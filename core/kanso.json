@@ -1,0 +1,9 @@
+{
+    "name": "core",
+    "version": "0.0.1",
+    "description": "TabCAT core libraries",
+    "attachments": ["lib"],
+    "dependencies": {
+        "attachments": null
+    }
+}
