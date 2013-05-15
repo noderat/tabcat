@@ -1,9 +1,0 @@
-{
-    "name": "llt",
-    "version": "0.0.1",
-    "description": "TabCAT Line Length Task",
-    "attachments": ["css", "img", "js", "llt.html"],
-    "dependencies": {
-        "attachments": null
-    }
-}
