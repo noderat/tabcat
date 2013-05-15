@@ -3,7 +3,12 @@
     "version": "0.0.1-dev",
     "description": "Line Length",
     "attachments": ["css", "img", "js", "task.html"],
+    "coffee-script": {
+	"attachments": ["js"],
+	"modules": []
+    },
     "dependencies": {
-        "attachments": null
+        "attachments": null,
+	"coffee-script-precompiler": null
     }
 }
