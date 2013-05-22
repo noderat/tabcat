@@ -1,0 +1,4 @@
+Refactor stuff:
+- break out UI code into TabCAT module
+- Use `cake` rather than `make`
+- automated testing
