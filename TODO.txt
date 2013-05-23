@@ -16,3 +16,5 @@ Refactors:
 UI cleanup:
 - black out status bar on iPad
 - Android fullscreen mode
+- fix max height of inner div in inches, when possible, using something like:
+  https://github.com/tombigel/detect-zoom
