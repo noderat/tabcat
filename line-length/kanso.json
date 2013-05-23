@@ -2,7 +2,7 @@
     "name": "line-length",
     "version": "0.0.1-dev",
     "description": "Line Length",
-    "attachments": ["css", "img", "js", "task.html"],
+    "attachments": ["css", "img", "js/task.js", "task.html"],
     "dependencies": {
         "attachments": null
     }
