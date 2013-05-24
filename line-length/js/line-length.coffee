@@ -1,9 +1,7 @@
-LL = {}
+debugMode = false
 
-LL.debugMode = false
-
-LL.startTimestamp = null
-LL.endTimestamp = null
+startTimestamp = null
+endTimestamp = null
 
 fontSizeAsPercentOfHeight = 2
 aspectRatio = 4/3  # pretend we're on an iPad
@@ -20,26 +18,26 @@ intensityChangeOnHit = -1
 intensityChangeOnMiss = 3
 startIntensity = 15
 practiceStartIntensity = 40
-LL.intensity = practiceStartIntensity
+intensity = practiceStartIntensity
 # used to track reversals. not maintained in practice mode
-LL.lastIntensityChange = 0
+lastIntensityChange = 0
 
 maxReversals = 20
-LL.intensitiesAtReversal = []
-LL.numTrials = 0
+intensitiesAtReversal = []
+numTrials = 0
 
 practiceMaxStreakLength = 4
 practiceCaptionMaxStreakLength = 2
-LL.practiceStreakLength = 0
+practiceStreakLength = 0
 
 numLayouts = 2
 
-inPracticeMode = -> LL.practiceStreakLength < practiceMaxStreakLength
+inPracticeMode = -> practiceStreakLength < practiceMaxStreakLength
 
 shouldShowPracticeCaption = ->
-  LL.practiceStreakLength < practiceCaptionMaxStreakLength
+  practiceStreakLength < practiceCaptionMaxStreakLength
 
-taskIsDone = -> LL.intensitiesAtReversal.length >= maxReversals
+taskIsDone = -> intensitiesAtReversal.length >= maxReversals
 
 randomUniform = (a, b) -> a + Math.random() * (b - a)
 
@@ -49,37 +47,37 @@ clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
 
 
 recordResult = (correct) ->
-  if LL.startTimestamp is null
-    LL.startTimestamp = $.now()
+  if startTimestamp is null
+    startTimestamp = $.now()
 
   change = if correct then intensityChangeOnHit else intensityChangeOnMiss
 
-  lastIntensity = LL.intensity
-  LL.intensity = clamp(minIntensity, lastIntensity + change, maxIntensity)
-  intensityChange = LL.intensity - lastIntensity
+  lastIntensity = intensity
+  intensity = clamp(minIntensity, lastIntensity + change, maxIntensity)
+  intensityChange = intensity - lastIntensity
 
   if inPracticeMode()
     if correct
-      LL.practiceStreakLength += 1
+      practiceStreakLength += 1
       if not inPracticeMode()  # i.e. we just left practice mode
-        LL.intensity = startIntensity
-        LL.lastIntensityChange = 0
+        intensity = startIntensity
+        lastIntensityChange = 0
     else
-      LL.practiceStreakLength = 0
+      practiceStreakLength = 0
   else
-    wasReversal = (intensityChange * LL.lastIntensityChange < 0 or
+    wasReversal = (intensityChange * lastIntensityChange < 0 or
                    intensityChange is 0)
     if wasReversal
-      LL.intensitiesAtReversal.push(lastIntensity)
-    LL.lastIntensityChange = intensityChange
+      intensitiesAtReversal.push(lastIntensity)
+    lastIntensityChange = intensityChange
 
-  LL.numTrials += 1
+  numTrials += 1
 
 
-LL.getNextTrial = ->
+getNextTrial = ->
   shortLineLength = randomUniform(shortLineMinLength, shortLineMaxLength)
 
-  longLineLength = shortLineLength * (1 + LL.intensity / 100)
+  longLineLength = shortLineLength * (1 + intensity / 100)
 
   if coinFlip()
     [topLineLength, bottomLineLength] = [shortLineLength, longLineLength]
@@ -112,18 +110,18 @@ LL.getNextTrial = ->
         width: bottomLineLength + '%'
       isLonger: bottomLineLength >= topLineLength
     shortLineLength: shortLineLength
-    intensity: LL.intensity
+    intensity: intensity
   }
 
 
-LL.showNextTrial = (event) ->
+showNextTrial = (event) ->
   if event and event.data
     recordResult(event.data.isLonger)
 
   if taskIsDone()
-    LL.finishTask()
+    finishTask()
   else
-    nextTrialDiv = LL.nextTrialDiv()
+    nextTrialDiv = getNextTrialDiv()
     $('#task-main').empty()
     $('#task-main').append(nextTrialDiv)
     tabcat.ui.fixAspectRatio(nextTrialDiv, aspectRatio)
@@ -131,43 +129,43 @@ LL.showNextTrial = (event) ->
     $(nextTrialDiv).fadeIn({duration: 200})
 
 
-LL.finishTask = (event) ->
-  LL.endTimestamp = $.now()
+finishTask = (event) ->
+  endTimestamp = $.now()
 
-  $('#scoring .score-list').text(LL.intensitiesAtReversal.join(', '))
-  elapsedSecs = (LL.endTimestamp - LL.startTimestamp) / 1000
+  $('#scoring .score-list').text(intensitiesAtReversal.join(', '))
+  elapsedSecs = (endTimestamp - startTimestamp) / 1000
   # we start timing after the first click, so leave out the first
   # trial in timing info
   $('#scoring .elapsed-time').text(
-    elapsedSecs.toFixed(1) + 's / ' + (LL.numTrials - 1) + ' = ' +
-    (elapsedSecs / (LL.numTrials - 1)).toFixed(1) + 's')
+    elapsedSecs.toFixed(1) + 's / ' + (numTrials - 1) + ' = ' +
+    (elapsedSecs / (numTrials - 1)).toFixed(1) + 's')
 
   $('#task').hide()
   $('#done').fadeIn({duration: 200})
 
-  $('#show-scoring').bind('click', LL.showScoring)
+  $('#show-scoring').bind('click', showScoring)
   $('#show-scoring').removeAttr('disabled')
 
 
-LL.showScoring = (event) ->
+showScoring = (event) ->
   $('#done').hide()
   $('#scoring').fadeIn({duration: 200})
 
 
-LL.nextTrialDiv = ->
+getNextTrialDiv = ->
   # get line offsets and widths for next trial
-  trial = LL.getNextTrial()
+  trial = getNextTrial()
 
   # construct divs for these lines
   topLineDiv = $('<div></div>', {'class': 'line top-line'})
   topLineDiv.css(trial.topLine.css)
-  topLineDiv.bind('click', trial.topLine, LL.showNextTrial)
+  topLineDiv.bind('click', trial.topLine, showNextTrial)
 
   bottomLineDiv = $('<div></div>', {'class': 'line bottom-line'})
   bottomLineDiv.css(trial.bottomLine.css)
-  bottomLineDiv.bind('click', trial.bottomLine, LL.showNextTrial)
+  bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
 
-  if (LL.debugMode)
+  if (debugMode)
     shortLineDiv = (
       if trial.topLine.isLonger then bottomLineDiv else topLineDiv)
     shortLineDiv.text(trial.shortLineLength.toFixed(2) +
@@ -180,7 +178,7 @@ LL.nextTrialDiv = ->
   # put them in an offscreen div
   containerDiv = $(
     '<div></div>', {
-    'class': 'layout-' + LL.numTrials % numLayouts})
+    'class': 'layout-' + numTrials % numLayouts})
   $(containerDiv).hide()
   containerDiv.append(topLineDiv, bottomLineDiv)
 
@@ -194,11 +192,6 @@ LL.nextTrialDiv = ->
 
   return containerDiv
 
-
-# add to the global object
-this.LL = LL
-
-
 # initialize the page
 
 # turn off scrolling/bounce
@@ -210,4 +203,4 @@ tabcat.ui.fixFontSize($(document.body), fontSizeAsPercentOfHeight)
 # enable fast click
 $(-> FastClick.attach(document.body))
 
-LL.showNextTrial()
+showNextTrial()
