@@ -1,8 +1,8 @@
-TabCAT = {}
+tabcat = {}
 
-TabCAT.UI = UI = {}
+tabcat.ui = ui = {}
 
-UI.fixAspectRatio = (element, ratio) ->
+ui.fixAspectRatio = (element, ratio) ->
   # Ensure that *element* has the given aspect ratio (width / height),
   # and make it as large as possible within the bounds of its parent
   # element. This property will be preserved on window resize.
@@ -57,7 +57,7 @@ UI.fixAspectRatio = (element, ratio) ->
   $(window).resize(fixElement)
 
 
-UI.fixFontSize = (element, percentOfHeight) ->
+ui.fixFontSize = (element, percentOfHeight) ->
   element = $(element)
 
   fixElement = (event) ->
@@ -69,9 +69,4 @@ UI.fixFontSize = (element, percentOfHeight) ->
   $(window).resize(fixElement)
 
 
-
-
-
-
-
-this.TabCAT = TabCAT
+this.tabcat = tabcat

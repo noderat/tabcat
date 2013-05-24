@@ -126,8 +126,8 @@ LL.showNextTrial = (event) ->
     nextTrialDiv = LL.nextTrialDiv()
     $('#task-main').empty()
     $('#task-main').append(nextTrialDiv)
-    TabCAT.UI.fixAspectRatio(nextTrialDiv, aspectRatio)
-    TabCAT.UI.fixFontSize(nextTrialDiv)
+    tabcat.ui.fixAspectRatio(nextTrialDiv, aspectRatio)
+    tabcat.ui.fixFontSize(nextTrialDiv)
     $(nextTrialDiv).fadeIn({duration: 200})
 
 
@@ -205,7 +205,7 @@ this.LL = LL
 $(document).bind('touchmove', (event) ->
   event.preventDefault())
 
-TabCAT.UI.fixFontSize($(document.body), fontSizeAsPercentOfHeight)
+tabcat.ui.fixFontSize($(document.body), fontSizeAsPercentOfHeight)
 
 # enable fast click
 $(-> FastClick.attach(document.body))
