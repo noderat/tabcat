@@ -13,10 +13,11 @@ UI.fixAspectRatio = (element, ratio) ->
   # TODO: handle nested elements properly (currently we'll get wrong results
   # if you call this on an element and then on its parent)
 
-  # TODO: set max height in cm (so that tests will display at the same size
-  # on different devices, assuming screen is large enough)
+  # TODO: set max height in inches so that tests will display at the same size
+  # on different devices, assuming screen is large enough. Use
+  # https://github.com/tombigel/detect-zoom or something similar to determine
+  # real pixel size (devices generally use a fake dpi by convention).
   element = $(element)
-  ratio = ratio or LL.aspectRatio
 
   fixElement = (event) ->
     parent = $(element.parent())
@@ -56,6 +57,16 @@ UI.fixAspectRatio = (element, ratio) ->
   $(window).resize(fixElement)
 
 
+UI.fixFontSize = (element, percentOfHeight) ->
+  element = $(element)
+
+  fixElement = (event) ->
+    sizeInPx = element.height() * percentOfHeight / 100
+    element.css({'font-size': sizeInPx + 'px'})
+
+  fixElement(element)
+
+  $(window).resize(fixElement)
 
 
 

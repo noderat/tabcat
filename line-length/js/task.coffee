@@ -5,8 +5,8 @@ LL.debugMode = false
 LL.startTimestamp = null
 LL.endTimestamp = null
 
-LL.fontSizeAsPercentOfHeight = 2
-LL.aspectRatio = 4/3  # pretend we're on an iPad
+fontSizeAsPercentOfHeight = 2
+aspectRatio = 4/3  # pretend we're on an iPad
 
 # as a percentage of container
 shortLineMinLength = 40
@@ -126,8 +126,8 @@ LL.showNextTrial = (event) ->
     nextTrialDiv = LL.nextTrialDiv()
     $('#task-main').empty()
     $('#task-main').append(nextTrialDiv)
-    LL.fixAspectRatio(nextTrialDiv)
-    LL.fixFontSize(nextTrialDiv)
+    TabCAT.UI.fixAspectRatio(nextTrialDiv, aspectRatio)
+    TabCAT.UI.fixFontSize(nextTrialDiv)
     $(nextTrialDiv).fadeIn({duration: 200})
 
 
@@ -195,61 +195,6 @@ LL.nextTrialDiv = ->
   return containerDiv
 
 
-LL.fixFontSize = (element, percentOfHeight) ->
-  element = $(element)
-  percentOfHeight = percentOfHeight or LL.fontSizeAsPercentOfHeight
-
-  fixElement = (event) ->
-    sizeInPx = element.height() * percentOfHeight / 100
-    element.css({'font-size': sizeInPx + 'px'})
-
-  fixElement(element)
-
-  $(window).resize(fixElement)
-
-
-LL.fixAspectRatio = (element, ratio) ->
-  element = $(element)
-  ratio = ratio or LL.aspectRatio
-
-  fixElement = (event) ->
-    parent = $(element.parent())
-    parentWidth = parent.width()
-    parentHeight = parent.height()
-    parentRatio = parentWidth / parentHeight
-
-    if parentRatio > ratio
-      # parent is too wide, need gap on left and right
-      gap = 100 * (parentRatio - ratio) / parentRatio / 2
-
-      element.css({
-        position: 'absolute'
-        left: gap + '%'
-        right: 100 - gap + '%'
-        width: 100 - 2 * gap + '%'
-        top: '0%'
-        bottom: '100%'
-        height: '100%'
-      })
-    else
-      # parent is too narrow, need gap on top and bottom
-      gap = (100 * (1 / parentRatio - 1 / ratio) * parentRatio / 2)
-
-      element.css({
-        position: 'absolute'
-        left: '0%'
-        right: '100%'
-        width: '100%'
-        top: gap + '%'
-        bottom: 100 - gap + '%'
-        height: 100 - 2 * gap + '%'
-      })
-
-  fixElement(element)
-
-  $(window).resize(fixElement)
-
-
 # add to the global object
 this.LL = LL
 
@@ -260,7 +205,7 @@ this.LL = LL
 $(document).bind('touchmove', (event) ->
   event.preventDefault())
 
-LL.fixFontSize($(document.body))
+TabCAT.UI.fixFontSize($(document.body), fontSizeAsPercentOfHeight)
 
 # enable fast click
 $(-> FastClick.attach(document.body))
