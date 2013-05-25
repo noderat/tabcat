@@ -27,8 +27,8 @@ body.fullscreen {
     -ms-touch-action: none !important;
 }
 
-/* disable text selection */
-.unselectable, .fullscreen, .fullscreen * {
+/* disable text selection. usually just need to set this on body */
+.unselectable {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -37,7 +37,7 @@ body.fullscreen {
     user-select: none;
 }
 
-/* if you want text selection within a fullscreen app */
+/* if you want to re-enable text selection */
 .selectable {
     -webkit-touch-callout: text;
     -webkit-user-select: text;
