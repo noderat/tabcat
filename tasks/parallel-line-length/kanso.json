@@ -3,7 +3,7 @@
     "index": "/task.html",
     "version": "0.0.1-dev",
     "description": "Parallel Line Length",
-    "attachments": ["css", "img", "js/parallel-line-length.js", "task.html"],
+    "attachments": ["css/task.css", "img", "js/task.js", "task.html"],
     "dependencies": {
         "attachments": null
     }

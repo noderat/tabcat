@@ -3,8 +3,7 @@
     "index": "/task.html",
     "version": "0.0.1-dev",
     "description": "Perpendicular Line Length",
-    "attachments": ["css", "img", "js/perpendicular-line-length.js",
-		    "task.html"],
+    "attachments": ["css/task.css", "img", "js/task.js", "task.html"],
     "dependencies": {
         "attachments": null
     }
