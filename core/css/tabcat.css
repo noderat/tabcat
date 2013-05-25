@@ -1,0 +1,68 @@
+/* default look and feel. All things being equal, try to follow the UCSF
+Web Identity Standards (right sidebar on http://www.ucsf.edu/about/identity). */
+body {
+    background-color: #000000;
+    color: #eeeeee;
+    /* Helvetica is the "everything is okay" font */
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+
+/* fullscreen mode. set this class on html and body to simulate an app */
+
+.fullscreen {
+    top: 0%;
+    height: 100%;
+    bottom: 100%;
+    left: 0%;
+    width: 100%;
+    bottom: 100%;
+    margin: 0;
+    padding: 0;
+ }
+
+/* disable elastic scrolling and zooming */
+body.fullscreen {
+    overflow: hidden;
+    -ms-touch-action: none !important;
+}
+
+/* disable text selection */
+.unselectable, .fullscreen, .fullscreen * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* if you want text selection within a fullscreen app */
+.selectable {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* portrait mode selectors. use this to hide the task and show a message
+instead when the browser is in portrait mode */
+
+.portrait-show {
+    display: none;
+    visibility: hidden;
+}
+
+@media (orientation:portrait) {
+    .portrait-show {
+	display: block;
+	visibility: visible;
+    }
+
+    .portrait-hide {
+	display: none;
+	visibility: hidden;
+    }
+}

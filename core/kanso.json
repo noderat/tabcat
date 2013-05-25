@@ -2,7 +2,7 @@
     "name": "core",
     "version": "0.0.1-dev",
     "description": "TabCAT core libraries",
-    "attachments": ["lib", "js/tabcat.js"],
+    "attachments": ["css/tabcat.css", "js/tabcat.js", "lib"],
     "dependencies": {
         "attachments": null
     }
