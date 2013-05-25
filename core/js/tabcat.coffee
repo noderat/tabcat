@@ -19,6 +19,20 @@ tabcat.math.clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
 
 tabcat.ui = {}
 
+# Several things need to be done to make a web page look like an app.
+#
+# To turn off bounce/scrolling, call tabcat.ui.turnOffBounce() and
+# add the "fullscreen" CSS class to html and body (in ../css/tabcat.css)
+#
+# To turn off zooming, add this tag to head:
+#
+# <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0,
+# maximum-scale=1.0, user-scalable=no">
+#
+# To turn off text selection, add the "unselectable" CSS class to body
+
+
+
 # Register a click immediately on tap/mouseup, rather than waiting for
 # a double-click (requires fastclick.js)
 tabcat.ui.enableFastClick = ->
@@ -32,6 +46,8 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
   #
   # We do this by setting its left, right, width, etc.
   # to the appropriate percentage. We do not set border, margin, or padding.
+  #
+  # This is part of how we ensure that tasks look the same on different devices.
 
   # TODO: handle nested elements properly (currently we'll get wrong results
   # if you call this on an element and then on its parent)
@@ -80,8 +96,9 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
   $(window).resize(fixElement)
 
 
-# make sure the font-size of the given element is always the given percent
-# of the element's height. This will be preserved on window resize.
+# Make sure the font-size of the given element is always the given percent
+# of the element's height. This will be preserved on window resize. This
+# ensures we get similar text layouts on different devices.
 tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   element = $(element)
 
@@ -97,12 +114,6 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
 
 # Don't allow the document to scroll past its boundaries. This only works
 # if your document isn't larger than the viewport.
-#
-# You'll probably want to disable zooming as well, which is done with a
-# meta tag:
-#
-# <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0,
-# maximum-scale=1.0, user-scalable=no">
 tabcat.ui.turnOffBounce = ->
   $(document).bind('touchmove', (event) ->
     event.preventDefault())
