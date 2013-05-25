@@ -1,0 +1,137 @@
+html, body, div.fullscreen {
+    top: 0%;
+    height: 100%;
+    bottom: 100%;
+    left: 0%;
+    width: 100%;
+    bottom: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+}
+
+/* disable elastic scrolling and zooming */
+body {
+    overflow: hidden;
+    -ms-touch-action: none !important;
+}
+
+/* disable text selection */
+div, span {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+div.task-description {
+    text-align: center;
+}
+
+div.line {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: gold;
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+    font-size: 2em;
+}
+
+div.layout-0 div.top-line {
+    top: 53%;
+    height: 7%;
+}
+
+div.layout-0 div.bottom-line {
+    top: 71%;
+    height: 7%;
+}
+
+div.layout-0 div.practice-caption {
+    top: 15%;
+    height: 15%;
+}
+
+div.layout-1 div.top-line {
+    top: 19%;
+    height: 7%;
+}
+
+div.layout-1 div.bottom-line {
+    top: 37%;
+    height: 7%;
+}
+
+div.layout-1 div.practice-caption {
+    top: 60%;
+    height: 15%;
+}
+
+
+
+
+
+
+div.practice-caption {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    color: goldenrod;
+    font-size: 5em;
+    text-align: center;
+    left: 0%;
+    width: 100%;
+}
+
+.portrait-show {
+    display: none;
+    visibility: hidden;
+}
+
+@media (orientation:portrait) {
+    .portrait-show {
+	display: block;
+	visibility: visible;
+    }
+
+    .portrait-hide {
+	display: none;
+	visibility: hidden;
+    }
+}
+
+.centered {
+    position: absolute;
+    top: 40%;
+    height: 20%;
+    left: 0%;
+    width: 100%;
+    vertical-align: middle;
+}
+
+.message {
+    text-align: center;
+    font-size: 5em;
+}
+
+.for-examiner {
+    text-align: center;
+    font-size: 3em;
+}
+
+.score-list {
+    text-align: center;
+    font-size: 3em;
+    color: lightgreen;
+}
+
+.elapsed-time {
+    text-align: center;
+    font-size: 3em;
+    color: pink;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Perpendicular Line Length</title>
+    <meta charset="utf-8" />
+    <!-- allow launching this in fullscreen like an app on iPad -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- turn off zooming -->
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" href="img/ipad-icon.png"/>
+    <link rel="stylesheet" href="css/llt.css">
+  </head>
+  <body>
+    <div id="task" class="fullscreen">
+      <div id="task-main" class="fullscreen portrait-hide"></div>
+      <div class="fullscreen portrait-show">
+	<div class="centered message">Please return to landscape mode</div>
+      </div>
+    </div>
+    <div id="done" class="fullscreen" style="display:none">
+      <p class="message">Done!</p>
+      <p class="message">Please return this to the examiner.</p>
+      <p class="message">
+	<button id="show-scoring" disabled>show scoring</button>
+      </p>
+    </div>
+    <div id="scoring" class="fullscreen" style="display:none">
+      <p class="message">Scoring</p>
+      <p class="for-examiner">Examiner: Please write down this data:</p>
+      <p class="score-list"></p>
+      <p class="elapsed-time"></p>
+    </div>
+    <script src="../core/lib/js/underscore.js"></script>
+    <script src="../core/lib/js/jquery.js"></script>
+    <script src="../core/lib/js/fastclick.js"></script>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/perpendicular-line-length.js"></script>
+  </body>
+</html>
