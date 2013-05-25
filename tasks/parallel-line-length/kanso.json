@@ -1,0 +1,10 @@
+{
+    "name": "parallel-line-length",
+    "index": "/task.html",
+    "version": "0.0.1-dev",
+    "description": "Parallel Line Length",
+    "attachments": ["css", "img", "js/parallel-line-length.js", "task.html"],
+    "dependencies": {
+        "attachments": null
+    }
+}

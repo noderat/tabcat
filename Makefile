@@ -8,7 +8,7 @@ TASK_PUSHES = $(patsubst %, %/.pushed, $(TASKS))
 
 all: $(TASK_PUSHES)
 
-$(TASK_PUSHES): %/.pushed: .kansorc $(JS_TARGETS)
+$(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
 	kanso push $(@D)
 	touch $@
 
