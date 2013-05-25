@@ -4,14 +4,18 @@ tabcat = {}
 
 tabcat.math = {}
 
-# return a number chosen uniformly at random from [a, b)
-tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
+# return x, clamped to between min and max
+tabcat.math.clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
 
 # randomly return true or false
 tabcat.math.coinFlip = -> Math.random() < 0.5
 
-# return x, clamped to between min and max
-tabcat.math.clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
+# return a mod b, but always return a positive value
+tabcat.math.mod = (a, b) -> ((a % b) + b) % b
+
+# return a number chosen uniformly at random from [a, b)
+tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
+
 
 
 
@@ -119,5 +123,5 @@ tabcat.ui.turnOffBounce = ->
     event.preventDefault())
 
 
-
-this.tabcat = tabcat
+# add to the global namespace
+@tabcat = tabcat

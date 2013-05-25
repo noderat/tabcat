@@ -4,12 +4,16 @@ DEBUG_MODE = false
 
 # css depends on 1em being this % of container height
 FONT_HEIGHT_PERCENT = 2
-# pretend div containing the test is on an iPad
-ASPECT_RATIO = 4/3
+# fit in a square, so all orientations work the same
+ASPECT_RATIO = 1/1
 
-# range on line length, as a % of container width
+# range of line length, as a % of container width/height
 SHORT_LINE_MIN_LENGTH = 40
 SHORT_LINE_MAX_LENGTH = 50
+# width of lines, as a % of container width/height. Also used for spacing.
+LINE_WIDTH = 7
+# height of practice caption, as a % of container height
+CAPTION_HEIGHT = 30
 # offest between line centers, as a % of the shorter line's length
 LINE_OFFSET_AT_CENTER = 50
 # number of positions for lines (currently, top and bottom of screen).
@@ -95,6 +99,7 @@ registerResult = (correct) ->
     else
       practiceStreakLength = 0
   else
+    # count hitting the floor/ceiling as a reversal
     wasReversal = (intensityChange * lastIntensityChange < 0 or
                    intensityChange is 0)
     if wasReversal
@@ -111,38 +116,75 @@ getNextTrial = ->
 
   longLineLength = shortLineLength * (1 + intensity / 100)
 
+  # Going to make a sort of T-shaped layout, and rotate it later.
+  # The top of the T is the "arm" and the vertical part is the "stem"
+
+  # Alternate between sideways and upright, but pick orientation
+  # randomly within that.
+  angle = 90 * (numTrials % 2)
   if tabcat.math.coinFlip()
-    [topLineLength, bottomLineLength] = [shortLineLength, longLineLength]
+    angle += 180
+
+  if shouldShowPracticeCaption()
+    # when showing the practice caption, always make the vertical
+    # line short
+    armIsShort = (tabcat.math.mod(angle, 180) == 90)
   else
-    [bottomLineLength, topLineLength] = [shortLineLength, longLineLength]
+    armIsShort = tabcat.math.coinFlip()
 
-  centerOffset = shortLineLength * LINE_OFFSET_AT_CENTER / 100
+  if armIsShort
+    [armLength, stemLength] = [shortLineLength, longLineLength]
+  else
+    [armLength, stemLength] = [longLineLength, shortLineLength]
 
-  # make sure both lines are the same distance from the edge of the screen
-  totalWidth = topLineLength / 2 + bottomLineLength / 2 + centerOffset
-  margin = (100 - totalWidth) / 2
+  totalHeight = stemLength + LINE_WIDTH * 2
+  verticalMargin = (100 - totalHeight) / 2
 
-  # push one line to the right, and one to the left
+  arm =
+    top: verticalMargin
+    bottom: verticalMargin + LINE_WIDTH
+    height: LINE_WIDTH
+    left: (100 - armLength) / 2
+    right: (100 + armLength) / 2
+    width: armLength
+
+  stem =
+    top: verticalMargin + 2 * LINE_WIDTH
+    bottom: 100 - verticalMargin
+    height: stemLength
+    width: LINE_WIDTH
+
+  # offset stem to the left or right to avoid perseverative tapping
+  # in the center of the screen
   if tabcat.math.coinFlip()
-    topLineLeft = margin
-    bottomLineLeft = 100 - margin - bottomLineLength
+    stem.left = arm.left + LINE_WIDTH
   else
-    topLineLeft = 100 - margin - topLineLength
-    bottomLineLeft = margin
+    stem.left = arm.right - LINE_WIDTH * 2
+  stem.right = stem.left + LINE_WIDTH
+
+  # rotate the "T" shape
+  line1Box = rotatePercentBox(arm, angle)
+  line2Box = rotatePercentBox(stem, angle)
+
+  # if we want to show a practice caption, shift the whole thing down
+  if shouldShowPracticeCaption()
+    offset = CAPTION_HEIGHT - Math.min(line1Box.top, line2Box.top)
+    line1Box.top += offset
+    line1Box.bottom += offset
+    line2Box.top += offset
+    line2Box.bottom += offset
+
+  line1Css = percentBoxToCss(line1Box)
+  line2Css = percentBoxToCss(line2Box)
 
   return {
-    topLine:
-      css:
-        left: topLineLeft + '%'
-        width: topLineLength + '%'
-      isLonger: topLineLength >= bottomLineLength
-    bottomLine:
-      css:
-        left: bottomLineLeft + '%'
-        width: bottomLineLength + '%'
-      isLonger: bottomLineLength >= topLineLength
-    shortLineLength: shortLineLength
-    intensity: intensity
+    line1:
+      css: line1Css
+      isLonger: (armLength >= stemLength)
+    line2:
+      css: line2Css
+      isLonger: (stemLength >= armLength)
+    angle: angle
   }
 
 
@@ -195,30 +237,18 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  topLineDiv = $('<div></div>', {'class': 'line top-line'})
-  topLineDiv.css(trial.topLine.css)
-  topLineDiv.bind('click', trial.topLine, showNextTrial)
+  line1Div = $('<div></div>', {'class': 'line top-line'})
+  line1Div.css(trial.line1.css)
+  line1Div.bind('click', trial.line1, showNextTrial)
 
-  bottomLineDiv = $('<div></div>', {'class': 'line bottom-line'})
-  bottomLineDiv.css(trial.bottomLine.css)
-  bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
-
-  if (DEBUG_MODE)
-    shortLineDiv = (
-      if trial.topLine.isLonger then bottomLineDiv else topLineDiv)
-    shortLineDiv.text(trial.shortLineLength.toFixed(2) +
-      '% of screen width')
-
-    longLineDiv = (
-      if trial.topLine.isLonger then topLineDiv else bottomLineDiv)
-    longLineDiv.text(trial.intensity + '% longer than short line')
+  line2Div = $('<div></div>', {'class': 'line bottom-line'})
+  line2Div.css(trial.line2.css)
+  line2Div.bind('click', trial.line2, showNextTrial)
 
   # put them in an offscreen div
-  containerDiv = $(
-    '<div></div>', {
-    'class': 'layout-' + numTrials % NUM_LAYOUTS})
+  containerDiv = $('<div></div>')
   $(containerDiv).hide()
-  containerDiv.append(topLineDiv, bottomLineDiv)
+  containerDiv.append(line1Div, line2Div)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -229,6 +259,32 @@ getNextTrialDiv = ->
     containerDiv.append(practiceCaptionDiv)
 
   return containerDiv
+
+
+rotatePercentBox = (box, angle) ->
+  if (angle % 90 != 0)
+    throw Error("angle must be a multiple of 90")
+
+  angle = tabcat.math.mod(angle, 360)
+  if (angle == 0)
+    return box
+
+  return rotatePercentBox({
+    top: 100 - box.right
+    bottom: 100 - box.left
+    height: box.width
+    left: box.top
+    right: box.bottom
+    width: box.height
+  }, angle - 90)
+
+
+percentBoxToCss = (box) ->
+  css = {}
+  for own key, value of box
+    css[key] = value + '%'
+
+  return css
 
 
 # INITIALIZATION
