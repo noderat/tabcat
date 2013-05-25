@@ -16,7 +16,7 @@ LINE_OFFSET_AT_CENTER = 50
 # these work with the layout-0 and layout-1 CSS classes
 NUM_LAYOUTS = 2
 # how long a fade should take, in msec
-FADE_DURATION = FADE_DURATION
+FADE_DURATION = 200
 
 
 # STAIRCASING PARAMETERS
