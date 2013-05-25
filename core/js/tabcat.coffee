@@ -1,8 +1,31 @@
 tabcat = {}
 
-tabcat.ui = ui = {}
+# MATH
 
-ui.fixAspectRatio = (element, ratio) ->
+tabcat.math = {}
+
+# return a number chosen uniformly at random from [a, b)
+tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
+
+# randomly return true or false
+tabcat.math.coinFlip = -> Math.random() < 0.5
+
+# return x, clamped to between min and max
+tabcat.math.clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
+
+
+
+# UI
+
+tabcat.ui = {}
+
+# Register a click immediately on tap/mouseup, rather than waiting for
+# a double-click (requires fastclick.js)
+tabcat.ui.enableFastClick = ->
+  $(-> FastClick.attach(document.body))
+
+
+tabcat.ui.fixAspectRatio = (element, ratio) ->
   # Ensure that *element* has the given aspect ratio (width / height),
   # and make it as large as possible within the bounds of its parent
   # element. This property will be preserved on window resize.
@@ -57,16 +80,33 @@ ui.fixAspectRatio = (element, ratio) ->
   $(window).resize(fixElement)
 
 
-ui.fixFontSize = (element, percentOfHeight) ->
+# make sure the font-size of the given element is always the given percent
+# of the element's height. This will be preserved on window resize.
+tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   element = $(element)
 
   fixElement = (event) ->
-    sizeInPx = element.height() * percentOfHeight / 100
+    # for font-size, "%" means % of default font size, not % of height.
+    sizeInPx = element.height() * percent / 100
     element.css({'font-size': sizeInPx + 'px'})
 
   fixElement(element)
 
   $(window).resize(fixElement)
+
+
+# Don't allow the document to scroll past its boundaries. This only works
+# if your document isn't larger than the viewport.
+#
+# You'll probably want to disable zooming as well, which is done with a
+# meta tag:
+#
+# <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0,
+# maximum-scale=1.0, user-scalable=no">
+tabcat.ui.turnOffBounce = ->
+  $(document).bind('touchmove', (event) ->
+    event.preventDefault())
+
 
 
 this.tabcat = tabcat

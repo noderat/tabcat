@@ -1,66 +1,96 @@
-debugMode = false
+DEBUG_MODE = false
 
+# LOOK AND FEEL
+
+# css depends on 1em being this % of container height
+FONT_HEIGHT_PERCENT = 2
+# pretend div containing the test is on an iPad
+ASPECT_RATIO = 4/3
+
+# range on line length, as a % of container width
+SHORT_LINE_MIN_LENGTH = 40
+SHORT_LINE_MAX_LENGTH = 50
+# offest between line centers, as a % of the shorter line's length
+LINE_OFFSET_AT_CENTER = 50
+# number of positions for lines (currently, top and bottom of screen).
+# these work with the layout-0 and layout-1 CSS classes
+NUM_LAYOUTS = 2
+# how long a fade should take, in msec
+FADE_DURATION = FADE_DURATION
+
+
+# STAIRCASING PARAMETERS
+
+# intensity is the % the longer line is longer than the shorter one
+MIN_INTENSITY = 1
+MAX_INTENSITY = 50
+# decrease intensity by this much after each correct response
+STEPS_DOWN = 1
+# increase increase by this much after each incorrect response
+STEPS_UP = 3
+# start practice mode here
+PRACTICE_START_INTENSITY = 40
+# jump to this intensity after exiting practice mode
+START_INTENSITY = 15
+# get this many correct in a row to leave practice mode
+PRACTICE_MAX_STREAK = 4
+# get this many correct in a row to turn off the practice mode instructions
+PRACTICE_CAPTION_MAX_STREAK = 2
+# task is done after this many reversals (change in direction of
+# intensity change). Bumping against the floor/ceiling also counts
+# as a reversal
+MAX_REVERSALS = 20
+
+
+# VARIABLES
+
+# time of first user action (not when the page loads). Thus, time to
+# complete the initial (practice) trial isn't included.
 startTimestamp = null
+# time user completed final trial
 endTimestamp = null
 
-fontSizeAsPercentOfHeight = 2
-aspectRatio = 4/3  # pretend we're on an iPad
-
-# as a percentage of container
-shortLineMinLength = 40
-shortLineMaxLength = 50
-# as a percentage of the short line's length
-lineOffsetAtCenter = 50
-
-minIntensity = 1
-maxIntensity = 50
-intensityChangeOnHit = -1
-intensityChangeOnMiss = 3
-startIntensity = 15
-practiceStartIntensity = 40
-intensity = practiceStartIntensity
+intensity = PRACTICE_START_INTENSITY
+# number of practice trials correct in a row
+practiceStreakLength = 0
 # used to track reversals. not maintained in practice mode
 lastIntensityChange = 0
 
-maxReversals = 20
+# intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
+# how many trials completed so far (including practice trials)
 numTrials = 0
 
-practiceMaxStreakLength = 4
-practiceCaptionMaxStreakLength = 2
-practiceStreakLength = 0
 
-numLayouts = 2
+# FUNCTIONS
 
-inPracticeMode = -> practiceStreakLength < practiceMaxStreakLength
+inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 
 shouldShowPracticeCaption = ->
-  practiceStreakLength < practiceCaptionMaxStreakLength
+  practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
-taskIsDone = -> intensitiesAtReversal.length >= maxReversals
-
-randomUniform = (a, b) -> a + Math.random() * (b - a)
-
-coinFlip = -> Math.random() < 0.5
-
-clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
+taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
 
 
-recordResult = (correct) ->
+# call this when the user taps on a line. correct is a boolean
+# this will update practiceStreakLength, intensity, lastIntensityChange,
+# and intensitiesAtReversal
+registerResult = (correct) ->
   if startTimestamp is null
     startTimestamp = $.now()
 
-  change = if correct then intensityChangeOnHit else intensityChangeOnMiss
+  change = if correct then -STEPS_DOWN else STEPS_UP
 
   lastIntensity = intensity
-  intensity = clamp(minIntensity, lastIntensity + change, maxIntensity)
+  intensity = tabcat.math.clamp(
+    MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
   intensityChange = intensity - lastIntensity
 
   if inPracticeMode()
     if correct
       practiceStreakLength += 1
       if not inPracticeMode()  # i.e. we just left practice mode
-        intensity = startIntensity
+        intensity = START_INTENSITY
         lastIntensityChange = 0
     else
       practiceStreakLength = 0
@@ -74,24 +104,26 @@ recordResult = (correct) ->
   numTrials += 1
 
 
+# generate data, including CSS, for the next trial
 getNextTrial = ->
-  shortLineLength = randomUniform(shortLineMinLength, shortLineMaxLength)
+  shortLineLength = tabcat.math.randomUniform(SHORT_LINE_MIN_LENGTH,
+                                              SHORT_LINE_MAX_LENGTH)
 
   longLineLength = shortLineLength * (1 + intensity / 100)
 
-  if coinFlip()
+  if tabcat.math.coinFlip()
     [topLineLength, bottomLineLength] = [shortLineLength, longLineLength]
   else
     [bottomLineLength, topLineLength] = [shortLineLength, longLineLength]
 
-  centerOffset = shortLineLength * lineOffsetAtCenter / 100
+  centerOffset = shortLineLength * LINE_OFFSET_AT_CENTER / 100
 
   # make sure both lines are the same distance from the edge of the screen
   totalWidth = topLineLength / 2 + bottomLineLength / 2 + centerOffset
   margin = (100 - totalWidth) / 2
 
   # push one line to the right, and one to the left
-  if coinFlip()
+  if tabcat.math.coinFlip()
     topLineLeft = margin
     bottomLineLeft = 100 - margin - bottomLineLength
   else
@@ -114,9 +146,11 @@ getNextTrial = ->
   }
 
 
+# event handler for clicks on lines. either fade in the next trial,
+# or call finishTask()
 showNextTrial = (event) ->
   if event and event.data
-    recordResult(event.data.isLonger)
+    registerResult(event.data.isLonger)
 
   if taskIsDone()
     finishTask()
@@ -124,11 +158,12 @@ showNextTrial = (event) ->
     nextTrialDiv = getNextTrialDiv()
     $('#task-main').empty()
     $('#task-main').append(nextTrialDiv)
-    tabcat.ui.fixAspectRatio(nextTrialDiv, aspectRatio)
-    tabcat.ui.fixFontSize(nextTrialDiv)
-    $(nextTrialDiv).fadeIn({duration: 200})
+    tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
+    tabcat.ui.linkFontSizeToHeight(nextTrialDiv, FONT_HEIGHT_PERCENT)
+    $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
 
 
+# show the "Done!" page, and enable its "show scoring" button
 finishTask = (event) ->
   endTimestamp = $.now()
 
@@ -141,17 +176,20 @@ finishTask = (event) ->
     (elapsedSecs / (numTrials - 1)).toFixed(1) + 's')
 
   $('#task').hide()
-  $('#done').fadeIn({duration: 200})
+  $('#done').fadeIn({duration: FADE_DURATION})
 
   $('#show-scoring').bind('click', showScoring)
   $('#show-scoring').removeAttr('disabled')
 
 
+# show the scoring page
 showScoring = (event) ->
   $('#done').hide()
-  $('#scoring').fadeIn({duration: 200})
+  $('#scoring').fadeIn({duration: FADE_DURATION})
 
 
+# create the next trial, and return the div containing it, but don't
+# show it or add it to the page (showNextTrial() does this)
 getNextTrialDiv = ->
   # get line offsets and widths for next trial
   trial = getNextTrial()
@@ -165,7 +203,7 @@ getNextTrialDiv = ->
   bottomLineDiv.css(trial.bottomLine.css)
   bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
 
-  if (debugMode)
+  if (DEBUG_MODE)
     shortLineDiv = (
       if trial.topLine.isLonger then bottomLineDiv else topLineDiv)
     shortLineDiv.text(trial.shortLineLength.toFixed(2) +
@@ -178,7 +216,7 @@ getNextTrialDiv = ->
   # put them in an offscreen div
   containerDiv = $(
     '<div></div>', {
-    'class': 'layout-' + numTrials % numLayouts})
+    'class': 'layout-' + numTrials % NUM_LAYOUTS})
   $(containerDiv).hide()
   containerDiv.append(topLineDiv, bottomLineDiv)
 
@@ -192,15 +230,12 @@ getNextTrialDiv = ->
 
   return containerDiv
 
-# initialize the page
 
-# turn off scrolling/bounce
-$(document).bind('touchmove', (event) ->
-  event.preventDefault())
+# INITIALIZATION
 
-tabcat.ui.fixFontSize($(document.body), fontSizeAsPercentOfHeight)
+tabcat.ui.enableFastClick()
+tabcat.ui.turnOffBounce()
 
-# enable fast click
-$(-> FastClick.attach(document.body))
+tabcat.ui.linkFontSizeToHeight($(document.body), FONT_HEIGHT_PERCENT)
 
 showNextTrial()
