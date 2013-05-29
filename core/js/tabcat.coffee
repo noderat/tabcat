@@ -72,6 +72,12 @@ tabcat.math.mod = (a, b) -> ((a % b) + b) % b
 tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
 
 
+# PATIENT
+
+tabcat.patient = {}
+
+
+
 
 
 # UI
