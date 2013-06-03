@@ -196,7 +196,8 @@ getNextTrialDiv = ->
   if shouldShowPracticeCaption()
     practiceCaptionDiv = $('<div></div>',
       {'class': 'practice-caption'})
-    practiceCaptionDiv.html('Which is parallel to the blue line?')
+    practiceCaptionDiv.html(
+      'Which is parallel to the <span class="target">blue</span> line?')
     containerDiv.append(practiceCaptionDiv)
 
   return containerDiv

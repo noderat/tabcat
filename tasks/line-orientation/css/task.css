@@ -11,15 +11,15 @@ div.line {
 }
 
 div.target-line {
-    background-color: #88bbbb;
+    background-color: #7799bb;
 }
 
 div.line-1 {
-    background-color: #eeeeee;
+    background-color: #cc9933;
 }
 
 div.line-2 {
-    background-color: #eeeeee;
+    background-color: #cc9933;
 }
 
 div.practice-caption {
@@ -31,6 +31,10 @@ div.practice-caption {
     text-align: center;
     left: 0%;
     width: 100%;
+}
+
+div.practice-caption span.target {
+    color: #7799bb;
 }
 
 div.layout-0 div.target-line {
