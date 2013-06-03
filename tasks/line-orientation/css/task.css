@@ -2,23 +2,50 @@ div.task-description {
     text-align: center;
 }
 
+div.line-container {
+    position: absolute;
+    /* this is square because the container is always 4/3 */
+    height: 72%;
+    width: 54%;
+    top: 14%;
+    bottom: 86%;
+    left: 23%;
+    right: 77%;
+}
+
 div.line {
     position: absolute;
     margin: 0;
     padding: 0;
-    width: 12%;
-    height: 4%;
 }
 
 div.target-line {
+    top: 0%;
+    bottom: 50%;
+    height: 50%;
+    left: 49%;
+    right: 51%;
+    width: 2%;
     background-color: #7799bb;
 }
 
 div.line-1 {
+    top: 75%;
+    bottom: 100%;
+    height: 25%;
+    left: 13%;
+    right: 14%;
+    width: 1%;
     background-color: #cc9933;
 }
 
 div.line-2 {
+    top: 75%;
+    bottom: 100%;
+    height: 25%;
+    left: 86%;
+    right: 87%;
+    width: 1%;
     background-color: #cc9933;
 }
 
@@ -31,62 +58,11 @@ div.practice-caption {
     text-align: center;
     left: 0%;
     width: 100%;
+    top: 3%;
 }
 
 div.practice-caption span.target {
     color: #7799bb;
-}
-
-div.layout-0 div.target-line {
-    top: 33%;
-    bottom: 37%;
-    left: 46%;
-    right: 56%;
-}
-
-div.layout-0 div.line-1 {
-    top: 64%;
-    bottom: 68%;
-    left: 32%;
-    right: 44%;
-}
-
-div.layout-0 div.line-2 {
-    top: 64%;
-    bottom: 68%;
-    left: 56%;
-    right: 68%;
-}
-
-div.layout-0 div.practice-caption {
-    top: 7%;
-    height: 10%;
-}
-
-div.layout-1 div.target-line {
-    top: 63%;
-    bottom: 67%;
-    left: 46%;
-    right: 56%;
-}
-
-div.layout-1 div.line-1 {
-    top: 32%;
-    bottom: 36%;
-    left: 32%;
-    right: 44%;
-}
-
-div.layout-1 div.line-2 {
-    top: 32%;
-    bottom: 36%;
-    left: 56%;
-    right: 68%;
-}
-
-div.layout-1 div.practice-caption {
-    top: 83%;
-    height: 10%;
 }
 
 .centered {

@@ -6,10 +6,11 @@ DEBUG_MODE = false
 FONT_HEIGHT_PERCENT = 2
 # pretend div containing the test is on an iPad
 ASPECT_RATIO = 4/3
+# max rotation of the target line
+MAX_TARGET_ROTATION = 50
+# minimum difference in orientation between trials
+MIN_ORIENTATION_DIFFERENCE = 20
 
-# number of positions for lines (currently, top and bottom of screen).
-# these work with the layout-0 and layout-1 CSS classes
-NUM_LAYOUTS = 2
 # how long a fade should take, in msec
 FADE_DURATION = FADE_DURATION
 
@@ -21,13 +22,13 @@ FADE_DURATION = FADE_DURATION
 MIN_INTENSITY = 1
 MAX_INTENSITY = 89
 # decrease intensity by this much after each correct response
-STEPS_DOWN = 2
+STEPS_DOWN = 1
 # increase increase by this much after each incorrect response
-STEPS_UP = 6
+STEPS_UP = 3
 # start practice mode here
 PRACTICE_START_INTENSITY = 45
 # jump to this intensity after exiting practice mode
-START_INTENSITY = 25
+START_INTENSITY = 15
 # get this many correct in a row to leave practice mode
 PRACTICE_MAX_STREAK = 4
 # get this many correct in a row to turn off the practice mode instructions
@@ -59,6 +60,8 @@ numTrials = 0
 
 
 # FUNCTIONS
+
+lastOrientation = 0
 
 inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 
@@ -102,35 +105,37 @@ registerResult = (correct) ->
 
 # generate data, including CSS, for the next trial
 getNextTrial = ->
-  rightOrientation = tabcat.math.randomUniform(0, 180)
+  targetOrientation = getNextOrientation()
 
-  if tabcat.math.coinFlip()
-    wrongOrientation = rightOrientation + intensity
-  else
-    wrongOrientation = rightOrientation - intensity
+  skew = intensity * tabcat.math.randomSign()
 
-  if tabcat.math.coinFlip()
-    [line1Orientation, line2Orientation] = [rightOrientation, wrongOrientation]
-  else
-    [line1Orientation, line2Orientation] = [wrongOrientation, rightOrientation]
+  [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
   return {
     targetLine:
-      orientation: rightOrientation
+      orientation: targetOrientation
     line1:
-      orientation: line1Orientation
-      isParallel: (line1Orientation == rightOrientation)
+      skew: line1Skew
     line2:
-      orientation: line2Orientation
-      isParallel: (line2Orientation == rightOrientation)
+      skew: line2Skew
   }
+
+
+# pick a new orientation that's not too close to the last one
+getNextOrientation = ->
+  while true
+    orientation = tabcat.math.randomUniform(-MAX_TARGET_ROTATION,
+                                            MAX_TARGET_ROTATION)
+    if Math.abs(orientation - lastOrientation) >= MIN_ORIENTATION_DIFFERENCE
+      lastOrientation = orientation
+      return orientation
 
 
 # event handler for clicks on lines. either fade in the next trial,
 # or call finishTask()
 showNextTrial = (event) ->
   if event and event.data
-    registerResult(event.data.isParallel)
+    registerResult(event.data.skew == 0)
 
   if taskIsDone()
     finishTask()
@@ -175,22 +180,25 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  targetLineDiv = $('<div></div>', {'class': 'line target-line'})
-  targetLineDiv.css(rotationCss(trial.targetLine.orientation))
+  targetLineDiv = $('<div></div>', {class: 'line target-line'})
 
-  line1Div = $('<div></div>', {'class': 'line line-1'})
-  line1Div.css(rotationCss(trial.line1.orientation))
+  line1Div = $('<div></div>', {class: 'line line-1'})
+  line1Div.css(rotationCss(trial.line1.skew))
   line1Div.bind('click', trial.line1, showNextTrial)
 
-  line2Div = $('<div></div>', {'class': 'line line-2'})
-  line2Div.css(rotationCss(trial.line2.orientation))
+  line2Div = $('<div></div>', {class: 'line line-2'})
+  line2Div.css(rotationCss(trial.line2.skew))
   line2Div.bind('click', trial.line2, showNextTrial)
 
-  # put them in an offscreen div
-  layoutClass = 'layout-' + numTrials % NUM_LAYOUTS
-  containerDiv = $('<div></div>', {class: layoutClass})
-  $(containerDiv).hide()
+  # put them in a container, and rotate it
+  containerDiv = $('<div></div>', {class: 'line-container'})
+  containerDiv.css(rotationCss(trial.targetLine.orientation))
   containerDiv.append(targetLineDiv, line1Div, line2Div)
+
+  # put them in an offscreen div
+  trialDiv = $('<div></div>')
+  $(trialDiv).hide()
+  trialDiv.append(containerDiv)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -198,12 +206,15 @@ getNextTrialDiv = ->
       {'class': 'practice-caption'})
     practiceCaptionDiv.html(
       'Which is parallel to the <span class="target">blue</span> line?')
-    containerDiv.append(practiceCaptionDiv)
+    trialDiv.append(practiceCaptionDiv)
 
-  return containerDiv
+  return trialDiv
 
 
 rotationCss = (angle) ->
+  if angle == 0
+    return {}
+
   value = 'rotate(' + angle + 'deg)'
   return {
     transform: value
