@@ -99,6 +99,7 @@ tabcat.encounter.start = (patientCode, options) ->
   addNewPatientAndEncounter = (doc) ->
     patientDoc =
       _id: patientDocId
+      type: "patient"
       encounters: [encounter]
 
     db.saveDoc(patientDoc, $.extend({}, options, {
