@@ -125,9 +125,15 @@ getNextTrial = ->
 getNextOrientation = ->
   while true
     orientation = tabcat.math.randomUniform(-MAX_ROTATION, MAX_ROTATION)
-    if Math.abs(orientation - lastOrientation) >= MIN_ORIENTATION_DIFFERENCE
-      lastOrientation = orientation
-      return orientation
+    if Math.abs(orientation - lastOrientation) < MIN_ORIENTATION_DIFFERENCE
+      continue
+
+    if shouldShowPracticeCaption() and (
+      Math.abs(orientation) < MIN_ORIENTATION_DIFFERENCE)
+      continue
+
+    lastOrientation = orientation
+    return orientation
 
 
 # event handler for clicks on lines. either fade in the next trial,
@@ -203,7 +209,6 @@ getNextTrialDiv = ->
   # put them in an offscreen div
   trialDiv = $('<div></div>')
   $(trialDiv).hide()
-  trialDiv.append(containerDiv)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -212,6 +217,8 @@ getNextTrialDiv = ->
     practiceCaptionDiv.html(
       'Which is parallel to the <span class="target">blue</span> line?')
     trialDiv.append(practiceCaptionDiv)
+
+  trialDiv.append(containerDiv)
 
   return trialDiv
 
