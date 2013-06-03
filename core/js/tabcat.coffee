@@ -127,6 +127,8 @@ tabcat.encounter.start = (patientCode, options) ->
     if options.success
       success(args...)
 
+  return
+
 
 # MATH
 
