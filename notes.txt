@@ -1,0 +1,9 @@
+PHI:
+
+UUIDs need to be random (default is "sequential", which includes timestamp):
+
+curl -X PUT http://admin:admin@127.0.0.1:5984/_config/uuids/algorithm -d '"random"'
+
+Turn off info logging (this stores IPs and timestamps)
+
+curl -X PUT http://admin:admin@127.0.0.1:5984/_config/log/level -d '"error"'
