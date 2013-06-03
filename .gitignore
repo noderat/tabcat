@@ -3,3 +3,5 @@
 .#*
 /.kansorc
 .pushed
+/core/packages
+/tasks/*/packages

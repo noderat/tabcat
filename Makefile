@@ -9,6 +9,7 @@ TASK_PUSHES = $(patsubst %, %/.pushed, $(TASKS))
 all: $(TASK_PUSHES)
 
 $(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
+	cd $(@D); kanso install
 	kanso push $(@D)
 	touch $@
 
