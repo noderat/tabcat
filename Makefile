@@ -6,7 +6,12 @@ JS_TARGETS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 TASKS = $(patsubst %/kanso.json, %, $(wildcard tasks/*/kanso.json))
 TASK_PUSHES = $(patsubst %, %/.pushed, $(TASKS))
 
+.PHONY: all
 all: $(TASK_PUSHES)
+
+.PHONY: js
+js: $(JS_TARGETS)
+
 
 $(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
 	cd $(@D); kanso install
