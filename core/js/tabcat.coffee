@@ -75,9 +75,57 @@ tabcat.couch.randomUUID = () ->
 
 tabcat.encounter = {}
 
-#tabcat.encounter.start = (patientCode, ajaxOptions) ->
-#  db = $.couch.db('tabcat-data')
-#  db.
+tabcat.encounter.start = (patientCode, options) ->
+  patientCode = patientCode or 0
+  options = options or {}
+  patientDocId = 'patient-' + patientCode
+
+  encounter =
+    id: tabcat.couch.randomUUID()
+    year: (new Date).getFullYear()
+
+  db = $.couch.db('tabcat-data')
+
+  db.openDoc(patientDocId, $.extend({}, options, {
+    success: (doc) -> addNewEncounter(doc),
+    error: (xhr, rest...) ->
+      if xhr == 404
+        addNewPatientAndEncounter()
+      else
+        if options.error
+          error(xhr, rest...)
+  }))
+
+  addNewPatientAndEncounter = (doc) ->
+    patientDoc =
+      _id: patientDocId
+      encounters: [encounter]
+
+    db.saveDoc(patientDoc, $.extend({}, options, {
+      success: (args...) ->
+        finish(1, args...)
+    }))
+
+  addNewEncounter = (doc) ->
+    if not doc.encounters
+      doc.encounters = []
+
+    doc.encounters.push(encounter)
+
+    encounterNum = doc.encounters.length  # encounterNum is 1-indexed
+
+    db.saveDoc(doc, $.extend({}, options, {
+      success: (args...) ->
+        finish(encounterNum, args...)
+    }))
+
+  finish = (encounterNum, successArgs...) ->
+    tabcat.clock.reset()
+    localStorage.patientCode = patientCode
+    localStorage.encounterId = encounter.id
+    localStorage.encounterNum = encounterNum
+    if options.success
+      success(args...)
 
 
 # MATH
