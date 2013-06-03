@@ -1,6 +1,8 @@
 tabcat = {}
 
+# so we don't have to type window.localStorage in functions
 localStorage = @localStorage
+
 
 # CLOCK
 
@@ -55,7 +57,32 @@ tabcat.clock.start = (startAt) ->
     tabcat.clock.reset()
 
 
+# COUCH
+
+# extra utilities for couchDB
+
+tabcat.couch = {}
+
+# create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
+# we don't put timestamps in UUIDs, and works offline.
+tabcat.couch.randomUUID = () ->
+  (Math.floor(Math.random() * 16).toString(16) for _ in [0..31]).join('')
+
+
+# ENCOUNTER
+
+# logic for creating patients and opening encounters with them.
+
+tabcat.encounter = {}
+
+#tabcat.encounter.start = (patientCode, ajaxOptions) ->
+#  db = $.couch.db('tabcat-data')
+#  db.
+
+
 # MATH
+
+# some simple math utilities; not TabCAT-specific
 
 tabcat.math = {}
 
@@ -70,14 +97,6 @@ tabcat.math.mod = (a, b) -> ((a % b) + b) % b
 
 # return a number chosen uniformly at random from [a, b)
 tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
-
-
-# PATIENT
-
-tabcat.patient = {}
-
-
-
 
 
 # UI
