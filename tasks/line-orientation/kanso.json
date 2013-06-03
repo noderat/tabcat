@@ -1,0 +1,10 @@
+{
+    "name": "line-orientation",
+    "index": "/task.html",
+    "version": "0.0.1-dev",
+    "description": "Line Orientation",
+    "attachments": ["css/task.css", "img", "js/task.js", "task.html"],
+    "dependencies": {
+        "attachments": null
+    }
+}
