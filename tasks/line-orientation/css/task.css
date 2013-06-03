@@ -19,7 +19,7 @@ div.line {
     padding: 0;
 }
 
-div.target-line {
+div.reference-line {
     top: 0%;
     bottom: 50%;
     height: 50%;
@@ -39,6 +39,17 @@ div.line-1 {
     background-color: #cc9933;
 }
 
+/* 8% taller, 6% wider (which is actually square due to 4/3 aspect ratio) */
+div.line-1-target-area {
+    top: 67%;
+    bottom: 108%;
+    height: 41%;
+    left: 7%;
+    right: 20%;
+    width: 13%;
+    background-color: transparent;
+}
+
 div.line-2 {
     top: 75%;
     bottom: 100%;
@@ -47,6 +58,16 @@ div.line-2 {
     right: 87%;
     width: 1%;
     background-color: #cc9933;
+}
+
+div.line-2-target-area {
+    top: 67%;
+    bottom: 108%;
+    height: 41%;
+    left: 80%;
+    right: 93%;
+    width: 13%;
+    background-color: transparent;
 }
 
 div.practice-caption {

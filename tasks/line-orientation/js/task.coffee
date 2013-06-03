@@ -6,8 +6,8 @@ DEBUG_MODE = false
 FONT_HEIGHT_PERCENT = 2
 # pretend div containing the test is on an iPad
 ASPECT_RATIO = 4/3
-# max rotation of the target line
-MAX_TARGET_ROTATION = 50
+# max rotation of the reference line
+MAX_ROTATION = 50
 # minimum difference in orientation between trials
 MIN_ORIENTATION_DIFFERENCE = 20
 
@@ -105,15 +105,15 @@ registerResult = (correct) ->
 
 # generate data, including CSS, for the next trial
 getNextTrial = ->
-  targetOrientation = getNextOrientation()
+  orientation = getNextOrientation()
 
   skew = intensity * tabcat.math.randomSign()
 
   [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
   return {
-    targetLine:
-      orientation: targetOrientation
+    referenceLine:
+      orientation: orientation
     line1:
       skew: line1Skew
     line2:
@@ -124,8 +124,7 @@ getNextTrial = ->
 # pick a new orientation that's not too close to the last one
 getNextOrientation = ->
   while true
-    orientation = tabcat.math.randomUniform(-MAX_TARGET_ROTATION,
-                                            MAX_TARGET_ROTATION)
+    orientation = tabcat.math.randomUniform(-MAX_ROTATION, MAX_ROTATION)
     if Math.abs(orientation - lastOrientation) >= MIN_ORIENTATION_DIFFERENCE
       lastOrientation = orientation
       return orientation
@@ -180,20 +179,26 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  targetLineDiv = $('<div></div>', {class: 'line target-line'})
+  referenceLineDiv = $('<div></div>', {class: 'line reference-line'})
 
   line1Div = $('<div></div>', {class: 'line line-1'})
   line1Div.css(rotationCss(trial.line1.skew))
-  line1Div.bind('click', trial.line1, showNextTrial)
+  line1TargetAreaDiv = $('<div></div>', {class: 'line line-1-target-area'})
+  line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
+  line1TargetAreaDiv.bind('click', trial.line1, showNextTrial)
 
   line2Div = $('<div></div>', {class: 'line line-2'})
   line2Div.css(rotationCss(trial.line2.skew))
-  line2Div.bind('click', trial.line2, showNextTrial)
+  line2TargetAreaDiv = $('<div></div>', {class: 'line line-2-target-area'})
+  line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
+  line2TargetAreaDiv.bind('click', trial.line2, showNextTrial)
 
   # put them in a container, and rotate it
   containerDiv = $('<div></div>', {class: 'line-container'})
-  containerDiv.css(rotationCss(trial.targetLine.orientation))
-  containerDiv.append(targetLineDiv, line1Div, line2Div)
+  containerDiv.css(rotationCss(trial.referenceLine.orientation))
+  containerDiv.append(referenceLineDiv,
+                      line1Div, line1TargetAreaDiv,
+                      line2Div, line2TargetAreaDiv)
 
   # put them in an offscreen div
   trialDiv = $('<div></div>')
