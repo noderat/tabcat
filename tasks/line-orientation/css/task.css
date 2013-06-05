@@ -41,9 +41,9 @@ div.line-1 {
 
 /* target area is 6% larger. Width and height have same scale here. */
 div.line-1-target-area {
-    top: 68%;
-    bottom: 107%;
-    height: 39%;
+    top: 69%;
+    bottom: 106%;
+    height: 37%;
     left: 6%;
     right: 21%;
     width: 15%;
@@ -61,9 +61,9 @@ div.line-2 {
 }
 
 div.line-2-target-area {
-    top: 68%;
-    bottom: 107%;
-    height: 39%;
+    top: 69%;
+    bottom: 106%;
+    height: 37%;
     left: 79%;
     right: 94%;
     width: 15%;
