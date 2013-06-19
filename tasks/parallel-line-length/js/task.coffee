@@ -230,6 +230,7 @@ getNextTrialDiv = ->
     'class': 'layout-' + numTrials % NUM_LAYOUTS})
   $(containerDiv).hide()
   containerDiv.append(topLineDiv, bottomLineDiv)
+  containerDiv.bind('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -262,11 +263,22 @@ getElementBounds = (element) ->
   }
 
 
+catchStrayClick = (event) ->
+  tabcat.task.logEvent(getTaskState(), event)
+
+catchResize = (event) ->
+  state = $.extend(getTaskState(), {viewport: tabcat.task.getViewportInfo()})
+  tabcat.task.logEvent(state, event)
+
+
+
 # INITIALIZATION
 
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
 tabcat.ui.linkFontSizeToHeight($(document.body), FONT_HEIGHT_PERCENT)
+
+$(window).resize(catchResize)
 
 showNextTrial()
