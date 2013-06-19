@@ -75,9 +75,9 @@ tabcat.couch.randomUUID = () ->
 
 tabcat.encounter = {}
 
-tabcat.encounter.start = (patientCode, options) ->
+tabcat.encounter.start = (patientCode, ajaxOptions) ->
   patientCode = patientCode or 0
-  options = options or {}
+  ajaxOptions = ajaxOptions or {}
   patientDocId = 'patient-' + patientCode
 
   encounter =
@@ -86,13 +86,13 @@ tabcat.encounter.start = (patientCode, options) ->
 
   db = $.couch.db('tabcat-data')
 
-  db.openDoc(patientDocId, $.extend({}, options, {
+  db.openDoc(patientDocId, $.extend({}, ajaxOptions, {
     success: (doc) -> addNewEncounter(doc),
     error: (xhr, rest...) ->
       if xhr == 404
         addNewPatientAndEncounter()
       else
-        if options.error
+        if ajaxOptions.error
           error(xhr, rest...)
   }))
 
@@ -102,7 +102,7 @@ tabcat.encounter.start = (patientCode, options) ->
       type: "patient"
       encounters: [encounter]
 
-    db.saveDoc(patientDoc, $.extend({}, options, {
+    db.saveDoc(patientDoc, $.extend({}, ajaxOptions, {
       success: (args...) ->
         finish(1, args...)
     }))
@@ -115,7 +115,7 @@ tabcat.encounter.start = (patientCode, options) ->
 
     encounterNum = doc.encounters.length  # encounterNum is 1-indexed
 
-    db.saveDoc(doc, $.extend({}, options, {
+    db.saveDoc(doc, $.extend({}, ajaxOptions, {
       success: (args...) ->
         finish(encounterNum, args...)
     }))
@@ -124,9 +124,11 @@ tabcat.encounter.start = (patientCode, options) ->
     tabcat.clock.reset()
     localStorage.patientCode = patientCode
     localStorage.encounterId = encounter.id
+    # encounterNum is used by the UI only; the patient document is
+    # the canonical way to tell the order of encounters
     localStorage.encounterNum = encounterNum
-    if options.success
-      success(args...)
+    if ajaxOptions.success
+      success(successArgs...)
 
   return
 
@@ -151,6 +153,54 @@ tabcat.math.mod = (a, b) -> ((a % b) + b) % b
 
 # return a number chosen uniformly at random from [a, b)
 tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
+
+
+# TASK
+
+# recording how a patient did on a task
+
+tabcat.task = {}
+
+# get basic information about the browser. This should not change
+# over the course of the task
+# TODO: add screen DPI/physical size, if available
+tabcat.task.getBrowserInfo = -> {
+  screenHeight: screen.height
+  screenWidth: screen.width
+  userAgent: navigator.userAgent
+}
+
+
+# get information about the viewport. This can potentially change during
+# the task.
+tabcat.task.getViewportInfo = ->
+  $d = $(document)
+  $w = $(window)
+  return {
+    documentHeight: $d.height()
+    documentWidth: $d.width()
+    scrollLeft: $w.scrollLeft()
+    scrollTop: $w.scrollTop()
+    windowHeight: $w.height()
+    windowWidth: $w.width()
+  }
+
+tabcat.task.eventLog = []
+
+# Store data in tabcat.task.eventLog about something that happened (e.g.
+# "the user tapped here, which was correct") along with the current state of
+# the world (there was a rectangle here, and we were in practice mode with
+# intensity 30).
+#
+# We add your data to the "data" field, and automatically fill in "now"
+# (task clock) and "viewport" (viewport information). You can override
+# these fields or add new ones with the options dictionary.
+tabcat.task.logEvent = (data, options) ->
+  tabcat.task.eventLog.push($.extend({
+    data: data
+    now: tabcat.clock.now()
+    viewport: tabcat.task.getViewportInfo()
+  }, options))
 
 
 # UI
