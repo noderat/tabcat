@@ -185,21 +185,27 @@ tabcat.task.eventLog = []
 #        in a format of your choice. (TODO: add some standard suggestions)
 # event: a jQuery event that fired
 # interpretation: what happened (e.g. did the user tap in the correct spot?)
+# now: when the event happened, relative to start of encounter
+# (i.e. tabcat.clock.now()). If not set, we try to infer this from
+# event.timeStamp
 #
 # Stores an object with the fields event, now, interpretation, state. "event"
 # is a summary of the event, "now" is the the time of the event relative to
 # start of encounter (or just tabcat.clock.now() if "event" is undefined),
 # and "state" and "interpretation" are stored as-is.
-tabcat.task.logEvent = (state, event, interpretation) ->
+tabcat.task.logEvent = (state, event, interpretation, now) ->
+  if not now  # ...when?
+    if event.timeStamp
+      now = event.timeStamp - tabcat.clock.offset()
+    else
+      now = tabcat.clock.now()
+
+  eventData = null
   if event
     eventData =
       pageX: event.pageX
       pageY: event.pageY
       type: event.type
-    now = event.eventTimestamp - tabcat.clock.offset()
-  else
-    eventData = null
-    now = tabcat.clock.now()
 
   tabcat.task.eventLog.push(
     event: eventData

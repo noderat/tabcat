@@ -75,7 +75,11 @@ taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and intensitiesAtReversal
-registerResult = (correct) ->
+registerResult = (event) ->
+  correct = event.data.isLonger
+
+  state = getTaskState()
+
   if startTimestamp is null
     startTimestamp = $.now()
 
@@ -86,6 +90,7 @@ registerResult = (correct) ->
     MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
   intensityChange = intensity - lastIntensity
 
+  wasReversal = false
   if inPracticeMode()
     if correct
       practiceStreakLength += 1
@@ -100,6 +105,13 @@ registerResult = (correct) ->
     if wasReversal
       intensitiesAtReversal.push(lastIntensity)
     lastIntensityChange = intensityChange
+
+  interpretation =
+    change: change
+    correct: correct
+    reversal: wasReversal
+
+  tabcat.task.logEvent(state, event, interpretation)
 
   numTrials += 1
 
@@ -150,7 +162,7 @@ getNextTrial = ->
 # or call finishTask()
 showNextTrial = (event) ->
   if event and event.data
-    registerResult(event.data.isLonger)
+    registerResult(event)
 
   if taskIsDone()
     finishTask()
@@ -229,6 +241,21 @@ getNextTrialDiv = ->
     containerDiv.append(practiceCaptionDiv)
 
   return containerDiv
+
+
+# summary of the current state of the task
+getTaskState = ->
+  lines: [getElementBounds($('.top-line')),
+          getElementBounds($('.bottom-line'))]
+  intensity: intensity
+  practiceCaption: shouldShowPracticeCaption()
+  practiceMode: inPracticeMode()
+  trial: numTrials
+
+
+getElementBounds = (element) ->
+  offset = element.offset()
+  [offset.left, offset.top, element.width(), element.height()]
 
 
 # INITIALIZATION
