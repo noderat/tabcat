@@ -174,7 +174,12 @@ tabcat.task.getBrowserInfo = -> {
 # get information about the viewport: [offsetX, offsetY, width, height]
 tabcat.task.getViewportInfo = ->
   $w = $(window)
-  return [$w.scrollLeft(), $w.scrollTop(), $w.width(), $w.height()]
+  return {
+    left: $w.scrollLeft()
+    top: $w.scrollTop()
+    width: $w.width()
+    height: $w.height()
+  }
 
 
 tabcat.task.eventLog = []

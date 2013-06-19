@@ -90,7 +90,10 @@ registerResult = (event) ->
     MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
   intensityChange = intensity - lastIntensity
 
-  wasReversal = false
+  interpretation =
+    correct: correct
+    intensityChange: change
+
   if inPracticeMode()
     if correct
       practiceStreakLength += 1
@@ -102,14 +105,10 @@ registerResult = (event) ->
   else
     wasReversal = (intensityChange * lastIntensityChange < 0 or
                    intensityChange is 0)
+    interpretation.reversal = wasReversal
     if wasReversal
       intensitiesAtReversal.push(lastIntensity)
     lastIntensityChange = intensityChange
-
-  interpretation =
-    change: change
-    correct: correct
-    reversal: wasReversal
 
   tabcat.task.logEvent(state, event, interpretation)
 
@@ -245,8 +244,7 @@ getNextTrialDiv = ->
 
 # summary of the current state of the task
 getTaskState = ->
-  lines: [getElementBounds($('.top-line')),
-          getElementBounds($('.bottom-line'))]
+  lines: (getElementBounds(div) for div in $('div.line:visible'))
   intensity: intensity
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
@@ -254,8 +252,14 @@ getTaskState = ->
 
 
 getElementBounds = (element) ->
+  element = $(element)
   offset = element.offset()
-  [offset.left, offset.top, element.width(), element.height()]
+  return {
+    left: offset.left
+    top: offset.top
+    width: element.width()
+    height: element.height()
+  }
 
 
 # INITIALIZATION
