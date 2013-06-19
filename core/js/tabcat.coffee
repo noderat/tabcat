@@ -171,36 +171,42 @@ tabcat.task.getBrowserInfo = -> {
 }
 
 
-# get information about the viewport. This can potentially change during
-# the task.
+# get information about the viewport: [offsetX, offsetY, width, height]
 tabcat.task.getViewportInfo = ->
-  $d = $(document)
   $w = $(window)
-  return {
-    documentHeight: $d.height()
-    documentWidth: $d.width()
-    scrollLeft: $w.scrollLeft()
-    scrollTop: $w.scrollTop()
-    windowHeight: $w.height()
-    windowWidth: $w.width()
-  }
+  return [$w.scrollLeft(), $w.scrollTop(), $w.width(), $w.height()]
+
 
 tabcat.task.eventLog = []
 
-# Store data in tabcat.task.eventLog about something that happened (e.g.
-# "the user tapped here, which was correct") along with the current state of
-# the world (there was a rectangle here, and we were in practice mode with
-# intensity 30).
+# Store data in tabcat.task.eventLog about:
 #
-# We add your data to the "data" field, and automatically fill in "now"
-# (task clock) and "viewport" (viewport information). You can override
-# these fields or add new ones with the options dictionary.
-tabcat.task.logEvent = (data, options) ->
-  tabcat.task.eventLog.push($.extend({
-    data: data
-    now: tabcat.clock.now()
-    viewport: tabcat.task.getViewportInfo()
-  }, options))
+# state: the state of the world (rectangle here, intensity is 30). An object
+#        in a format of your choice. (TODO: add some standard suggestions)
+# event: a jQuery event that fired
+# interpretation: what happened (e.g. did the user tap in the correct spot?)
+#
+# Stores an object with the fields event, now, interpretation, state. "event"
+# is a summary of the event, "now" is the the time of the event relative to
+# start of encounter (or just tabcat.clock.now() if "event" is undefined),
+# and "state" and "interpretation" are stored as-is.
+tabcat.task.logEvent = (state, event, interpretation) ->
+  if event
+    eventData =
+      pageX: event.pageX
+      pageY: event.pageY
+      type: event.type
+    now = event.eventTimestamp - tabcat.clock.offset()
+  else
+    eventData = null
+    now = tabcat.clock.now()
+
+  tabcat.task.eventLog.push(
+    event: eventData
+    interpretation: interpretation
+    now: now
+    state: state
+  )
 
 
 # UI
