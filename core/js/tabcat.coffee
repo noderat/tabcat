@@ -87,6 +87,19 @@ tabcat.couch.randomUUID = () ->
 TABCAT_ROOT = '/tabcat/'
 DB_ROOT = '/tabcat-data/'
 
+# quick wrapper to make failure callbacks that do something useful on 404.
+# define failFilter to handle failures other than 404s; otherwise the error
+# will be passed through
+on404 = (callback, failFilter) ->
+  (xhr, args...) ->
+    if xhr.status == 404
+      callback()
+    else if failFilter
+      failFilter(xhr, args...)
+    else
+      # pass error through
+      xhr
+
 
 # ENCOUNTER
 
@@ -129,13 +142,7 @@ tabcat.encounter.start = (patientCode) ->
   # get/create the patient doc, add the encounter, update local storage
   $.getJSON(DB_ROOT + patientDocId).then(
     addEncounterToPatientDoc,
-    (xhr, rest...) ->
-      if xhr.status == 404
-        # make a new patient doc if none exists
-        addEncounterToPatientDoc(_id: patientDocId, type: 'patient')
-      else
-        # pass the error through
-        $.Deferred().reject(xhr, rest...)
+    on404(-> addEncounterToPatientDoc(_id: patientDocId, type: 'patient'))
   )
 
 
