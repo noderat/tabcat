@@ -68,6 +68,9 @@ tabcat.couch = {}
 tabcat.couch.randomUUID = () ->
   (Math.floor(Math.random() * 16).toString(16) for _ in [0..31]).join('')
 
+TABCAT_ROOT = '/tabcat/'
+DB_ROOT = '/tabcat-data/'
+
 
 # ENCOUNTER
 
@@ -75,62 +78,65 @@ tabcat.couch.randomUUID = () ->
 
 tabcat.encounter = {}
 
-tabcat.encounter.start = (patientCode, ajaxOptions) ->
+tabcat.encounter.start = (patientCode) ->
   patientCode = patientCode or 0
-  ajaxOptions = ajaxOptions or {}
   patientDocId = 'patient-' + patientCode
 
   encounter =
     id: tabcat.couch.randomUUID()
     year: (new Date).getFullYear()
 
-  db = $.couch.db('tabcat-data')
-
-  db.openDoc(patientDocId, $.extend({}, ajaxOptions, {
-    success: (doc) -> addNewEncounter(doc),
-    error: (xhr, rest...) ->
-      if xhr == 404
+  promise = $.get(DB_ROOT + patientDocId).then(
+    addNewEncounter,
+    (xhr, rest...) ->
+      alert(JSON.stringify([xhr, rest...]))
+      if xhr.status == 404
+        alert('status was 404, yay')
         addNewPatientAndEncounter()
       else
-        if ajaxOptions.error
-          error(xhr, rest...)
-  }))
+        alert('status was ' + xhr.status)
+        $.Deferred().reject(xhr, rest...)
+  )
 
-  addNewPatientAndEncounter = (doc) ->
+  addNewPatientAndEncounter = ->
+    alert('addNewPatientAndEncounter')
+
     patientDoc =
       _id: patientDocId
       type: "patient"
       encounters: [encounter]
 
-    db.saveDoc(patientDoc, $.extend({}, ajaxOptions, {
-      success: (args...) ->
-        finish(1, args...)
-    }))
+    $.ajax(
+      url: DB_ROOT + patientDocId
+      type: 'PUT'
+      data: JSON.stringify(patientDoc)
+      dataType: 'json'
+    ).done(-> updateLocalStorage())
 
-  addNewEncounter = (doc) ->
-    if not doc.encounters
-      doc.encounters = []
+  addNewEncounter = (patientDoc) ->
+    if not patientDoc.encounters
+      patientDoc.encounters = []
 
-    doc.encounters.push(encounter)
+    patientDoc.encounters.push(encounter)
+    encounterNum = patientDoc.encounters.length  # encounterNum is 1-indexed
 
-    encounterNum = doc.encounters.length  # encounterNum is 1-indexed
+    $.ajax(
+      url: DB_ROOT + patientDocId
+      type: 'PUT',
+      data: JSON.stringify(patientDoc),
+      dataType: 'json'
+    ).done(-> updateLocalStorage(encounterNum))
 
-    db.saveDoc(doc, $.extend({}, ajaxOptions, {
-      success: (args...) ->
-        finish(encounterNum, args...)
-    }))
-
-  finish = (encounterNum, successArgs...) ->
+  updateLocalStorage = (encounterNum) ->
     tabcat.clock.reset()
     localStorage.patientCode = patientCode
     localStorage.encounterId = encounter.id
     # encounterNum is used by the UI only; the patient document is
     # the canonical way to tell the order of encounters
-    localStorage.encounterNum = encounterNum
-    if ajaxOptions.success
-      success(successArgs...)
+    localStorage.encounterNum = encounterNum or 1
+    return
 
-  return
+  return promise
 
 
 # MATH
