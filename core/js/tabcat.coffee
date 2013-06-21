@@ -1,7 +1,23 @@
+# GLOBALS
+
 tabcat = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
+
+
+# STUFF THAT SHOULD BE IN JQUERY
+
+jQuery.extend(
+  putJSON: (url, data, success) ->
+    jQuery.ajax(
+      contentType: 'application/json'
+      data: JSON.stringify(data)
+      success: success
+      type: 'PUT'
+      url: url
+    )
+)
 
 
 # CLOCK
@@ -78,65 +94,49 @@ DB_ROOT = '/tabcat-data/'
 
 tabcat.encounter = {}
 
+# start an encounter. This involves network access, so this method
+# returns a promise. Sample usage:
+#
+# tabcat.encounter.start(patientCode).then(
+#   (patientDoc) -> ... # proceed,
+#   (xhr) -> ... # show error message on failure)
 tabcat.encounter.start = (patientCode) ->
   patientCode = patientCode or 0
   patientDocId = 'patient-' + patientCode
 
-  encounter =
-    id: tabcat.couch.randomUUID()
-    year: (new Date).getFullYear()
-
-  promise = $.get(DB_ROOT + patientDocId).then(
-    addNewEncounter,
-    (xhr, rest...) ->
-      alert(JSON.stringify([xhr, rest...]))
-      if xhr.status == 404
-        alert('status was 404, yay')
-        addNewPatientAndEncounter()
-      else
-        alert('status was ' + xhr.status)
-        $.Deferred().reject(xhr, rest...)
-  )
-
-  addNewPatientAndEncounter = ->
-    alert('addNewPatientAndEncounter')
-
-    patientDoc =
-      _id: patientDocId
-      type: "patient"
-      encounters: [encounter]
-
-    $.ajax(
-      url: DB_ROOT + patientDocId
-      type: 'PUT'
-      data: JSON.stringify(patientDoc)
-      dataType: 'json'
-    ).done(-> updateLocalStorage())
-
-  addNewEncounter = (patientDoc) ->
+  # this adds an encounter to patientDoc.encounters in the DB, and then
+  # updates local storage
+  addEncounterToPatientDoc = (patientDoc) ->
     if not patientDoc.encounters
       patientDoc.encounters = []
 
+    encounter =
+      id: tabcat.couch.randomUUID()
+      year: (new Date).getFullYear()
+
     patientDoc.encounters.push(encounter)
-    encounterNum = patientDoc.encounters.length  # encounterNum is 1-indexed
 
-    $.ajax(
-      url: DB_ROOT + patientDocId
-      type: 'PUT',
-      data: JSON.stringify(patientDoc),
-      dataType: 'json'
-    ).done(-> updateLocalStorage(encounterNum))
+    $.putJSON(DB_ROOT + patientDoc._id, patientDoc).then(->
+      tabcat.clock.reset()
+      localStorage.patientCode = patientCode
+      localStorage.encounterId = encounter.id
+      # encounterNum is used by the UI only; the patient document is
+      # the canonical way to tell the order of encounters
+      localStorage.encounterNum = patientDoc.encounters.length
+      return patientDoc
+    )
 
-  updateLocalStorage = (encounterNum) ->
-    tabcat.clock.reset()
-    localStorage.patientCode = patientCode
-    localStorage.encounterId = encounter.id
-    # encounterNum is used by the UI only; the patient document is
-    # the canonical way to tell the order of encounters
-    localStorage.encounterNum = encounterNum or 1
-    return
-
-  return promise
+  # get/create the patient doc, add the encounter, update local storage
+  $.getJSON(DB_ROOT + patientDocId).then(
+    addEncounterToPatientDoc,
+    (xhr, rest...) ->
+      if xhr.status == 404
+        # make a new patient doc if none exists
+        addEncounterToPatientDoc(_id: patientDocId, type: 'patient')
+      else
+        # pass the error through
+        $.Deferred().reject(xhr, rest...)
+  )
 
 
 # MATH
