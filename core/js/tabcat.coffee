@@ -120,13 +120,11 @@ tabcat.encounter.start = (patientCode) ->
   # this adds an encounter to patientDoc.encounters in the DB, and then
   # updates local storage
   addEncounterToPatientDoc = (patientDoc) ->
-    if not patientDoc.encounters
-      patientDoc.encounters = []
-
     encounter =
       id: tabcat.couch.randomUUID()
       year: (new Date).getFullYear()
 
+    patientDoc.encounters ?= []
     patientDoc.encounters.push(encounter)
 
     $.putJSON(DB_ROOT + patientDoc._id, patientDoc).then(->
@@ -201,7 +199,7 @@ tabcat.task.eventLog = []
 #
 # state: the state of the world (rectangle here, intensity is 30). An object
 #        in a format of your choice. (TODO: add some standard suggestions)
-# event: a jQuery event that fired
+# event: a jQuery event that fired, or a string
 # interpretation: what happened (e.g. did the user tap in the correct spot?)
 # now: when the event happened, relative to start of encounter
 # (i.e. tabcat.clock.now()). If not set, we try to infer this from
