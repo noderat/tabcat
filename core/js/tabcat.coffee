@@ -62,7 +62,7 @@ tabcat.clock.offset = ->
 # Reset the clock. Optionally, specify the current time relative to
 # start of encounter (in msec)
 tabcat.clock.reset = (startAt) ->
-  startAt = startAt or 0
+  startAt ?= 0
   localStorage.clockLastStarted = startAt
   localStorage.clockOffset = $.now() - startAt
   return  # don't let people depend on return value
@@ -75,7 +75,7 @@ tabcat.clock.start = (startAt) ->
 
 # COUCH
 
-# extra utilities for couchDB
+# Utilities for couchDB
 
 tabcat.couch = {}
 
@@ -107,6 +107,22 @@ on404 = (callback, failFilter) ->
 
 tabcat.encounter = {}
 
+# get the patient code
+tabcat.encounter.getPatientCode = ->
+  localStorage.patientCode
+
+# get the (random) ID of this encounter
+tabcat.encounter.getEncounterId = ->
+  localStorage.encounterId
+
+# get the encounter number. This should only be used in the UI, not
+# stored in the database. May be undefined.
+tabcat.encounter.getEncounterNum = ->
+  try
+    parseInt(localStorage.encounterNum)
+  catch error
+    undefined
+
 # start an encounter. This involves network access, so this method
 # returns a promise. Sample usage:
 #
@@ -114,7 +130,7 @@ tabcat.encounter = {}
 #   (patientDoc) -> ... # proceed,
 #   (xhr) -> ... # show error message on failure)
 tabcat.encounter.start = (patientCode) ->
-  patientCode = patientCode or 0
+  patientCode = String(patientCode ? 0)
   patientDocId = 'patient-' + patientCode
 
   # this adds an encounter to patientDoc.encounters in the DB, and then
@@ -131,8 +147,6 @@ tabcat.encounter.start = (patientCode) ->
       tabcat.clock.reset()
       localStorage.patientCode = patientCode
       localStorage.encounterId = encounter.id
-      # encounterNum is used by the UI only; the patient document is
-      # the canonical way to tell the order of encounters
       localStorage.encounterNum = patientDoc.encounters.length
       return patientDoc
     )
@@ -172,6 +186,71 @@ tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
 
 tabcat.task = {}
 
+# the CouchDB document for this task
+tabcat.task.doc = null
+
+
+# Initialize the task. This does lots of things:
+# - start automatically logging when the browser resizes
+# - check if it's okay to continue (correct PHI, browser capabilities, etc)
+# - create an initial task doc with start time, browser info, viewport,
+#   patient code, etc.
+tabcat.task.start = (options) ->
+  if tabcat.task.start.promise
+    return tabcat.task.start.promise
+
+  now = tabcat.clock.now()
+
+  options = $.extend({logResizeEvents: true}, options)
+
+  # automatically log whenever the viewport changes size (in tablets,
+  # this will be if the tablet is rotated)
+  if options.logResizeEvents
+    $(window).resize((event) ->
+      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+
+  createTaskDoc = (taskDoc) ->
+    $.extend(taskDoc,
+      _id: tabcat.couch.randomUUID()
+      type: 'task'
+      browser: tabcat.task.getBrowserInfo()
+      encounter: tabcat.encounter.getEncounterId()
+      eventLog: tabcat.task.eventLog
+      patient: tabcat.encounter.getPatientCode()
+      startTime: now
+      startViewport: tabcat.task.getViewportInfo()
+    )
+
+    $.putJSON(DB_ROOT + taskDoc._id, taskDoc).then(
+      (data, textStatus, jqXHR) ->
+        taskDoc._rev = $.parseJSON(jqXHR.getResponseHeader('ETag'))
+        tabcat.task.doc = taskDoc
+      # TODO: on failure, redirect or show an error message or something
+    )
+
+  tabcat.task.start.promise = $.getJSON('/_session').then(
+    (sessionData) -> createTaskDoc(user: sessionData.userCtx.name)
+  )
+
+
+# Use this instead of $(document).ready(), so that we can also wait for
+# tabcat.task.start() to complete
+tabcat.task.ready = (handler) ->
+  $.when(tabcat.task.start(), $.ready.promise()).done(-> handler())
+
+
+# upload task info to the DB, and (TODO) load the page for the next task
+tabcat.task.finish = (interpretation) ->
+  now = tabcat.clock.now()
+
+  tabcat.task.start().then(->
+    taskDoc = tabcat.task.doc
+    taskDoc.finishTime = now
+    if interpretation?
+      taskDoc.interpretation = interpretation
+    $.putJSON(DB_ROOT + tabcat.task.doc._id, tabcat.task.doc))
+
+
 # get basic information about the browser. This should not change
 # over the course of the task
 # TODO: add screen DPI/physical size, if available
@@ -193,7 +272,11 @@ tabcat.task.getViewportInfo = ->
   }
 
 
+# a place for the task to store things the user did, along with timing
+# information and the state of the task. This is independent from
+# tabcat.task.start
 tabcat.task.eventLog = []
+
 
 # Store data in tabcat.task.eventLog about:
 #
@@ -210,25 +293,26 @@ tabcat.task.eventLog = []
 # start of encounter (or just tabcat.clock.now() if "event" is undefined),
 # and "state" and "interpretation" are stored as-is.
 tabcat.task.logEvent = (state, event, interpretation, now) ->
-  if not now  # ...when?
-    if event.timeStamp
+  if not now?  # ...when?
+    if event?.timeStamp
       now = event.timeStamp - tabcat.clock.offset()
     else
       now = tabcat.clock.now()
 
-  eventData = null
-  if event
-    eventData =
-      pageX: event.pageX
-      pageY: event.pageY
-      type: event.type
+  eventLogItem = now: now
 
-  tabcat.task.eventLog.push(
-    event: eventData
-    interpretation: interpretation
-    now: now
-    state: state
-  )
+  if typeof event is 'string'
+    eventLogItem.event = {type: event}
+  else if event?
+    eventLogItem.event = _.pick(event, 'pageX', 'pageY', 'type')
+
+  if interpretation?
+    eventLogItem.interpretation = interpretation
+
+  if state?
+    eventLogItem.state = state
+
+  tabcat.task.eventLog.push(eventLogItem)
 
 
 # UI
