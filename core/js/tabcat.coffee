@@ -210,6 +210,7 @@ tabcat.task.start = (options) ->
       tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
 
   createTaskDoc = (taskDoc) ->
+    # TODO: collect this info sooner
     $.extend(taskDoc,
       _id: tabcat.couch.randomUUID()
       type: 'task'
@@ -228,6 +229,8 @@ tabcat.task.start = (options) ->
       # TODO: on failure, redirect or show an error message or something
     )
 
+  # TODO: fetch design doc and include kanso.config.name and
+  # kanso.config.version
   tabcat.task.start.promise = $.getJSON('/_session').then(
     (sessionData) -> createTaskDoc(user: sessionData.userCtx.name)
   )
