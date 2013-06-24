@@ -194,7 +194,7 @@ tabcat.task.start = (options) ->
       browser: tabcat.task.getBrowserInfo()
       encounter: tabcat.encounter.getEncounterId()
       eventLog: tabcat.task.eventLog
-      patient: tabcat.encounter.getPatientCode()
+      patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
 
