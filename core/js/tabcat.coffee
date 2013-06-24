@@ -199,28 +199,30 @@ tabcat.task.start = (options) ->
   if tabcat.task.start.promise
     return tabcat.task.start.promise
 
-  now = tabcat.clock.now()
-
-  options = $.extend({logResizeEvents: true}, options)
-
-  # automatically log whenever the viewport changes size (in tablets,
-  # this will be if the tablet is rotated)
-  if options.logResizeEvents
-    $(window).resize((event) ->
-      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
-
-  createTaskDoc = (taskDoc) ->
-    # TODO: collect this info sooner
-    $.extend(taskDoc,
+  taskDoc =
       _id: tabcat.couch.randomUUID()
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
       encounter: tabcat.encounter.getEncounterId()
       eventLog: tabcat.task.eventLog
       patient: tabcat.encounter.getPatientCode()
-      startTime: now
+      startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
-    )
+
+  options = $.extend({logResizeEvents: true}, options)
+
+  # automatically log whenever the viewport changes size (in tablets,
+  # this will be when the tablet is rotated)
+  if options.logResizeEvents
+    $(window).resize((event) ->
+      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+
+  # create the task document on the server; we'll updated it when
+  # tabcat.task.finish() is called. This allows us to fail fast if there's
+  # a problem with the server, and also to detect tasks that were started
+  # but not finished.
+  createTaskDoc = (additionalFields) ->
+    $.extend(taskDoc, additionalFields)
 
     $.putJSON(DB_ROOT + taskDoc._id, taskDoc).then(
       (data, textStatus, jqXHR) ->
@@ -229,11 +231,17 @@ tabcat.task.start = (options) ->
       # TODO: on failure, redirect or show an error message or something
     )
 
-  # TODO: fetch design doc and include kanso.config.name and
-  # kanso.config.version
-  tabcat.task.start.promise = $.getJSON('/_session').then(
-    (sessionData) -> createTaskDoc(user: sessionData.userCtx.name)
-  )
+  # fetch login information and the task's design doc (.), and create
+  # the task document, with some additional fields filled in
+  tabcat.task.start.promise = $.when(
+    $.getJSON('/_session'), $.getJSON('.')).then(
+    (sessionArgs, designDocArgs) ->
+      createTaskDoc(
+        name: designDocArgs[0]?.kanso.config.name
+        version: designDocArgs[0]?.kanso.config.version
+        user: sessionArgs[0].userCtx.name
+      )
+    )
 
 
 # Use this instead of $(document).ready(), so that we can also wait for
@@ -248,7 +256,7 @@ tabcat.task.finish = (interpretation) ->
 
   tabcat.task.start().then(->
     taskDoc = tabcat.task.doc
-    taskDoc.finishTime = now
+    taskDoc.finishedAt = now
     if interpretation?
       taskDoc.interpretation = interpretation
     $.putJSON(DB_ROOT + tabcat.task.doc._id, tabcat.task.doc))
