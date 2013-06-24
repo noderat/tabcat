@@ -209,7 +209,7 @@ tabcat.task.start = (options) ->
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
 
-  options = $.extend({logResizeEvents: true}, options)
+  options = $.extend(logResizeEvents: true, options)
 
   # automatically log whenever the viewport changes size (in tablets,
   # this will be when the tablet is rotated)
@@ -257,7 +257,7 @@ tabcat.task.finish = (options) ->
   tabcat.task.start().then(->
     taskDoc = tabcat.task.doc
     taskDoc.finishedAt = now
-    if options.interpretation?
+    if options?.interpretation
       taskDoc.interpretation = options.interpretation
     $.putJSON(DB_ROOT + tabcat.task.doc._id, tabcat.task.doc))
 
@@ -378,7 +378,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
       # parent is too wide, need gap on left and right
       gap = 100 * (parentRatio - ratio) / parentRatio / 2
 
-      element.css({
+      element.css(
         position: 'absolute'
         left: gap + '%'
         right: 100 - gap + '%'
@@ -386,12 +386,12 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
         top: '0%'
         bottom: '100%'
         height: '100%'
-      })
+      )
     else
       # parent is too narrow, need gap on top and bottom
       gap = (100 * (1 / parentRatio - 1 / ratio) * parentRatio / 2)
 
-      element.css({
+      element.css(
         position: 'absolute'
         left: '0%'
         right: '100%'
@@ -399,7 +399,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
         top: gap + '%'
         bottom: 100 - gap + '%'
         height: 100 - 2 * gap + '%'
-      })
+      )
 
   fixElement(element)
 
@@ -415,7 +415,7 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   fixElement = (event) ->
     # for font-size, "%" means % of default font size, not % of height.
     sizeInPx = element.height() * percent / 100
-    element.css({'font-size': sizeInPx + 'px'})
+    element.css('font-size': sizeInPx + 'px')
 
   fixElement(element)
 
