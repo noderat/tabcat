@@ -6,6 +6,12 @@ tabcat = {}
 localStorage = @localStorage
 
 
+# CONSTANTS
+
+TABCAT_ROOT = '/tabcat/'
+DB_ROOT = '/tabcat-data/'
+
+
 # STUFF THAT SHOULD BE IN JQUERY
 
 jQuery.extend(
@@ -73,6 +79,16 @@ tabcat.clock.start = (startAt) ->
     tabcat.clock.reset()
 
 
+# CONFIG
+
+# Tabcat-specific configs, such as PHI level
+
+tabcat.config = {}
+
+tabcat.config.get = _.once(-> $.getJSON(DB_ROOT + 'config'))
+
+
+
 # COUCH
 
 # Utilities for couchDB
@@ -83,9 +99,6 @@ tabcat.couch = {}
 # we don't put timestamps in UUIDs, and works offline.
 tabcat.couch.randomUUID = () ->
   (Math.floor(Math.random() * 16).toString(16) for _ in [0..31]).join('')
-
-TABCAT_ROOT = '/tabcat/'
-DB_ROOT = '/tabcat-data/'
 
 
 # ENCOUNTER
@@ -184,10 +197,7 @@ tabcat.task.doc = null
 # - check if it's okay to continue (correct PHI, browser capabilities, etc)
 # - create an initial task doc with start time, browser info, viewport,
 #   patient code, etc.
-tabcat.task.start = (options) ->
-  if tabcat.task.start.promise
-    return tabcat.task.start.promise
-
+tabcat.task.start = _.once((options) ->
   taskDoc =
       _id: tabcat.couch.randomUUID()
       type: 'task'
@@ -222,7 +232,7 @@ tabcat.task.start = (options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  tabcat.task.start.promise = $.when(
+  $.when(
     $.getJSON('/_session'), $.getJSON('.')).then(
     ([sessionDoc], [designDoc]) ->
       createTaskDoc(
@@ -231,12 +241,12 @@ tabcat.task.start = (options) ->
         user: sessionDoc.userCtx.name
       )
     )
-
+  )
 
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
 tabcat.task.ready = (handler) ->
-  $.when(tabcat.task.start(), $.ready.promise()).done(-> handler())
+  $.when($.ready.promise(), tabcat.task.start()).then(handler)
 
 
 # upload task info to the DB, and (TODO) load the page for the next task
