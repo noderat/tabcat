@@ -87,19 +87,6 @@ tabcat.couch.randomUUID = () ->
 TABCAT_ROOT = '/tabcat/'
 DB_ROOT = '/tabcat-data/'
 
-# quick wrapper to make failure callbacks that do something useful on 404.
-# define failFilter to handle failures other than 404s; otherwise the error
-# will be passed through
-on404 = (callback, failFilter) ->
-  (xhr, args...) ->
-    if xhr.status == 404
-      callback()
-    else if failFilter
-      failFilter(xhr, args...)
-    else
-      # pass error through
-      xhr
-
 
 # ENCOUNTER
 
@@ -135,7 +122,7 @@ tabcat.encounter.start = (patientCode) ->
 
   # this adds an encounter to patientDoc.encounters in the DB, and then
   # updates local storage
-  addEncounterToPatientDoc = (patientDoc) ->
+  updatePatientDoc = (patientDoc) ->
     encounter =
       id: tabcat.couch.randomUUID()
       year: (new Date).getFullYear()
@@ -153,8 +140,10 @@ tabcat.encounter.start = (patientCode) ->
 
   # get/create the patient doc, add the encounter, update local storage
   $.getJSON(DB_ROOT + patientDocId).then(
-    addEncounterToPatientDoc,
-    on404(-> addEncounterToPatientDoc(_id: patientDocId, type: 'patient'))
+    updatePatientDoc,
+    (xhr) -> switch xhr.status
+      when 404 then updatePatientDoc(_id: patientDocId, type: 'patient')
+      else xhr  # pass failure through
   )
 
 
@@ -225,8 +214,8 @@ tabcat.task.start = (options) ->
     $.extend(taskDoc, additionalFields)
 
     $.putJSON(DB_ROOT + taskDoc._id, taskDoc).then(
-      (_, __, jqXHR) ->
-        taskDoc._rev = $.parseJSON(jqXHR.getResponseHeader('ETag'))
+      (_, __, xhr) ->
+        taskDoc._rev = $.parseJSON(xhr.getResponseHeader('ETag'))
         tabcat.task.doc = taskDoc
       # TODO: on failure, redirect or show an error message or something
     )
