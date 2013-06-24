@@ -92,12 +92,23 @@ tabcat.clock.start = (startAt) ->
 
 # CONFIG
 
-# Tabcat-specific configs, such as PHI level
+# Tabcat-specific configs, such as PHI (Protected Health Information) level
+
+# for more info about PHI see:
+# http://www.research.ucsf.edu/chr/HIPAA/chrHIPAAfaq.asp
 
 tabcat.config = {}
 
-tabcat.config.allowDates = (configDoc) ->
+# check if we allow Limited Dataset PHI. This allows us to store dates,
+# timestamps, city, state, and zipcode
+#
+# IMPORTANT: Limited PHI should always be stored in a sub-field
+# called "limitedPHI" so we can strip it out later if need be.
+tabcat.config.canStoreLimitedPHI = (configDoc) ->
   configDoc?.PHI or configDoc?.limitedPHI
+
+tabcat.config.canStorePHI = (configDoc) ->
+  configDoc?.PHI
 
 # Promise: get the config document, or return {}
 tabcat.config.get = _.once(->
@@ -171,10 +182,11 @@ tabcat.encounter.start = (patientCode) ->
 
     tabcat.config.get().then((configDoc) ->
       # store today's date, and timestamp if we're allowed
-      if tabcat.config.allowDates(configDoc)
-        encounter.month = date.getMonth()
-        encounter.day = date.getDate()
-        encounter.startAt = $.now()
+      if tabcat.config.canStoreLimitedPHI(configDoc)
+        encounter.limitedPHI =
+          month: date.getMonth()
+          day: date.getDate()
+          now: $.now()
 
       patientDoc.encounters ?= []
       patientDoc.encounters.push(encounter)
@@ -271,8 +283,9 @@ tabcat.task.start = _.once((options) ->
         version: designDoc?.kanso.config.version
         user: sessionDoc.userCtx.name
 
-      if tabcat.config.allowDates(configDoc)
-        fields.clockOffset = tabcat.clock.offset()
+      if tabcat.config.canStoreLimitedPHI(configDoc)
+        fields.limitedPHI =
+          clockOffset: tabcat.clock.offset()
 
       createTaskDoc(fields)
   )
