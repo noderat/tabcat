@@ -8,22 +8,33 @@ localStorage = @localStorage
 
 # CONSTANTS
 
-TABCAT_ROOT = '/tabcat/'
-DB_ROOT = '/tabcat-data/'
+DB = 'tabcat-data'
+DB_ROOT = '/' + DB + '/'
 
 
 # UTILITIES
 
-jQuery.extend(
-  putJSON: (url, data, success) ->
-    jQuery.ajax(
-      contentType: 'application/json'
-      data: JSON.stringify(data)
-      success: success
-      type: 'PUT'
-      url: url
-    )
-)
+# jQuery ought to have this, but it doesn't
+putJSON = (url, data, success) ->
+  jQuery.ajax(
+    contentType: 'application/json'
+    data: JSON.stringify(data)
+    success: success
+    type: 'PUT'
+    url: url
+  )
+
+# upload a document to couch DB, and, if successful, update its _rev field
+putDoc = (db, doc) ->
+  url = "/#{db}/#{doc._id}"
+  putJSON(url, doc).then(
+    (data, textStatus, xhr) ->
+      doc._rev = $.parseJSON(xhr.getResponseHeader('ETag'))
+      xhr  # pass response through
+  )
+
+
+
 
 
 # CLOCK
@@ -106,6 +117,9 @@ tabcat.config.get = _.once(->
 
 tabcat.couch = {}
 
+# upload a document to couch DB, and, if successful, update its _rev field
+tabcat.couch.putDoc = putDoc
+
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
 # we don't put timestamps in UUIDs, and works offline.
 tabcat.couch.randomUUID = () ->
@@ -165,7 +179,7 @@ tabcat.encounter.start = (patientCode) ->
       patientDoc.encounters ?= []
       patientDoc.encounters.push(encounter)
 
-      $.putJSON(DB_ROOT + patientDoc._id, patientDoc).then(->
+      putDoc(DB, patientDoc).then(->
         tabcat.clock.reset()
         localStorage.patientCode = patientCode
         localStorage.encounterId = encounter.id
@@ -221,7 +235,7 @@ tabcat.task.doc = null
 # - create an initial task doc with start time, browser info, viewport,
 #   patient code, etc.
 tabcat.task.start = _.once((options) ->
-  taskDoc =
+  tabcat.task.doc =
       _id: tabcat.couch.randomUUID()
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
@@ -245,14 +259,8 @@ tabcat.task.start = _.once((options) ->
   # a problem with the server, and also to detect tasks that were started
   # but not finished.
   createTaskDoc = (additionalFields) ->
-    $.extend(taskDoc, additionalFields)
-
-    $.putJSON(DB_ROOT + taskDoc._id, taskDoc).then(
-      (_, __, xhr) ->
-        taskDoc._rev = $.parseJSON(xhr.getResponseHeader('ETag'))
-        tabcat.task.doc = taskDoc
-      # TODO: on failure, redirect or show an error message or something
-    )
+    $.extend(tabcat.task.doc, additionalFields)
+    putDoc(DB, tabcat.task.doc)
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
@@ -282,12 +290,11 @@ tabcat.task.finish = (options) ->
   now = tabcat.clock.now()
 
   tabcat.task.start().then(->
-    taskDoc = tabcat.task.doc
-    taskDoc.finishedAt = now
+    tabcat.task.doc.finishedAt = now
     if options?.interpretation
-      taskDoc.interpretation = options.interpretation
-    $.putJSON(DB_ROOT + tabcat.task.doc._id, tabcat.task.doc))
-
+      tabcat.task.doc.interpretation = options.interpretation
+    putDoc(DB, tabcat.task.doc)
+  )
 
 # get basic information about the browser. This should not change
 # over the course of the task
