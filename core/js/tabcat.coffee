@@ -111,6 +111,7 @@ tabcat.config.canStorePHI = (configDoc) ->
   configDoc?.PHI
 
 # Promise: get the config document, or return {}
+# TODO: fill in missing fields so we don't need the functions above
 tabcat.config.get = _.once(->
   $.getJSON(DB_ROOT + 'config').then(
     null,  # pass through success
