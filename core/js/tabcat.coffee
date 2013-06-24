@@ -85,6 +85,9 @@ tabcat.clock.start = (startAt) ->
 
 tabcat.config = {}
 
+tabcat.config.allowDates = (configDoc) ->
+  configDoc?.PHI or configDoc?.limitedPHI
+
 # Promise: get the config document, or return {}
 tabcat.config.get = _.once(->
   $.getJSON(DB_ROOT + 'config').then(
@@ -146,19 +149,29 @@ tabcat.encounter.start = (patientCode) ->
   # this adds an encounter to patientDoc.encounters in the DB, and then
   # updates local storage
   updatePatientDoc = (patientDoc) ->
+    date = new Date
+
     encounter =
       id: tabcat.couch.randomUUID()
-      year: (new Date).getFullYear()
+      year: date.getFullYear()
 
-    patientDoc.encounters ?= []
-    patientDoc.encounters.push(encounter)
+    tabcat.config.get().then((configDoc) ->
+      # store today's date, and timestamp if we're allowed
+      if tabcat.config.allowDates(configDoc)
+        encounter.month = date.getMonth()
+        encounter.day = date.getDate()
+        encounter.startAt = $.now()
 
-    $.putJSON(DB_ROOT + patientDoc._id, patientDoc).then(->
-      tabcat.clock.reset()
-      localStorage.patientCode = patientCode
-      localStorage.encounterId = encounter.id
-      localStorage.encounterNum = patientDoc.encounters.length
-      return patientDoc
+      patientDoc.encounters ?= []
+      patientDoc.encounters.push(encounter)
+
+      $.putJSON(DB_ROOT + patientDoc._id, patientDoc).then(->
+        tabcat.clock.reset()
+        localStorage.patientCode = patientCode
+        localStorage.encounterId = encounter.id
+        localStorage.encounterNum = patientDoc.encounters.length
+        return patientDoc
+      )
     )
 
   # get/create the patient doc, add the encounter, update local storage
@@ -212,6 +225,7 @@ tabcat.task.start = _.once((options) ->
       _id: tabcat.couch.randomUUID()
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
+      clockLastStarted: tabcat.clock.lastStarted()
       encounter: tabcat.encounter.getEncounterId()
       eventLog: tabcat.task.eventLog
       patientCode: tabcat.encounter.getPatientCode()
@@ -242,16 +256,20 @@ tabcat.task.start = _.once((options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when(
-    $.getJSON('/_session'), $.getJSON('.')).then(
-    ([sessionDoc], [designDoc]) ->
-      createTaskDoc(
+  $.when($.getJSON('/_session'), $.getJSON('.'), tabcat.config.get()).then(
+    ([sessionDoc], [designDoc], [configDoc]) ->
+      fields =
         name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version
         user: sessionDoc.userCtx.name
-      )
-    )
+
+      if tabcat.config.allowDates(configDoc)
+        fields.clockOffset = tabcat.clock.offset()
+
+      createTaskDoc(fields)
   )
+)
+
 
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
