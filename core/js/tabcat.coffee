@@ -12,7 +12,7 @@ TABCAT_ROOT = '/tabcat/'
 DB_ROOT = '/tabcat-data/'
 
 
-# STUFF THAT SHOULD BE IN JQUERY
+# UTILITIES
 
 jQuery.extend(
   putJSON: (url, data, success) ->
@@ -85,7 +85,15 @@ tabcat.clock.start = (startAt) ->
 
 tabcat.config = {}
 
-tabcat.config.get = _.once(-> $.getJSON(DB_ROOT + 'config'))
+# Promise: get the config document, or return {}
+tabcat.config.get = _.once(->
+  $.getJSON(DB_ROOT + 'config').then(
+    null,  # pass through success
+    (xhr) -> switch xhr.status
+      when 404 then $.Deferred().resolve({})
+      else xhr  # pass through failure
+  )
+)
 
 
 
@@ -123,8 +131,10 @@ tabcat.encounter.getEncounterNum = ->
   catch error
     undefined
 
-# start an encounter. This involves network access, so this method
-# returns a promise. Sample usage:
+# Promise: start an encounter and update patient doc and localStorage
+# appropriately
+#
+# Sample usage:
 #
 # tabcat.encounter.start(patientCode).then(
 #   (patientDoc) -> ... # proceed,
@@ -192,7 +202,7 @@ tabcat.task = {}
 tabcat.task.doc = null
 
 
-# Initialize the task. This does lots of things:
+# Promise: Initialize the task. This does lots of things:
 # - start automatically logging when the browser resizes
 # - check if it's okay to continue (correct PHI, browser capabilities, etc)
 # - create an initial task doc with start time, browser info, viewport,
