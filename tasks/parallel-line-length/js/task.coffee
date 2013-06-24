@@ -254,14 +254,8 @@ getTaskState = ->
 
 
 getElementBounds = (element) ->
-  element = $(element)
-  offset = element.offset()
-  return {
-    left: offset.left
-    top: offset.top
-    width: element.width()
-    height: element.height()
-  }
+  # some browsers include height and width, but it's redundant
+  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
 
 
 catchStrayClick = (event) ->
