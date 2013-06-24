@@ -225,7 +225,7 @@ tabcat.task.start = (options) ->
     $.extend(taskDoc, additionalFields)
 
     $.putJSON(DB_ROOT + taskDoc._id, taskDoc).then(
-      (data, textStatus, jqXHR) ->
+      (_, __, jqXHR) ->
         taskDoc._rev = $.parseJSON(jqXHR.getResponseHeader('ETag'))
         tabcat.task.doc = taskDoc
       # TODO: on failure, redirect or show an error message or something
@@ -235,11 +235,11 @@ tabcat.task.start = (options) ->
   # the task document, with some additional fields filled in
   tabcat.task.start.promise = $.when(
     $.getJSON('/_session'), $.getJSON('.')).then(
-    (sessionArgs, designDocArgs) ->
+    ([sessionDoc], [designDoc]) ->
       createTaskDoc(
-        name: designDocArgs[0]?.kanso.config.name
-        version: designDocArgs[0]?.kanso.config.version
-        user: sessionArgs[0].userCtx.name
+        name: designDoc?.kanso.config.name
+        version: designDoc?.kanso.config.version
+        user: sessionDoc.userCtx.name
       )
     )
 
@@ -251,28 +251,27 @@ tabcat.task.ready = (handler) ->
 
 
 # upload task info to the DB, and (TODO) load the page for the next task
-tabcat.task.finish = (interpretation) ->
+tabcat.task.finish = (options) ->
   now = tabcat.clock.now()
 
   tabcat.task.start().then(->
     taskDoc = tabcat.task.doc
     taskDoc.finishedAt = now
-    if interpretation?
-      taskDoc.interpretation = interpretation
+    if options.interpretation?
+      taskDoc.interpretation = options.interpretation
     $.putJSON(DB_ROOT + tabcat.task.doc._id, tabcat.task.doc))
 
 
 # get basic information about the browser. This should not change
 # over the course of the task
 # TODO: add screen DPI/physical size, if available
-tabcat.task.getBrowserInfo = -> {
+tabcat.task.getBrowserInfo = ->
   screenHeight: screen.height
   screenWidth: screen.width
   userAgent: navigator.userAgent
-}
 
 
-# get information about the viewport: [offsetX, offsetY, width, height]
+# get information about the viewport
 tabcat.task.getViewportInfo = ->
   $w = $(window)
   return {
