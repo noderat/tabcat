@@ -259,13 +259,8 @@ tabcat.task.start = _.once((options) ->
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
 
-  options = $.extend(logResizeEvents: true, options)
-
-  # automatically log whenever the viewport changes size (in tablets,
-  # this will be when the tablet is rotated)
-  if options.logResizeEvents
-    $(window).resize((event) ->
-      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+  if not options?.examinerAdministered
+    localStorage.patientHasDevice = true
 
   # create the task document on the server; we'll updated it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
@@ -292,6 +287,10 @@ tabcat.task.start = _.once((options) ->
   )
 )
 
+# automatically log whenever the viewport changes size (in tablets,
+# this will be when the tablet is rotated)
+  $(window).resize((event) ->
+      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
 
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
