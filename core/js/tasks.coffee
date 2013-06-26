@@ -40,14 +40,15 @@ showTasks = ->
   getTaskInfo().then((info) ->
     $('#tasks').empty()
     for item in info
-      div = $('<div></div>', class: 'task')
-      img = $('<img>', class: 'icon', src: item.icon)
-      div.append(img)
-      span = $('<span></span>', class: 'name')
-      span.text(item.name)
-      div.append(span)
-      div.bind('click', (event) -> window.location = item.url)
-      $('#tasks').append(div)
+      do (item) ->  # create a new scope to create separate bind() functions
+        div = $('<div></div>', class: 'task')
+        img = $('<img>', class: 'icon', src: item.icon)
+        div.append(img)
+        span = $('<span></span>', class: 'name')
+        span.text(item.name)
+        div.append(span)
+        div.bind('click', (event) -> window.location = item.url)
+        $('#tasks').append(div)
   )
 
 
