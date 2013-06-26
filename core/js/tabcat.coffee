@@ -289,8 +289,8 @@ tabcat.task.start = _.once((options) ->
 
 # automatically log whenever the viewport changes size (in tablets,
 # this will be when the tablet is rotated)
-  $(window).resize((event) ->
-      tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+$(window).resize((event) ->
+  tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
 
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
