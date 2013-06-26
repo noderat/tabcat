@@ -7,6 +7,10 @@
     border-radius: 18px;
 }
 
+#tasks div.task:active {
+    background-color: #cccccc;
+}
+
 #tasks img.icon {
     width: 72px;
     height: 72px;
