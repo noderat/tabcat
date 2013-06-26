@@ -8,14 +8,14 @@ getAllDesignDocs = ->
       (row.doc for row in response.rows))
 
 # Promise: get a list of info about each task, with the keys index, icon,
-# and name (index and icon are URLs), sorted by name.
+# and description (index and icon are URLs), sorted by description.
 #
 # This automatically filters out design docs that aren't valid tasks.
 getTaskInfo = ->
   getAllDesignDocs().then((docs) ->
     _.sortBy(
       _.compact(designDocToTaskInfo(doc) for doc in docs),
-      (item) -> item.name))
+      (item) -> item.description))
 
 # convert a design doc to task info, or return undefined if it's not a
 # valid task
@@ -24,17 +24,17 @@ designDocToTaskInfo = (doc) ->
 
   index = doc?.kanso?.config?.index
   icon = doc?.kanso?.config?.tabcat?.icon
-  name = doc?.kanso?.config?.description ? doc?.kanso?.config?.name
+  description = doc?.kanso?.config?.description
 
-  if not (index and icon and name)
+  if not (index and icon and description)
     undefined
   else
     url: urlRoot + index
     icon: urlRoot + '/' + icon
-    name: name
+    description: description
 
 
-# get task info from the server, and then display an icon and a name
+# get task info from the server, and then display an icon and a description
 # for each task
 showTasks = ->
   getTaskInfo().then((info) ->
@@ -44,8 +44,8 @@ showTasks = ->
         div = $('<div></div>', class: 'task')
         img = $('<img>', class: 'icon', src: item.icon)
         div.append(img)
-        span = $('<span></span>', class: 'name')
-        span.text(item.name)
+        span = $('<span></span>', class: 'description')
+        span.text(item.description)
         div.append(span)
         div.bind('click', (event) -> window.location = item.url)
         $('#tasks').append(div)
