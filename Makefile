@@ -22,6 +22,6 @@ $(JS_TARGETS): %.js: %.coffee
 	if which coffeelint; then coffeelint -q $<; fi
 	coffee -c $<
 
-# auto-create .kansorc if it exists
-.kansorc:
-	cp .kansorc.example .kansorc
+# auto-create .kansorc if it does not exist
+.kansorc: .kansorc.example
+	if [ ! -e .kansorc ]; then cp .kansorc.example .kansorc; fi
