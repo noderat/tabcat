@@ -8,6 +8,11 @@
     border-radius: 10px;
 }
 
+form.login p.error {
+    font-size: 18px;
+    color: #990000;
+}
+
 form.login label {
     display: inline-block;
     width: 140px;
