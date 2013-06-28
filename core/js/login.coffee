@@ -5,7 +5,7 @@ submitLoginForm = (event) ->
     -> window.location = 'tasks.html',
     (xhr) -> switch xhr.status
       when 401 then $('p.error', form).text(
-        'Incorrect username or password')
+        'Incorrect email or password')
       else $('p.error', form).text(xhr.textStatus or 'Unknown error')
   )
 
