@@ -164,7 +164,8 @@ showNextTrial = (event) ->
     registerResult(event)
 
   if taskIsDone()
-    finishTask()
+    tabcat.task.finish()
+    showDonePage()
   else
     nextTrialDiv = getNextTrialDiv()
     $('#task-main').empty()
@@ -175,7 +176,7 @@ showNextTrial = (event) ->
 
 
 # show the "Done!" page, and enable its "show scoring" button
-finishTask = (event) ->
+showDonePage = (event) ->
   endTimestamp = $.now()
 
   $('#scoring .score-list').text(intensitiesAtReversal.join(', '))
@@ -253,32 +254,22 @@ getTaskState = ->
 
 
 getElementBounds = (element) ->
-  element = $(element)
-  offset = element.offset()
-  return {
-    left: offset.left
-    top: offset.top
-    width: element.width()
-    height: element.height()
-  }
+  # some browsers include height and width, but it's redundant
+  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
 
 
 catchStrayClick = (event) ->
   tabcat.task.logEvent(getTaskState(), event)
 
-catchResize = (event) ->
-  state = $.extend(getTaskState(), {viewport: tabcat.task.getViewportInfo()})
-  tabcat.task.logEvent(state, event)
-
 
 
 # INITIALIZATION
+
+tabcat.task.start()
 
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
 tabcat.ui.linkFontSizeToHeight($(document.body), FONT_HEIGHT_PERCENT)
 
-$(window).resize(catchResize)
-
-showNextTrial()
+tabcat.task.ready(showNextTrial)

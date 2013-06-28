@@ -1,7 +1,40 @@
+# GLOBALS
+
 tabcat = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
+
+
+# CONSTANTS
+
+DB = 'tabcat-data'
+DB_ROOT = '/' + DB + '/'
+
+
+# UTILITIES
+
+# jQuery ought to have this, but it doesn't
+putJSON = (url, data, success) ->
+  jQuery.ajax(
+    contentType: 'application/json'
+    data: JSON.stringify(data)
+    success: success
+    type: 'PUT'
+    url: url
+  )
+
+# upload a document to couch DB, and, if successful, update its _rev field
+putDoc = (db, doc) ->
+  url = "/#{db}/#{doc._id}"
+  putJSON(url, doc).then(
+    (data, textStatus, xhr) ->
+      doc._rev = $.parseJSON(xhr.getResponseHeader('ETag'))
+      xhr  # pass response through
+  )
+
+
+
 
 
 # CLOCK
@@ -46,7 +79,7 @@ tabcat.clock.offset = ->
 # Reset the clock. Optionally, specify the current time relative to
 # start of encounter (in msec)
 tabcat.clock.reset = (startAt) ->
-  startAt = startAt or 0
+  startAt ?= 0
   localStorage.clockLastStarted = startAt
   localStorage.clockOffset = $.now() - startAt
   return  # don't let people depend on return value
@@ -57,11 +90,47 @@ tabcat.clock.start = (startAt) ->
     tabcat.clock.reset()
 
 
+# CONFIG
+
+# Tabcat-specific configs, such as PHI (Protected Health Information) level
+
+# for more info about PHI see:
+# http://www.research.ucsf.edu/chr/HIPAA/chrHIPAAfaq.asp
+
+tabcat.config = {}
+
+# check if we allow Limited Dataset PHI. This allows us to store dates,
+# timestamps, city, state, and zipcode
+#
+# IMPORTANT: Limited PHI should always be stored in a sub-field
+# called "limitedPHI" so we can strip it out later if need be.
+tabcat.config.canStoreLimitedPHI = (configDoc) ->
+  configDoc?.PHI or configDoc?.limitedPHI
+
+tabcat.config.canStorePHI = (configDoc) ->
+  configDoc?.PHI
+
+# Promise: get the config document, or return {}
+# TODO: fill in missing fields so we don't need the functions above
+tabcat.config.get = _.once(->
+  $.getJSON(DB_ROOT + 'config').then(
+    null,  # pass through success
+    (xhr) -> switch xhr.status
+      when 404 then $.Deferred().resolve({})
+      else xhr  # pass through failure
+  )
+)
+
+
+
 # COUCH
 
-# extra utilities for couchDB
+# Utilities for couchDB
 
 tabcat.couch = {}
+
+# upload a document to couch DB, and, if successful, update its _rev field
+tabcat.couch.putDoc = putDoc
 
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
 # we don't put timestamps in UUIDs, and works offline.
@@ -75,62 +144,70 @@ tabcat.couch.randomUUID = () ->
 
 tabcat.encounter = {}
 
-tabcat.encounter.start = (patientCode, ajaxOptions) ->
-  patientCode = patientCode or 0
-  ajaxOptions = ajaxOptions or {}
+# get the patient code
+tabcat.encounter.getPatientCode = ->
+  localStorage.patientCode
+
+# get the (random) ID of this encounter
+tabcat.encounter.getEncounterId = ->
+  localStorage.encounterId
+
+# get the encounter number. This should only be used in the UI, not
+# stored in the database. May be undefined.
+tabcat.encounter.getEncounterNum = ->
+  try
+    parseInt(localStorage.encounterNum)
+  catch error
+    undefined
+
+# Promise: start an encounter and update patient doc and localStorage
+# appropriately
+#
+# Sample usage:
+#
+# tabcat.encounter.start(patientCode).then(
+#   (patientDoc) -> ... # proceed,
+#   (xhr) -> ... # show error message on failure)
+tabcat.encounter.start = (patientCode) ->
+  patientCode = String(patientCode ? 0)
   patientDocId = 'patient-' + patientCode
 
-  encounter =
-    id: tabcat.couch.randomUUID()
-    year: (new Date).getFullYear()
+  # this adds an encounter to patientDoc.encounters in the DB, and then
+  # updates local storage
+  updatePatientDoc = (patientDoc) ->
+    date = new Date
 
-  db = $.couch.db('tabcat-data')
+    encounter =
+      id: tabcat.couch.randomUUID()
+      year: date.getFullYear()
 
-  db.openDoc(patientDocId, $.extend({}, ajaxOptions, {
-    success: (doc) -> addNewEncounter(doc),
-    error: (xhr, rest...) ->
-      if xhr == 404
-        addNewPatientAndEncounter()
-      else
-        if ajaxOptions.error
-          error(xhr, rest...)
-  }))
+    tabcat.config.get().then((configDoc) ->
+      # store today's date, and timestamp if we're allowed
+      if tabcat.config.canStoreLimitedPHI(configDoc)
+        encounter.limitedPHI =
+          month: date.getMonth()
+          day: date.getDate()
+          now: $.now()
 
-  addNewPatientAndEncounter = (doc) ->
-    patientDoc =
-      _id: patientDocId
-      type: "patient"
-      encounters: [encounter]
+      patientDoc.encounters ?= []
+      patientDoc.encounters.push(encounter)
 
-    db.saveDoc(patientDoc, $.extend({}, ajaxOptions, {
-      success: (args...) ->
-        finish(1, args...)
-    }))
+      putDoc(DB, patientDoc).then(->
+        tabcat.clock.reset()
+        localStorage.patientCode = patientCode
+        localStorage.encounterId = encounter.id
+        localStorage.encounterNum = patientDoc.encounters.length
+        return patientDoc
+      )
+    )
 
-  addNewEncounter = (doc) ->
-    if not doc.encounters
-      doc.encounters = []
-
-    doc.encounters.push(encounter)
-
-    encounterNum = doc.encounters.length  # encounterNum is 1-indexed
-
-    db.saveDoc(doc, $.extend({}, ajaxOptions, {
-      success: (args...) ->
-        finish(encounterNum, args...)
-    }))
-
-  finish = (encounterNum, successArgs...) ->
-    tabcat.clock.reset()
-    localStorage.patientCode = patientCode
-    localStorage.encounterId = encounter.id
-    # encounterNum is used by the UI only; the patient document is
-    # the canonical way to tell the order of encounters
-    localStorage.encounterNum = encounterNum
-    if ajaxOptions.success
-      success(successArgs...)
-
-  return
+  # get/create the patient doc, add the encounter, update local storage
+  $.getJSON(DB_ROOT + patientDocId).then(
+    updatePatientDoc,
+    (xhr) -> switch xhr.status
+      when 404 then updatePatientDoc(_id: patientDocId, type: 'patient')
+      else xhr  # pass failure through
+  )
 
 
 # MATH
@@ -161,17 +238,87 @@ tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
 
 tabcat.task = {}
 
+# the CouchDB document for this task
+tabcat.task.doc = null
+
+
+# Promise: Initialize the task. This does lots of things:
+# - start automatically logging when the browser resizes
+# - check if it's okay to continue (correct PHI, browser capabilities, etc)
+# - create an initial task doc with start time, browser info, viewport,
+#   patient code, etc.
+tabcat.task.start = _.once((options) ->
+  tabcat.task.doc =
+      _id: tabcat.couch.randomUUID()
+      type: 'task'
+      browser: tabcat.task.getBrowserInfo()
+      clockLastStarted: tabcat.clock.lastStarted()
+      encounter: tabcat.encounter.getEncounterId()
+      eventLog: tabcat.task.eventLog
+      patientCode: tabcat.encounter.getPatientCode()
+      startedAt: tabcat.clock.now()
+      startViewport: tabcat.task.getViewportInfo()
+
+  if not options?.examinerAdministered
+    localStorage.patientHasDevice = true
+
+  # create the task document on the server; we'll updated it when
+  # tabcat.task.finish() is called. This allows us to fail fast if there's
+  # a problem with the server, and also to detect tasks that were started
+  # but not finished.
+  createTaskDoc = (additionalFields) ->
+    $.extend(tabcat.task.doc, additionalFields)
+    putDoc(DB, tabcat.task.doc)
+
+  # fetch login information and the task's design doc (.), and create
+  # the task document, with some additional fields filled in
+  $.when($.getJSON('/_session'), $.getJSON('.'), tabcat.config.get()).then(
+    ([sessionDoc], [designDoc], [configDoc]) ->
+      fields =
+        name: designDoc?.kanso.config.name
+        version: designDoc?.kanso.config.version
+        user: sessionDoc.userCtx.name
+
+      if tabcat.config.canStoreLimitedPHI(configDoc)
+        fields.limitedPHI =
+          clockOffset: tabcat.clock.offset()
+
+      createTaskDoc(fields)
+  )
+)
+
+# automatically log whenever the viewport changes size (in tablets,
+# this will be when the tablet is rotated)
+$(window).resize((event) ->
+  tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+
+# Use this instead of $(document).ready(), so that we can also wait for
+# tabcat.task.start() to complete
+tabcat.task.ready = (handler) ->
+  $.when($.ready.promise(), tabcat.task.start()).then(handler)
+
+
+# upload task info to the DB, and (TODO) load the page for the next task
+tabcat.task.finish = (options) ->
+  now = tabcat.clock.now()
+
+  tabcat.task.start().then(->
+    tabcat.task.doc.finishedAt = now
+    if options?.interpretation
+      tabcat.task.doc.interpretation = options.interpretation
+    putDoc(DB, tabcat.task.doc)
+  )
+
 # get basic information about the browser. This should not change
 # over the course of the task
 # TODO: add screen DPI/physical size, if available
-tabcat.task.getBrowserInfo = -> {
+tabcat.task.getBrowserInfo = ->
   screenHeight: screen.height
   screenWidth: screen.width
   userAgent: navigator.userAgent
-}
 
 
-# get information about the viewport: [offsetX, offsetY, width, height]
+# get information about the viewport
 tabcat.task.getViewportInfo = ->
   $w = $(window)
   return {
@@ -182,13 +329,17 @@ tabcat.task.getViewportInfo = ->
   }
 
 
+# a place for the task to store things the user did, along with timing
+# information and the state of the task. This is independent from
+# tabcat.task.start
 tabcat.task.eventLog = []
+
 
 # Store data in tabcat.task.eventLog about:
 #
 # state: the state of the world (rectangle here, intensity is 30). An object
 #        in a format of your choice. (TODO: add some standard suggestions)
-# event: a jQuery event that fired
+# event: a jQuery event that fired, or a string
 # interpretation: what happened (e.g. did the user tap in the correct spot?)
 # now: when the event happened, relative to start of encounter
 # (i.e. tabcat.clock.now()). If not set, we try to infer this from
@@ -199,25 +350,26 @@ tabcat.task.eventLog = []
 # start of encounter (or just tabcat.clock.now() if "event" is undefined),
 # and "state" and "interpretation" are stored as-is.
 tabcat.task.logEvent = (state, event, interpretation, now) ->
-  if not now  # ...when?
-    if event.timeStamp
+  if not now?  # ...when?
+    if event?.timeStamp
       now = event.timeStamp - tabcat.clock.offset()
     else
       now = tabcat.clock.now()
 
-  eventData = null
-  if event
-    eventData =
-      pageX: event.pageX
-      pageY: event.pageY
-      type: event.type
+  eventLogItem = now: now
 
-  tabcat.task.eventLog.push(
-    event: eventData
-    interpretation: interpretation
-    now: now
-    state: state
-  )
+  if typeof event is 'string'
+    eventLogItem.event = {type: event}
+  else if event?
+    eventLogItem.event = _.pick(event, 'pageX', 'pageY', 'type')
+
+  if interpretation?
+    eventLogItem.interpretation = interpretation
+
+  if state?
+    eventLogItem.state = state
+
+  tabcat.task.eventLog.push(eventLogItem)
 
 
 # UI
@@ -273,7 +425,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
       # parent is too wide, need gap on left and right
       gap = 100 * (parentRatio - ratio) / parentRatio / 2
 
-      element.css({
+      element.css(
         position: 'absolute'
         left: gap + '%'
         right: 100 - gap + '%'
@@ -281,12 +433,12 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
         top: '0%'
         bottom: '100%'
         height: '100%'
-      })
+      )
     else
       # parent is too narrow, need gap on top and bottom
       gap = (100 * (1 / parentRatio - 1 / ratio) * parentRatio / 2)
 
-      element.css({
+      element.css(
         position: 'absolute'
         left: '0%'
         right: '100%'
@@ -294,7 +446,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
         top: gap + '%'
         bottom: 100 - gap + '%'
         height: 100 - 2 * gap + '%'
-      })
+      )
 
   fixElement(element)
 
@@ -310,7 +462,7 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   fixElement = (event) ->
     # for font-size, "%" means % of default font size, not % of height.
     sizeInPx = element.height() * percent / 100
-    element.css({'font-size': sizeInPx + 'px'})
+    element.css('font-size': sizeInPx + 'px')
 
   fixElement(element)
 

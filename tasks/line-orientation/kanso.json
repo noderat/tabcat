@@ -6,5 +6,8 @@
     "attachments": ["css/task.css", "img", "js/task.js", "task.html"],
     "dependencies": {
         "attachments": null
+    },
+    "tabcat": {
+	"icon": "img/icon.png"
     }
 }
