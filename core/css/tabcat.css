@@ -94,8 +94,9 @@ div.statusBar div.right {
     text-align: right;
 }
 
-div.statusBar span.username {
+div.statusBar p.username {
     font-size: 14px;
+    margin: 0px;
 }
 
 div.statusBar p.encounter {

@@ -487,40 +487,50 @@ tabcat.ui.updateEncounterClock = ->
 
 # fill the statusBar div on the main page
 tabcat.ui.populateStatusBar = ->
-  $.getJSON('/_session').then((sessionDoc) ->
-    statusBar = $('div.statusBar')
+  statusBar = $('div.statusBar')
 
-    statusBar.html(
-      """
-      <div class="left">
-        <img class="banner" src="img/banner-white.png">
-      </div>
-      <div class="right">
-        <span class="username"></span>
-      </div>
-      <div class="center">
-      	<p class="encounter"></p>
-      	<p class="clock"></p>
-      </div>
+  statusBar.html(
     """
-    )
-
-    username = sessionDoc.userCtx.name
-    if username
-      $('span.username', statusBar).text(username)
-
-    patientCode = tabcat.encounter.getPatientCode()
-    if patientCode?
-      $('p.encounter', statusBar).text(
-        'Encounter with Patient ' + patientCode)
-
-      if not tabcat.ui.populateStatusBar.clockInterval?
-        tabcat.ui.populateStatusBar.clockInterval = window.setInterval(
-          tabcat.ui.updateEncounterClock, 50)
-    else
-      if tabcat.ui.populateStatusBar.clockInterval?
-        window.clearInterval(tabcat.ui.populateStatusBar.clockInterval)
+    <div class="left">
+      <img class="banner" src="img/banner-white.png">
+    </div>
+    <div class="right">
+      <p class="username"></p>
+      <button class="login" display="style:none"></span>
+    </div>
+    <div class="center">
+      <p class="encounter"></p>
+      <p class="clock"></p>
+    </div>
+    """
   )
+
+  $.getJSON('/_session').then((sessionDoc) ->
+    username = sessionDoc.userCtx.name
+    usernameP = $('p.username', statusBar)
+    button =  $('button.login', statusBar)
+
+    if username
+      usernameP.text(username)
+      button.text('Log Out')
+    else
+      usernameP.text('not logged in')
+      button.text('Log In')
+
+    button.show()
+  )
+
+  patientCode = tabcat.encounter.getPatientCode()
+  if patientCode?
+    $('p.encounter', statusBar).text(
+      'Encounter with Patient ' + patientCode)
+
+    if not tabcat.ui.populateStatusBar.clockInterval?
+      tabcat.ui.populateStatusBar.clockInterval = window.setInterval(
+        tabcat.ui.updateEncounterClock, 50)
+  else
+    if tabcat.ui.populateStatusBar.clockInterval?
+      window.clearInterval(tabcat.ui.populateStatusBar.clockInterval)
 
 
 # Don't allow the document to scroll past its boundaries. This only works

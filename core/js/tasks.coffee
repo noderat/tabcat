@@ -55,4 +55,5 @@ showTasks = ->
 # INTIALIZATION
 tabcat.ui.enableFastClick()
 
+$(tabcat.ui.populateStatusBar)
 $(showTasks)
