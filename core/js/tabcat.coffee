@@ -469,6 +469,60 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   $(window).resize(fixElement)
 
 
+# update the encounter clock on the statusBar
+tabcat.ui.updateEncounterClock = ->
+  now = tabcat.clock.now()
+
+  seconds = Math.floor(now / 1000) % 60
+  if seconds < 10
+    seconds = '0' + seconds
+  minutes = Math.floor(now / 60000) % 60
+  if minutes < 10
+    minutes = '0' + minutes
+  hours = Math.floor(now / 3600000)
+  time = hours + ':' + minutes + ':' + seconds
+
+  $('div.statusBar p.clock').text(time)
+
+
+# fill the statusBar div on the main page
+tabcat.ui.populateStatusBar = ->
+  $.getJSON('/_session').then((sessionDoc) ->
+    statusBar = $('div.statusBar')
+
+    statusBar.html(
+      """
+      <div class="left">
+        <img class="banner" src="img/banner-white.png">
+      </div>
+      <div class="right">
+        <span class="username"></span>
+      </div>
+      <div class="center">
+      	<p class="encounter"></p>
+      	<p class="clock"></p>
+      </div>
+    """
+    )
+
+    username = sessionDoc.userCtx.name
+    if username
+      $('span.username', statusBar).text(username)
+
+    patientCode = tabcat.encounter.getPatientCode()
+    if patientCode?
+      $('p.encounter', statusBar).text(
+        'Encounter with Patient ' + patientCode)
+
+      if not tabcat.ui.populateStatusBar.clockInterval?
+        tabcat.ui.populateStatusBar.clockInterval = window.setInterval(
+          tabcat.ui.updateEncounterClock, 50)
+    else
+      if tabcat.ui.populateStatusBar.clockInterval?
+        window.clearInterval(tabcat.ui.populateStatusBar.clockInterval)
+  )
+
+
 # Don't allow the document to scroll past its boundaries. This only works
 # if your document isn't larger than the viewport.
 tabcat.ui.turnOffBounce = ->
