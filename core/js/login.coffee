@@ -15,6 +15,10 @@ submitLoginForm = (event) ->
 
   tabcat.couch.login(form.serialize()).then(
     (->
+      # don't magically restart an encounter just because it's sitting
+      # around in localStorage
+      tabcat.encounter.clear()
+
       redirPath = null
       try
         redirPath = JSON.parse(decodeURIComponent(

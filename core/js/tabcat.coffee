@@ -171,11 +171,11 @@ tabcat.encounter.getEncounterNum = ->
 #
 # Sample usage:
 #
-# tabcat.encounter.start(patientCode: "AAAAA").then(
+# tabcat.encounter.create(patientCode: "AAAAA").then(
 #   (patientDoc) -> ... # proceed,
 #   (xhr) -> ... # show error message on failure)
-tabcat.encounter.start = (options) ->
-  patientCode = String(options.patientCode ? 0)
+tabcat.encounter.create = (options) ->
+  patientCode = String(options?.patientCode ? 0)
   patientDocId = 'patient-' + patientCode
   encounterId = tabcat.couch.randomUUID()
 
@@ -202,23 +202,41 @@ tabcat.encounter.start = (options) ->
     patientDoc.encounterIds.push(encounterId)
     putDoc(DB, patientDoc)
 
-  putDoc(DB, encounterDoc).then(->
-    $.getJSON(DB_ROOT + patientDocId).then(
-      updatePatientDoc,
-      (xhr) -> switch xhr.status
-        when 404 then updatePatientDoc(_id: patientDocId, type: 'patient')
-        else xhr  # pass failure through
-    ).then((patientDoc) ->
-      localStorage.patientCode = patientCode
-      localStorage.encounterId = encounterId
-      localStorage.encounterNum = patientDoc.encounterIds.length
-      return patientDoc
+  $.getJSON('/_session').then((sessionDoc) ->
+    encounterDoc.user = sessionDoc.userCtx.name
+    putDoc(DB, encounterDoc).then(->
+      $.getJSON(DB_ROOT + patientDocId).then(
+        updatePatientDoc,
+        (xhr) -> switch xhr.status
+          when 404 then updatePatientDoc(_id: patientDocId, type: 'patient')
+          else xhr  # pass failure through
+      ).then((patientDoc) ->
+        localStorage.patientCode = patientCode
+        localStorage.encounterId = encounterId
+        localStorage.encounterNum = patientDoc.encounterIds.length
+        return patientDoc
+      )
     )
   )
 
+# finish the current patient encounter. this clears local storage even
+# if there is a problem updating the encounter doc
+tabcat.encounter.close = ->
+  encounterId = tabcat.encounter.getEncounterId()
+  tabcat.encounter.clear()
 
-tabcat.encounter.finish = (options) ->
-  null
+  if encounterId?
+    $.getJSON(DB_ROOT + encounterId).then((encounterDoc) ->
+      encounterDoc.finishAt = tabcat.clock.now()
+      putDoc(DB, encounterDoc)
+    )
+
+# clear local storage relating to the current encounter
+tabcat.encounter.clear = ->
+  localStorage.removeItem('patientCode')
+  localStorage.removeItem('encounterId')
+  localStorage.removeItem('encounterNum')
+  tabcat.clock.clear()
 
 
 
@@ -508,8 +526,8 @@ tabcat.ui.updateStatusBar = ->
         <img class="banner" src="img/banner-white.png">
       </div>
       <div class="right">
-        <p class="username">not logged in</p>
-        <button class="login" display="style:none">Log In</span>
+        <p class="username">&nbsp;</p>
+        <button class="login" style="display:none"></span>
       </div>
       <div class="center">
         <p class="encounter"></p>
@@ -521,7 +539,13 @@ tabcat.ui.updateStatusBar = ->
     $('button.login', statusBar).on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
-        tabcat.couch.logout().then(tabcat.ui.updateStatusBar)
+        if tabcat.encounter.getEncounterId()?
+          if window.confirm(
+            'Logging out will close the current encounter. Proceed?')
+            tabcat.encounter.close().always(
+              -> tabcat.couch.logout().then(tabcat.ui.updateStatusBar))
+        else
+          tabcat.couch.logout().then(tabcat.ui.updateStatusBar)
       else
         # redirect to the login page
         window.location = (
@@ -530,31 +554,35 @@ tabcat.ui.updateStatusBar = ->
             'redirPath': window.location.pathname)))
     )
 
-  patientCode = tabcat.encounter.getPatientCode()
-  if patientCode?
-    $('p.encounter', statusBar).text(
-      'Encounter with Patient ' + patientCode)
-
-    if not tabcat.ui.updateStatusBar.clockInterval?
-      tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
-        tabcat.ui.updateEncounterClock, 50)
-  else
-    if tabcat.ui.updateStatusBar.clockInterval?
-      window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
-
   $.getJSON('/_session').then((sessionDoc) ->
     username = sessionDoc.userCtx.name
     usernameP = $('p.username', statusBar)
     button =  $('button.login', statusBar)
+    encounterP = $('p.encounter', statusBar)
 
     if username
       usernameP.text(username)
       button.text('Log Out')
+
     else
       usernameP.text('not logged in')
       button.text('Log In')
 
     button.show()
+
+    # don't show encounter info unless patient is logged in
+    patientCode = tabcat.encounter.getPatientCode()
+    if patientCode? and username?
+      encounterP.text('Encounter with Patient ' + patientCode)
+
+      if not tabcat.ui.updateStatusBar.clockInterval?
+        tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
+          tabcat.ui.updateEncounterClock, 50)
+    else
+      encounterP.empty()
+      if tabcat.ui.updateStatusBar.clockInterval?
+        window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
+      $('p.clock', statusBar).empty()
   )
 
 
