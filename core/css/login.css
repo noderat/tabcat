@@ -1,16 +1,25 @@
-#main {
+body.blueBackground {
+    background-color: #666699;
+}
+
+#loginMain {
     text-align: center;
 }
 
-#main img.logo {
-    width: 200px;
-    height: 200px;
-    border-radius: 10px;
+#loginMain img.logo {
+    width: 250px;
+    height: 250px;
+    margin-top: 10px;
+    margin-bottom: -5px;
+}
+
+form.login p {
+    margin: 15px;
 }
 
 form.login p.error {
     font-size: 18px;
-    color: #990000;
+    color: #ffcc99;
 }
 
 form.login label {
@@ -30,4 +39,9 @@ form.login button {
     width: 100px;
     height: 50px;
     border-radius: 10px;
+    color: #666699;
+    border-color: #eeeeee;
+    background-color: #eeeeee;
+    border-width: 5px;
+    margin: 0px;
 }

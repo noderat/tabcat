@@ -512,12 +512,12 @@ tabcat.ui.updateEncounterClock = ->
   hours = Math.floor(now / 3600000)
   time = hours + ':' + minutes + ':' + seconds
 
-  $('div.statusBar p.clock').text(time)
+  $('#statusBar p.clock').text(time)
 
 
 # update the statusBar div, populating it if necessary
 tabcat.ui.updateStatusBar = ->
-  statusBar = $('div.statusBar')
+  statusBar = $('#statusBar')
 
   if $('div.left', statusBar).length is 0
     statusBar.html(

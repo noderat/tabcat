@@ -67,59 +67,60 @@ instead when the browser is in portrait mode */
     }
 }
 
-div.statusBar {
+#statusBar {
     background-color: #666699;
     text-align: center;
     height: 50px;
     padding: 5px;
+    min-width: 800px;
 }
 
-div.statusBar div.left {
+#statusBar div.left {
     float: left;
 }
 
-div.statusBar img.banner {
+#statusBar img.banner {
     height: 50px;
 }
 
-div.statusBar div.rightContainer {
+#statusBar div.rightContainer {
     position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;
 }
 
-div.statusBar div.right {
+#statusBar div.right {
     float: right;
     text-align: right;
     width: 200px;
 }
 
-div.statusBar p.username {
+#statusBar p.username {
     font-size: 14px;
     margin: 0px;
 }
 
-div.statusBar p.encounter {
+#statusBar p.encounter {
     font-size: 18px;
     margin: 0px;
 }
 
-div.statusBar p.clock {
+#statusBar p.clock {
     font-size: 24px;
     margin: 0px;
 }
 
-div.statusBar div.center {
+#statusBar div.center {
     display: inline-block;
 }
 
-div.statusBar button.login {
+#statusBar button.login {
     height: 27px;
     width: 80px;
-    background-color: #666699;
+    color: #666699;
     border-color: #eeeeee;
-    color: #eeeeee;
+    background-color: #eeeeee;
     border-radius: 6px;
     font-size: 16px;
     margin-top: 5px;
