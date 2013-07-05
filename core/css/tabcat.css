@@ -109,8 +109,18 @@ div.statusBar p.clock {
     margin: 0px;
 }
 
-
-
 div.statusBar div.center {
     display: inline-block;
+}
+
+div.statusBar button.login {
+    height: 27px;
+    width: 80px;
+    background-color: #666699;
+    border-color: #eeeeee;
+    color: #eeeeee;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 5px;
+    border-width: 3px;
 }
