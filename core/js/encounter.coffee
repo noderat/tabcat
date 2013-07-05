@@ -1,1 +1,3 @@
-$(tabcat.ui.populateStatusBar)
+tabcat.ui.enableFastClick()
+
+$(tabcat.ui.updateStatusBar)

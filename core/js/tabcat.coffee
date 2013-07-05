@@ -16,7 +16,7 @@ DB_ROOT = '/' + DB + '/'
 
 # jQuery ought to have this, but it doesn't
 putJSON = (url, data, success) ->
-  jQuery.ajax(
+  $.ajax(
     contentType: 'application/json'
     data: JSON.stringify(data)
     success: success
@@ -128,6 +128,12 @@ tabcat.config.get = _.once(->
 # Utilities for couchDB
 
 tabcat.couch = {}
+
+tabcat.couch.login = (nameAndPassword) ->
+  $.post('/_session', nameAndPassword)
+
+tabcat.couch.logout = ->
+  $.ajax(type: 'DELETE', url: '/_session')
 
 # upload a document to couch DB, and, if successful, update its _rev field
 tabcat.couch.putDoc = putDoc
@@ -485,25 +491,50 @@ tabcat.ui.updateEncounterClock = ->
   $('div.statusBar p.clock').text(time)
 
 
-# fill the statusBar div on the main page
-tabcat.ui.populateStatusBar = ->
+# update the statusBar div, populating it if necessary
+tabcat.ui.updateStatusBar = ->
   statusBar = $('div.statusBar')
 
-  statusBar.html(
-    """
-    <div class="left">
-      <img class="banner" src="img/banner-white.png">
-    </div>
-    <div class="right">
-      <p class="username"></p>
-      <button class="login" display="style:none"></span>
-    </div>
-    <div class="center">
-      <p class="encounter"></p>
-      <p class="clock"></p>
-    </div>
-    """
-  )
+  if $('div.left', statusBar).length is 0
+    statusBar.html(
+      """
+      <div class="left">
+        <img class="banner" src="img/banner-white.png">
+      </div>
+      <div class="right">
+        <p class="username">not logged in</p>
+        <button class="login" display="style:none">Log In</span>
+      </div>
+      <div class="center">
+        <p class="encounter"></p>
+        <p class="clock"></p>
+      </div>
+      """
+    )
+
+    $('button.login', statusBar).on('click', (event) ->
+      button = $(event.target)
+      if button.text() == 'Log Out'
+        tabcat.couch.logout().then(tabcat.ui.updateStatusBar)
+      else
+        # redirect to the login page
+        window.location = (
+          '../core/login.html#' +
+          encodeURIComponent(JSON.stringify(
+            'redirPath': window.location.pathname)))
+    )
+
+  patientCode = tabcat.encounter.getPatientCode()
+  if patientCode?
+    $('p.encounter', statusBar).text(
+      'Encounter with Patient ' + patientCode)
+
+    if not tabcat.ui.updateStatusBar.clockInterval?
+      tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
+        tabcat.ui.updateEncounterClock, 50)
+  else
+    if tabcat.ui.updateStatusBar.clockInterval?
+      window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
 
   $.getJSON('/_session').then((sessionDoc) ->
     username = sessionDoc.userCtx.name
@@ -519,18 +550,6 @@ tabcat.ui.populateStatusBar = ->
 
     button.show()
   )
-
-  patientCode = tabcat.encounter.getPatientCode()
-  if patientCode?
-    $('p.encounter', statusBar).text(
-      'Encounter with Patient ' + patientCode)
-
-    if not tabcat.ui.populateStatusBar.clockInterval?
-      tabcat.ui.populateStatusBar.clockInterval = window.setInterval(
-        tabcat.ui.updateEncounterClock, 50)
-  else
-    if tabcat.ui.populateStatusBar.clockInterval?
-      window.clearInterval(tabcat.ui.populateStatusBar.clockInterval)
 
 
 # Don't allow the document to scroll past its boundaries. This only works

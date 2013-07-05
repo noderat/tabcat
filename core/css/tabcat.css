@@ -92,6 +92,7 @@ div.statusBar div.rightContainer {
 div.statusBar div.right {
     float: right;
     text-align: right;
+    width: 200px;
 }
 
 div.statusBar p.username {

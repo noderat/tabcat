@@ -13,8 +13,19 @@ submitLoginForm = (event) ->
     errorElement.text('Please enter your password')
     return
 
-  $.post('/_session', form.serialize()).then(
-    -> window.location = 'tasks.html',
+  tabcat.couch.login(form.serialize()).then(
+    (->
+      redirPath = null
+      try
+        redirPath = JSON.parse(decodeURIComponent(
+          window.location.hash.substring(1))).redirPath
+
+      # only allow redirects to a different path, not to other sites
+      if not redirPath? or redirPath.substring(0, 1) is not '/'
+        redirPath = 'encounter.html'
+
+      window.location = redirPath
+    ),
     (xhr) -> switch xhr.status
       when 401 then errorElement.text(
         'Incorrect email or password')
