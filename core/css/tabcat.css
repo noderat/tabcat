@@ -118,7 +118,7 @@ instead when the browser is in portrait mode */
 #statusBar button.login {
     height: 27px;
     width: 80px;
-    color: #666699;
+    color: #33334d;
     border-color: #eeeeee;
     background-color: #eeeeee;
     border-radius: 6px;
@@ -161,6 +161,7 @@ form.login label {
 form.login input {
     width: 200px;
     font-size: 24px;
+    color: #33334d;
 }
 
 form.login button {
@@ -168,7 +169,7 @@ form.login button {
     width: 100px;
     height: 50px;
     border-radius: 10px;
-    color: #666699;
+    color: #33334d;
     border-color: #eeeeee;
     background-color: #eeeeee;
     border-width: 5px;
