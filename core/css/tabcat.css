@@ -94,17 +94,14 @@ button:disabled {
     height: 50px;
 }
 
-#statusBar div.rightContainer {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-}
-
 #statusBar div.right {
     float: right;
     text-align: right;
     width: 250px;
+}
+
+#statusBar div.center {
+    width: 300px;
 }
 
 #statusBar p.email {
@@ -144,8 +141,8 @@ button:disabled {
 }
 
 #loginMain img.logo {
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     margin-top: 10px;
     margin-bottom: -5px;
 }

@@ -512,25 +512,29 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
 
 # update the encounter clock on the statusBar
 tabcat.ui.updateEncounterClock = ->
-  now = tabcat.clock.now()
+  # handle end of encounter gracefully
+  if tabcat.encounter.getEncounterId()?
+    now = tabcat.clock.now()
 
-  seconds = Math.floor(now / 1000) % 60
-  if seconds < 10
-    seconds = '0' + seconds
-  minutes = Math.floor(now / 60000) % 60
-  if minutes < 10
-    minutes = '0' + minutes
-  hours = Math.floor(now / 3600000)
-  time = hours + ':' + minutes + ':' + seconds
+    seconds = Math.floor(now / 1000) % 60
+    if seconds < 10
+      seconds = '0' + seconds
+    minutes = Math.floor(now / 60000) % 60
+    if minutes < 10
+      minutes = '0' + minutes
+    hours = Math.floor(now / 3600000)
+    time = hours + ':' + minutes + ':' + seconds
 
-  $('#statusBar p.clock').text(time)
-
+    $('#statusBar p.clock').text(time)
+  else
+    $('#statusBar p.clock').empty()
 
 # update the statusBar div, populating it if necessary
 tabcat.ui.updateStatusBar = ->
   statusBar = $('#statusBar')
 
-  if $('div.left', statusBar).length is 0
+  # populate with new HTML if we didn't already
+  if statusBar.find('div.left').length is 0
     statusBar.html(
       """
       <div class="left">
@@ -547,18 +551,21 @@ tabcat.ui.updateStatusBar = ->
       """
     )
 
-    $('button.login', statusBar).on('click', (event) ->
+    statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
         tabcat.ui.logout()
       else
         tabcat.ui.requestLogin()
-     )
+    )
+
+    statusBar.find('div.center').on('click', (event) ->
+      window.location = '../core/encounter.html')
 
   tabcat.couch.getUser().then((user) ->
-    emailP = $('p.email', statusBar)
-    button =  $('button.login', statusBar)
-    encounterP = $('p.encounter', statusBar)
+    emailP = statusBar.find('p.email')
+    button =  statusBar.find('button.login')
+    encounterP = statusBar.find('p.encounter')
 
     if user?
       emailP.text(user)
@@ -573,7 +580,9 @@ tabcat.ui.updateStatusBar = ->
     # don't show encounter info unless patient is logged in
     patientCode = tabcat.encounter.getPatientCode()
     if patientCode? and user?
-      encounterP.text('Encounter with Patient ' + patientCode)
+      encounterP.text(
+        'Encounter #' + tabcat.encounter.getEncounterNum() +
+        ' with Patient ' + patientCode)
 
       if not tabcat.ui.updateStatusBar.clockInterval?
         tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
@@ -582,7 +591,7 @@ tabcat.ui.updateStatusBar = ->
       encounterP.empty()
       if tabcat.ui.updateStatusBar.clockInterval?
         window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
-      $('p.clock', statusBar).empty()
+      statusBar.find('p.clock').empty()
   )
 
 
