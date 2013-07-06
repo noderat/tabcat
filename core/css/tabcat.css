@@ -87,6 +87,7 @@ button:disabled {
 
 #statusBar div.left {
     float: left;
+    width: 250px;
 }
 
 #statusBar img.banner {
@@ -103,7 +104,7 @@ button:disabled {
 #statusBar div.right {
     float: right;
     text-align: right;
-    width: 200px;
+    width: 250px;
 }
 
 #statusBar p.email {
@@ -194,10 +195,24 @@ form.big button[type=submit] {
     width: 100px;
 }
 
-#encounter, #noEncounter {
+#encounter {
     text-align: center;
+}
+
+#encounter button {
+    font-size: 24px;
+    border-radius: 10px;
+    border-width: 5px;
+}
+
+#encounter p {
+    margin: 10px;
 }
 
 #createEncounterForm label {
     width: 170px;
+}
+
+#noEncounter {
+    text-align: center;
 }

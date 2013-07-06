@@ -1,4 +1,5 @@
-updateEncounterDivs = ->
+updateStatusBarAndEncounterDivs = ->
+  tabcat.ui.updateStatusBar()
   if tabcat.encounter.getEncounterId()?
     $('#noEncounter').hide()
     $('#encounter').show()
@@ -23,13 +24,20 @@ submitCreateEncounterForm = (event) ->
   tabcat.encounter.create(patientCode: patientCode).then(
     -> window.location = 'tasks.html')
 
+clickSelectTasks = (event) ->
+  window.location = 'tasks.html'
+
+clickCloseEncounter = (event) ->
+  patientCode = tabcat.encounter.getPatientCode()
+  tabcat.encounter.close().always(->
+    $('#message').text('Closed encounter with Patient ' + patientCode)
+    updateStatusBarAndEncounterDivs())
 
 tabcat.ui.requireLogin()
 
 tabcat.ui.enableFastClick()
 
-$(tabcat.ui.updateStatusBar)
-$(updateEncounterDivs)
+$(updateStatusBarAndEncounterDivs)
 $(->
   $('#generatePatientCode')
     .on('click', clickGeneratePatientCode)
@@ -39,3 +47,5 @@ $(->
   $('#createEncounterForm').on('submit', submitCreateEncounterForm)
   $('#createEncounterForm button[type=submit]').removeAttr('disabled')
 )
+$(-> $('#selectTasks').on('click', clickSelectTasks))
+$(-> $('#closeEncounter').on('click', clickCloseEncounter))

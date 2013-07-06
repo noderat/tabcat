@@ -239,6 +239,8 @@ tabcat.encounter.close = ->
       encounterDoc.finishAt = tabcat.clock.now()
       putDoc(DB, encounterDoc)
     )
+  else
+    $.Deferred().reject()
 
 # clear local storage relating to the current encounter
 tabcat.encounter.clear = ->
