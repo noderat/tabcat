@@ -1,19 +1,19 @@
 submitLoginForm = (event) ->
   event.preventDefault()
   form = $(event.target)
-  errorElement = $('p.error', form)
+  errorP = form.find('p.error')
 
-  name = $('input[name=name]', form).val()
-  if name.indexOf('@') is -1
-    errorElement.text('Please enter a valid email')
+  email = form.find('input[name=email]').val()
+  if email.indexOf('@') is -1
+    errorP.text('Please enter a valid email')
     return
 
-  password = $('input[name=password]', form).val()
+  password = form.find('input[name=password]').val()
   if not password
-    errorElement.text('Please enter your password')
+    errorP.text('Please enter your password')
     return
 
-  tabcat.couch.login(form.serialize()).then(
+  tabcat.couch.login(name: email, password: password).then(
     (->
       # don't magically restart an encounter just because it's sitting
       # around in localStorage
@@ -27,9 +27,9 @@ submitLoginForm = (event) ->
       window.location = redirPath
     ),
     (xhr) -> switch xhr.status
-      when 401 then errorElement.text(
+      when 401 then errorP.text(
         'Incorrect email or password')
-      else errorElement.text(xhr.textStatus or 'Unknown error')
+      else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
 $(->
