@@ -615,7 +615,7 @@ tabcat.ui.requestLogin = (options) ->
   options ?= {}
 
   if not options.redirPath?
-    redirPath = window.location.pathname
+    redirPath = window.location.pathname + window.location.hash
 
   window.location = (
     '../core/login.html#' +

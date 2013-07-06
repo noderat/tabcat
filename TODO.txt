@@ -1,20 +1,20 @@
-Tasks:
-- line orientation
+UI:
+- "please return to examiner" page
+- tasks should return to _design/core/tasks.html when done
+- tasks.html should have option to end encounter
+- Back button
+- demo mode for tasks
+- black out status bar on iPad
+- Android fullscreen mode
+- fix max height of inner div in inches, when possible, using something like:
+  https://github.com/tombigel/detect-zoom
 
-Data storage:
-- store data after test completes
-- patient code and session mgmt
 
 Refactors:
 - break out UI code into TabCAT module
 - break out staircasing code into TabCAT module
 - break out utility code into TabCAT module
-- Use `cake` rather than `make`
 - automated testing
 - make tabcat.css
 
 UI cleanup:
-- black out status bar on iPad
-- Android fullscreen mode
-- fix max height of inner div in inches, when possible, using something like:
-  https://github.com/tombigel/detect-zoom
