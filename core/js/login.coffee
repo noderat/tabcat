@@ -19,13 +19,9 @@ submitLoginForm = (event) ->
       # around in localStorage
       tabcat.encounter.clear()
 
-      redirPath = null
-      try
-        redirPath = JSON.parse(decodeURIComponent(
-          window.location.hash.substring(1))).redirPath
-
+      redirPath = tabcat.ui.readHashJSON().redirPath
       # only allow redirects to a different path, not to other sites
-      if not redirPath? or redirPath.substring(0, 1) is not '/'
+      if not (redirPath? and redirPath.substring(0, 1) is '/')
         redirPath = 'encounter.html'
 
       window.location = redirPath
@@ -39,4 +35,7 @@ submitLoginForm = (event) ->
 $(->
   $('form.login').on('submit', submitLoginForm)
   $('form.login button').removeAttr('disabled')
+  message = tabcat.ui.readHashJSON().message
+  if message
+    $('form.login p.error').text(message)
 )

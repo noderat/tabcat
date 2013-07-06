@@ -96,7 +96,7 @@ instead when the browser is in portrait mode */
     width: 200px;
 }
 
-#statusBar p.username {
+#statusBar p.email {
     font-size: 14px;
     margin: 0px;
 }

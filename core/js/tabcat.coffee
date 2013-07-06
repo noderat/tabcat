@@ -129,13 +129,18 @@ tabcat.config.get = _.once(->
 
 tabcat.couch = {}
 
+# Promise:
 tabcat.couch.login = (nameAndPassword) ->
   $.post('/_session', nameAndPassword)
 
 tabcat.couch.logout = ->
   $.ajax(type: 'DELETE', url: '/_session')
 
-# upload a document to couch DB, and, if successful, update its _rev field
+# Promise: get the username of the current user, or null
+tabcat.couch.getUser = ->
+  $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name)
+
+# Promise: upload a document to couch DB, and update its _rev field
 tabcat.couch.putDoc = putDoc
 
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
@@ -202,8 +207,8 @@ tabcat.encounter.create = (options) ->
     patientDoc.encounterIds.push(encounterId)
     putDoc(DB, patientDoc)
 
-  $.getJSON('/_session').then((sessionDoc) ->
-    encounterDoc.user = sessionDoc.userCtx.name
+  tabcat.couch.getUser().then((user) ->
+    encounterDoc.user = user
     putDoc(DB, encounterDoc).then(->
       $.getJSON(DB_ROOT + patientDocId).then(
         updatePatientDoc,
@@ -302,12 +307,12 @@ tabcat.task.start = _.once((options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when($.getJSON('/_session'), $.getJSON('.'), tabcat.config.get()).then(
-    ([sessionDoc], [designDoc], [configDoc]) ->
+  $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
+    ([user], [designDoc], [configDoc]) ->
       fields =
         name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version
-        user: sessionDoc.userCtx.name
+        user: user
 
       if tabcat.config.canStoreLimitedPHI(configDoc)
         fields.limitedPHI =
@@ -526,7 +531,7 @@ tabcat.ui.updateStatusBar = ->
         <img class="banner" src="img/banner-white.png">
       </div>
       <div class="right">
-        <p class="username">&nbsp;</p>
+        <p class="email">&nbsp;</p>
         <button class="login" style="display:none"></span>
       </div>
       <div class="center">
@@ -539,40 +544,29 @@ tabcat.ui.updateStatusBar = ->
     $('button.login', statusBar).on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
-        if tabcat.encounter.getEncounterId()?
-          if window.confirm(
-            'Logging out will close the current encounter. Proceed?')
-            tabcat.encounter.close().always(
-              -> tabcat.couch.logout().then(tabcat.ui.updateStatusBar))
-        else
-          tabcat.couch.logout().then(tabcat.ui.updateStatusBar)
+        tabcat.ui.logout()
       else
-        # redirect to the login page
-        window.location = (
-          '../core/login.html#' +
-          encodeURIComponent(JSON.stringify(
-            'redirPath': window.location.pathname)))
-    )
+        tabcat.ui.requestLogin()
+     )
 
-  $.getJSON('/_session').then((sessionDoc) ->
-    username = sessionDoc.userCtx.name
-    usernameP = $('p.username', statusBar)
+  tabcat.couch.getUser().then((user) ->
+    emailP = $('p.email', statusBar)
     button =  $('button.login', statusBar)
     encounterP = $('p.encounter', statusBar)
 
-    if username
-      usernameP.text(username)
+    if user?
+      emailP.text(user)
       button.text('Log Out')
 
     else
-      usernameP.text('not logged in')
+      emailP.text('not logged in')
       button.text('Log In')
 
     button.show()
 
     # don't show encounter info unless patient is logged in
     patientCode = tabcat.encounter.getPatientCode()
-    if patientCode? and username?
+    if patientCode? and user?
       encounterP.text('Encounter with Patient ' + patientCode)
 
       if not tabcat.ui.updateStatusBar.clockInterval?
@@ -584,6 +578,58 @@ tabcat.ui.updateStatusBar = ->
         window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
       $('p.clock', statusBar).empty()
   )
+
+
+# log out, warning that this will close the current e
+tabcat.ui.logout = ->
+  logoutAndRedirect = ->
+    tabcat.couch.logout().then(->
+      window.location = (
+        '../core/login.html' + tabcat.ui.encodeHashJSON(message: 'Logged out'))
+    )
+
+  if tabcat.encounter.getEncounterId()?
+    if window.confirm('Logging out will close the current encounter. Proceed?')
+      tabcat.encounter.close().always(logoutAndRedirect)
+  else
+    logoutAndRedirect()
+
+
+# redirect to the login page
+tabcat.ui.requestLogin = (options) ->
+  options ?= {}
+
+  if not options.redirPath?
+    redirPath = window.location.pathname
+
+  window.location = (
+    '../core/login.html#' +
+    encodeURIComponent(JSON.stringify(options)))
+
+# force the user to log in to this page
+tabcat.ui.requireLogin = (options) ->
+  options ?= {}
+
+  tabcat.couch.getUser().then(
+    ((user) ->
+      if not user?
+        options.message ?= 'You need to log in to view that page'
+        tabcat.ui.requestLogin(options)),
+    ->
+      options.message ?= 'Authentication error, please try logging in again'
+      tabcat.ui.requestLogin(options)
+  )
+
+# read a json from the HTML fragment
+tabcat.ui.readHashJSON = ->
+  try
+    JSON.parse(decodeURIComponent(window.location.hash.substring(1)))
+  catch error
+    {}
+
+# encode json into HTML fragment. This includes the leading "#"
+tabcat.ui.encodeHashJSON = (json) ->
+  return '#' + encodeURIComponent(JSON.stringify(json))
 
 
 # Don't allow the document to scroll past its boundaries. This only works
