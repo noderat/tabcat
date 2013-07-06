@@ -11,7 +11,7 @@
   <body class="blueBackground">
     <div id="loginMain">
       <img class="logo" src="img/logo-white.png">
-      <form class="login" action="#" method="post">
+      <form id="loginForm" class="big" action="#" method="post">
 	<p>
 	  <label>Email</label>
 	  <input type="text" name="email" autofocus="autofocus">
@@ -21,9 +21,9 @@
 	  <input type="password" name="password">
 	</p>
 	<p>
-	  <button type="submit">Log In</button>
+	  <button type="submit" disabled>Log In</button>
 	</p>
-	<p class="error"></p>
+	<p id="message" class="warning"></p>
       </form>
     </div>
     <script src="../core/lib/js/jquery.js"></script>

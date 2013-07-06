@@ -67,6 +67,16 @@ instead when the browser is in portrait mode */
     }
 }
 
+button {
+    color: #33334d;
+    border-color: #ffffff;
+    background-color: #ffffff;
+}
+
+button:disabled {
+    color: #9999aa;
+}
+
 #statusBar {
     background-color: #666699;
     text-align: center;
@@ -118,9 +128,6 @@ instead when the browser is in portrait mode */
 #statusBar button.login {
     height: 27px;
     width: 80px;
-    color: #33334d;
-    border-color: #eeeeee;
-    background-color: #eeeeee;
     border-radius: 6px;
     font-size: 16px;
     margin-top: 5px;
@@ -142,36 +149,55 @@ instead when the browser is in portrait mode */
     margin-bottom: -5px;
 }
 
-form.login p {
+#loginMain label {
+    width: 130px;
+}
+
+form.big p {
     margin: 15px;
 }
 
-form.login p.error {
+form.big p.warning {
     font-size: 18px;
     color: #ffcc99;
 }
 
-form.login label {
+form.big label {
     display: inline-block;
-    width: 140px;
     text-align: left;
     font-size: 24px;
+    padding-right: 10px;
 }
 
-form.login input {
+form.big input {
     width: 200px;
     font-size: 24px;
     color: #33334d;
+    height: 34px;
 }
 
-form.login button {
+form.big button {
+    height: 34px;
+    font-size: 22px;
+    border-radius: 6px;
+}
+
+form.big button[type=submit] {
     font-size: 24px;
-    width: 100px;
     height: 50px;
     border-radius: 10px;
-    color: #33334d;
-    border-color: #eeeeee;
-    background-color: #eeeeee;
     border-width: 5px;
     margin: 0px;
+}
+
+#loginForm button {
+    width: 100px;
+}
+
+#encounter, #noEncounter {
+    text-align: center;
+}
+
+#createEncounterForm label {
+    width: 170px;
 }

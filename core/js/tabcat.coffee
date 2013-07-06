@@ -155,6 +155,10 @@ tabcat.couch.randomUUID = () ->
 
 tabcat.encounter = {}
 
+# randomly generate a 6-digit patient code
+tabcat.encounter.generatePatientCode = ->
+  String(Math.floor(tabcat.math.randomUniform(1000000, 2000000))).substring(1)
+
 # get the patient code
 tabcat.encounter.getPatientCode = ->
   localStorage.patientCode

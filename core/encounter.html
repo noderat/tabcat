@@ -10,6 +10,26 @@
   </head>
   <body>
     <div id="statusBar"></div>
+    <div id="encounter" style="display:none">
+      <button>Close Encounter</button>
+    </div>
+    <div id="noEncounter" style="display:none">
+      <form id="createEncounterForm" class="big" action="#" method="post">
+	<p>
+	  <label>Patient Code</label>
+	  <input type="text" name="patientCode" autofocus="autofocus">
+	  <button id="generatePatientCode" disabled>Generate</button>
+	</p>
+	<p class="warning">
+	  Patient code should be a randomly selected code specific
+	  to this study<br> Please do not use SSN or health insurance ID
+	</p>
+	<p>
+	  <button type="submit" disabled>Start New Encounter</button>
+	</p>
+	<p id="message" class="warning"></p>
+      </form>
+    </div>
     <script src="../core/lib/js/jquery.js"></script>
     <script src="../core/lib/js/underscore.js"></script>
     <script src="../core/lib/js/fastclick.js"></script>
