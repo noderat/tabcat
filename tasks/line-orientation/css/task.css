@@ -1,8 +1,8 @@
-div.task-description {
+#task div.task-description {
     text-align: center;
 }
 
-div.line-container {
+#task div.line-container {
     position: absolute;
     /* this is square because the container is always 4/3 */
     height: 72%;
@@ -13,13 +13,13 @@ div.line-container {
 }
 
 
-div.line {
+#task div.line {
     position: absolute;
     margin: 0;
     padding: 0;
 }
 
-div.reference-line {
+#task div.reference-line {
     top: 0%;
     bottom: 50%;
     height: 50%;
@@ -29,7 +29,7 @@ div.reference-line {
     background-color: #7799bb;
 }
 
-div.line-1 {
+#task div.line-1 {
     top: 75%;
     bottom: 100%;
     height: 25%;
@@ -40,7 +40,7 @@ div.line-1 {
 }
 
 /* target area is 6% larger. Width and height have same scale here. */
-div.line-1-target-area {
+#task div.line-1-target-area {
     top: 69%;
     bottom: 106%;
     height: 37%;
@@ -50,7 +50,7 @@ div.line-1-target-area {
     background-color: transparent;
 }
 
-div.line-2 {
+#task div.line-2 {
     top: 75%;
     bottom: 100%;
     height: 25%;
@@ -60,7 +60,7 @@ div.line-2 {
     background-color: #cc9933;
 }
 
-div.line-2-target-area {
+#task div.line-2-target-area {
     top: 69%;
     bottom: 106%;
     height: 37%;
@@ -70,52 +70,18 @@ div.line-2-target-area {
     background-color: transparent;
 }
 
-div.practice-caption {
+#task div.practice-caption {
     position: absolute;
     margin: 0;
     padding: 0;
     color: #cc9933;
-    font-size: 4em;
+    font-size: 8em;
     text-align: center;
     left: 0%;
     width: 100%;
     top: 3%;
 }
 
-div.practice-caption span.target {
+#task div.practice-caption span.target {
     color: #7799bb;
-}
-
-.centered {
-    position: absolute;
-    top: 40%;
-    height: 20%;
-    left: 0%;
-    width: 100%;
-    vertical-align: middle;
-}
-
-.message {
-    text-align: center;
-    font-size: 5em;
-}
-
-
-/* probably will want to move this to core/css/tabcat.css once we work out
-the use cases */
-.for-examiner {
-    text-align: center;
-    font-size: 3em;
-}
-
-.score-list {
-    text-align: center;
-    font-size: 3em;
-    color: #88bbbb;
-}
-
-.elapsed-time {
-    text-align: center;
-    font-size: 3em;
-    color: #cc9933;
 }

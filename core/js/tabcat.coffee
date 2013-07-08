@@ -574,6 +574,11 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
 # Make 1em equivalent to 1% of the given element's height This will be
 # preserved on window resize. This ensures we get similar text layouts on
 # different devices.
+#
+# Make sure your element is part of the DOM (that is, has a meaningful height)
+# before calling this function on it
+#
+# (TODO: check the above with element.closest('html'))
 tabcat.ui.linkEmToPercentOfHeight = (element) ->
   if not element?
     element = $('body')
