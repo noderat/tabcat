@@ -165,8 +165,8 @@ showNextTrial = (event) ->
     tabcat.task.finish()
   else
     nextTrialDiv = getNextTrialDiv()
-    $('#task-main').empty()
-    $('#task-main').append(nextTrialDiv)
+    $('#task').empty()
+    $('#task').append(nextTrialDiv)
     tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
     tabcat.ui.linkEmToPercentOfHeight(nextTrialDiv)
     $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
@@ -243,5 +243,7 @@ tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
 tabcat.ui.linkEmToPercentOfHeight()
+
+tabcat.ui.requireLandscapeMode($('#task'))
 
 tabcat.task.ready(showNextTrial)

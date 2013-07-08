@@ -53,17 +53,3 @@
     left: 0%;
     width: 100%;
 }
-
-#task .centered {
-    position: absolute;
-    top: 40%;
-    height: 20%;
-    left: 0%;
-    width: 100%;
-    vertical-align: middle;
-}
-
-#task .message {
-    text-align: center;
-    font-size: 10em;
-}

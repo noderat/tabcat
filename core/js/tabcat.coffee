@@ -725,6 +725,21 @@ tabcat.ui.turnOffBounce = ->
   $(document).bind('touchmove', (event) ->
     event.preventDefault())
 
+# Wrap the given element in a way that requires landscape mode
+#
+# Don't use this on the <body> element!
+tabcat.ui.requireLandscapeMode = (element) ->
+  element = $(element)
+
+  pleaseReturnDiv = $(
+    '<div class="fullscreen portrait-show blueBackground"></div>')
+  pleaseReturnDiv.html('<p>Please return to landscape mode</p>')
+
+  element.wrap('<div class="fullscreen requireLandscapeMode"></div>')
+  element.addClass('portrait-hide')
+  element.parent().append(pleaseReturnDiv)
+  tabcat.ui.linkEmToPercentOfHeight(pleaseReturnDiv)
+
 
 # add to the global namespace
 @tabcat = tabcat

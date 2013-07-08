@@ -16,7 +16,7 @@ body {
     bottom: 100%;
     left: 0%;
     width: 100%;
-    bottom: 100%;
+    right: 100%;
     margin: 0;
     padding: 0;
  }
@@ -50,8 +50,10 @@ body.fullscreen {
 /* used to show that a task is done */
 body.taskComplete p {
     font-size: 15em;
-    margin-top: 2em;  /* this is relative to its 15em size */
     text-align: center;
+    margin-top: 2em;  /* this is relative to its 15em size, so 30em */
+    margin-left: 0.25em;
+    margin-right: 0.25em;
 }
 
 /* portrait mode selectors. use this to hide the task and show a message
@@ -73,6 +75,17 @@ instead when the browser is in portrait mode */
 	visibility: hidden;
     }
 }
+
+div.requireLandscapeMode div.portrait-show p {
+    font-size: 10em;
+    /* use padding rather than margin at top, or we get a black bar at the top */
+    margin-top: 0;
+    padding-top: 3em;  /* this is relative to its 10em size, so 30em */
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    text-align: center;
+}
+
 
 button {
     color: #33334d;
@@ -178,7 +191,7 @@ p.message {
 }
 
 form.big p.message {
-    height: 32px;
+    min-height: 32px;
     margin-top: 15px;
     margin-bottom: 20px;
 }
@@ -247,7 +260,7 @@ form.big button[type=submit] {
 }
 
 #tasks p.message {
-    height: 32px;
+    min-height: 32px;
     margin: 10px;
 }
 
