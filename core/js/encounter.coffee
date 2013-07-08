@@ -7,11 +7,6 @@ updateStatusBarAndEncounterDivs = ->
     $('#encounter').hide()
     $('#noEncounter').show()
 
-clickGeneratePatientCode = (event) ->
-  event.preventDefault()
-  $('#createEncounterForm input[name=patientCode]').val(
-    tabcat.encounter.generatePatientCode())
-
 submitCreateEncounterForm = (event) ->
   event.preventDefault()
   form = $(event.target)
@@ -44,11 +39,6 @@ $(->
     $('p.message').text(message)
 )
 $(updateStatusBarAndEncounterDivs)
-$(->
-  $('#generatePatientCode')
-    .on('click', clickGeneratePatientCode)
-    .removeAttr('disabled')
-)
 $(->
   $('#createEncounterForm').on('submit', submitCreateEncounterForm)
   $('#createEncounterForm button[type=submit]').removeAttr('disabled')
