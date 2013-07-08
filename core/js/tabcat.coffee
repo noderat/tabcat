@@ -285,12 +285,26 @@ tabcat.task = {}
 # the CouchDB document for this task
 tabcat.task.doc = null
 
+# does the patient have the device?
+tabcat.task.patientHasDevice = ->
+  !!localStorage.patientHasDevice  # convert to boolean
+
+# set whether the patient has the device
+tabcat.task.setPatientHasDevice = (patientHasDevice) ->
+  if patientHasDevice
+    localStorage.patientHasDevice = '1'
+  else
+    localStorage.removeItem('patientHasDevice')
 
 # Promise: Initialize the task. This does lots of things:
 # - start automatically logging when the browser resizes
 # - check if it's okay to continue (correct PHI, browser capabilities, etc)
 # - create an initial task doc with start time, browser info, viewport,
 #   patient code, etc.
+#
+# options:
+# - examinerAdministered: should the examiner have the device before the task
+#   starts?
 tabcat.task.start = _.once((options) ->
   tabcat.task.doc =
       _id: tabcat.couch.randomUUID()
@@ -303,10 +317,12 @@ tabcat.task.start = _.once((options) ->
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
 
+  # TODO: provide a standard way to splash "return to examiner" screen for
+  # examiner-administered tasks (currently there are none)
   if not options?.examinerAdministered
-    localStorage.patientHasDevice = true
+    tabcat.task.setPatientHasDevice(true)
 
-  # create the task document on the server; we'll updated it when
+  # create the task document on the server; we'll update it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
   # a problem with the server, and also to detect tasks that were started
   # but not finished.
@@ -342,6 +358,9 @@ tabcat.task.ready = (handler) ->
   $.when($.ready.promise(), tabcat.task.start()).then(handler)
 
 
+# splash a "Done!" page for the user, upload task info to the DB, and return
+# to the task selector page
+#
 # upload task info to the DB, and (TODO) load the page for the next task
 tabcat.task.finish = (options) ->
   now = tabcat.clock.now()
