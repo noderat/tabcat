@@ -160,6 +160,11 @@ p.error {
     color: #ffcc99;
 }
 
+p.warning {
+    font-size: 16px;
+    color: #ffcc99;
+}
+
 p.message {
     font-size: 28px;
     color: #eeeecc;
