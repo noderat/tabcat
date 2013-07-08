@@ -331,7 +331,7 @@ tabcat.task.start = _.once((options) ->
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
   $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
-    ([user], [designDoc], [configDoc]) ->
+    (user, [designDoc], [configDoc]) ->
       fields =
         name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version

@@ -1,6 +1,4 @@
 UI:
-- tasks should track whether patient or examiner has tablet
-- tasks should return to _design/core/tasks.html when done
 - icon and favicon for TabCAT console
 - Back button
 - demo mode for tasks
@@ -12,7 +10,6 @@ UI:
 
 Refactors:
 - simplify config functions (always return valid config)
-- break out UI code into TabCAT module
 - break out staircasing code into TabCAT module
 - break out utility code into TabCAT module
 - automated testing
@@ -20,4 +17,3 @@ Refactors:
 
 UI cleanup:
 - make separate create_encounter.html page
-- create encounter page is too busy
