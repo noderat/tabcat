@@ -1,7 +1,6 @@
 UI:
-- "please return to examiner" page
+- tasks should track whether patient or examiner has tablet
 - tasks should return to _design/core/tasks.html when done
-- tasks.html should have option to end encounter
 - icon and favicon for TabCAT console
 - Back button
 - demo mode for tasks
@@ -12,6 +11,7 @@ UI:
 
 
 Refactors:
+- simplify config functions (always return valid config)
 - break out UI code into TabCAT module
 - break out staircasing code into TabCAT module
 - break out utility code into TabCAT module
