@@ -230,6 +230,9 @@ tabcat.encounter.create = (options) ->
 
 # finish the current patient encounter. this clears local storage even
 # if there is a problem updating the encounter doc
+#
+# you will usually use tabcat.ui.closeEncounter(), which also redirects
+# to the encounter page
 tabcat.encounter.close = ->
   encounterId = tabcat.encounter.getEncounterId()
   tabcat.encounter.clear()
@@ -430,6 +433,14 @@ tabcat.ui = {}
 # To turn off text selection, add the "unselectable" CSS class to body
 
 
+# close encounter, and redirect to the encounter page
+tabcat.ui.closeEncounter = (event) ->
+  patientCode = tabcat.encounter.getPatientCode()
+  message = 'Closed encounter with Patient ' + patientCode
+  tabcat.encounter.close().always(->
+    window.location = (
+      '../core/encounter.html' + tabcat.ui.encodeHashJSON(message: message))
+  )
 
 # Register a click immediately on tap/mouseup, rather than waiting for
 # a double-click (requires fastclick.js)

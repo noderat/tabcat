@@ -30,13 +30,19 @@ clickSelectTasks = (event) ->
 clickCloseEncounter = (event) ->
   patientCode = tabcat.encounter.getPatientCode()
   tabcat.encounter.close().always(->
-    $('#error').text('Closed encounter with Patient ' + patientCode)
+    $('#noEncounter p.message').text(
+      'Closed encounter with Patient ' + patientCode)
     updateStatusBarAndEncounterDivs())
 
 tabcat.ui.requireLogin()
 
 tabcat.ui.enableFastClick()
 
+$(->
+  message = tabcat.ui.readHashJSON().message
+  if message
+    $('p.message').text(message)
+)
 $(updateStatusBarAndEncounterDivs)
 $(->
   $('#generatePatientCode')

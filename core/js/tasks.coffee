@@ -38,7 +38,7 @@ designDocToTaskInfo = (doc) ->
 # for each task
 showTasks = ->
   getTaskInfo().then((info) ->
-    $('#tasks').empty()
+    $('#taskList').empty()
     for item in info
       do (item) ->  # create a new scope to create separate bind() functions
         div = $('<div></div>', class: 'task')
@@ -48,8 +48,10 @@ showTasks = ->
         span.text(item.description)
         div.append(span)
         div.bind('click', (event) -> window.location = item.url)
-        $('#tasks').append(div)
+        $('#taskList').append(div)
   )
+
+
 
 
 # INTIALIZATION
@@ -57,3 +59,7 @@ tabcat.ui.enableFastClick()
 
 $(tabcat.ui.updateStatusBar)
 $(showTasks)
+$(->
+  $('#closeEncounter').on('click', tabcat.ui.closeEncounter)
+  $('#closeEncounter').removeAttr('disabled')
+)

@@ -3,7 +3,6 @@
     "version": "0.0.1-dev",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
-		    "css/tasks.css",
 		    "encounter.html",
 		    "js/encounter.js",
 		    "js/login.js",

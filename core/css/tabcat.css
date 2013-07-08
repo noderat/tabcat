@@ -155,15 +155,18 @@ form.big p {
     margin: 15px;
 }
 
-form.big p.error {
+p.error {
     font-size: 18px;
     color: #ffcc99;
 }
 
-form.big p.message {
+p.message {
     font-size: 28px;
-    height: 32px;
     color: #eeeecc;
+}
+
+form.big p.message {
+    height: 32px;
     margin-top: 15px;
     margin-bottom: 20px;
 }
@@ -220,4 +223,46 @@ form.big button[type=submit] {
 
 #noEncounter {
     text-align: center;
+}
+
+#tasks div.task {
+    background-color: #eeeeee;
+    padding: 8px;
+    margin: 10px;
+    width: 600px;
+    text-align: left;
+    border-radius: 18px;
+}
+
+#tasks p.message {
+    height: 32px;
+    margin: 10px;
+}
+
+#tasks div.task:active {
+    background-color: #cccccc;
+}
+
+#tasks img.icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
+#tasks span.description {
+    color: #000000;
+    font-size: 36px;
+    margin-left: 24px;
+    vertical-align: middle;
+}
+
+#tasks button {
+    font-size: 24px;
+    border-radius: 10px;
+    border-width: 5px;
+}
+
+#tasks #taskList {
+    margin-top: 25px;
 }
