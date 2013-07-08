@@ -631,8 +631,10 @@ tabcat.ui.requireLogin = (options) ->
         options.message ?= 'You need to log in to view that page'
         tabcat.ui.requestLogin(options)),
     ->
-      options.message ?= 'Authentication error, please try logging in again'
-      tabcat.ui.requestLogin(options)
+      # don't redir when we're just viewing static pages
+      if window.location.protocol != 'file:'
+        options.message ?= 'Authentication error, please try logging in again'
+        tabcat.ui.requestLogin(options)
   )
 
 # read a json from the HTML fragment

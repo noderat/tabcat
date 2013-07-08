@@ -18,7 +18,7 @@ submitCreateEncounterForm = (event) ->
 
   patientCode = form.find('input[name=patientCode]').val()
   if not patientCode
-    $('#message').text('Please enter a patient code')
+    $('#error').text('Please enter a patient code')
     return
 
   tabcat.encounter.create(patientCode: patientCode).then(
@@ -30,7 +30,7 @@ clickSelectTasks = (event) ->
 clickCloseEncounter = (event) ->
   patientCode = tabcat.encounter.getPatientCode()
   tabcat.encounter.close().always(->
-    $('#message').text('Closed encounter with Patient ' + patientCode)
+    $('#error').text('Closed encounter with Patient ' + patientCode)
     updateStatusBarAndEncounterDivs())
 
 tabcat.ui.requireLogin()

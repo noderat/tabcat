@@ -141,10 +141,10 @@ button:disabled {
 }
 
 #loginMain img.logo {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     margin-top: 10px;
-    margin-bottom: -5px;
+    margin-bottom: -10px;
 }
 
 #loginMain label {
@@ -155,9 +155,17 @@ form.big p {
     margin: 15px;
 }
 
-form.big p.warning {
+form.big p.error {
     font-size: 18px;
     color: #ffcc99;
+}
+
+form.big p.message {
+    font-size: 28px;
+    height: 32px;
+    color: #eeeecc;
+    margin-top: 15px;
+    margin-bottom: 20px;
 }
 
 form.big label {

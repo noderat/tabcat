@@ -1,16 +1,16 @@
 submitLoginForm = (event) ->
   event.preventDefault()
   form = $(event.target)
-  messageP = form.find('#message')
+  errorP = form.find('#error')
 
   email = form.find('input[name=email]').val()
   if email.indexOf('@') is -1
-    messageP.text('Please enter a valid email')
+    errorP.text('Please enter a valid email')
     return
 
   password = form.find('input[name=password]').val()
   if not password
-    messageP.text('Please enter your password')
+    errorP.text('Please enter your password')
     return
 
   tabcat.couch.login(name: email, password: password).then(
@@ -27,15 +27,14 @@ submitLoginForm = (event) ->
       window.location = redirPath
     ),
     (xhr) -> switch xhr.status
-      when 401 then messageP.text(
+      when 401 then errorP.text(
         'Incorrect email or password')
-      else messageP.text(xhr.textStatus or 'Unknown error')
+      else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
 $(->
   $('#loginForm').on('submit', submitLoginForm)
   $('#loginForm button').removeAttr('disabled')
   message = tabcat.ui.readHashJSON().message
-  if message?
-    $('#message').text(message)
+  $('#message').text(message ? 'Please log in with your email and password')
 )
