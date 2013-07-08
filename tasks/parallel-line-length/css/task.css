@@ -1,8 +1,8 @@
-div.task-description {
+#task div.task-description {
     text-align: center;
 }
 
-div.line {
+#task div.line {
     position: absolute;
     margin: 0;
     padding: 0;
@@ -10,56 +10,51 @@ div.line {
     text-align: center;
     vertical-align: middle;
     color: #000000; /* for debug text */
-    font-size: 2em;
+    font-size: 4em;
 }
 
-div.layout-0 div.top-line {
+#task div.layout-0 div.top-line {
     top: 53%;
     height: 7%;
 }
 
-div.layout-0 div.bottom-line {
+#task div.layout-0 div.bottom-line {
     top: 71%;
     height: 7%;
 }
 
-div.layout-0 div.practice-caption {
+#task div.layout-0 div.practice-caption {
     top: 15%;
     height: 15%;
 }
 
-div.layout-1 div.top-line {
+#task div.layout-1 div.top-line {
     top: 19%;
     height: 7%;
 }
 
-div.layout-1 div.bottom-line {
+#task div.layout-1 div.bottom-line {
     top: 37%;
     height: 7%;
 }
 
-div.layout-1 div.practice-caption {
+#task div.layout-1 div.practice-caption {
     top: 60%;
     height: 15%;
 }
 
-
-
-
-
-
-div.practice-caption {
+#task div.practice-caption {
     position: absolute;
     margin: 0;
     padding: 0;
     color: #cc9933;
-    font-size: 5em;
+    font-size: 10em;
     text-align: center;
     left: 0%;
     width: 100%;
 }
 
-.centered {
+#task .centered {
     position: absolute;
     top: 40%;
     height: 20%;
@@ -68,27 +63,7 @@ div.practice-caption {
     vertical-align: middle;
 }
 
-.message {
+#task .message {
     text-align: center;
-    font-size: 5em;
-}
-
-
-/* probably will want to move this to core/css/tabcat.css once we work out
-the use cases */
-.for-examiner {
-    text-align: center;
-    font-size: 3em;
-}
-
-.score-list {
-    text-align: center;
-    font-size: 3em;
-    color: #88bbbb;
-}
-
-.elapsed-time {
-    text-align: center;
-    font-size: 3em;
-    color: #cc9933;
+    font-size: 10em;
 }
