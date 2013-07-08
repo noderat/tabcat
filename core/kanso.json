@@ -6,6 +6,7 @@
 		    "encounter.html",
 		    "js/encounter.js",
 		    "js/login.js",
+		    "js/return_to_examiner.js",
 		    "js/tabcat.js",
 		    "js/tasks.js",
 		    "img/banner.png",
@@ -14,6 +15,7 @@
 		    "img/logo-white.png",
 		    "login.html",
 		    "lib",
+		    "return_to_examiner.html",
 		    "tasks.html"],
     "dependencies": {
         "attachments": null

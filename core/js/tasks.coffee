@@ -17,6 +17,7 @@ getTaskInfo = ->
       _.compact(designDocToTaskInfo(doc) for doc in docs),
       (item) -> item.description))
 
+
 # convert a design doc to task info, or return undefined if it's not a
 # valid task
 designDocToTaskInfo = (doc) ->

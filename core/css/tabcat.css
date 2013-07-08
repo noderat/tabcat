@@ -271,3 +271,26 @@ form.big button[type=submit] {
 #tasks #taskList {
     margin-top: 25px;
 }
+
+#returnToExaminer div.caption {
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    top: 35%;
+    text-align: center;
+    font-size: 4em;
+}
+
+#returnToExaminer button {
+    position: absolute;
+    display: block;
+    width: 25%;
+    left: 75%;
+    height: 20%;
+    top: 80%;
+    border-radius: 0.25em;
+    border-width: 0.25em;
+    background-color: #666699;
+    color: #eeeeee;
+    border-color: #666699;
+}

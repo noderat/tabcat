@@ -436,7 +436,10 @@ tabcat.ui = {}
 # close encounter, and redirect to the encounter page
 tabcat.ui.closeEncounter = (event) ->
   patientCode = tabcat.encounter.getPatientCode()
-  message = 'Closed encounter with Patient ' + patientCode
+  if patientCode?
+    message = 'Closed encounter with Patient ' + patientCode
+  else
+    message = null
   tabcat.encounter.close().always(->
     window.location = (
       '../core/encounter.html' + tabcat.ui.encodeHashJSON(message: message))

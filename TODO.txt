@@ -2,6 +2,7 @@ UI:
 - "please return to examiner" page
 - tasks should return to _design/core/tasks.html when done
 - tasks.html should have option to end encounter
+- icon and favicon for TabCAT console
 - Back button
 - demo mode for tasks
 - black out status bar on iPad
@@ -18,3 +19,4 @@ Refactors:
 - make tabcat.css
 
 UI cleanup:
+- make separate create_encounter.html page
