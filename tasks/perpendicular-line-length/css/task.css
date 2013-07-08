@@ -1,15 +1,15 @@
-div.task-description {
+#task div.task-description {
     text-align: center;
 }
 
-div.line {
+#task div.line {
     position: absolute;
     margin: 0;
     padding: 0;
     background-color: #ffcc66;
 }
 
-div.practice-caption {
+#task div.practice-caption {
     position: absolute;
     padding: 0;
     margin-left: 0;
@@ -17,44 +17,10 @@ div.practice-caption {
     margin-top: 5%;
     margin-bottom: 5%;
     color: #cc9933;
-    font-size: 4em;
+    font-size: 8em;
     text-align: center;
     top: 0%;
     left: 0%;
     right: 100%;
     width: 100%;
-}
-
-.centered {
-    position: absolute;
-    top: 40%;
-    height: 20%;
-    left: 0%;
-    width: 100%;
-    vertical-align: middle;
-}
-
-.message {
-    text-align: center;
-    font-size: 5em;
-}
-
-
-/* probably will want to move this to core/css/tabcat.css once we work out
-the use cases */
-.for-examiner {
-    text-align: center;
-    font-size: 3em;
-}
-
-.score-list {
-    text-align: center;
-    font-size: 3em;
-    color: #9999cc;
-}
-
-.elapsed-time {
-    text-align: center;
-    font-size: 3em;
-    color: #ffcc99;
 }

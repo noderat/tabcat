@@ -242,8 +242,6 @@ tabcat.task.start()
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
-tabcat.ui.linkEmToPercentOfHeight()
-
 tabcat.ui.requireLandscapeMode($('#task'))
 
 tabcat.task.ready(showNextTrial)

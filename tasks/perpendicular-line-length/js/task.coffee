@@ -2,8 +2,6 @@ DEBUG_MODE = false
 
 # LOOK AND FEEL
 
-# css depends on 1em being this % of container height
-FONT_HEIGHT_PERCENT = 2
 # fit in a square, so all orientations work the same
 ASPECT_RATIO = 1/1
 
@@ -43,7 +41,7 @@ PRACTICE_CAPTION_MAX_STREAK = 2
 # task is done after this many reversals (change in direction of
 # intensity change). Bumping against the floor/ceiling also counts
 # as a reversal
-MAX_REVERSALS = 20
+MAX_REVERSALS = 10
 
 
 # VARIABLES
@@ -195,39 +193,14 @@ showNextTrial = (event) ->
     registerResult(event.data.isLonger)
 
   if taskIsDone()
-    finishTask()
+    tabcat.task.finish()
   else
     nextTrialDiv = getNextTrialDiv()
-    $('#task-main').empty()
-    $('#task-main').append(nextTrialDiv)
+    $('#task').empty()
+    $('#task').append(nextTrialDiv)
     tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
-    tabcat.ui.linkFontSizeToHeight(nextTrialDiv, FONT_HEIGHT_PERCENT)
+    tabcat.ui.linkEmToPercentOfHeight(nextTrialDiv)
     $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
-
-
-# show the "Done!" page, and enable its "show scoring" button
-finishTask = (event) ->
-  endTimestamp = $.now()
-
-  $('#scoring .score-list').text(intensitiesAtReversal.join(', '))
-  elapsedSecs = (endTimestamp - startTimestamp) / 1000
-  # we start timing after the first click, so leave out the first
-  # trial in timing info
-  $('#scoring .elapsed-time').text(
-    elapsedSecs.toFixed(1) + 's / ' + (numTrials - 1) + ' = ' +
-    (elapsedSecs / (numTrials - 1)).toFixed(1) + 's')
-
-  $('#task').hide()
-  $('#done').fadeIn({duration: FADE_DURATION})
-
-  $('#show-scoring').bind('click', showScoring)
-  $('#show-scoring').removeAttr('disabled')
-
-
-# show the scoring page
-showScoring = (event) ->
-  $('#done').hide()
-  $('#scoring').fadeIn({duration: FADE_DURATION})
 
 
 # create the next trial, and return the div containing it, but don't
@@ -289,9 +262,11 @@ percentBoxToCss = (box) ->
 
 # INITIALIZATION
 
+tabcat.task.start()
+
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
-tabcat.ui.linkFontSizeToHeight($(document.body), FONT_HEIGHT_PERCENT)
+tabcat.ui.requireLandscapeMode($('#task'))
 
 showNextTrial()
