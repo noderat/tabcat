@@ -11,6 +11,8 @@ localStorage = @localStorage
 DB = 'tabcat-data'
 DB_ROOT = '/' + DB + '/'
 
+MIN_WAIT_AFTER_TASK_DONE = 3000
+
 
 # UTILITIES
 
@@ -285,16 +287,16 @@ tabcat.task = {}
 # the CouchDB document for this task
 tabcat.task.doc = null
 
-# does the patient have the device?
-tabcat.task.patientHasDevice = ->
-  !!localStorage.patientHasDevice  # convert to boolean
+# does the patient have the device? Call with an argument (true or false) to
+# set whether the patient has device
+tabcat.task.patientHasDevice = (value) ->
+  if value?
+    if value
+      localStorage.patientHasDevice = '1'
+    else
+      localStorage.removeItem('patientHasDevice')
 
-# set whether the patient has the device
-tabcat.task.setPatientHasDevice = (patientHasDevice) ->
-  if patientHasDevice
-    localStorage.patientHasDevice = '1'
-  else
-    localStorage.removeItem('patientHasDevice')
+  return !!localStorage.patientHasDevice
 
 # Promise: Initialize the task. This does lots of things:
 # - start automatically logging when the browser resizes
@@ -320,7 +322,7 @@ tabcat.task.start = _.once((options) ->
   # TODO: provide a standard way to splash "return to examiner" screen for
   # examiner-administered tasks (currently there are none)
   if not options?.examinerAdministered
-    tabcat.task.setPatientHasDevice(true)
+    tabcat.task.patientHasDevice(true)
 
   # create the task document on the server; we'll update it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
@@ -358,18 +360,47 @@ tabcat.task.ready = (handler) ->
   $.when($.ready.promise(), tabcat.task.start()).then(handler)
 
 
-# splash a "Done!" page for the user, upload task info to the DB, and return
-# to the task selector page
+# splash a "Task complete!" page for the user, upload task info to the DB, and
+#  return to the task selector page.
 #
-# upload task info to the DB, and (TODO) load the page for the next task
+# Note that this will blow away everything in the <body> tag, so grab anything
+# you need before calling this method.
+#
+# options:
+# - minWait: minimum number of milliseconds to wait before redirecting to
+#   another page
 tabcat.task.finish = (options) ->
   now = tabcat.clock.now()
 
-  tabcat.task.start().then(->
+  options ?= {}
+  minWait = options.minWait ? 1000
+  fadeDuration = options.minWait ? 200
+
+  # start the timer
+  minWaitDeferred = $.Deferred()
+  window.setTimeout((-> minWaitDeferred.resolve()), minWait)
+
+  # splash up Task complete! screen
+  body = $('body')
+  body.empty()
+  body.hide()
+  tabcat.ui.linkEmToPercentOfHeight(body)
+  body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
+  body.html('<p>Task complete!</p>')
+  body.fadeIn(duration: fadeDuration)
+
+  uploadPromise = tabcat.task.start().then(->
     tabcat.task.doc.finishedAt = now
     if options?.interpretation
       tabcat.task.doc.interpretation = options.interpretation
     putDoc(DB, tabcat.task.doc)
+  )
+
+  $.when(uploadPromise, minWaitDeferred).then(->
+    if tabcat.task.patientHasDevice()
+      window.location = '../core/return_to_examiner.html'
+    else
+      window.location = '../core/tasks.html'
   )
 
 # get basic information about the browser. This should not change
@@ -527,9 +558,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
   $(window).resize(fixElement)
 
 
-# Make sure the font-size of the given element is always the given percent
-# of the element's height. This will be preserved on window resize. This
-# ensures we get similar text layouts on different devices.
+# Deprecated helper for tabcat.ui.linkEmToPercentOfHeight()
 tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   element = $(element)
 
@@ -541,6 +570,12 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
   fixElement(element)
 
   $(window).resize(fixElement)
+
+# Make 1em equivalent to 1% of the given element's height This will be
+# preserved on window resize. This ensures we get similar text layouts on
+# different devices.
+tabcat.ui.linkEmToPercentOfHeight = (element) ->
+  tabcat.ui.linkFontSizeToHeight(element, 1)
 
 
 # update the encounter clock on the statusBar

@@ -21,4 +21,3 @@ Refactors:
 UI cleanup:
 - make separate create_encounter.html page
 - create encounter page is too busy
-- generated patient codes should start with "TC"
