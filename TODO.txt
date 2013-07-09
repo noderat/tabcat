@@ -1,3 +1,7 @@
+Tasks:
+- need to log events for line-orientation
+- add interpretation (intensitiesAtReversal)
+
 UI:
 - icon and favicon for TabCAT console
 - Back button

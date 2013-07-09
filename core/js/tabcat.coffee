@@ -353,7 +353,7 @@ $(window).resize((event) ->
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
 tabcat.task.ready = (handler) ->
-  $.when($.ready.promise(), tabcat.task.start()).then(handler)
+  $.when($.ready.promise(), tabcat.task.start()).then(-> handler())
 
 
 # splash a "Task complete!" page for the user, upload task info to the DB, and

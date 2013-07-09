@@ -137,7 +137,7 @@ getNextOrientation = ->
 # event handler for clicks on lines. either fade in the next trial,
 # or call finishTask()
 showNextTrial = (event) ->
-  if event and event.data
+  if event?.data?
     registerResult(event.data.skew == 0)
 
   if taskIsDone()
@@ -219,4 +219,4 @@ tabcat.ui.turnOffBounce()
 
 tabcat.ui.requireLandscapeMode($('#task'))
 
-showNextTrial()
+tabcat.task.ready(showNextTrial)

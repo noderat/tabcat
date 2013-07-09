@@ -158,7 +158,7 @@ getNextTrial = ->
 # event handler for clicks on lines. either fade in the next trial,
 # or call finishTask()
 showNextTrial = (event) ->
-  if event and event.data
+  if event?.data?
     registerResult(event)
 
   if taskIsDone()
