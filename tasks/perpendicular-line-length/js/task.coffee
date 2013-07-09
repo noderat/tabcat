@@ -77,7 +77,11 @@ taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and intensitiesAtReversal
-registerResult = (correct) ->
+registerResult = (event) ->
+  correct = event.data.isLonger
+
+  state = getTaskState()
+
   if startTimestamp is null
     startTimestamp = $.now()
 
@@ -87,6 +91,10 @@ registerResult = (correct) ->
   intensity = tabcat.math.clamp(
     MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
   intensityChange = intensity - lastIntensity
+
+  interpretation =
+    correct: correct
+    intensityChange: change
 
   if inPracticeMode()
     if correct
@@ -103,6 +111,8 @@ registerResult = (correct) ->
     if wasReversal
       intensitiesAtReversal.push(lastIntensity)
     lastIntensityChange = intensityChange
+
+  tabcat.task.logEvent(state, event, interpretation)
 
   numTrials += 1
 
@@ -190,7 +200,7 @@ getNextTrial = ->
 # or call finishTask()
 showNextTrial = (event) ->
   if event and event.data
-    registerResult(event.data.isLonger)
+    registerResult(event)
 
   if taskIsDone()
     tabcat.task.finish()
@@ -222,6 +232,7 @@ getNextTrialDiv = ->
   containerDiv = $('<div></div>')
   $(containerDiv).hide()
   containerDiv.append(line1Div, line2Div)
+  containerDiv.bind('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -258,6 +269,24 @@ percentBoxToCss = (box) ->
     css[key] = value + '%'
 
   return css
+
+
+# summary of the current state of the task
+getTaskState = ->
+  lines: (getElementBounds(div) for div in $('div.line:visible'))
+  intensity: intensity
+  practiceCaption: shouldShowPracticeCaption()
+  practiceMode: inPracticeMode()
+  trial: numTrials
+
+
+getElementBounds = (element) ->
+  # some browsers include height and width, but it's redundant
+  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
+
+
+catchStrayClick = (event) ->
+  tabcat.task.logEvent(getTaskState(), event)
 
 
 # INITIALIZATION
