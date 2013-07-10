@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.2.0",
+    "version": "0.2.0-dev",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
 		    "encounter.html",
@@ -9,12 +9,14 @@
 		    "js/return_to_examiner.js",
 		    "js/tabcat.js",
 		    "js/tasks.js",
+		    "js/vendor/fastclick.js",
+		    "js/vendor/jquery.js",
+		    "js/vendor/underscore.js",
 		    "img/banner.png",
 		    "img/banner-white.png",
 		    "img/logo.png",
 		    "img/logo-white.png",
 		    "login.html",
-		    "lib",
 		    "return_to_examiner.html",
 		    "tasks.html"],
     "dependencies": {
