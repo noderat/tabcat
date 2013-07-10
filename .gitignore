@@ -3,5 +3,9 @@
 .#*
 /.kansorc
 .pushed
+
 /core/packages
 /tasks/*/packages
+
+/core/js/*.js
+/core/lib/*.js

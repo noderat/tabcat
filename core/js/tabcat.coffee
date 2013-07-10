@@ -311,7 +311,7 @@ tabcat.task.start = _.once((options) ->
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
       clockLastStarted: tabcat.clock.lastStarted()
-      encounter: tabcat.encounter.getEncounterId()
+      encounterId: tabcat.encounter.getEncounterId()
       eventLog: tabcat.task.eventLog
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()

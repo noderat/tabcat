@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.2.0-dev",
+    "version": "0.3.0-dev",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
 		    "encounter.html",
@@ -19,7 +19,12 @@
 		    "login.html",
 		    "return_to_examiner.html",
 		    "tasks.html"],
+    "modules": ["lib/app.js"],
+    "load": "lib/app",
     "dependencies": {
-        "attachments": null
+        "attachments": null,
+	"modules": null,
+	"properties": null,
+	"underscore": null
     }
 }
