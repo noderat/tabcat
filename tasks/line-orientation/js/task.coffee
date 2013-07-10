@@ -58,7 +58,7 @@ intensitiesAtReversal = []
 trialNum = 0
 
 # state of the current trial (set by getNextTrial())
-trialState = null
+currentStimuli = null
 
 
 # FUNCTIONS
@@ -123,14 +123,13 @@ getNextTrial = ->
 
   [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
-  trialState = {
+  currentStimuli =
     referenceLine:
       orientation: orientation
     line1:
       skew: line1Skew
     line2:
       skew: line2Skew
-  }
 
 
 # pick a new orientation that's not too close to the last one
@@ -191,6 +190,7 @@ getNextTrialDiv = ->
   containerDiv.append(referenceLineDiv,
                       line1Div, line1TargetAreaDiv,
                       line2Div, line2TargetAreaDiv)
+  containerDiv.bind('click', catchStrayClick)
 
   # put them in an offscreen div
   trialDiv = $('<div></div>')
@@ -224,16 +224,20 @@ rotationCss = (angle) ->
 
 # summary of the current state of the task
 getTaskState = ->
-  lines: trialState
   intensity: intensity
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
+  stimuli: currentStimuli
   trialNum: trialNum
+
+catchStrayClick = (event) ->
+  tabcat.task.logEvent(getTaskState(), event)
+
 
 
 # INITIALIZATION
 
-tabcat.task.start()
+tabcat.task.start(trackViewport: true)
 
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()

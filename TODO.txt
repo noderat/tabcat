@@ -1,6 +1,15 @@
+Bugs:
+
+
+Refactors/Fixes:
+- use on() rather than bind() in tasks, attach new div before binding events
+- simplify config functions (always return valid config)
+- break out staircasing code into TabCAT module
+- automated testing
+- make tabcat.css
+
 Tasks:
-- need to log events for line-orientation
-- add interpretation (intensitiesAtReversal)
+- add final interpretation to tasks (intensitiesAtReversal)
 
 UI:
 - icon and favicon for TabCAT console
@@ -12,12 +21,6 @@ UI:
   https://github.com/tombigel/detect-zoom
 
 
-Refactors:
-- simplify config functions (always return valid config)
-- break out staircasing code into TabCAT module
-- break out utility code into TabCAT module
-- automated testing
-- make tabcat.css
 
 UI cleanup:
 - make separate create_encounter.html page

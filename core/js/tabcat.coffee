@@ -303,6 +303,8 @@ tabcat.task.patientHasDevice = (value) ->
 # options:
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
+# - trackViewport: should we log changes to the viewport in the event log?
+#   (see tabcat.task.trackViewportInEventLog())
 tabcat.task.start = _.once((options) ->
   tabcat.task.doc =
       _id: tabcat.couch.randomUUID()
@@ -314,6 +316,9 @@ tabcat.task.start = _.once((options) ->
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
+
+  if options?.trackViewport
+    tabcat.task.trackViewportInEventLog()
 
   # TODO: provide a standard way to splash "return to examiner" screen for
   # examiner-administered tasks (currently there are none)
@@ -345,10 +350,28 @@ tabcat.task.start = _.once((options) ->
   )
 )
 
-# automatically log whenever the viewport changes size (in tablets,
-# this will be when the tablet is rotated)
-$(window).resize((event) ->
-  tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event))
+# Log an event whenever the viewport changes (scroll/resize). You can also
+# access this with the trackViewport option to tabcat.task.start()
+#
+# If there is a series of viewport changes without other events logged between
+# them, we only keep the most recent one, to avoid cluttering the event log.
+#
+# TODO: give a way to turn this on/off in the middle of a task
+tabcat.task.trackViewportInEventLog = _.once(->
+  isViewportLogItem = (item) ->
+    item? and not item.interpretation? and _.isEqual(
+      _.keys(item.state), ['viewport'])
+
+  handler = (event) ->
+    if (isViewportLogItem(_.last(tabcat.task.eventLog)))
+      tabcat.task.eventLog.pop()
+
+    tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event)
+
+  $(window).resize(handler)
+  $(window).scroll(handler)
+)
+
 
 # Use this instead of $(document).ready(), so that we can also wait for
 # tabcat.task.start() to complete
@@ -408,7 +431,10 @@ tabcat.task.getBrowserInfo = ->
   userAgent: navigator.userAgent
 
 
-# get information about the viewport
+# Get information about the viewport. If you want to track changes to the
+# viewport (scroll/resize) in tabcat.task.eventLog, it's recommended you
+# use tabcat.task.trackViewportInEventLog() rather than including viewport
+# info in other events you log.
 tabcat.task.getViewportInfo = ->
   $w = $(window)
   return {
@@ -419,29 +445,34 @@ tabcat.task.getViewportInfo = ->
   }
 
 
-# a place for the task to store things the user did, along with timing
+# A place for the task to store things the user did, along with timing
 # information and the state of the task. This is independent from
-# tabcat.task.start
+# tabcat.task.start.
 tabcat.task.eventLog = []
 
 
-# Store data in tabcat.task.eventLog about:
+
+# Stores an object in tabcat.task.eventLog with these fields:
+# - state: object representing the state of the world at the time the event
+#   happened. Common fields are:
+#   - intensity: intensity
+#   - practiceCaption: are we showing the practice mode caption
+#   - practiceMode: are we in practice mode?
+#   - stimuli: task-specific info about what's shown on the screen
+#   - trialNum: which trial we're on (0-indexed). includes practice trials
+# - event: a summary of the event (currently we keep type, pageX, and pageY).
+#   You can pass in a jQuery event, or just a string for event type.
+# - interpretation: the meaning of the event (i.e. was it the right answer?)
+#   Common fields are:
+#   - correct (boolean): did the patient select the correct answer
+#   - intensityChange: change in intensity (easiness) due to patient's choice
+# - now: if not set, the time of the event relative to start of encounter, or
+#   tabcat.clock.now() if "event" is undefined
 #
-# state: the state of the world (rectangle here, intensity is 30). An object
-#        in a format of your choice. (TODO: add some standard suggestions)
-# event: a jQuery event that fired, or a string
-# interpretation: what happened (e.g. did the user tap in the correct spot?)
-# now: when the event happened, relative to start of encounter
-# (i.e. tabcat.clock.now()). If not set, we try to infer this from
-# event.timeStamp
-#
-# Stores an object with the fields event, now, interpretation, state. "event"
-# is a summary of the event, "now" is the the time of the event relative to
-# start of encounter (or just tabcat.clock.now() if "event" is undefined),
-# and "state" and "interpretation" are stored as-is.
+# state, event, and interpretation are not included if null/undefined
 tabcat.task.logEvent = (state, event, interpretation, now) ->
   if not now?  # ...when?
-    if event?.timeStamp
+    if event?.timeStamp?
       now = event.timeStamp - tabcat.clock.offset()
     else
       now = tabcat.clock.now()
@@ -464,6 +495,9 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
 
 # UI
 
+# Functions which merely read from the UI to support tasks (especially event
+# logging) go in tabcat.task, not tabcat.ui
+
 tabcat.ui = {}
 
 # Several things need to be done to make a web page look like an app.
@@ -477,7 +511,6 @@ tabcat.ui = {}
 # maximum-scale=1.0, user-scalable=no">
 #
 # To turn off text selection, add the "unselectable" CSS class to body
-
 
 # close encounter, and redirect to the encounter page
 tabcat.ui.closeEncounter = (event) ->

@@ -218,10 +218,11 @@ getNextTrialDiv = ->
 
 # summary of the current state of the task
 getTaskState = ->
-  lines: (getElementBounds(div) for div in $('div.line:visible'))
   intensity: intensity
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
+  stimuli:
+    lines: (getElementBounds(div) for div in $('div.line:visible'))
   trialNum: trialNum
 
 
@@ -237,7 +238,7 @@ catchStrayClick = (event) ->
 
 # INITIALIZATION
 
-tabcat.task.start()
+tabcat.task.start(trackViewport: true)
 
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
