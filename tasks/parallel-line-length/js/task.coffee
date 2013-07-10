@@ -57,7 +57,7 @@ lastIntensityChange = 0
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
 # how many trials completed so far (including practice trials)
-numTrials = 0
+trialNum = 0
 
 
 # FUNCTIONS
@@ -110,7 +110,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  numTrials += 1
+  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -200,7 +200,7 @@ getNextTrialDiv = ->
   # put them in an offscreen div
   containerDiv = $(
     '<div></div>', {
-    'class': 'layout-' + numTrials % NUM_LAYOUTS})
+    'class': 'layout-' + trialNum % NUM_LAYOUTS})
   $(containerDiv).hide()
   containerDiv.append(topLineDiv, bottomLineDiv)
   containerDiv.bind('click', catchStrayClick)
@@ -222,7 +222,7 @@ getTaskState = ->
   intensity: intensity
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
-  trial: numTrials
+  trialNum: trialNum
 
 
 getElementBounds = (element) ->

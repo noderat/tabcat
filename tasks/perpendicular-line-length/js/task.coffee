@@ -61,7 +61,7 @@ lastIntensityChange = 0
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
 # how many trials completed so far (including practice trials)
-numTrials = 0
+trialNum = 0
 
 
 # FUNCTIONS
@@ -114,7 +114,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  numTrials += 1
+  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -129,7 +129,7 @@ getNextTrial = ->
 
   # Alternate between sideways and upright, but pick orientation
   # randomly within that.
-  angle = 90 * (numTrials % 2)
+  angle = 90 * (trialNum % 2)
   if tabcat.math.coinFlip()
     angle += 180
 
@@ -277,7 +277,7 @@ getTaskState = ->
   intensity: intensity
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
-  trial: numTrials
+  trialNum: trialNum
 
 
 getElementBounds = (element) ->

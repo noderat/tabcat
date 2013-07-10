@@ -5,10 +5,11 @@ DEBUG_MODE = false
 # pretend div containing the test is on an iPad
 ASPECT_RATIO = 4/3
 # max rotation of the reference line
-MAX_ROTATION = 50
+MAX_ROTATION = 60
 # minimum difference in orientation between trials
 MIN_ORIENTATION_DIFFERENCE = 20
-
+# min orientation in practice mode (to avoid the caption)
+MIN_PRACTICE_MODE_ORIENTATION = 25
 # how long a fade should take, in msec
 FADE_DURATION = FADE_DURATION
 
@@ -54,7 +55,10 @@ lastIntensityChange = 0
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
 # how many trials completed so far (including practice trials)
-numTrials = 0
+trialNum = 0
+
+# state of the current trial (set by getNextTrial())
+trialState = null
 
 
 # FUNCTIONS
@@ -72,7 +76,11 @@ taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and intensitiesAtReversal
-registerResult = (correct) ->
+registerResult = (event) ->
+  correct = (event.data.skew is 0)
+
+  state = getTaskState()
+
   if startTimestamp is null
     startTimestamp = $.now()
 
@@ -82,6 +90,10 @@ registerResult = (correct) ->
   intensity = tabcat.math.clamp(
     MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
   intensityChange = intensity - lastIntensity
+
+  interpretation =
+    correct: correct
+    intensityChange: intensityChange
 
   if inPracticeMode()
     if correct
@@ -98,7 +110,9 @@ registerResult = (correct) ->
       intensitiesAtReversal.push(lastIntensity)
     lastIntensityChange = intensityChange
 
-  numTrials += 1
+  tabcat.task.logEvent(state, event, interpretation)
+
+  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -109,7 +123,7 @@ getNextTrial = ->
 
   [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
-  return {
+  trialState = {
     referenceLine:
       orientation: orientation
     line1:
@@ -127,7 +141,7 @@ getNextOrientation = ->
       continue
 
     if shouldShowPracticeCaption() and (
-      Math.abs(orientation) < MIN_ORIENTATION_DIFFERENCE)
+      Math.abs(orientation) < MIN_PRACTICE_MODE_ORIENTATION)
       continue
 
     lastOrientation = orientation
@@ -138,7 +152,7 @@ getNextOrientation = ->
 # or call finishTask()
 showNextTrial = (event) ->
   if event?.data?
-    registerResult(event.data.skew == 0)
+    registerResult(event)
 
   if taskIsDone()
     tabcat.task.finish()
@@ -208,6 +222,13 @@ rotationCss = (angle) ->
     '-webkit-transform': value
   }
 
+# summary of the current state of the task
+getTaskState = ->
+  lines: trialState
+  intensity: intensity
+  practiceCaption: shouldShowPracticeCaption()
+  practiceMode: inPracticeMode()
+  trialNum: trialNum
 
 
 # INITIALIZATION
