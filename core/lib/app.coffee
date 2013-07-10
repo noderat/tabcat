@@ -1,4 +1,4 @@
-_ = require('underscore')
+_ = require('underscore')._
 
 encounterMap = (doc) ->
   if doc.type is 'encounter'
