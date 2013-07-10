@@ -35,7 +35,7 @@ PRACTICE_CAPTION_MAX_STREAK = 2
 # task is done after this many reversals (change in direction of
 # intensity change). Bumping against the floor/ceiling also counts
 # as a reversal
-MAX_REVERSALS = 10
+MAX_REVERSALS = 20
 
 
 # VARIABLES
