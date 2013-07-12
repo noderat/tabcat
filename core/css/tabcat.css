@@ -145,7 +145,6 @@ button:disabled {
 
 #statusBar button.login {
     height: 27px;
-    width: 80px;
     border-radius: 6px;
     font-size: 16px;
     margin-top: 5px;
@@ -222,10 +221,6 @@ form.big button[type=submit] {
     border-radius: 10px;
     border-width: 5px;
     margin: 0px;
-}
-
-#loginForm button {
-    width: 100px;
 }
 
 #encounter {
