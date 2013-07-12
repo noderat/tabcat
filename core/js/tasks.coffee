@@ -56,11 +56,14 @@ showTasks = ->
 
 
 # INTIALIZATION
+
+tabcat.ui.requireLoginAndEncounter()
+
 tabcat.ui.enableFastClick()
 
-$(tabcat.ui.updateStatusBar)
-$(showTasks)
 $(->
+  tabcat.ui.updateStatusBar()
+  showTasks()
   $('#closeEncounter').on('click', tabcat.ui.closeEncounter)
   $('#closeEncounter').removeAttr('disabled')
 )

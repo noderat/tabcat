@@ -16,8 +16,13 @@ submitCreateEncounterForm = (event) ->
     form.find('#error').text('Please enter a patient code')
     return
 
+  redirPath = tabcat.ui.readHashJSON().redirPath
+  # only allow redirects to a different path, not to other sites
+  if not (redirPath? and redirPath.substring(0, 1) is '/')
+    redirPath = 'tasks.html'
+
   tabcat.encounter.create(patientCode: patientCode).then(
-    -> window.location = 'tasks.html')
+    -> window.location = redirPath)
 
 clickSelectTasks = (event) ->
   window.location = 'tasks.html'

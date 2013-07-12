@@ -138,9 +138,10 @@ tabcat.couch.login = (nameAndPassword) ->
 tabcat.couch.logout = ->
   $.ajax(type: 'DELETE', url: '/_session')
 
-# Promise: get the username of the current user, or null
-tabcat.couch.getUser = ->
-  $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name)
+# Promise: get the username of the current user, or null. Will only do this
+# once for each page.
+tabcat.couch.getUser = _.once(->
+  $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name))
 
 # Promise: upload a document to couch DB, and update its _rev field
 tabcat.couch.putDoc = putDoc
@@ -161,7 +162,9 @@ tabcat.encounter = {}
 tabcat.encounter.getPatientCode = ->
   localStorage.patientCode
 
-# get the (random) ID of this encounter
+# get the (random) ID of this encounter.
+#
+# Use tabcat.encounter.getEncounterId()? to check if there is an encounter
 tabcat.encounter.getEncounterId = ->
   localStorage.encounterId
 
@@ -718,16 +721,14 @@ tabcat.ui.logout = ->
 tabcat.ui.requestLogin = (options) ->
   options ?= {}
 
-  if not options.redirPath?
-    redirPath = window.location.pathname + window.location.hash
+  options.redirPath ?= window.location.pathname + window.location.hash
 
-  window.location = (
-    '../core/login.html#' +
-    encodeURIComponent(JSON.stringify(options)))
+  window.location = '../core/login.html' + tabcat.ui.encodeHashJSON(options)
+
 
 # force the user to log in to this page
 tabcat.ui.requireLogin = (options) ->
-  options ?= {}
+  options = $.extend({}, options)
 
   tabcat.couch.getUser().then(
     ((user) ->
@@ -740,6 +741,19 @@ tabcat.ui.requireLogin = (options) ->
         options.message ?= 'Authentication error, please try logging in again'
         tabcat.ui.requestLogin(options)
   )
+
+# force the user to log in to view this page, and to create an encounter
+tabcat.ui.requireLoginAndEncounter = (options) ->
+  tabcat.ui.requireLogin(options)
+
+  options = $.extend({}, options)
+
+  if not tabcat.encounter.getEncounterId()?
+    options.message ?= 'You need to create an encounter to view that page'
+    options.redirPath ?= window.location.pathname + window.location.hash
+    window.location = (
+      '../core/encounter.html' + tabcat.ui.encodeHashJSON(options))
+
 
 # read a json from the HTML fragment
 tabcat.ui.readHashJSON = ->
