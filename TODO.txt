@@ -1,5 +1,4 @@
 Bugs/Issues:
-- "create encounter" button permanently grayed out on iOS Safari
 - tasks.html does not require an encounter or login
 
 
