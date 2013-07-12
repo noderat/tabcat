@@ -44,7 +44,5 @@ $(->
   $('#selectTasks').on('click', clickSelectTasks)
   $('#closeEncounter').on('click', clickCloseEncounter)
 
-  $('#error').text('#error')
-
   updateStatusBarAndEncounterDivs()
 )
