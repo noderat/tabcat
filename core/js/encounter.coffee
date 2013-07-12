@@ -13,7 +13,7 @@ submitCreateEncounterForm = (event) ->
 
   patientCode = form.find('input[name=patientCode]').val()
   if not patientCode
-    $('#error').text('Please enter a patient code')
+    form.find('#error').text('Please enter a patient code')
     return
 
   tabcat.encounter.create(patientCode: patientCode).then(
@@ -37,11 +37,14 @@ $(->
   message = tabcat.ui.readHashJSON().message
   if message
     $('p.message').text(message)
-)
-$(updateStatusBarAndEncounterDivs)
-$(->
+
   $('#createEncounterForm').on('submit', submitCreateEncounterForm)
   $('#createEncounterForm button[type=submit]').removeAttr('disabled')
+
+  $('#selectTasks').on('click', clickSelectTasks)
+  $('#closeEncounter').on('click', clickCloseEncounter)
+
+  $('#error').text('#error')
+
+  updateStatusBarAndEncounterDivs()
 )
-$(-> $('#selectTasks').on('click', clickSelectTasks))
-$(-> $('#closeEncounter').on('click', clickCloseEncounter))

@@ -233,10 +233,6 @@ form.big button[type=submit] {
     border-width: 5px;
 }
 
-#encounter p {
-    margin: 10px;
-}
-
 #createEncounterForm label {
     width: 170px;
 }
