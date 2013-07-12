@@ -1,5 +1,10 @@
-Bugs:
+Bugs/Issues:
+- "create encounter" button permanently grayed out on iOS Safari
+- tasks.html does not require an encounter or login
 
+
+Tasks:
+- add final interpretation to tasks (intensitiesAtReversal)
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
@@ -7,9 +12,6 @@ Refactors/Fixes:
 - break out staircasing code into TabCAT module
 - automated testing
 - make tabcat.css
-
-Tasks:
-- add final interpretation to tasks (intensitiesAtReversal)
 
 UI:
 - icon and favicon for TabCAT console
