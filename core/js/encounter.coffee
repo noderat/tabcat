@@ -1,6 +1,6 @@
 updateStatusBarAndEncounterDivs = ->
   tabcat.ui.updateStatusBar()
-  if tabcat.encounter.getEncounterId()?
+  if tabcat.encounter.isOpen()
     $('#noEncounter').hide()
     $('#encounter').show()
   else

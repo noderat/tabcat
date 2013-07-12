@@ -1,5 +1,5 @@
-Bugs/Issues:
-- Log Out does not work in standalone mode
+Issues:
+- "encounter" CouchDB view is empty
 
 Tasks:
 - add final interpretation to tasks (intensitiesAtReversal)
@@ -14,6 +14,10 @@ Refactors/Fixes:
 - break out staircasing code into TabCAT module
 - automated testing
 - make tabcat.css
+
+Issues to revisit:
+- Log Out does not work in standalone browsing mode
+
 
 UI:
 - demo mode for tasks

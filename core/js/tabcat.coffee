@@ -622,7 +622,7 @@ tabcat.ui.linkEmToPercentOfHeight = (element) ->
 # update the encounter clock on the statusBar
 tabcat.ui.updateEncounterClock = ->
   # handle end of encounter gracefully
-  if tabcat.encounter.getEncounterId()?
+  if tabcat.encounter.isOpen()
     now = tabcat.clock.now()
 
     seconds = Math.floor(now / 1000) % 60
@@ -707,12 +707,16 @@ tabcat.ui.updateStatusBar = ->
 # log out, warning that this will close the current e
 tabcat.ui.logout = ->
   logoutAndRedirect = ->
+    # delete the login cookie manually until I can get logout to work
+    # in Safari standalone mode
+    document.cookie = 'AuthSession=; expires=Thu, 01-Jan-70 00:00:01 GMT;'
+
     tabcat.couch.logout().then(->
       window.location = (
         '../core/login.html' + tabcat.ui.encodeHashJSON(message: 'Logged out'))
     )
 
-  if tabcat.encounter.getEncounterId()?
+  if tabcat.encounter.isOpen()
     if window.confirm('Logging out will close the current encounter. Proceed?')
       tabcat.encounter.close().always(logoutAndRedirect)
   else
@@ -750,7 +754,7 @@ tabcat.ui.requireLoginAndEncounter = (options) ->
 
   options = $.extend({}, options)
 
-  if not tabcat.encounter.getEncounterId()?
+  if not tabcat.encounter.isOpen()
     options.message ?= 'You need to create an encounter to view that page'
     options.redirPath ?= window.location.pathname + window.location.hash
     window.location = (
