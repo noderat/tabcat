@@ -11,3 +11,4 @@ curl -X PUT http://admin:admin@127.0.0.1:5984/_config/log/level -d '"error"'
 users DB needs not to be globally writeable
 
 config.couch_httpd_auth.timeout needs to be longer (e.g. 86400)
+config.couch_httpd_auth.allow_persistent_cookies should be true
