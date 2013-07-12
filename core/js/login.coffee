@@ -32,9 +32,20 @@ submitLoginForm = (event) ->
       else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
+
 $(->
-  $('#loginForm').on('submit', submitLoginForm)
-  $('#loginForm button').removeAttr('disabled')
-  message = tabcat.ui.readHashJSON().message
-  $('#message').text(message ? 'Please log in with your email and password')
+  tabcat.couch.getUser().then((user) ->
+    if user?
+      $('#message').text('Continuing your session...')
+      if tabcat.encounter.isOpen()
+        window.location = 'tasks.html'
+      else
+        window.location = 'encounter.html'
+    else
+      $('#loginForm').on('submit', submitLoginForm)
+      $('#loginForm button').removeAttr('disabled')
+      message = tabcat.ui.readHashJSON().message
+      $('#message').text(
+        message ? 'Please log in with your email and password')
+  )
 )

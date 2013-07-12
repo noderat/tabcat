@@ -163,10 +163,12 @@ tabcat.encounter.getPatientCode = ->
   localStorage.patientCode
 
 # get the (random) ID of this encounter.
-#
-# Use tabcat.encounter.getEncounterId()? to check if there is an encounter
 tabcat.encounter.getEncounterId = ->
   localStorage.encounterId
+
+# is there an open encounter?
+tabcat.encounter.isOpen = ->
+  tabcat.encounter.getEncounterId()?
 
 # get the encounter number. This should only be used in the UI, not
 # stored in the database. May be undefined.

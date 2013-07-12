@@ -1,9 +1,12 @@
 Bugs/Issues:
-- tasks.html does not require an encounter or login
-
 
 Tasks:
+- blue icon/favicon for TabCAT console
 - add final interpretation to tasks (intensitiesAtReversal)
+- tweak sort order on tasks.html
+- allow abort and restart
+- Back button in standalone mode
+- force patient codes to be uppercase (not case-sensitive)
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
@@ -13,8 +16,6 @@ Refactors/Fixes:
 - make tabcat.css
 
 UI:
-- icon and favicon for TabCAT console
-- Back button
 - demo mode for tasks
 - black out status bar on iPad
 - Android fullscreen mode
