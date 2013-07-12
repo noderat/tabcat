@@ -1,7 +1,7 @@
 Bugs/Issues:
+- Log Out does not work in standalone mode
 
 Tasks:
-- blue icon/favicon for TabCAT console
 - add final interpretation to tasks (intensitiesAtReversal)
 - tweak sort order on tasks.html
 - allow abort and restart
