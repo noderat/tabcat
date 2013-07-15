@@ -1,5 +1,3 @@
-DEBUG_MODE = false
-
 # LOOK AND FEEL
 
 # pretend div containing the test is on an iPad
@@ -42,12 +40,6 @@ MAX_REVERSALS = 20
 
 # VARIABLES
 
-# time of first user action (not when the page loads). Thus, time to
-# complete the initial (practice) trial isn't included.
-startTimestamp = null
-# time user completed final trial
-endTimestamp = null
-
 intensity = PRACTICE_START_INTENSITY
 # number of practice trials correct in a row
 practiceStreakLength = 0
@@ -74,12 +66,9 @@ taskIsDone = -> numReversals >= MAX_REVERSALS
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and numReversals
 registerResult = (event) ->
-  correct = event.data.isLonger
-
   state = getTaskState()
 
-  if startTimestamp is null
-    startTimestamp = $.now()
+  correct = event.data.isLonger
 
   change = if correct then -STEPS_DOWN else STEPS_UP
 
@@ -168,56 +157,43 @@ showNextTrial = (event) ->
         when e.interpretation?.reversal
     tabcat.task.finish(interpretation: interpretation)
   else
-    nextTrialDiv = getNextTrialDiv()
+    $nextTrialDiv = getNextTrialDiv()
     $('#task').empty()
-    $('#task').append(nextTrialDiv)
-    tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight(nextTrialDiv)
-    $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
+    $('#task').append($nextTrialDiv)
+    tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+    tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+    $nextTrialDiv.fadeIn({duration: FADE_DURATION})
 
 
-# create the next trial, and return the div containing it, but don't
-# show it or add it to the page (showNextTrial() does this)
+# create the next trial, and return the (jQuery-wrapped) div containing it, but
+# don't show it or add it to the page (showNextTrial() does this)
 getNextTrialDiv = ->
   # get line offsets and widths for next trial
   trial = getNextTrial()
 
   # construct divs for these lines
-  topLineDiv = $('<div></div>', {'class': 'line top-line'})
-  topLineDiv.css(trial.topLine.css)
-  topLineDiv.bind('click', trial.topLine, showNextTrial)
+  $topLineDiv = $('<div></div>', class: 'line top-line')
+  $topLineDiv.css(trial.topLine.css)
+  $topLineDiv.bind('click', trial.topLine, showNextTrial)
 
-  bottomLineDiv = $('<div></div>', {'class': 'line bottom-line'})
-  bottomLineDiv.css(trial.bottomLine.css)
-  bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
-
-  if (DEBUG_MODE)
-    shortLineDiv = (
-      if trial.topLine.isLonger then bottomLineDiv else topLineDiv)
-    shortLineDiv.text(trial.shortLineLength.toFixed(2) +
-      '% of screen width')
-
-    longLineDiv = (
-      if trial.topLine.isLonger then topLineDiv else bottomLineDiv)
-    longLineDiv.text(trial.intensity + '% longer than short line')
+  $bottomLineDiv = $('<div></div>', class: 'line bottom-line')
+  $bottomLineDiv.css(trial.bottomLine.css)
+  $bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
-  containerDiv = $(
-    '<div></div>', {
-    'class': 'layout-' + trialNum % NUM_LAYOUTS})
-  $(containerDiv).hide()
-  containerDiv.append(topLineDiv, bottomLineDiv)
-  containerDiv.bind('click', catchStrayClick)
+  $containerDiv = $('<div></div>', class: 'layout-' + trialNum % NUM_LAYOUTS)
+  $containerDiv.hide()
+  $containerDiv.append($topLineDiv, $bottomLineDiv)
+  $containerDiv.bind('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
-    practiceCaptionDiv = $('<div></div>',
-      {'class': 'practice-caption'})
-    practiceCaptionDiv.html('Tap the longer line<br>' +
+    $practiceCaptionDiv = $('<div></div>', class: 'practice-caption')
+    $practiceCaptionDiv.html('Tap the longer line<br>' +
       ' quickly and accurately.')
-    containerDiv.append(practiceCaptionDiv)
+    $containerDiv.append($practiceCaptionDiv)
 
-  return containerDiv
+  return $containerDiv
 
 
 # summary of the current state of the task
@@ -236,11 +212,11 @@ getTaskState = ->
 # describe what's on the screen. helper for getTaskState()
 getStimuli = ->
   stimuli =
-    lines: (getElementBounds(div) for div in $('div.line:visible'))
+    lines: (tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
 
-  practiceCaptionDiv = $('div.practice-caption:visible')
-  if practiceCaptionDiv.length
-    stimuli.practiceCaption = getElementBounds(practiceCaptionDiv[0])
+  $practiceCaption = $('div.practice-caption:visible')
+  if $practiceCaption.length > 0
+    stimuli.practiceCaption = tabcat.task.getElementBounds($practiceCaption[0])
 
   return stimuli
 

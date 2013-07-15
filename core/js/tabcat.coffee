@@ -444,20 +444,29 @@ tabcat.task.getBrowserInfo = ->
 # use tabcat.task.trackViewportInEventLog() rather than including viewport
 # info in other events you log.
 tabcat.task.getViewportInfo = ->
-  $w = $(window)
+  $window = $(window)
   return {
-    left: $w.scrollLeft()
-    top: $w.scrollTop()
-    width: $w.width()
-    height: $w.height()
+    left: $window.scrollLeft()
+    top: $window.scrollTop()
+    width: $window.width()
+    height: $window.height()
   }
+
+
+# get the bounding box for the given (non-jQuery-select-wrapped) DOM element,
+# with fields "top", "bottom", "left", and "right"
+#
+# we use getBoundingClientRect() rather than the jQuery alternative to get
+# floating-point values
+tabcat.task.getElementBounds = (element) ->
+  # some browsers include height and width, but it's redundant
+  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
 
 
 # A place for the task to store things the user did, along with timing
 # information and the state of the task. This is independent from
 # tabcat.task.start.
 tabcat.task.eventLog = []
-
 
 
 # Stores an object in tabcat.task.eventLog with these fields:
