@@ -50,8 +50,8 @@ practiceStreakLength = 0
 # used to track reversals. not maintained in practice mode
 lastIntensityChange = 0
 
-# intensity at each reversal. This is the data we care about.
-intensitiesAtReversal = []
+# number of reversals so far
+numReversals = 0
 # number of trials completed
 numTrials = 0
 
@@ -68,19 +68,14 @@ inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
-taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
-
 
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
-# and intensitiesAtReversal
+# and numReversals
 registerResult = (event) ->
-  correct = (event.data.skew is 0)
-
   state = getTaskState()
 
-  if startTimestamp is null
-    startTimestamp = $.now()
+  correct = (event.data.skew is 0)
 
   change = if correct then -STEPS_DOWN else STEPS_UP
 
@@ -102,10 +97,12 @@ registerResult = (event) ->
     else
       practiceStreakLength = 0
   else
-    wasReversal = (intensityChange * lastIntensityChange < 0 or
-                   intensityChange is 0)
-    if wasReversal
-      intensitiesAtReversal.push(lastIntensity)
+    interpretation.reversal = (
+      intensityChange * lastIntensityChange < 0 or
+      intensityChange is 0)  # i.e. we hit the floor/ceiling
+
+    if interpretation.reversal
+      numReversals += 1
     lastIntensityChange = intensityChange
 
   tabcat.task.logEvent(state, event, interpretation)
@@ -121,6 +118,8 @@ getNextTrial = ->
 
   [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
+  # return this and store in currentStimuli (it's hard to query the browser
+  # about rotations)
   currentStimuli =
     referenceLine:
       orientation: orientation
@@ -145,21 +144,24 @@ getNextOrientation = ->
     return orientation
 
 
-# event handler for clicks on lines. either fade in the next trial,
-# or call finishTask()
+# event handler for clicks on lines. either fade in the next trial or
+# call tabcat.task.finish()
 showNextTrial = (event) ->
   if event?.data?
     registerResult(event)
 
-  if taskIsDone()
-    tabcat.task.finish()
+  if numReversals >= MAX_REVERSALS
+    interpretation =
+      intensitiesAtReversal: e.state.intensity for e in tabcat.task.eventLog \
+        when e.interpretation?.reversal
+    tabcat.task.finish(interpretation: interpretation)
   else
-    nextTrialDiv = getNextTrialDiv()
+    $nextTrialDiv = getNextTrialDiv()
     $('#task').empty()
-    $('#task').append(nextTrialDiv)
-    tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight(nextTrialDiv)
-    $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
+    $('#task').append($nextTrialDiv)
+    tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+    tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+    $nextTrialDiv.fadeIn({duration: FADE_DURATION})
 
 # create the next trial, and return the div containing it, but don't
 # show it or add it to the page (showNextTrial() does this)
@@ -168,43 +170,43 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  referenceLineDiv = $('<div></div>', {class: 'line reference-line'})
+  $referenceLineDiv = $('<div></div>', class: 'line reference-line')
 
-  line1Div = $('<div></div>', {class: 'line line-1'})
-  line1Div.css(rotationCss(trial.line1.skew))
-  line1TargetAreaDiv = $('<div></div>', {class: 'line line-1-target-area'})
-  line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
-  line1TargetAreaDiv.bind('click', trial.line1, showNextTrial)
+  $line1Div = $('<div></div>', class: 'line line-1')
+  $line1Div.css(rotationCss(trial.line1.skew))
+  $line1TargetAreaDiv = $('<div></div>', class: 'line line-1-target-area')
+  $line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
+  $line1TargetAreaDiv.bind('click', trial.line1, showNextTrial)
 
-  line2Div = $('<div></div>', {class: 'line line-2'})
-  line2Div.css(rotationCss(trial.line2.skew))
-  line2TargetAreaDiv = $('<div></div>', {class: 'line line-2-target-area'})
-  line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
-  line2TargetAreaDiv.bind('click', trial.line2, showNextTrial)
+  $line2Div = $('<div></div>', class: 'line line-2')
+  $line2Div.css(rotationCss(trial.line2.skew))
+  $line2TargetAreaDiv = $('<div></div>', class: 'line line-2-target-area')
+  $line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
+  $line2TargetAreaDiv.bind('click', trial.line2, showNextTrial)
 
   # put them in a container, and rotate it
-  containerDiv = $('<div></div>', {class: 'line-container'})
-  containerDiv.css(rotationCss(trial.referenceLine.orientation))
-  containerDiv.append(referenceLineDiv,
-                      line1Div, line1TargetAreaDiv,
-                      line2Div, line2TargetAreaDiv)
-  containerDiv.bind('click', catchStrayClick)
+  $containerDiv = $('<div></div>', class: 'line-container')
+  $containerDiv.css(rotationCss(trial.referenceLine.orientation))
+  $containerDiv.append(
+    $referenceLineDiv,
+    $line1Div, $line1TargetAreaDiv,
+    $line2Div, $line2TargetAreaDiv)
+  $containerDiv.bind('click', catchStrayClick)
 
   # put them in an offscreen div
-  trialDiv = $('<div></div>')
-  $(trialDiv).hide()
+  $trialDiv = $('<div></div>')
+  $trialDiv.hide()
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
-    practiceCaptionDiv = $('<div></div>',
-      {'class': 'practice-caption'})
-    practiceCaptionDiv.html(
+    $practiceCaptionDiv = $('<div></div>', class: 'practice-caption')
+    $practiceCaptionDiv.html(
       'Which is parallel to the <span class="target">blue</span> line?')
-    trialDiv.append(practiceCaptionDiv)
+    $trialDiv.append($practiceCaptionDiv)
 
-  trialDiv.append(containerDiv)
+  $trialDiv.append($containerDiv)
 
-  return trialDiv
+  return $trialDiv
 
 
 rotationCss = (angle) ->
@@ -222,11 +224,29 @@ rotationCss = (angle) ->
 
 # summary of the current state of the task
 getTaskState = ->
-  intensity: intensity
-  practiceCaption: shouldShowPracticeCaption()
-  practiceMode: inPracticeMode()
-  stimuli: currentStimuli
-  trialNum: numTrials + 1
+  state =
+    intensity: intensity
+    stimuli: getStimuli()
+    trialNum: numTrials + 1
+
+  if inPracticeMode()
+    state.practiceMode = true
+
+  return state
+
+
+# describe what's on the screen. helper for getTaskState()
+getStimuli = ->
+  stimuli = currentStimuli
+
+  $practiceCaption = $('div.practice-caption:visible')
+  if $practiceCaption.length > 0
+    stimuli = $.extend(
+      {}, stimuli,
+      practiceCaption: tabcat.task.getElementBounds($practiceCaption[0]))
+
+  return stimuli
+
 
 catchStrayClick = (event) ->
   tabcat.task.logEvent(getTaskState(), event)

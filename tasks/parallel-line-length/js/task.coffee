@@ -59,8 +59,6 @@ inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
-taskIsDone = -> numReversals >= MAX_REVERSALS
-
 
 # call this when the user taps on a line.
 #
@@ -146,8 +144,8 @@ getNextTrial = ->
   }
 
 
-# event handler for clicks on lines. either fade in the next trial,
-# or call finishTask()
+# event handler for clicks on lines. either fade in the next trial or
+# call tabcat.task.finish()
 showNextTrial = (event) ->
   if event?.data?
     registerResult(event)
