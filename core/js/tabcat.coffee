@@ -408,13 +408,13 @@ tabcat.task.finish = (options) ->
   window.setTimeout((-> minWaitDeferred.resolve()), minWait)
 
   # splash up Task complete! screen
-  body = $('body')
-  body.empty()
-  body.hide()
-  tabcat.ui.linkEmToPercentOfHeight(body)
-  body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
-  body.html('<p>Task complete!</p>')
-  body.fadeIn(duration: fadeDuration)
+  $body = $('body')
+  $body.empty()
+  $body.hide()
+  tabcat.ui.linkEmToPercentOfHeight($body)
+  $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
+  $body.html('<p>Task complete!</p>')
+  $body.fadeIn(duration: fadeDuration)
 
   uploadPromise = tabcat.task.start().then(->
     tabcat.task.doc.finishedAt = now
@@ -551,8 +551,8 @@ tabcat.ui.enableFastClick = ->
   $(-> FastClick.attach(document.body))
 
 
-tabcat.ui.fixAspectRatio = (element, ratio) ->
-  # Ensure that *element* has the given aspect ratio (width / height),
+tabcat.ui.fixAspectRatio = ($element, ratio) ->
+  # Ensure that $element has the given aspect ratio (width / height),
   # and make it as large as possible within the bounds of its parent
   # element. This property will be preserved on window resize.
   #
@@ -568,19 +568,19 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
   # on different devices, assuming screen is large enough. Use
   # https://github.com/tombigel/detect-zoom or something similar to determine
   # real pixel size (devices generally use a fake dpi by convention).
-  element = $(element)
+  $element = $($element)
 
   fixElement = (event) ->
-    parent = $(element.parent())
-    parentWidth = parent.width()
-    parentHeight = parent.height()
+    $parent = $($element.parent())
+    parentWidth = $parent.width()
+    parentHeight = $parent.height()
     parentRatio = parentWidth / parentHeight
 
     if parentRatio > ratio
       # parent is too wide, need gap on left and right
       gap = 100 * (parentRatio - ratio) / parentRatio / 2
 
-      element.css(
+      $element.css(
         position: 'absolute'
         left: gap + '%'
         right: 100 - gap + '%'
@@ -593,7 +593,7 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
       # parent is too narrow, need gap on top and bottom
       gap = (100 * (1 / parentRatio - 1 / ratio) * parentRatio / 2)
 
-      element.css(
+      $element.css(
         position: 'absolute'
         left: '0%'
         right: '100%'
@@ -603,23 +603,24 @@ tabcat.ui.fixAspectRatio = (element, ratio) ->
         height: 100 - 2 * gap + '%'
       )
 
-  fixElement(element)
+  fixElement($element)
 
   $(window).resize(fixElement)
 
 
 # Deprecated helper for tabcat.ui.linkEmToPercentOfHeight()
-tabcat.ui.linkFontSizeToHeight = (element, percent) ->
-  element = $(element)
+tabcat.ui.linkFontSizeToHeight = ($element, percent) ->
+  $element = $($element)
 
   fixElement = (event) ->
     # for font-size, "%" means % of default font size, not % of height.
-    sizeInPx = element.height() * percent / 100
-    element.css('font-size': sizeInPx + 'px')
+    sizeInPx = $element.height() * percent / 100
+    $element.css('font-size': sizeInPx + 'px')
 
-  fixElement(element)
+  fixElement($element)
 
   $(window).resize(fixElement)
+
 
 # Make 1em equivalent to 1% of the given element's height This will be
 # preserved on window resize. This ensures we get similar text layouts on
@@ -629,10 +630,20 @@ tabcat.ui.linkFontSizeToHeight = (element, percent) ->
 # before calling this function on it
 #
 # (TODO: check the above with element.closest('html'))
-tabcat.ui.linkEmToPercentOfHeight = (element) ->
-  if not element?
-    element = $('body')
-  tabcat.ui.linkFontSizeToHeight(element, 1)
+tabcat.ui.linkEmToPercentOfHeight = ($element) ->
+  if not $element?
+    $element = $('body')
+  else
+    $element = $($element)
+
+  fixElement = (event) ->
+    # for font-size, "%" means % of default font size, not % of height.
+    sizeInPx = $element.height() / 100
+    $element.css('font-size': sizeInPx + 'px')
+
+  fixElement($element)
+
+  $(window).resize(fixElement)
 
 
 # update the encounter clock on the statusBar
@@ -654,13 +665,14 @@ tabcat.ui.updateEncounterClock = ->
   else
     $('#statusBar p.clock').empty()
 
+
 # update the statusBar div, populating it if necessary
 tabcat.ui.updateStatusBar = ->
-  statusBar = $('#statusBar')
+  $statusBar = $('#statusBar')
 
   # populate with new HTML if we didn't already
-  if statusBar.find('div.left').length is 0
-    statusBar.html(
+  if $statusBar.find('div.left').length is 0
+    $statusBar.html(
       """
       <div class="left">
         <img class="banner" src="img/banner-white.png">
@@ -676,7 +688,7 @@ tabcat.ui.updateStatusBar = ->
       """
     )
 
-    statusBar.find('button.login').on('click', (event) ->
+    $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
         tabcat.ui.logout()
@@ -684,13 +696,13 @@ tabcat.ui.updateStatusBar = ->
         tabcat.ui.requestLogin()
     )
 
-    statusBar.find('div.center').on('click', (event) ->
+    $statusBar.find('div.center').on('click', (event) ->
       window.location = '../core/encounter.html')
 
   tabcat.couch.getUser().then((user) ->
-    emailP = statusBar.find('p.email')
-    button =  statusBar.find('button.login')
-    encounterP = statusBar.find('p.encounter')
+    emailP = $statusBar.find('p.email')
+    button =  $statusBar.find('button.login')
+    encounterP = $statusBar.find('p.encounter')
 
     if user?
       emailP.text(user)
@@ -716,7 +728,7 @@ tabcat.ui.updateStatusBar = ->
       encounterP.empty()
       if tabcat.ui.updateStatusBar.clockInterval?
         window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
-      statusBar.find('p.clock').empty()
+      $statusBar.find('p.clock').empty()
   )
 
 
@@ -798,17 +810,17 @@ tabcat.ui.turnOffBounce = ->
 # Wrap the given element in a way that requires landscape mode
 #
 # Don't use this on the <body> element!
-tabcat.ui.requireLandscapeMode = (element) ->
-  element = $(element)
+tabcat.ui.requireLandscapeMode = ($element) ->
+  $element = $($element)
 
-  pleaseReturnDiv = $(
+  $pleaseReturnDiv = $(
     '<div class="fullscreen portrait-show blueBackground"></div>')
-  pleaseReturnDiv.html('<p>Please return to landscape mode</p>')
+  $pleaseReturnDiv.html('<p>Please return to landscape mode</p>')
 
-  element.wrap('<div class="fullscreen requireLandscapeMode"></div>')
-  element.addClass('portrait-hide')
-  element.parent().append(pleaseReturnDiv)
-  tabcat.ui.linkEmToPercentOfHeight(pleaseReturnDiv)
+  $element.wrap('<div class="fullscreen requireLandscapeMode"></div>')
+  $element.addClass('portrait-hide')
+  $element.parent().append($pleaseReturnDiv)
+  tabcat.ui.linkEmToPercentOfHeight($pleaseReturnDiv)
 
 
 # add to the global namespace
