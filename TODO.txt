@@ -1,12 +1,12 @@
 Tasks:
-- add final interpretation to tasks (intensitiesAtReversal)
+- check off tasks that are already completed
 
 Issues:
 - "encounter" CouchDB view is empty
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
-- use $ to identify jQuery objects
+- use hyphens, not undescores in page names (e.g. return-to-examiner.html)
 - always return a valid config
 - break out staircasing code into TabCAT module
 - don't pass messages around via URL
