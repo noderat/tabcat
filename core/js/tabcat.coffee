@@ -198,6 +198,7 @@ tabcat.encounter.create = (options) ->
 
   encounterDoc =
     _id: encounterId
+    type: 'encounter'
     patientCode: patientCode
     year: date.getFullYear()
 

@@ -1,9 +1,6 @@
 Tasks:
 - check off tasks that are already completed
 
-Issues:
-- "encounter" CouchDB view is empty
-
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
 - use hyphens, not undescores in page names (e.g. return-to-examiner.html)

@@ -1,5 +1,6 @@
 encounterMap = (doc) ->
   _ = require('views/lib/underscore')._
+
   if doc.type is 'encounter'
     emit([doc._id], _.pick(doc, '_id', 'type', 'patientCode'))
   else if doc.type is 'task'
@@ -7,6 +8,7 @@ encounterMap = (doc) ->
       emit(
         [doc.encounterId, doc.startedAt],
         _.pick(doc, '_id', 'type', 'name', 'finishedAt'))
+
 
 exports.views =
   encounter:
