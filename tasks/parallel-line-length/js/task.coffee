@@ -54,8 +54,8 @@ practiceStreakLength = 0
 # used to track reversals. not maintained in practice mode
 lastIntensityChange = 0
 
-# intensity at each reversal. This is the data we care about.
-intensitiesAtReversal = []
+# number of reversals so far
+numReversals = 0
 # how many trials completed so far (including practice trials)
 trialNum = 0
 
@@ -67,12 +67,12 @@ inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
-taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
+taskIsDone = -> numReversals >= MAX_REVERSALS
 
 
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
-# and intensitiesAtReversal
+# and numReversals
 registerResult = (event) ->
   correct = event.data.isLonger
 
@@ -101,11 +101,12 @@ registerResult = (event) ->
     else
       practiceStreakLength = 0
   else
-    wasReversal = (intensityChange * lastIntensityChange < 0 or
-                   intensityChange is 0)
-    interpretation.reversal = wasReversal
-    if wasReversal
-      intensitiesAtReversal.push(lastIntensity)
+    interpretation.reversal = (
+      intensityChange * lastIntensityChange < 0 or
+      intensityChange is 0)  # i.e. we hit the floor/ceiling
+
+    if interpretation.reversal
+      numReversals += 1
     lastIntensityChange = intensityChange
 
   tabcat.task.logEvent(state, event, interpretation)
@@ -161,8 +162,11 @@ showNextTrial = (event) ->
   if event?.data?
     registerResult(event)
 
-  if taskIsDone()
-    tabcat.task.finish()
+  if numReversals >= MAX_REVERSALS
+    interpretation =
+      intensitiesAtReversal: e.state.intensity for e in tabcat.task.eventLog \
+        when e.interpretation?.reversal
+    tabcat.task.finish(interpretation: interpretation)
   else
     nextTrialDiv = getNextTrialDiv()
     $('#task').empty()
