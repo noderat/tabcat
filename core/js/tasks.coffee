@@ -15,7 +15,9 @@ getTaskInfo = ->
   getAllDesignDocs().then((docs) ->
     _.sortBy(
       _.compact(designDocToTaskInfo(doc) for doc in docs),
-      (item) -> item.description))
+      # temporary hack: put Line Orientation task last
+      #(item) -> item.description))
+      (item) -> [item.description[0] is "L", item.description]))
 
 
 # convert a design doc to task info, or return undefined if it's not a
