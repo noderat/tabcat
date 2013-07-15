@@ -222,14 +222,34 @@ getNextTrialDiv = ->
 
 # summary of the current state of the task
 getTaskState = ->
-  intensity: intensity
-  practiceCaption: shouldShowPracticeCaption()
-  practiceMode: inPracticeMode()
-  stimuli:
+  state =
+    intensity: intensity
+    stimuli: getStimuli()
+    trialNum: trialNum
+
+  if inPracticeMode()
+    state.practiceMode = true
+
+  return state
+
+
+# describe what's on the screen. helper for getTaskState()
+getStimuli = ->
+  stimuli =
     lines: (getElementBounds(div) for div in $('div.line:visible'))
-  trialNum: trialNum
+
+  practiceCaptionDiv = $('div.practice-caption:visible')
+  if practiceCaptionDiv.length
+    stimuli.practiceCaption = getElementBounds(practiceCaptionDiv[0])
+
+  return stimuli
 
 
+# get the bounding box for the given (non-jQuery-select-wrapped) DOM element,
+# with fields "top", "bottom", "left", and "right"
+#
+# we use getBoundingClientRect() rather than the jQuery alternative to get
+# floating-point values
 getElementBounds = (element) ->
   # some browsers include height and width, but it's redundant
   _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')

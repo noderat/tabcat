@@ -464,9 +464,9 @@ tabcat.task.eventLog = []
 # - state: object representing the state of the world at the time the event
 #   happened. Common fields are:
 #   - intensity: intensity
-#   - practiceCaption: are we showing the practice mode caption
-#   - practiceMode: are we in practice mode?
-#   - stimuli: task-specific info about what's shown on the screen
+#   - practiceMode: are we in practice mode? (don't set at all if false)
+#   - stimuli: task-specific info about what's actually shown on the screen.
+#     Some stimuli fields so far: "lines", "practiceCaption"
 #   - trialNum: which trial we're on (0-indexed). includes practice trials
 # - event: a summary of the event (currently we keep type, pageX, and pageY).
 #   You can pass in a jQuery event, or just a string for event type.
