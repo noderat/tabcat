@@ -1,5 +1,3 @@
-DEBUG_MODE = false
-
 # LOOK AND FEEL
 
 # pretend div containing the test is on an iPad
@@ -54,8 +52,8 @@ lastIntensityChange = 0
 
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
-# how many trials completed so far (including practice trials)
-trialNum = 0
+# which trial we're on (1-indexed, includes practice trials)
+trialNum = 1
 
 # state of the current trial (set by getNextTrial())
 currentStimuli = null

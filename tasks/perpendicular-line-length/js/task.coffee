@@ -1,5 +1,3 @@
-DEBUG_MODE = false
-
 # LOOK AND FEEL
 
 # fit in a square, so all orientations work the same
@@ -46,12 +44,6 @@ MAX_REVERSALS = 20
 
 # VARIABLES
 
-# time of first user action (not when the page loads). Thus, time to
-# complete the initial (practice) trial isn't included.
-startTimestamp = null
-# time user completed final trial
-endTimestamp = null
-
 intensity = PRACTICE_START_INTENSITY
 # number of practice trials correct in a row
 practiceStreakLength = 0
@@ -60,8 +52,8 @@ lastIntensityChange = 0
 
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
-# how many trials completed so far (including practice trials)
-trialNum = 0
+# which trial we're on (1-indexed, includes practice trials)
+trialNum = 1
 
 
 # FUNCTIONS
@@ -81,9 +73,6 @@ registerResult = (event) ->
   correct = event.data.isLonger
 
   state = getTaskState()
-
-  if startTimestamp is null
-    startTimestamp = $.now()
 
   change = if correct then -STEPS_DOWN else STEPS_UP
 
@@ -129,7 +118,7 @@ getNextTrial = ->
 
   # Alternate between sideways and upright, but pick orientation
   # randomly within that.
-  angle = 90 * (trialNum % 2)
+  angle = 90 * (trialNum - 1 % 2)
   if tabcat.math.coinFlip()
     angle += 180
 

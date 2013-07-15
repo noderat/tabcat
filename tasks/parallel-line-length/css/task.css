@@ -10,32 +10,32 @@
 }
 
 #task div.layout-0 div.top-line {
-    top: 53%;
-    height: 7%;
-}
-
-#task div.layout-0 div.bottom-line {
-    top: 71%;
-    height: 7%;
-}
-
-#task div.layout-0 div.practice-caption {
-    top: 15%;
-    height: 15%;
-}
-
-#task div.layout-1 div.top-line {
     top: 19%;
     height: 7%;
 }
 
-#task div.layout-1 div.bottom-line {
+#task div.layout-0 div.bottom-line {
     top: 37%;
     height: 7%;
 }
 
-#task div.layout-1 div.practice-caption {
+#task div.layout-0 div.practice-caption {
     top: 60%;
+    height: 15%;
+}
+
+#task div.layout-1 div.top-line {
+    top: 53%;
+    height: 7%;
+}
+
+#task div.layout-1 div.bottom-line {
+    top: 71%;
+    height: 7%;
+}
+
+#task div.layout-1 div.practice-caption {
+    top: 15%;
     height: 15%;
 }
 

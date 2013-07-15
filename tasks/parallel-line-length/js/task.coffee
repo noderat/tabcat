@@ -48,8 +48,8 @@ lastIntensityChange = 0
 
 # number of reversals so far
 numReversals = 0
-# how many trials completed so far (including practice trials)
-trialNum = 0
+# which trial we're on (1-indexed, includes practice trial)
+trialNum = 1
 
 
 # FUNCTIONS

@@ -476,7 +476,7 @@ tabcat.task.eventLog = []
 #   - practiceMode: are we in practice mode? (don't set at all if false)
 #   - stimuli: task-specific info about what's actually shown on the screen.
 #     Some stimuli fields so far: "lines", "practiceCaption"
-#   - trialNum: which trial we're on (0-indexed). includes practice trials
+#   - trialNum: which trial we're on (1-indexed, includes practice trials)
 # - event: a summary of the event (currently we keep type, pageX, and pageY).
 #   You can pass in a jQuery event, or just a string for event type.
 # - interpretation: the meaning of the event (i.e. was it the right answer?)
