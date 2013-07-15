@@ -155,6 +155,9 @@ tabcat.couch.randomUUID = () ->
 # ENCOUNTER
 
 # logic for creating patients and opening encounters with them.
+#
+# Patient codes should always be uppercase. We may eventually restrict which
+# characters they can contain.
 
 tabcat.encounter = {}
 
@@ -179,7 +182,7 @@ tabcat.encounter.getEncounterNum = ->
     undefined
 
 # Promise: start an encounter and update patient doc and localStorage
-# appropriately
+# appropriately. Patient code will always be converted to all uppercase.
 #
 # Sample usage:
 #
@@ -187,7 +190,7 @@ tabcat.encounter.getEncounterNum = ->
 #   (patientDoc) -> ... # proceed,
 #   (xhr) -> ... # show error message on failure)
 tabcat.encounter.create = (options) ->
-  patientCode = String(options?.patientCode ? 0)
+  patientCode = String(options?.patientCode ? 0).toUpperCase()
   patientDocId = 'patient-' + patientCode
   encounterId = tabcat.couch.randomUUID()
 

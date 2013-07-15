@@ -1,32 +1,25 @@
-Issues:
-- "encounter" CouchDB view is empty
-
 Tasks:
 - add final interpretation to tasks (intensitiesAtReversal)
-- tweak sort order on tasks.html
-- allow abort and restart
-- Back button in standalone mode
-- force patient codes to be uppercase (not case-sensitive)
+
+Issues:
+- "encounter" CouchDB view is empty
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
 - simplify config functions (always return valid config)
 - break out staircasing code into TabCAT module
-- automated testing
-- make tabcat.css
+- don't pass messages around via URL
+- automated JavaScript testing framework
+- automated Selenium testing framework
+- make separate create_encounter.html page
+- makefile should properly handle dependencies
 
-Issues to revisit:
-- Log Out does not work in standalone browsing mode
+Puzzling issues to revisit:
+- Log Out does not clear cookies in standalone browsing mode on iPad
 
-
-UI:
+Features:
 - demo mode for tasks
-- black out status bar on iPad
 - Android fullscreen mode
 - fix max height of inner div in inches, when possible, using something like:
   https://github.com/tombigel/detect-zoom
-
-
-
-UI cleanup:
-- make separate create_encounter.html page
+- Back button in standalone mode
