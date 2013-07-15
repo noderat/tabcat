@@ -1,5 +1,5 @@
 # CoffeeScript to compile into JavaScript
-COFFEE_SRC = $(shell find . -name '*.coffee')
+COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.\#*')
 JS_TARGETS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 
 # Tasks to push to CouchDB as design documents
