@@ -20,12 +20,11 @@
 		    "login.html",
 		    "return_to_examiner.html",
 		    "tasks.html"],
-    "modules": ["lib/app.js"],
+    "modules": ["lib/app.js", "views/lib/underscore.js"],
     "load": "lib/app",
     "dependencies": {
         "attachments": null,
 	"modules": null,
-	"properties": null,
-	"underscore": null
+	"properties": null
     }
 }
