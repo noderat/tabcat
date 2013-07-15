@@ -52,8 +52,8 @@ lastIntensityChange = 0
 
 # intensity at each reversal. This is the data we care about.
 intensitiesAtReversal = []
-# which trial we're on (1-indexed, includes practice trials)
-trialNum = 1
+# number of trials completed
+numTrials = 0
 
 # state of the current trial (set by getNextTrial())
 currentStimuli = null
@@ -110,7 +110,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  trialNum += 1
+  numTrials += 1
 
 
 # generate data, including CSS, for the next trial
@@ -226,7 +226,7 @@ getTaskState = ->
   practiceCaption: shouldShowPracticeCaption()
   practiceMode: inPracticeMode()
   stimuli: currentStimuli
-  trialNum: trialNum
+  trialNum: numTrials + 1
 
 catchStrayClick = (event) ->
   tabcat.task.logEvent(getTaskState(), event)

@@ -48,8 +48,8 @@ lastIntensityChange = 0
 
 # number of reversals so far
 numReversals = 0
-# which trial we're on (1-indexed, includes practice trial)
-trialNum = 1
+# number of trials completed
+numTrials = 0
 
 
 # FUNCTIONS
@@ -62,7 +62,8 @@ shouldShowPracticeCaption = ->
 taskIsDone = -> numReversals >= MAX_REVERSALS
 
 
-# call this when the user taps on a line. correct is a boolean
+# call this when the user taps on a line.
+#
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and numReversals
 registerResult = (event) ->
@@ -100,7 +101,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  trialNum += 1
+  numTrials += 1
 
 
 # generate data, including CSS, for the next trial
@@ -181,7 +182,7 @@ getNextTrialDiv = ->
   $bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
-  $containerDiv = $('<div></div>', class: 'layout-' + trialNum % NUM_LAYOUTS)
+  $containerDiv = $('<div></div>', class: 'layout-' + numTrials % NUM_LAYOUTS)
   $containerDiv.hide()
   $containerDiv.append($topLineDiv, $bottomLineDiv)
   $containerDiv.bind('click', catchStrayClick)
@@ -201,7 +202,7 @@ getTaskState = ->
   state =
     intensity: intensity
     stimuli: getStimuli()
-    trialNum: trialNum
+    trialNum: numTrials + 1
 
   if inPracticeMode()
     state.practiceMode = true
