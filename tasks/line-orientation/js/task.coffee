@@ -97,12 +97,14 @@ registerResult = (event) ->
     else
       practiceStreakLength = 0
   else
-    interpretation.reversal = (
+    wasReversal = (
       intensityChange * lastIntensityChange < 0 or
       intensityChange is 0)  # i.e. we hit the floor/ceiling
 
-    if interpretation.reversal
+    if wasReversal
       numReversals += 1
+      interpretation.reversal = true
+
     lastIntensityChange = intensityChange
 
   tabcat.task.logEvent(state, event, interpretation)

@@ -483,10 +483,14 @@ tabcat.task.eventLog = []
 #   Common fields are:
 #   - correct (boolean): did the patient select the correct answer
 #   - intensityChange: change in intensity (easiness) due to patient's choice
+#   - reversal (boolean): was this a reversal?
 # - now: if not set, the time of the event relative to start of encounter, or
 #   tabcat.clock.now() if "event" is undefined
 #
-# state, event, and interpretation are not included if null/undefined
+# state, event, and interpretation are not included if null/undefined. In
+#
+# You should aim for readable, compact formats for state and interpretation.
+# For most true/false values, only include the field if it's true.
 tabcat.task.logEvent = (state, event, interpretation, now) ->
   if not now?  # ...when?
     if event?.timeStamp?
