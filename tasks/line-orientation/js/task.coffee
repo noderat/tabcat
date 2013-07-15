@@ -163,7 +163,7 @@ showNextTrial = (event) ->
     $('#task').append($nextTrialDiv)
     tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
     tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
-    $nextTrialDiv.fadeIn({duration: FADE_DURATION})
+    $nextTrialDiv.fadeIn(duration: FADE_DURATION)
 
 # create the next trial, and return the div containing it, but don't
 # show it or add it to the page (showNextTrial() does this)

@@ -7,7 +7,7 @@ Issues:
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
 - use $ to identify jQuery objects
-- simplify config functions (always return valid config)
+- always return a valid config
 - break out staircasing code into TabCAT module
 - don't pass messages around via URL
 - automated JavaScript testing framework

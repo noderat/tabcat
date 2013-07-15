@@ -50,8 +50,8 @@ practiceStreakLength = 0
 # used to track reversals. not maintained in practice mode
 lastIntensityChange = 0
 
-# intensity at each reversal. This is the data we care about.
-intensitiesAtReversal = []
+# number of reversals so far
+numReversals = 0
 # number of trials completed
 numTrials = 0
 
@@ -63,16 +63,14 @@ inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
-taskIsDone = -> intensitiesAtReversal.length >= MAX_REVERSALS
-
 
 # call this when the user taps on a line. correct is a boolean
 # this will update practiceStreakLength, intensity, lastIntensityChange,
 # and intensitiesAtReversal
 registerResult = (event) ->
-  correct = event.data.isLonger
-
   state = getTaskState()
+
+  correct = event.data.isLonger
 
   change = if correct then -STEPS_DOWN else STEPS_UP
 
@@ -94,11 +92,14 @@ registerResult = (event) ->
     else
       practiceStreakLength = 0
   else
-    # count hitting the floor/ceiling as a reversal
-    wasReversal = (intensityChange * lastIntensityChange < 0 or
-                   intensityChange is 0)
+    wasReversal = (
+      intensityChange * lastIntensityChange < 0 or
+      intensityChange is 0)  # i.e. we hit the floor/ceiling
+
     if wasReversal
-      intensitiesAtReversal.push(lastIntensity)
+      numReversals += 1
+      interpretation.reversal = true
+
     lastIntensityChange = intensityChange
 
   tabcat.task.logEvent(state, event, interpretation)
@@ -191,15 +192,18 @@ showNextTrial = (event) ->
   if event?.data?
     registerResult(event)
 
-  if taskIsDone()
-    tabcat.task.finish()
+  if numReversals >= MAX_REVERSALS
+    interpretation =
+      intensitiesAtReversal: e.state.intensity for e in tabcat.task.eventLog \
+        when e.interpretation?.reversal
+    tabcat.task.finish(interpretation: interpretation)
   else
-    nextTrialDiv = getNextTrialDiv()
+    $nextTrialDiv = getNextTrialDiv()
     $('#task').empty()
-    $('#task').append(nextTrialDiv)
-    tabcat.ui.fixAspectRatio(nextTrialDiv, ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight(nextTrialDiv)
-    $(nextTrialDiv).fadeIn({duration: FADE_DURATION})
+    $('#task').append($nextTrialDiv)
+    tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+    tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+    $nextTrialDiv.fadeIn(duration: FADE_DURATION)
 
 
 # create the next trial, and return the div containing it, but don't
@@ -209,29 +213,28 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  line1Div = $('<div></div>', {'class': 'line top-line'})
-  line1Div.css(trial.line1.css)
-  line1Div.bind('click', trial.line1, showNextTrial)
+  $line1Div = $('<div></div>', class: 'line')
+  $line1Div.css(trial.line1.css)
+  $line1Div.bind('click', trial.line1, showNextTrial)
 
-  line2Div = $('<div></div>', {'class': 'line bottom-line'})
-  line2Div.css(trial.line2.css)
-  line2Div.bind('click', trial.line2, showNextTrial)
+  $line2Div = $('<div></div>', class: 'line')
+  $line2Div.css(trial.line2.css)
+  $line2Div.bind('click', trial.line2, showNextTrial)
 
   # put them in an offscreen div
-  containerDiv = $('<div></div>')
-  $(containerDiv).hide()
-  containerDiv.append(line1Div, line2Div)
-  containerDiv.bind('click', catchStrayClick)
+  $containerDiv = $('<div></div>')
+  $containerDiv.hide()
+  $containerDiv.append($line1Div, $line2Div)
+  $containerDiv.bind('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
-    practiceCaptionDiv = $('<div></div>',
-      {'class': 'practice-caption'})
-    practiceCaptionDiv.html('Tap the longer line<br>' +
+    $practiceCaptionDiv = $('<div></div>', class: 'practice-caption')
+    $practiceCaptionDiv.html('Tap the longer line<br>' +
       ' quickly and accurately.')
-    containerDiv.append(practiceCaptionDiv)
+    $containerDiv.append($practiceCaptionDiv)
 
-  return containerDiv
+  return $containerDiv
 
 
 rotatePercentBox = (box, angle) ->
@@ -262,17 +265,27 @@ percentBoxToCss = (box) ->
 
 # summary of the current state of the task
 getTaskState = ->
-  intensity: intensity
-  practiceCaption: shouldShowPracticeCaption()
-  practiceMode: inPracticeMode()
-  stimuli:
-    lines: (getElementBounds(div) for div in $('div.line:visible'))
-  trialNum: numTrials + 1
+  state =
+    intensity: intensity
+    stimuli: getStimuli()
+    trialNum: numTrials + 1
+
+  if inPracticeMode()
+    state.practiceMode = true
+
+  return state
 
 
-getElementBounds = (element) ->
-  # some browsers include height and width, but it's redundant
-  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
+# describe what's on the screen. helper for getTaskState()
+getStimuli = ->
+  stimuli =
+    lines: (tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
+
+  $practiceCaption = $('div.practice-caption:visible')
+  if $practiceCaption.length > 0
+    stimuli.practiceCaption = tabcat.task.getElementBounds($practiceCaption[0])
+
+  return stimuli
 
 
 catchStrayClick = (event) ->
