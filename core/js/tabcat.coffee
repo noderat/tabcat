@@ -224,7 +224,8 @@ tabcat.encounter.create = (options) ->
       $.getJSON(DB_ROOT + patientDocId).then(
         updatePatientDoc,
         (xhr) -> switch xhr.status
-          when 404 then updatePatientDoc(_id: patientDocId, type: 'patient')
+          when 404 then updatePatientDoc(
+            _id: patientDocId, type: 'patient', patientCode: patientCode)
           else xhr  # pass failure through
       ).then((patientDoc) ->
         localStorage.patientCode = patientCode
