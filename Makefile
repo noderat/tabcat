@@ -1,3 +1,5 @@
+TABCAT_HOST ?= http://localhost:5984
+
 # CoffeeScript to compile into JavaScript
 COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.\#*')
 JS_TARGETS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
@@ -15,7 +17,8 @@ js: $(JS_TARGETS)
 
 $(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
 	cd $(@D); kanso install
-	kanso push $(@D)
+	kanso push $(@D) $(TABCAT_HOST)/tabcat
+	kanso push $(@D) $(TABCAT_HOST)/tabcat-data
 	touch $@
 
 $(JS_TARGETS): %.js: %.coffee

@@ -1,7 +1,6 @@
 Before feature freeze:
 - don't pass messages around via URL
 - create config document
-- stop using .kansorc
 
 - check off tasks that are already completed
 
