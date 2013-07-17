@@ -16,13 +16,8 @@ submitCreateEncounterForm = (event) ->
     form.find('#error').text('Please enter a patient code')
     return
 
-  redirPath = tabcat.ui.readHashJSON().redirPath
-  # only allow redirects to a different path, not to other sites
-  if not (redirPath? and redirPath.substring(0, 1) is '/')
-    redirPath = 'tasks.html'
-
-  tabcat.encounter.create(patientCode: patientCode).then(
-    -> window.location = redirPath)
+  tabcat.encounter.create(patientCode: patientCode).then(->
+    window.location = tabcat.ui.srcPath() ? 'tasks.html')
 
 clickSelectTasks = (event) ->
   window.location = 'tasks.html'
@@ -39,9 +34,13 @@ tabcat.ui.requireLogin()
 tabcat.ui.enableFastClick()
 
 $(->
-  message = tabcat.ui.readHashJSON().message
-  if message
-    $('p.message').text(message)
+  if tabcat.ui.srcPath()
+    $('p.message').text('You need to create an encounter to view that page')
+  else
+    closedEncounterWith = tabcat.ui.readHashJSON().closedEncounterWith
+    if closedEncounterWith?
+      $('p.message').text(
+        'Closed encounter with Patient ' + closedEncounterWith)
 
   $('#createEncounterForm').on('submit', submitCreateEncounterForm)
   $('#createEncounterForm button[type=submit]').removeAttr('disabled')

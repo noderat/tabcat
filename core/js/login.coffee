@@ -19,12 +19,7 @@ submitLoginForm = (event) ->
       # around in localStorage
       tabcat.encounter.clear()
 
-      redirPath = tabcat.ui.readHashJSON().redirPath
-      # only allow redirects to a different path, not to other sites
-      if not (redirPath? and redirPath.substring(0, 1) is '/')
-        redirPath = 'encounter.html'
-
-      window.location = redirPath
+      window.location = tabcat.ui.srcPath() ? 'encounter.html'
     ),
     (xhr) -> switch xhr.status
       when 401 then errorP.text(
@@ -38,9 +33,14 @@ $(->
     $('#message').text('Continuing encounter...')
     window.location = 'tasks.html'
   else
-    message = tabcat.ui.readHashJSON().message
-    $('#message').text(
-      message ? 'Please log in with your email and password')
+    if tabcat.ui.srcPath()?
+      message = 'You need to log in to view that page'
+    else if tabcat.ui.readHashJSON().loggedOut
+      message = 'Logged out'
+    else
+      message = 'Please log in with your email and password'
+
+    $('#message').text(message)
 
   $('#loginForm').on('submit', submitLoginForm)
   $('#loginForm button').removeAttr('disabled')

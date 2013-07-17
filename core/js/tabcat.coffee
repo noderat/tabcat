@@ -140,8 +140,13 @@ tabcat.couch.logout = ->
 
 # Promise: get the username of the current user, or null. Will only do this
 # once for each page.
+#
+# For debugging, return user "nobody"
 tabcat.couch.getUser = _.once(->
-  $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name))
+  if window.location.protocol is 'file:'
+    $.Deferred().resolve('nobody')
+  else
+    $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name))
 
 # Promise: upload a document to couch DB, and update its _rev field
 tabcat.couch.putDoc = putDoc
@@ -538,14 +543,14 @@ tabcat.ui = {}
 
 # close encounter, and redirect to the encounter page
 tabcat.ui.closeEncounter = (event) ->
+  options = {}
   patientCode = tabcat.encounter.getPatientCode()
   if patientCode?
-    message = 'Closed encounter with Patient ' + patientCode
-  else
-    message = null
+    options.closedEncounterWith = patientCode
+
   tabcat.encounter.close().always(->
     window.location = (
-      '../core/encounter.html' + tabcat.ui.encodeHashJSON(message: message))
+      '../core/encounter.html' + tabcat.ui.encodeHashJSON(options))
   )
 
 # Register a click immediately on tap/mouseup, rather than waiting for
@@ -744,7 +749,7 @@ tabcat.ui.logout = ->
 
     tabcat.couch.logout().then(->
       window.location = (
-        '../core/login.html' + tabcat.ui.encodeHashJSON(message: 'Logged out'))
+        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
     )
 
   if tabcat.encounter.isOpen()
@@ -755,41 +760,42 @@ tabcat.ui.logout = ->
 
 
 # redirect to the login page
-tabcat.ui.requestLogin = (options) ->
-  options ?= {}
-
-  options.redirPath ?= window.location.pathname + window.location.hash
-
-  window.location = '../core/login.html' + tabcat.ui.encodeHashJSON(options)
+tabcat.ui.requestLogin = ->
+  tabcat.ui.detour('../core/login.html')
 
 
 # force the user to log in to this page
-tabcat.ui.requireLogin = (options) ->
-  options = $.extend({}, options)
-
-  tabcat.couch.getUser().then(
-    ((user) ->
-      if not user?
-        options.message ?= 'You need to log in to view that page'
-        tabcat.ui.requestLogin(options)),
-    ->
-      # don't redir when we're just viewing static pages
-      if window.location.protocol != 'file:'
-        options.message ?= 'Authentication error, please try logging in again'
-        tabcat.ui.requestLogin(options)
+tabcat.ui.requireLogin = ->
+  tabcat.couch.getUser().then((user) ->
+    if not user?
+      tabcat.ui.requestLogin()
   )
 
-# force the user to log in to view this page, and to create an encounter
-tabcat.ui.requireLoginAndEncounter = (options) ->
-  tabcat.ui.requireLogin(options)
 
-  options = $.extend({}, options)
+# force the user to log in to view this page, and to create an encounter
+tabcat.ui.requireLoginAndEncounter = ->
+  tabcat.ui.requireLogin()
 
   if not tabcat.encounter.isOpen()
-    options.message ?= 'You need to create an encounter to view that page'
-    options.redirPath ?= window.location.pathname + window.location.hash
-    window.location = (
-      '../core/encounter.html' + tabcat.ui.encodeHashJSON(options))
+    tabcat.ui.detour('../core/encounter.html')
+
+
+# redirect to the given page, with the intent of being redirected back
+tabcat.ui.detour = (path) ->
+  srcPath = window.location.pathname + window.location.hash
+  window.location = path + tabcat.ui.encodeHashJSON(srcPath: srcPath)
+
+
+# return srcPath from the hash, if it's set and is actually a path
+#
+# common usage: window.location = tabcat.ui.srcPath() ? 'default.html'
+tabcat.ui.srcPath = ->
+  srcPath = tabcat.ui.readHashJSON().srcPath
+  # only allow redirects to a different path, not to other sites
+  if srcPath? and srcPath.substring(0, 1) is '/'
+    return srcPath
+  else
+    return null
 
 
 # read a json from the HTML fragment
