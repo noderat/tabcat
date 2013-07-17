@@ -3,14 +3,17 @@ Tasks:
 
 Console:
 - check off tasks that are already completed
+- make separate create-encounter.html page
+
+Issues:
+- Patient Code on encounter.html is slow to gain focus on iPad
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
-- always return a valid config
+- always return a valid config rather than having tabcat.config functions
 - break out staircasing code into TabCAT module
 - automated JavaScript testing framework
 - automated Selenium testing framework
-- make separate create-encounter.html page
 - makefile should properly handle dependencies
 
 Puzzling issues to revisit:

@@ -116,7 +116,7 @@ tabcat.config.canStorePHI = (configDoc) ->
 # TODO: fill in missing fields so we don't need the functions above
 tabcat.config.get = _.once(->
   $.getJSON(DB_ROOT + 'config').then(
-    null,  # pass through success
+    (configDoc) -> configDoc,
     (xhr) -> switch xhr.status
       when 404 then $.Deferred().resolve({})
       else xhr  # pass through failure
@@ -209,37 +209,37 @@ tabcat.encounter.create = (options) ->
 
   tabcat.clock.reset()
 
-  tabcat.config.get().then((configDoc) ->
-    # store today's date, and timestamp if we're allowed
-    if tabcat.config.canStoreLimitedPHI(configDoc)
-      encounterDoc.limitedPHI =
-        month: date.getMonth()
-        day: date.getDate()
-        clockOffset: tabcat.clock.offset()
-  )
-
   updatePatientDoc = (patientDoc) ->
     patientDoc.encounterIds ?= []
     patientDoc.encounterIds.push(encounterId)
     putDoc(DB, patientDoc)
 
-  tabcat.couch.getUser().then((user) ->
-    encounterDoc.user = user
-    putDoc(DB, encounterDoc).then(->
-      $.getJSON(DB_ROOT + patientDocId).then(
-        updatePatientDoc,
-        (xhr) -> switch xhr.status
-          when 404 then updatePatientDoc(
-            _id: patientDocId, type: 'patient', patientCode: patientCode)
-          else xhr  # pass failure through
-      ).then((patientDoc) ->
-        localStorage.patientCode = patientCode
-        localStorage.encounterId = encounterId
-        localStorage.encounterNum = patientDoc.encounterIds.length
-        return patientDoc
+  $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
+    (configDoc, user) ->
+      # store today's date, and timestamp if we're allowed
+      if tabcat.config.canStoreLimitedPHI(configDoc)
+        encounterDoc.limitedPHI =
+          month: date.getMonth()
+          day: date.getDate()
+          clockOffset: tabcat.clock.offset()
+
+      encounterDoc.user = user
+      putDoc(DB, encounterDoc).then(->
+        $.getJSON(DB_ROOT + patientDocId).then(
+          updatePatientDoc,
+          (xhr) -> switch xhr.status
+            when 404 then updatePatientDoc(
+              _id: patientDocId, type: 'patient', patientCode: patientCode)
+            else xhr  # pass failure through
+        ).then((patientDoc) ->
+          localStorage.patientCode = patientCode
+          localStorage.encounterId = encounterId
+          localStorage.encounterNum = patientDoc.encounterIds.length
+          return patientDoc
+        )
       )
-    )
   )
+
 
 # finish the current patient encounter. this clears local storage even
 # if there is a problem updating the encounter doc
@@ -248,11 +248,12 @@ tabcat.encounter.create = (options) ->
 # to the encounter page
 tabcat.encounter.close = ->
   encounterId = tabcat.encounter.getEncounterId()
+  now = tabcat.clock.now()
   tabcat.encounter.clear()
 
   if encounterId?
     $.getJSON(DB_ROOT + encounterId).then((encounterDoc) ->
-      encounterDoc.finishAt = tabcat.clock.now()
+      encounterDoc.finishedAt = now
       putDoc(DB, encounterDoc)
     )
   else
