@@ -1,6 +1,4 @@
 Before feature freeze:
-- redo "encounter" index to not use underscore.js
-- use hyphens, not underscores in page names (e.g. return-to-examiner.html)
 - don't pass messages around via URL
 - create config document
 - stop using .kansorc

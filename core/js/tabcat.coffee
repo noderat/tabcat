@@ -298,11 +298,12 @@ tabcat.task.doc = null
 tabcat.task.patientHasDevice = (value) ->
   if value?
     if value
-      localStorage.patientHasDevice = '1'
+      localStorage.patientHasDevice = 'true'
     else
       localStorage.removeItem('patientHasDevice')
 
-  return !!localStorage.patientHasDevice
+  return (localStorage.patientHasDevice is 'true')
+
 
 # Promise: Initialize the task. This does lots of things:
 # - start automatically logging when the browser resizes
@@ -427,7 +428,7 @@ tabcat.task.finish = (options) ->
 
   $.when(uploadPromise, minWaitDeferred).then(->
     if tabcat.task.patientHasDevice()
-      window.location = '../core/return_to_examiner.html'
+      window.location = '../core/return-to-examiner.html'
     else
       window.location = '../core/tasks.html'
   )
