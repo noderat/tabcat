@@ -1,12 +1,16 @@
-Tasks:
+Before feature freeze:
+- redo "encounter" index to not use underscore.js
+- use hyphens, not underscores in page names (e.g. return-to-examiner.html)
+- don't pass messages around via URL
+- create config document
+- stop using .kansorc
+
 - check off tasks that are already completed
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
-- use hyphens, not undescores in page names (e.g. return-to-examiner.html)
 - always return a valid config
 - break out staircasing code into TabCAT module
-- don't pass messages around via URL
 - automated JavaScript testing framework
 - automated Selenium testing framework
 - make separate create_encounter.html page
@@ -14,6 +18,7 @@ Refactors/Fixes:
 
 Puzzling issues to revisit:
 - Log Out does not clear cookies in standalone browsing mode on iPad
+- browsers do not save login, password (actually submit form, target iframe?)
 
 Features:
 - demo mode for tasks
