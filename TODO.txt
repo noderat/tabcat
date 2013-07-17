@@ -1,11 +1,8 @@
-Before feature freeze:
-- create config document
-
-Features:
-- check off tasks that are already completed
-
 Tasks:
 - DART
+
+Console:
+- check off tasks that are already completed
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
