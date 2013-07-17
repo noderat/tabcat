@@ -1,7 +1,7 @@
 \#*
 *~
 .#*
-.pushed
+.pushed-*
 
 /core/packages
 /tasks/*/packages

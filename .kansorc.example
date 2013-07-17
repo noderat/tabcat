@@ -1,5 +1,0 @@
-exports.env = {
-    'default': {
-	db: 'http://tabcat:tabcat@127.0.0.1:5984/tabcat'
-    }
-}

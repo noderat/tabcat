@@ -1,4 +1,5 @@
-TABCAT_HOST ?= http://localhost:5984
+TABCAT_HOST ?= http://127.0.0.1:5984
+PUSHED = .pushed-$(subst :,_,$(subst /,_,$(TABCAT_HOST)))
 
 # CoffeeScript to compile into JavaScript
 COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.\#*')
@@ -6,16 +7,22 @@ JS_TARGETS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 
 # Tasks to push to CouchDB as design documents
 TASKS = $(patsubst %/kanso.json, %, $(wildcard tasks/*/kanso.json))
-TASK_PUSHES = $(patsubst %, %/.pushed, $(TASKS))
+TASK_PUSHES = $(patsubst %, %/$(PUSHED), $(TASKS))
 
 .PHONY: all
 all: $(TASK_PUSHES)
+
+.PHONY: clean
+clean:
+	rm -f $(JS_TARGETS)
+	find . -name '.pushed-*' -delete
+
 
 .PHONY: js
 js: $(JS_TARGETS)
 
 
-$(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
+$(TASK_PUSHES): %/$(PUSHED): %/kanso.json $(JS_TARGETS)
 	cd $(@D); kanso install
 	kanso push $(@D) $(TABCAT_HOST)/tabcat
 	kanso push $(@D) $(TABCAT_HOST)/tabcat-data
@@ -24,7 +31,3 @@ $(TASK_PUSHES): %/.pushed: %/kanso.json .kansorc $(JS_TARGETS)
 $(JS_TARGETS): %.js: %.coffee
 	if which coffeelint; then coffeelint -q $<; fi
 	coffee -c $<
-
-# auto-create .kansorc if it does not exist
-.kansorc: .kansorc.example
-	if [ ! -e .kansorc ]; then cp .kansorc.example .kansorc; fi
