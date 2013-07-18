@@ -101,28 +101,35 @@ tabcat.clock.start = (startAt) ->
 
 tabcat.config = {}
 
-# check if we allow Limited Dataset PHI. This allows us to store dates,
-# timestamps, city, state, and zipcode
+# Helper for tabcat.config.get()
+tabcat.config.fix = (configDoc) ->
+  configDoc._id ?= 'config'
+  configDoc.type ?= 'config'
+
+  configDoc.PHI = !!configDoc.PHI
+  configDoc.limitedPHI = configDoc.PHI or !!configDoc.limitedPHI
+
+  return configDoc
+
+
+# Promise: get the current config, based on the "config" document
 #
-# IMPORTANT: Limited PHI should always be stored in a sub-field
-# called "limitedPHI" so we can strip it out later if need be.
-tabcat.config.canStoreLimitedPHI = (configDoc) ->
-  configDoc?.PHI or configDoc?.limitedPHI
-
-tabcat.config.canStorePHI = (configDoc) ->
-  configDoc?.PHI
-
-# Promise: get the config document, or return {}
-# TODO: fill in missing fields so we don't need the functions above
+# Fields we will make sure are filled in the config doc returned:
+#
+# - PHI (boolean): do we allow full PHI? (e.g. name of the patient)
+# - limitedPHI (boolean): do we allow Limited Dataset PHI? This allows us to
+#   store dates, timestamps, city, state, and zipcode. Implied by "PHI".
+#
+# - _id: should always be "config"
+# - type: should always be "config"
 tabcat.config.get = _.once(->
   $.getJSON(DB_ROOT + 'config').then(
-    (configDoc) -> configDoc,
+    (configDoc) -> tabcat.config.fix(configDoc),
     (xhr) -> switch xhr.status
-      when 404 then $.Deferred().resolve({})
+      when 404 then $.Deferred().resolve(tabcat.config.fix({}))
       else xhr  # pass through failure
   )
 )
-
 
 
 # COUCH
@@ -217,7 +224,7 @@ tabcat.encounter.create = (options) ->
   $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
     (configDoc, user) ->
       # store today's date, and timestamp if we're allowed
-      if tabcat.config.canStoreLimitedPHI(configDoc)
+      if configDoc.limitedPHI
         encounterDoc.limitedPHI =
           month: date.getMonth()
           day: date.getDate()
@@ -359,7 +366,7 @@ tabcat.task.start = _.once((options) ->
         version: designDoc?.kanso.config.version
         user: user
 
-      if tabcat.config.canStoreLimitedPHI(configDoc)
+      if configDoc.limitedPHI
         fields.limitedPHI =
           clockOffset: tabcat.clock.offset()
 

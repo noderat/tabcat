@@ -21,7 +21,6 @@ General features:
 
 Refactors/Fixes:
 - use on() rather than bind() in tasks, attach new div before binding events
-- always return a valid config rather than having tabcat.config functions
 - break out staircasing code into TabCAT module
 - automated JavaScript testing framework
 - automated Selenium testing framework
