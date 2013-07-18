@@ -19,7 +19,7 @@ submitLoginForm = (event) ->
       # around in localStorage
       tabcat.encounter.clear()
 
-      window.location = tabcat.ui.srcPath() ? 'encounter.html'
+      window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
     ),
     (xhr) -> switch xhr.status
       when 401 then errorP.text(

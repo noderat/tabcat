@@ -233,11 +233,11 @@ form.big button[type=submit] {
     border-width: 5px;
 }
 
-#createEncounterForm label {
+#createEncounter form label {
     width: 170px;
 }
 
-#noEncounter {
+#createEncounter {
     text-align: center;
 }
 

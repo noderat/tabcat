@@ -551,7 +551,7 @@ tabcat.ui.closeEncounter = (event) ->
 
   tabcat.encounter.close().always(->
     window.location = (
-      '../core/encounter.html' + tabcat.ui.encodeHashJSON(options))
+      '../core/create-encounter.html' + tabcat.ui.encodeHashJSON(options))
   )
 
 # Register a click immediately on tap/mouseup, rather than waiting for
@@ -705,9 +705,6 @@ tabcat.ui.updateStatusBar = ->
         tabcat.ui.requestLogin()
     )
 
-    $statusBar.find('div.center').on('click', (event) ->
-      window.location = '../core/encounter.html')
-
   tabcat.couch.getUser().then((user) ->
     emailP = $statusBar.find('p.email')
     button =  $statusBar.find('button.login')
@@ -778,7 +775,7 @@ tabcat.ui.requireLoginAndEncounter = ->
   tabcat.ui.requireLogin()
 
   if not tabcat.encounter.isOpen()
-    tabcat.ui.detour('../core/encounter.html')
+    tabcat.ui.detour('../core/create-encounter.html')
 
 
 # redirect to the given page, with the intent of being redirected back

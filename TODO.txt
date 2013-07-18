@@ -1,13 +1,13 @@
 Tasks:
 - DART
+- line length tasks: larger target area around lines?
 
 Issues:
-- Patient Code on encounter.html is slow to gain focus on iPad
+
 
 General features:
 - save task doc as we go, aborting partial uploads
 - check off tasks that are already completed
-- make separate create-encounter.html page
 - protect against poor network connectivity
   - error handling
   - use localStorage
@@ -31,7 +31,6 @@ Puzzling issues to revisit:
 - Log Out does not clear cookies in standalone browsing mode on iPad
   - currently manually expiring login cookies
 - browsers do not save login, password (actually submit form, target iframe?)
-- can we make taps more forgiving?
 
 
 Features:

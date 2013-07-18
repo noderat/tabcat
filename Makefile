@@ -16,6 +16,7 @@ all: $(TASK_PUSHES)
 clean:
 	rm -f $(JS_TARGETS)
 	find . -name '.pushed-*' -delete
+	find . -name '*~' -delete
 
 
 .PHONY: js
