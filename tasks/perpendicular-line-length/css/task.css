@@ -9,6 +9,13 @@
     background-color: #ffcc66;
 }
 
+#task div.line-target-area {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
 #task div.practice-caption {
     position: absolute;
     padding: 0;

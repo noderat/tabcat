@@ -8,6 +8,8 @@ SHORT_LINE_MIN_LENGTH = 40
 SHORT_LINE_MAX_LENGTH = 50
 # width of lines, as a % of container width/height. Also used for spacing.
 LINE_WIDTH = 7
+# how much bigger to make invisible target around lines, as a % of width/height
+TARGET_BORDER_WIDTH = 3
 # height of practice caption, as a % of container height
 CAPTION_HEIGHT = 30
 # offest between line centers, as a % of the shorter line's length
@@ -172,16 +174,23 @@ getNextTrial = ->
     line2Box.top += offset
     line2Box.bottom += offset
 
+  line1TargetBox = makeTargetBox(line1Box)
+  line2TargetBox = makeTargetBox(line2Box)
+
   line1Css = percentBoxToCss(line1Box)
+  line1TargetCss = percentBoxToCss(line1TargetBox)
   line2Css = percentBoxToCss(line2Box)
+  line2TargetCss = percentBoxToCss(line2TargetBox)
 
   return {
     line1:
       css: line1Css
       isLonger: (armLength >= stemLength)
+      targetCss: line1TargetCss
     line2:
       css: line2Css
       isLonger: (stemLength >= armLength)
+      targetCss: line2TargetCss
     angle: angle
   }
 
@@ -215,17 +224,21 @@ getNextTrialDiv = ->
   # construct divs for these lines
   $line1Div = $('<div></div>', class: 'line')
   $line1Div.css(trial.line1.css)
-  $line1Div.bind('click', trial.line1, showNextTrial)
+  $line1TargetDiv = $('<div></div>', class: 'line-target-area')
+  $line1TargetDiv.css(trial.line1.targetCss)
+  $line1TargetDiv.on('click', trial.line1, showNextTrial)
 
   $line2Div = $('<div></div>', class: 'line')
   $line2Div.css(trial.line2.css)
-  $line2Div.bind('click', trial.line2, showNextTrial)
+  $line2TargetDiv = $('<div></div>', class: 'line-target-area')
+  $line2TargetDiv.css(trial.line2.targetCss)
+  $line2TargetDiv.on('click', trial.line2, showNextTrial)
 
   # put them in an offscreen div
   $containerDiv = $('<div></div>')
   $containerDiv.hide()
-  $containerDiv.append($line1Div, $line2Div)
-  $containerDiv.bind('click', catchStrayClick)
+  $containerDiv.append($line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv)
+  $containerDiv.on('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -261,6 +274,19 @@ percentBoxToCss = (box) ->
     css[key] = value + '%'
 
   return css
+
+
+makeTargetBox = (box, borderWidth) ->
+  borderWidth ?= TARGET_BORDER_WIDTH
+
+  return {
+    top: box.top - borderWidth
+    bottom: box.top + borderWidth
+    height: box.height + borderWidth * 2
+    left: box.left - borderWidth
+    right: box.right + borderWidth
+    width: box.width + borderWidth * 2
+  }
 
 
 # summary of the current state of the task
