@@ -266,6 +266,7 @@ tabcat.encounter.close = ->
   else
     $.Deferred().reject()
 
+
 # clear local storage relating to the current encounter
 tabcat.encounter.clear = ->
   localStorage.removeItem('patientCode')
@@ -274,6 +275,47 @@ tabcat.encounter.clear = ->
   tabcat.clock.clear()
 
 
+# Promise: fetch info about an encounter.
+#
+# By default, we return info about the current encounter:
+# - _id: doc ID for encounter (same as encounterId), if encounter exsists
+# - clockOffset: real start time of encounter (if allowed by PHI settings)
+# - patientCode: patient in encounter
+# - tasks: list of task info, sorted by start time, with these fields:
+#   - _id: doc ID for task
+#   - name: name of task's design doc (e.g. "line-orientation")
+#   - startedAt: timestamp for start of task (using encounter clock)
+#   - finishedAt: timestamp for end of task, if task was finished
+tabcat.encounter.getInfo = (encounterId) ->
+  if not encounterId?
+    encounterId = tabcat.encounter.getEncounterId()
+    if not encounterId?
+      return $.Deferred().resolve(null)
+
+  encounterUrl = (
+    DB_ROOT + '_design/core/_view/encounter?startkey=' +
+    encodeURIComponent(JSON.stringify([encounterId])) +
+    '&endkey=' +
+    encodeURIComponent(JSON.stringify([encounterId, []])))
+
+  $.getJSON(encounterUrl).then((results) ->
+    info = {tasks: [], results: results}
+
+    # arrange encounter, patients, and tasks into a single doc
+    for {key: [__, docType, startedAt], value: doc} in results.rows
+      if docType is 'encounter'
+        $.extend(info, _.doc)
+      else if docType is 'patient'
+        # encounter number is determined from patient's list of encounters
+        info.encounterNum = doc.encounterNum
+      else if docType is 'task'
+        doc.startedAt = startedAt
+        info.tasks.push(doc)
+
+    info.tasks = _.sortBy(info.tasks, (task) -> task.startedAt)
+
+    return info
+  )
 
 # MATH
 
@@ -360,7 +402,7 @@ tabcat.task.start = _.once((options) ->
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
   $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
-    (user, [designDoc], [configDoc]) ->
+    (user, [designDoc], configDoc) ->
       fields =
         name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version

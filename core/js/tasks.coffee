@@ -7,6 +7,7 @@ getAllDesignDocs = ->
     (response) ->
       (row.doc for row in response.rows))
 
+
 # Promise: get a list of info about each task, with the keys index, icon,
 # and description (index and icon are URLs), sorted by description.
 #

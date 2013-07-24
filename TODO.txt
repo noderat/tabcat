@@ -6,8 +6,8 @@ Issues:
 
 
 General features:
-- save task doc as we go, aborting partial uploads
 - check off tasks that are already completed
+- save task doc as we go, aborting partial uploads
 - protect against poor network connectivity
   - error handling
   - use localStorage
