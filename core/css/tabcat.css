@@ -262,6 +262,7 @@ form.big button[type=submit] {
 #tasks img.icon {
     width: 72px;
     height: 72px;
+    background-size: 72px 72px;
     border-radius: 12px;
     vertical-align: middle;
 }
