@@ -13,12 +13,30 @@ getAllDesignDocs = ->
 #
 # This automatically filters out design docs that aren't valid tasks.
 getTaskInfo = ->
-  getAllDesignDocs().then((docs) ->
-    _.sortBy(
-      _.compact(designDocToTaskInfo(doc) for doc in docs),
-      # temporary hack: put Line Orientation task last
-      #(item) -> item.description))
-      (item) -> [item.description[0] is "L", item.description]))
+  $.when(getAllDesignDocs(), tabcat.encounter.getInfo()).then(
+    (docs, encounterInfo) ->
+      tasks = _.sortBy(
+        _.compact(designDocToTaskInfo(doc) for doc in docs),
+        # temporary hack: put Line Orientation task last
+        #(item) -> item.description))
+        (item) -> [item.description[0] is "L", item.description])
+
+      started = {}
+      finished = {}
+      console.log(encounterInfo.tasks)
+      for task in encounterInfo.tasks
+        started[task.name] = true
+        if task.finishedAt?
+          finished[task.name] = true
+
+      for task in tasks
+        task.started = started[task.name]
+        task.finished = finished[task.name]
+
+      console.log(tasks)
+
+      return tasks
+  )
 
 
 # convert a design doc to task info, or return undefined if it's not a
@@ -26,33 +44,37 @@ getTaskInfo = ->
 designDocToTaskInfo = (doc) ->
   urlRoot = '../../' + doc._id
 
-  index = doc?.kanso?.config?.index
-  icon = doc?.kanso?.config?.tabcat?.icon
-  description = doc?.kanso?.config?.description
-
-  if not (index and icon and description)
-    undefined
-  else
-    url: urlRoot + index
-    icon: urlRoot + '/' + icon
-    description: description
+  c = doc.kanso?.config
+  console.log(c)
+  if (c? and c.index? and c.tabcat?.icon? and c.name? and c.description?)
+    url: urlRoot + c.index
+    icon: urlRoot + '/' + c.tabcat.icon
+    description: c.description
+    name: c.name
 
 
 # get task info from the server, and then display an icon and a description
 # for each task
 showTasks = ->
-  getTaskInfo().then((info) ->
+  getTaskInfo().then((tasks) ->
     $('#taskList').empty()
-    for item in info
-      do (item) ->  # create a new scope to create separate bind() functions
-        div = $('<div></div>', class: 'task')
-        img = $('<img>', class: 'icon', src: item.icon)
-        div.append(img)
-        span = $('<span></span>', class: 'description')
-        span.text(item.description)
-        div.append(span)
-        div.bind('click', (event) -> window.location = item.url)
-        $('#taskList').append(div)
+    for task in tasks
+      do (task) ->  # create a new scope to create separate bind() functions
+        $div = $('<div></div>', class: 'task')
+        $icon = $('<img>', class: 'icon', src: task.icon)
+        $div.append($icon)
+        $description = $('<span></span>', class: 'description')
+        $description.text(task.description)
+        $div.append($description)
+        if task.started
+          $status = $('<span></span>', class: 'status')
+          if task.finished
+            $status.text('finished')
+          else
+            $status.text('unfinished')
+          $div.append($status)
+        $('#taskList').append($div)
+        $div.on('click', (event) -> window.location = task.url)
   )
 
 
