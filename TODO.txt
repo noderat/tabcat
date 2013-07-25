@@ -2,7 +2,6 @@ Tasks:
 - DART
 
 Issues:
-- Task Complete screen pops out at you (set font size, then show)
 
 General features:
 - save task doc as we go, aborting partial uploads
@@ -18,6 +17,7 @@ General features:
 - Back button in standalone mode
 
 Refactors/Fixes:
+- get rid of linkFontSizeToHeight() (looks like dead code)
 - use on() rather than bind() in tasks, attach new div before binding events
 - break out staircasing code into TabCAT module
 - automated JavaScript testing framework
