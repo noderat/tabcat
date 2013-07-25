@@ -176,13 +176,13 @@ getNextTrialDiv = ->
 
   $line1Div = $('<div></div>', class: 'line line-1')
   $line1Div.css(rotationCss(trial.line1.skew))
-  $line1TargetAreaDiv = $('<div></div>', class: 'line line-1-target-area')
+  $line1TargetAreaDiv = $('<div></div>', class: 'line line-1-target')
   $line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
   $line1TargetAreaDiv.bind('click', trial.line1, showNextTrial)
 
   $line2Div = $('<div></div>', class: 'line line-2')
   $line2Div.css(rotationCss(trial.line2.skew))
-  $line2TargetAreaDiv = $('<div></div>', class: 'line line-2-target-area')
+  $line2TargetAreaDiv = $('<div></div>', class: 'line line-2-target')
   $line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
   $line2TargetAreaDiv.bind('click', trial.line2, showNextTrial)
 

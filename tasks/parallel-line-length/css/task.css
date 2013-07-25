@@ -9,14 +9,31 @@
     background-color: #ffcc66;
 }
 
+#task div.line-target {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
 #task div.layout-0 div.top-line {
     top: 53%;
     height: 7%;
 }
 
+#task div.layout-0 div.top-line-target {
+    top: 50%;
+    height: 13%;
+}
+
 #task div.layout-0 div.bottom-line {
     top: 71%;
     height: 7%;
+}
+
+#task div.layout-0 div.bottom-line-target {
+    top: 68%;
+    height: 13%;
 }
 
 #task div.layout-0 div.practice-caption {
@@ -29,9 +46,19 @@
     height: 7%;
 }
 
+#task div.layout-1 div.top-line-target {
+    top: 16%;
+    height: 13%;
+}
+
 #task div.layout-1 div.bottom-line {
     top: 37%;
     height: 7%;
+}
+
+#task div.layout-1 div.bottom-line-target {
+    top: 34%;
+    height: 13%;
 }
 
 #task div.layout-1 div.practice-caption {

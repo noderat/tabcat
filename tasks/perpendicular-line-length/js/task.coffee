@@ -224,13 +224,13 @@ getNextTrialDiv = ->
   # construct divs for these lines
   $line1Div = $('<div></div>', class: 'line')
   $line1Div.css(trial.line1.css)
-  $line1TargetDiv = $('<div></div>', class: 'line-target-area')
+  $line1TargetDiv = $('<div></div>', class: 'line-target')
   $line1TargetDiv.css(trial.line1.targetCss)
   $line1TargetDiv.on('click', trial.line1, showNextTrial)
 
   $line2Div = $('<div></div>', class: 'line')
   $line2Div.css(trial.line2.css)
-  $line2TargetDiv = $('<div></div>', class: 'line-target-area')
+  $line2TargetDiv = $('<div></div>', class: 'line-target')
   $line2TargetDiv.css(trial.line2.targetCss)
   $line2TargetDiv.on('click', trial.line2, showNextTrial)
 

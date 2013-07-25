@@ -6,8 +6,10 @@ ASPECT_RATIO = 4/3
 # range on line length, as a % of container width
 SHORT_LINE_MIN_LENGTH = 40
 SHORT_LINE_MAX_LENGTH = 50
-# offest between line centers, as a % of the shorter line's length
+# offset between line centers, as a % of the shorter line's length
 LINE_OFFSET_AT_CENTER = 50
+# how much wider to make invisible target around lines, as % of width
+TARGET_BORDER_WIDTH = 3 / ASPECT_RATIO
 # number of positions for lines (currently, top and bottom of screen).
 # these work with the layout-0 and layout-1 CSS classes
 NUM_LAYOUTS = 2
@@ -136,11 +138,17 @@ getNextTrial = ->
         left: topLineLeft + '%'
         width: topLineLength + '%'
       isLonger: topLineLength >= bottomLineLength
+      targetCss:
+        left: topLineLeft - TARGET_BORDER_WIDTH + '%'
+        width: topLineLength + TARGET_BORDER_WIDTH * 2 + '%'
     bottomLine:
       css:
         left: bottomLineLeft + '%'
         width: bottomLineLength + '%'
       isLonger: bottomLineLength >= topLineLength
+      targetCss:
+        left: bottomLineLeft - TARGET_BORDER_WIDTH + '%'
+        width: bottomLineLength + TARGET_BORDER_WIDTH * 2 + '%'
     shortLineLength: shortLineLength
     intensity: intensity
   }
@@ -175,17 +183,23 @@ getNextTrialDiv = ->
   # construct divs for these lines
   $topLineDiv = $('<div></div>', class: 'line top-line')
   $topLineDiv.css(trial.topLine.css)
-  $topLineDiv.bind('click', trial.topLine, showNextTrial)
+  $topLineTargetDiv = $('<div></div>', class: 'line-target top-line-target')
+  $topLineTargetDiv.css(trial.topLine.targetCss)
+  $topLineTargetDiv.on('click', trial.topLine, showNextTrial)
 
   $bottomLineDiv = $('<div></div>', class: 'line bottom-line')
   $bottomLineDiv.css(trial.bottomLine.css)
-  $bottomLineDiv.bind('click', trial.bottomLine, showNextTrial)
+  $bottomLineTargetDiv = $(
+    '<div></div>', class: 'line-target bottom-line-target')
+  $bottomLineTargetDiv.css(trial.bottomLine.targetCss)
+  $bottomLineTargetDiv.on('click', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
   $containerDiv = $('<div></div>', class: 'layout-' + numTrials % NUM_LAYOUTS)
   $containerDiv.hide()
-  $containerDiv.append($topLineDiv, $bottomLineDiv)
-  $containerDiv.bind('click', catchStrayClick)
+  $containerDiv.append(
+    $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
+  $containerDiv.on('click', catchStrayClick)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()

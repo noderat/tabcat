@@ -1,12 +1,10 @@
 Tasks:
 - DART
-- line length tasks: larger target area around lines?
 
 Issues:
-
+- Task Complete screen pops out at you (set font size, then show)
 
 General features:
-- check off tasks that are already completed
 - save task doc as we go, aborting partial uploads
 - protect against poor network connectivity
   - error handling

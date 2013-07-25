@@ -40,7 +40,7 @@
 }
 
 /* target area is 6% larger. Width and height have same scale here. */
-#task div.line-1-target-area {
+#task div.line-1-target {
     top: 69%;
     bottom: 106%;
     height: 37%;
@@ -60,7 +60,7 @@
     background-color: #cc9933;
 }
 
-#task div.line-2-target-area {
+#task div.line-2-target {
     top: 69%;
     bottom: 106%;
     height: 37%;
