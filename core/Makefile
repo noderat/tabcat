@@ -9,6 +9,9 @@ TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 
 VENDOR_JS = $(wildcard js/vendor/*.js)
 
+# files kanso expects to push
+KANSO_DEPS = $(shell node ../scripts/kanso-deps.js)
+
 .PHONY: all
 all: $(PUSHED)
 
@@ -19,10 +22,11 @@ clean:
 	rm -f .pushed-*
 	find . -name '*~' -delete
 
-$(PUSHED): kanso.json js/tabcat.js
+# js/tabcat.js should be in $(KANSO_DEPS); including it for clarity
+$(PUSHED): kanso.json $(KANSO_DEPS) js/tabcat.js
 	kanso install
-	kanso push $(@D) $(TABCAT_HOST)/tabcat
-	kanso push $(@D) $(TABCAT_HOST)/tabcat-data
+	kanso push $(TABCAT_HOST)/tabcat
+	kanso push $(TABCAT_HOST)/tabcat-data
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
