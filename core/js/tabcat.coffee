@@ -89,7 +89,7 @@ tabcat.clock.reset = (startAt) ->
 # Start the clock, if it's not already started
 tabcat.clock.start = (startAt) ->
   if not (localStorage.clockLastStarted and localStorage.clockOffset)
-    tabcat.clock.reset()
+    tabcat.clock.reset(startAt)
 
 
 # CONFIG
@@ -592,7 +592,7 @@ tabcat.ui = {}
 # To turn off text selection, add the "unselectable" CSS class to body
 
 # close encounter, and redirect to the encounter page
-tabcat.ui.closeEncounter = (event) ->
+tabcat.ui.closeEncounter = () ->
   options = {}
   patientCode = tabcat.encounter.getPatientCode()
   if patientCode?
@@ -628,7 +628,7 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
   # real pixel size (devices generally use a fake dpi by convention).
   $element = $($element)
 
-  fixElement = (event) ->
+  fixElement = ->
     $parent = $($element.parent())
     parentWidth = $parent.width()
     parentHeight = $parent.height()
@@ -680,7 +680,7 @@ tabcat.ui.linkEmToPercentOfHeight = ($element) ->
   else
     $element = $($element)
 
-  fixElement = (event) ->
+  fixElement = ->
     # for font-size, "%" means % of default font size, not % of height.
     sizeInPx = $element.height() / 100
     $element.css('font-size': sizeInPx + 'px')

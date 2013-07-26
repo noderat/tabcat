@@ -4,7 +4,9 @@ Tasks:
 Issues:
 
 General features:
-- save task doc as we go, aborting partial uploads
+- retry uploads on network outage
+- save task events as we go, in separate documents
+
 - protect against poor network connectivity
   - error handling
   - use localStorage
@@ -26,7 +28,8 @@ Refactors/Fixes:
 Puzzling issues to revisit:
 - Log Out does not clear cookies in standalone browsing mode on iPad
   - currently manually expiring login cookies
-- browsers do not save login, password (actually submit form, target iframe?)
+- iOS Safari and chrome do not save login, password (actually submit form,
+  target iframe?)
 
-
-Features:
+Features for later:
+- offline mode
