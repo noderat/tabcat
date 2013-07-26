@@ -12,6 +12,7 @@ General features:
   - use localStorage
     - possibly compress with https://github.com/pieroxy/lz-string/blob/master/libs/lz-string-1.3.0.js
     - possibly use pouchDB?
+- support for re-opening tasks where we left off
 - demo mode for tasks
 - Android fullscreen mode
 - fix max height of inner div in inches, when possible, using something like:

@@ -8,3 +8,4 @@
 
 /core/js/*.js
 /core/lib/*.js
+/core/js/tabcat/*.js
