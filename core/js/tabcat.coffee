@@ -666,20 +666,6 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
   $(window).resize(fixElement)
 
 
-# Deprecated helper for tabcat.ui.linkEmToPercentOfHeight()
-tabcat.ui.linkFontSizeToHeight = ($element, percent) ->
-  $element = $($element)
-
-  fixElement = (event) ->
-    # for font-size, "%" means % of default font size, not % of height.
-    sizeInPx = $element.height() * percent / 100
-    $element.css('font-size': sizeInPx + 'px')
-
-  fixElement($element)
-
-  $(window).resize(fixElement)
-
-
 # Make 1em equivalent to 1% of the given element's height This will be
 # preserved on window resize. This ensures we get similar text layouts on
 # different devices.
