@@ -15,21 +15,25 @@ all: $(PUSHED)
 .PHONY: clean
 clean:
 	rm -f $(COFFEE_JS)
-	rm -f js/tabcat.js js/tabcat.min.js
+	rm -f js/tabcat.js js/tabcat.js
 	rm -f .pushed-*
 	find . -name '*~' -delete
 
-$(PUSHED): kanso.json js/tabcat.js js/tabcat.min.js
+$(PUSHED): kanso.json js/tabcat.js
 	kanso install
 	kanso push $(@D) $(TABCAT_HOST)/tabcat
 	kanso push $(@D) $(TABCAT_HOST)/tabcat-data
 	touch $@
 
+ifeq ($(TABCAT_DEBUG), 1)
+# force rebuild of js/tabcat.js
+.PHONY: js/tabcat.js
 js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
-	uglifyjs $^ -b -o $@
-
-js/tabcat.min.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
+	cat $^ > $@
+else
+js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
 	uglifyjs $^ -c -o $@
+endif
 
 $(COFFEE_JS): %.js: %.coffee
 	if which coffeelint; then coffeelint -q $<; fi
