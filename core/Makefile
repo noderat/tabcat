@@ -14,6 +14,7 @@ KANSO_DEPS = $(shell node ../scripts/kanso-deps.js)
 
 .PHONY: all
 all: $(PUSHED)
+	@: # suppress "nothing to be done for "all" message
 
 .PHONY: clean
 clean:
@@ -22,8 +23,8 @@ clean:
 	rm -f .pushed-*
 	find . -name '*~' -delete
 
-# js/tabcat.js should be in $(KANSO_DEPS); including it for clarity
-$(PUSHED): kanso.json $(KANSO_DEPS) js/tabcat.js
+# note that $(KANSO_DEPS) should include js/tabcat.js
+$(PUSHED): kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso push $(TABCAT_HOST)/tabcat
 	kanso push $(TABCAT_HOST)/tabcat-data
