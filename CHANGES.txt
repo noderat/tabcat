@@ -1,0 +1,21 @@
+v0.2.0, 2013-06-17 -- cleanup based on initial pilot
+- core library:
+  - tabcat.config is simplified down to tabcat.config.get()
+  - redirects handled by tabcat.ui.detour()
+  - added "encounter" view
+  - added tabcat.encounter.getInfo() (uses "encounter" view)
+- console UI:
+  - encounter.html is now create-encounter.html (deleted current encounter UI)
+  - messages are no longer passed through URL
+  - tasks are checked off as they are completed
+- tasks
+  - {parallel,perpendicular}-line-length: added invisible targets around lines
+
+v0.1.0, 2013-07-17 -- first real release, to be tried on a patient!
+- console UI:
+  - you may log in, create an encounter, and choose tasks
+  - login.html will take you to the tasks page if an encounter is open
+- initial tasks:
+  - parallel-line-length
+  - perpendicular-line-length
+  - line-orientation
