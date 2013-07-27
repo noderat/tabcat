@@ -1,0 +1,30 @@
+# The default makefile for tasks, if they don't have their own Makefile
+
+include ../../Makefile.common
+
+# CoffeeScript to compile into JavaScript
+COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.*')
+COFFEE_JS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
+
+# files kanso expects to push
+KANSO_DEPS = $(shell node ../../scripts/kanso-deps.js)
+
+.PHONY: all
+all: $(PUSHED)
+	@: # suppress "nothing to be done for "all" message
+
+.PHONY: clean
+clean:
+	rm -f $(COFFEE_JS)
+	rm -f .pushed-*
+	find . -name '*~' -delete
+
+$(PUSHED): kanso.json $(KANSO_DEPS)
+	kanso install
+	kanso push $(TABCAT_HOST)/tabcat
+	kanso push $(TABCAT_HOST)/tabcat-data
+	touch $@
+
+$(COFFEE_JS): %.js: %.coffee
+	if which coffeelint; then coffeelint -q $<; fi
+	coffee -c $<
