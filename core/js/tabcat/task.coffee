@@ -83,7 +83,6 @@ tabcat.task.start = _.once((options) ->
       browser: tabcat.task.getBrowserInfo()
       clockLastStarted: tabcat.clock.lastStarted()
       encounterId: tabcat.encounter.getEncounterId()
-      eventLog: eventLog
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
@@ -291,12 +290,6 @@ tabcat.task.getViewportInfo = ->
 tabcat.task.getElementBounds = (element) ->
   # some browsers include height and width, but it's redundant
   _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
-
-
-# A place for the task to store things the user did, along with timing
-# information and the state of the task. This is independent from
-# tabcat.task.start.
-eventLog = []
 
 
 # Appends an event to the event log, with these fields:
