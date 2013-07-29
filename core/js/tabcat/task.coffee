@@ -12,9 +12,14 @@ DATA_DB = 'tabcat-data'
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
+# The CouchDB document for this task. This stores information about the task as
+# a whole.
+taskDoc = null
 
-# the CouchDB document for this task
-tabcat.task.doc = null
+# An array of events recorded during the task (e.g. user clicked). These are
+# are stored to CouchDB in chunks periodically. This is independent from
+# tabcat.task.start()
+eventLog = []
 
 
 # Does the patient have the device? Call with an argument (true or false) to
@@ -46,13 +51,13 @@ tabcat.task.patientHasDevice = (value) ->
 # - trackViewport: should we log changes to the viewport in the event log?
 #   (see tabcat.task.trackViewportInEventLog())
 tabcat.task.start = _.once((options) ->
-  tabcat.task.doc =
+  taskDoc =
       _id: tabcat.couch.randomUUID()
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
       clockLastStarted: tabcat.clock.lastStarted()
       encounterId: tabcat.encounter.getEncounterId()
-      eventLog: tabcat.task.eventLog
+      eventLog: eventLog
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
@@ -70,8 +75,8 @@ tabcat.task.start = _.once((options) ->
   # a problem with the server, and also to detect tasks that were started
   # but not finished.
   createTaskDoc = (additionalFields) ->
-    $.extend(tabcat.task.doc, additionalFields)
-    tabcat.couch.putDoc(DATA_DB, tabcat.task.doc)
+    $.extend(taskDoc, additionalFields)
+    tabcat.couch.putDoc(DATA_DB, taskDoc)
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
@@ -104,8 +109,8 @@ tabcat.task.trackViewportInEventLog = _.once(->
       _.keys(item.state), ['viewport'])
 
   handler = (event) ->
-    if (isViewportLogItem(_.last(tabcat.task.eventLog)))
-      tabcat.task.eventLog.pop()
+    if (isViewportLogItem(_.last(eventLog)))
+      eventLog.pop()
 
     tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event)
 
@@ -150,10 +155,10 @@ tabcat.task.finish = (options) ->
   $body.fadeIn(duration: fadeDuration)
 
   uploadPromise = tabcat.task.start().then(->
-    tabcat.task.doc.finishedAt = now
+    taskDoc.finishedAt = now
     if options?.interpretation
-      tabcat.task.doc.interpretation = options.interpretation
-    tabcat.couch.putDoc(DATA_DB, tabcat.task.doc)
+      taskDoc.interpretation = options.interpretation
+    tabcat.couch.putDoc(DATA_DB, taskDoc)
   )
 
   $.when(uploadPromise, minWaitDeferred).then(->
@@ -174,7 +179,7 @@ tabcat.task.getBrowserInfo = ->
 
 
 # Get information about the viewport. If you want to track changes to the
-# viewport (scroll/resize) in tabcat.task.eventLog, it's recommended you
+# viewport (scroll/resize) in eventLog, it's recommended you
 # use tabcat.task.trackViewportInEventLog() rather than including viewport
 # info in other events you log.
 tabcat.task.getViewportInfo = ->
@@ -200,10 +205,10 @@ tabcat.task.getElementBounds = (element) ->
 # A place for the task to store things the user did, along with timing
 # information and the state of the task. This is independent from
 # tabcat.task.start.
-tabcat.task.eventLog = []
+eventLog = []
 
 
-# Stores an object in tabcat.task.eventLog with these fields:
+# Appends an event to the event log, with these fields:
 # - state: object representing the state of the world at the time the event
 #   happened. Common fields are:
 #   - intensity: intensity
@@ -245,4 +250,9 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
   if state?
     eventLogItem.state = state
 
-  tabcat.task.eventLog.push(eventLogItem)
+  eventLog.push(eventLogItem)
+
+
+# Get a (shallow) copy of the event log
+tabcat.task.getEventLog = ->
+  eventLog.slice(0)

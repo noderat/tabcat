@@ -162,7 +162,8 @@ showNextTrial = (event) ->
 
   if numReversals >= MAX_REVERSALS
     interpretation =
-      intensitiesAtReversal: e.state.intensity for e in tabcat.task.eventLog \
+      intensitiesAtReversal: e.state.intensity \
+        for e in tabcat.task.getEventLog() \
         when e.interpretation?.reversal
     tabcat.task.finish(interpretation: interpretation)
   else
