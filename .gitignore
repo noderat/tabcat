@@ -5,6 +5,7 @@
 
 /core/packages
 /tasks/*/packages
+/tasks/*/Makefile
 
 /core/js/*.js
 /core/lib/*.js
