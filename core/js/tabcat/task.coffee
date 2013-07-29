@@ -115,27 +115,34 @@ tabcat.task.start = _.once((options) ->
   # the task document, with some additional fields filled in
   $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
     (user, [designDoc], configDoc) ->
-      fields =
+      additionalFields =
         name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version
         user: user
 
       if configDoc.limitedPHI
-        fields.limitedPHI =
+        additionalFields.limitedPHI =
           clockOffset: tabcat.clock.offset()
 
-      createTaskDoc(fields)
+      createTaskDoc(additionalFields)
   )
 )
 
 
 # Promise: upload the portion of the event log that has not already
 # been stored in the DB. You usually don't need to call this directly;
-# tabcat.task.start() will cause it to be called periodically.
+# by default, tabcat.task.start() will cause it to be called periodically.
 #
 # The only option is "force". If true, this will abort pending syncs unless
 # they were already uploading all the event log items we wanted to.
+#
+# You must call tabcat.task.start() before calling this (you don't have to
+# wait for the promise it returns to resolve).
 tabcat.task.syncEventLog = (options) ->
+  # require taskDoc
+  if not taskDoc?
+    throw new Error('no taskDoc; call tabcat.task.start() first')
+
   # don't upload events if there's already one pending
   if eventSyncXHR?
     # if there's more to upload, abort the current upload and restart
@@ -145,9 +152,8 @@ tabcat.task.syncEventLog = (options) ->
     else
       return eventSyncXHR
 
-  # if no new events to upload, or tabcat.task.start() hasn't been called,
-  # do nothing
-  if eventLog.length <= eventSyncStartIndex or not taskDoc?
+  # if no new events to upload, do nothing
+  if eventLog.length <= eventSyncStartIndex
     return $.Deferred().resolve(eventSyncStartIndex)
 
   # upload everything we haven't so far
@@ -310,7 +316,7 @@ tabcat.task.getElementBounds = (element) ->
 # - now: if not set, the time of the event relative to start of encounter, or
 #   tabcat.clock.now() if "event" is undefined
 #
-# state, event, and interpretation are not included if null/undefined. In
+# state, event, and interpretation are not included if null/undefined.
 #
 # You should aim for readable, compact formats for state and interpretation.
 # For most true/false values, only include the field if it's true.

@@ -4,9 +4,7 @@ Tasks:
 Issues:
 
 General features:
-- save task events as we go, in separate documents
 - retry uploads on network outage
-
 - protect against poor network connectivity
   - error handling
   - use localStorage
