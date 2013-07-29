@@ -140,13 +140,16 @@ tabcat.encounter.getInfo = (encounterId) ->
     "/#{DATA_DB}/_design/core/_view/encounter?startkey=" +
     encodeURIComponent(JSON.stringify([encounterId])) +
     '&endkey=' +
-    encodeURIComponent(JSON.stringify([encounterId, []])))
+    # "" sorts just after null and all numbers
+    encodeURIComponent(JSON.stringify([encounterId, ""])))
 
   $.getJSON(encounterUrl).then((results) ->
     info = {tasks: [], results: results}
 
     # arrange encounter, patients, and tasks into a single doc
-    for {key: [__, docType, startedAt], value: doc} in results.rows
+    #
+    # for now, don't bother with eventLog docs
+    for {key: [__, startedAt, docType], value: doc} in results.rows
       if docType is 'encounter'
         $.extend(info, _.doc)
       else if docType is 'patient'
