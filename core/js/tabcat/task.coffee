@@ -229,7 +229,7 @@ tabcat.task.finish = (options) ->
 
   options ?= {}
   minWait = options.minWait ? 1000
-  fadeDuration = options.minWait ? 200
+  fadeDuration = options.fadeDuration ? 200
 
   # start the timer
   minWaitDeferred = $.Deferred()
@@ -241,8 +241,12 @@ tabcat.task.finish = (options) ->
   $body.hide()
   tabcat.ui.linkEmToPercentOfHeight($body)
   $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
-  $body.html('<p>Task complete!</p>')
+  $messageP = $('<p class="message">Task complete!</p>')
+  $statusP = $('<p class="status"></p>')
+  $body.append($messageP, $statusP)
   $body.fadeIn(duration: fadeDuration)
+
+  $statusP.text('Uploading task data...')
 
   taskDocPromise = tabcat.task.start().then(->
     taskDoc.finishedAt = now
@@ -257,11 +261,18 @@ tabcat.task.finish = (options) ->
 
   eventSyncPromise = tabcat.task.syncEventLog(force: true)
 
-  $.when(taskDocPromise, eventSyncPromise, minWaitDeferred).then(->
-    if tabcat.task.patientHasDevice()
-      window.location = '../core/return-to-examiner.html'
-    else
-      window.location = '../core/tasks.html'
+  $.when(taskDocPromise, eventSyncPromise).then(
+    (->
+      $statusP.text('Task data uploaded')
+      minWaitDeferred.then(->
+        if tabcat.task.patientHasDevice()
+          window.location = '../core/return-to-examiner.html'
+        else
+          window.location = '../core/tasks.html'
+      )
+    ),
+    ->
+      $statusP.text('Upload failed')
   )
 
 

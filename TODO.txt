@@ -4,6 +4,8 @@ Tasks:
 Issues:
 
 General features:
+
+
 - retry uploads on network outage
 - protect against poor network connectivity
   - error handling

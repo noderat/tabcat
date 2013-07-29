@@ -48,12 +48,28 @@ body.fullscreen {
 }
 
 /* used to show that a task is done */
-body.taskComplete p {
+body.taskComplete p.message {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 30%;
+    width: 100%;
     font-size: 15em;
     text-align: center;
-    margin-top: 2em;  /* this is relative to its 15em size, so 30em */
-    margin-left: 0.25em;
-    margin-right: 0.25em;
+    color: #eeeeee;
+}
+
+/* used to show status of data upload */
+body.taskComplete p.status {
+    position: absolute;
+    margin-top: 0;
+    top: 95%;
+    width: 98%;
+    margin-left: 0;
+    margin-right: 2%;
+    font-size: 2.5em;
+    text-align: right;
+    color: #eeeeee;
 }
 
 /* portrait mode selectors. use this to hide the task and show a message
