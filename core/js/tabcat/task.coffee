@@ -6,11 +6,17 @@
 @tabcat ?= {}
 tabcat.task = {}
 
+
+# by default, we attempt to upload a chunk of events every 5 seconds
+DEFAULT_EVENT_UPLOAD_INTERVAL = 5000
+
+
 # DB where we store patient and encounter docs
 DATA_DB = 'tabcat-data'
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
+
 
 # The CouchDB document for this task. This stores information about the task as
 # a whole.
@@ -20,6 +26,27 @@ taskDoc = null
 # are stored to CouchDB in chunks periodically. This is independent from
 # tabcat.task.start()
 eventLog = []
+
+# These track our progress in storing chunks of the event log to the DB. Since
+# a request to store an event chunk may succeed but time out on the client
+# side, it's possible that we may upload the same event twice.
+
+# This tracks where we are in the event log in terms of items that we've
+# successfully stored in the DB
+eventUploadIdx = 0
+
+# This tracks where we are in the event log in terms of items that we've
+# attempted to upload and MAY be stored on the server. Sections of the event
+# log before this index should be considered read-only.
+eventUploadAttemptIdx = 0
+
+# The current xhr for an AJAX request to upload events (only one is allowed at
+# a time).
+eventUploadXHR = null
+
+# ID of the timer for event uploads
+eventUploadIntervalId = null
+
 
 
 # Does the patient have the device? Call with an argument (true or false) to
@@ -100,7 +127,7 @@ tabcat.task.start = _.once((options) ->
 # access this with the trackViewport option to tabcat.task.start()
 #
 # If there is a series of viewport changes without other events logged between
-# them, we only keep the most recent one, to avoid cluttering the event log.
+# them, we try to only keep the most recent one.
 #
 # TODO: give a way to turn this on/off in the middle of a task
 tabcat.task.trackViewportInEventLog = _.once(->
@@ -109,7 +136,10 @@ tabcat.task.trackViewportInEventLog = _.once(->
       _.keys(item.state), ['viewport'])
 
   handler = (event) ->
-    if (isViewportLogItem(_.last(eventLog)))
+    # if the last event log item is also a viewport event, delete it, assuming
+    # we haven't already tried to upload it to the DB
+    if (eventLog.length > eventUploadAttemptIdx and
+        isViewportLogItem(_.last(eventLog)))
       eventLog.pop()
 
     tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event)
