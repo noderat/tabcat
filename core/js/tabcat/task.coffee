@@ -33,12 +33,14 @@ eventLog = []
 
 # This tracks where we are in the event log in terms of items that we've
 # successfully stored in the DB
-eventUploadIdx = 0
+eventUploadIndex = 0
 
 # This tracks where we are in the event log in terms of items that we've
 # attempted to upload and MAY be stored on the server. Sections of the event
 # log before this index should be considered read-only.
-eventUploadAttemptIdx = 0
+#
+# This should always be >= eventUploadIndex
+eventUploadAttemptIndex = 0
 
 # The current xhr for an AJAX request to upload events (only one is allowed at
 # a time).
@@ -73,6 +75,9 @@ tabcat.task.patientHasDevice = (value) ->
 #   patient code, etc.
 #
 # options:
+# - eventUploadInterval: how often to upload chunks of the event log, in
+#   milliseconds (default is 5 seconds). Set this to 0 to disable periodic
+#   uploads.
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
 # - trackViewport: should we log changes to the viewport in the event log?
@@ -96,6 +101,14 @@ tabcat.task.start = _.once((options) ->
   # and this is examiner-administered
   if not options?.examinerAdministered
     tabcat.task.patientHasDevice(true)
+
+  # periodically upload chunks of the event log
+  eventUploadInterval = (
+    options.eventUploadInterval ? DEFAULT_EVENT_UPLOAD_INTERVAL)
+
+  if eventUploadInterval > 0
+    eventUploadIntervalId = window.setInterval(
+      tabcat.task.uploadEventLogChunk, eventUploadInterval)
 
   # create the task document on the server; we'll update it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
@@ -123,6 +136,49 @@ tabcat.task.start = _.once((options) ->
 )
 
 
+# Promise: upload the portion of the event log that has not already
+# been stored in the DB. You usually don't need to call this directly;
+# tabcat.task.start() will cause it to be called periodically.
+tabcat.task.uploadEventLogChunk = ->
+  # don't upload events if there's already one pending
+  if eventUploadXHR?
+    return eventUploadXHR
+
+  # no new events to upload
+  if eventLog.length <= eventUploadIndex
+    return $.Deferred.resolve(eventUploadIndex)
+
+  # tabcat.task.start() should have been called
+  if not taskDoc?
+    return $.Deferred.reject()
+
+  # upload everything we haven't so far. Store this value for callbacks
+  endIndex = eventLog.length
+
+  # This is only called by tabcat.task.start(), so we can safely assume
+  # taskDoc exists and has the fields we want.
+  eventLogDoc = {
+    _id: tabcat.couch.randomUUID()
+    type: 'eventLog'
+    taskId: taskDoc._id
+    encounterId: taskDoc.encounterId
+    patientCode: taskDoc.patientCode
+    startIndex: eventUploadIndex
+    items: eventLog.slice(eventUploadIndex, endIndex)
+  }
+
+  eventUploadAttemptIndex = endIndex
+
+  eventUploadXHR = tabcat.couch.putDoc(DATA_DB, eventLogDoc)
+
+  # track that we're ready for a new XHR
+  eventUploadXHR.always(-> eventUploadXHR = null)
+
+  # track that events were successfully uploaded
+  eventUploadXHR.then(-> eventUploadIndex = endIndex)
+
+
+
 # Log an event whenever the viewport changes (scroll/resize). You can also
 # access this with the trackViewport option to tabcat.task.start()
 #
@@ -138,7 +194,7 @@ tabcat.task.trackViewportInEventLog = _.once(->
   handler = (event) ->
     # if the last event log item is also a viewport event, delete it, assuming
     # we haven't already tried to upload it to the DB
-    if (eventLog.length > eventUploadAttemptIdx and
+    if (eventLog.length > eventUploadAttemptIndex and
         isViewportLogItem(_.last(eventLog)))
       eventLog.pop()
 
