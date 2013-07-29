@@ -29,19 +29,19 @@ eventLog = []
 
 # This tracks where we are in the event log in terms of items that we've
 # successfully stored in the DB
-eventUploadStartIndex = 0
+eventSyncStartIndex = 0
 
 # This tracks where we are in the event log in terms of items that we've
 # attempted to upload and MAY be stored on the server. Sections of eventLog
 # log before this index should be considered read-only.
-eventUploadEndIndex = 0
+eventSyncEndIndex = 0
 
 # The current xhr for an AJAX request to upload events (only one is allowed at
 # a time).
-eventUploadXHR = null
+eventSyncXHR = null
 
 # ID of the timer for event uploads
-eventUploadIntervalId = null
+eventSyncIntervalId = null
 
 
 
@@ -69,7 +69,7 @@ tabcat.task.patientHasDevice = (value) ->
 #   patient code, etc.
 #
 # options:
-# - eventUploadInterval: how often to upload chunks of the event log, in
+# - eventSyncInterval: how often to upload chunks of the event log, in
 #   milliseconds (default is 5 seconds). Set this to 0 to disable periodic
 #   uploads.
 # - examinerAdministered: should the examiner have the device before the task
@@ -97,12 +97,12 @@ tabcat.task.start = _.once((options) ->
     tabcat.task.patientHasDevice(true)
 
   # periodically upload chunks of the event log
-  eventUploadInterval = (
-    options.eventUploadInterval ? DEFAULT_EVENT_UPLOAD_INTERVAL)
+  eventSyncInterval = (
+    options.eventSyncInterval ? DEFAULT_EVENT_UPLOAD_INTERVAL)
 
-  if eventUploadInterval > 0
-    eventUploadIntervalId = window.setInterval(
-      tabcat.task.uploadEventLogChunk, eventUploadInterval)
+  if eventSyncInterval > 0
+    eventSyncIntervalId = window.setInterval(
+      tabcat.task.syncEventLog, eventSyncInterval)
 
   # create the task document on the server; we'll update it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
@@ -134,29 +134,28 @@ tabcat.task.start = _.once((options) ->
 # been stored in the DB. You usually don't need to call this directly;
 # tabcat.task.start() will cause it to be called periodically.
 #
-# The only option is "force". If this is true, if there's an pending event
-# chunk upload that doesn't include the last item in the event log, abort
-# it and restart.
-tabcat.task.uploadEventLogChunk = (options) ->
+# The only option is "force". If true, this will abort pending syncs unless
+# they were already uploading all the event log items we wanted to.
+tabcat.task.syncEventLog = (options) ->
   # don't upload events if there's already one pending
-  if eventUploadXHR?
+  if eventSyncXHR?
     # if there's more to upload, abort the current upload and restart
-    if options?.force and eventLog.length > eventUploadEndIndex
-      eventUploadXHR.abort()
-      eventUploadXHR = null
+    if options?.force and eventLog.length > eventSyncEndIndex
+      eventSyncXHR.abort()
+      eventSyncXHR = null
     else
-      return eventUploadXHR
+      return eventSyncXHR
 
   # if no new events to upload, or tabcat.task.start() hasn't been called,
   # do nothing
-  if eventLog.length <= eventUploadStartIndex or not taskDoc?
-    return $.Deferred().resolve(eventUploadStartIndex)
+  if eventLog.length <= eventSyncStartIndex or not taskDoc?
+    return $.Deferred().resolve(eventSyncStartIndex)
 
   # upload everything we haven't so far
   #
-  # Store value of eventUploadEndIndex in local scope just in case something
+  # Store value of eventSyncEndIndex in local scope just in case something
   # weird happens with multiple overlapping callbacks
-  endIndex = eventUploadEndIndex = eventLog.length
+  endIndex = eventSyncEndIndex = eventLog.length
 
   # This is only called by tabcat.task.start(), so we can safely assume
   # taskDoc exists and has the fields we want.
@@ -166,17 +165,17 @@ tabcat.task.uploadEventLogChunk = (options) ->
     taskId: taskDoc._id
     encounterId: taskDoc.encounterId
     patientCode: taskDoc.patientCode
-    startIndex: eventUploadStartIndex
-    items: eventLog.slice(eventUploadStartIndex, endIndex)
+    startIndex: eventSyncStartIndex
+    items: eventLog.slice(eventSyncStartIndex, endIndex)
   }
 
-  eventUploadXHR = tabcat.couch.putDoc(DATA_DB, eventLogDoc)
+  eventSyncXHR = tabcat.couch.putDoc(DATA_DB, eventLogDoc)
 
   # track that we're ready for a new XHR
-  eventUploadXHR.always(-> eventUploadXHR = null)
+  eventSyncXHR.always(-> eventSyncXHR = null)
 
   # track that events were successfully uploaded
-  eventUploadXHR.then(-> eventUploadStartIndex = endIndex)
+  eventSyncXHR.then(-> eventSyncStartIndex = endIndex)
 
 
 # Log an event whenever the viewport changes (scroll/resize). You can also
@@ -194,7 +193,7 @@ tabcat.task.trackViewportInEventLog = _.once(->
   handler = (event) ->
     # if the last event log item is also a viewport event, delete it, assuming
     # we haven't already tried to upload it to the DB
-    if (eventLog.length > eventUploadEndIndex and
+    if (eventLog.length > eventSyncEndIndex and
         isViewportLogItem(_.last(eventLog)))
       eventLog.pop()
 
@@ -247,11 +246,11 @@ tabcat.task.finish = (options) ->
     tabcat.couch.putDoc(DATA_DB, taskDoc)
   )
 
-  if eventUploadIntervalId?
-    window.clearInterval(eventUploadIntervalId)
-    eventUploadIntervalId = null
+  if eventSyncIntervalId?
+    window.clearInterval(eventSyncIntervalId)
+    eventSyncIntervalId = null
 
-  eventChunkPromise = tabcat.task.uploadEventLogChunk(force: true)
+  eventChunkPromise = tabcat.task.syncEventLog(force: true)
 
   $.when(taskDocPromise, eventChunkPromise, minWaitDeferred).then(->
     if tabcat.task.patientHasDevice()
