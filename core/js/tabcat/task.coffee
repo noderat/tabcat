@@ -8,7 +8,7 @@ tabcat.task = {}
 
 
 # by default, we attempt to upload a chunk of events every 5 seconds
-DEFAULT_EVENT_UPLOAD_INTERVAL = 1
+DEFAULT_EVENT_UPLOAD_INTERVAL = 5000
 
 
 # DB where we store patient and encounter docs
