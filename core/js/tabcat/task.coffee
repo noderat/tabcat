@@ -8,7 +8,7 @@ tabcat.task = {}
 
 
 # by default, we attempt to upload a chunk of events every 5 seconds
-DEFAULT_EVENT_UPLOAD_INTERVAL = 5000
+DEFAULT_EVENT_UPLOAD_INTERVAL = 1
 
 
 # DB where we store patient and encounter docs
@@ -141,7 +141,7 @@ tabcat.task.uploadEventLogChunk = (options) ->
   # don't upload events if there's already one pending
   if eventUploadXHR?
     # if there's more to upload, abort the current upload and restart
-    if options.force and eventLog.length > eventUploadEndIndex
+    if options?.force and eventLog.length > eventUploadEndIndex
       eventUploadXHR.abort()
       eventUploadXHR = null
     else
@@ -150,7 +150,7 @@ tabcat.task.uploadEventLogChunk = (options) ->
   # if no new events to upload, or tabcat.task.start() hasn't been called,
   # do nothing
   if eventLog.length <= eventUploadStartIndex or not taskDoc?
-    return $.Deferred.resolve(eventUploadStartIndex)
+    return $.Deferred().resolve(eventUploadStartIndex)
 
   # upload everything we haven't so far
   #
