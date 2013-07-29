@@ -8,7 +8,7 @@ tabcat.task = {}
 
 
 # by default, we attempt to upload a chunk of events every 5 seconds
-DEFAULT_EVENT_UPLOAD_INTERVAL = 5000
+DEFAULT_EVENT_LOG_SYNC_INTERVAL = 5000
 
 
 # DB where we store patient and encounter docs
@@ -69,7 +69,7 @@ tabcat.task.patientHasDevice = (value) ->
 #   patient code, etc.
 #
 # options:
-# - eventSyncInterval: how often to upload chunks of the event log, in
+# - eventLogSyncInterval: how often to upload chunks of the event log, in
 #   milliseconds (default is 5 seconds). Set this to 0 to disable periodic
 #   uploads.
 # - examinerAdministered: should the examiner have the device before the task
@@ -97,12 +97,12 @@ tabcat.task.start = _.once((options) ->
     tabcat.task.patientHasDevice(true)
 
   # periodically upload chunks of the event log
-  eventSyncInterval = (
-    options.eventSyncInterval ? DEFAULT_EVENT_UPLOAD_INTERVAL)
+  eventLogSyncInterval = (
+    options?.eventLogSyncInterval ? DEFAULT_EVENT_LOG_SYNC_INTERVAL)
 
-  if eventSyncInterval > 0
+  if eventLogSyncInterval > 0
     eventSyncIntervalId = window.setInterval(
-      tabcat.task.syncEventLog, eventSyncInterval)
+      tabcat.task.syncEventLog, eventLogSyncInterval)
 
   # create the task document on the server; we'll update it when
   # tabcat.task.finish() is called. This allows us to fail fast if there's
@@ -250,9 +250,9 @@ tabcat.task.finish = (options) ->
     window.clearInterval(eventSyncIntervalId)
     eventSyncIntervalId = null
 
-  eventChunkPromise = tabcat.task.syncEventLog(force: true)
+  eventSyncPromise = tabcat.task.syncEventLog(force: true)
 
-  $.when(taskDocPromise, eventChunkPromise, minWaitDeferred).then(->
+  $.when(taskDocPromise, eventSyncPromise, minWaitDeferred).then(->
     if tabcat.task.patientHasDevice()
       window.location = '../core/return-to-examiner.html'
     else
