@@ -27,20 +27,14 @@ taskDoc = null
 # tabcat.task.start()
 eventLog = []
 
-# These track our progress in storing chunks of the event log to the DB. Since
-# a request to store an event chunk may succeed but time out on the client
-# side, it's possible that we may upload the same event twice.
-
 # This tracks where we are in the event log in terms of items that we've
 # successfully stored in the DB
-eventUploadIndex = 0
+eventUploadStartIndex = 0
 
 # This tracks where we are in the event log in terms of items that we've
-# attempted to upload and MAY be stored on the server. Sections of the event
+# attempted to upload and MAY be stored on the server. Sections of eventLog
 # log before this index should be considered read-only.
-#
-# This should always be >= eventUploadIndex
-eventUploadAttemptIndex = 0
+eventUploadEndIndex = 0
 
 # The current xhr for an AJAX request to upload events (only one is allowed at
 # a time).
@@ -139,21 +133,30 @@ tabcat.task.start = _.once((options) ->
 # Promise: upload the portion of the event log that has not already
 # been stored in the DB. You usually don't need to call this directly;
 # tabcat.task.start() will cause it to be called periodically.
-tabcat.task.uploadEventLogChunk = ->
+#
+# The only option is "force". If this is true, if there's an pending event
+# chunk upload that doesn't include the last item in the event log, abort
+# it and restart.
+tabcat.task.uploadEventLogChunk = (options) ->
   # don't upload events if there's already one pending
   if eventUploadXHR?
-    return eventUploadXHR
+    # if there's more to upload, abort the current upload and restart
+    if options.force and eventLog.length > eventUploadEndIndex
+      eventUploadXHR.abort()
+      eventUploadXHR = null
+    else
+      return eventUploadXHR
 
-  # no new events to upload
-  if eventLog.length <= eventUploadIndex
-    return $.Deferred.resolve(eventUploadIndex)
+  # if no new events to upload, or tabcat.task.start() hasn't been called,
+  # do nothing
+  if eventLog.length <= eventUploadStartIndex or not taskDoc?
+    return $.Deferred.resolve(eventUploadStartIndex)
 
-  # tabcat.task.start() should have been called
-  if not taskDoc?
-    return $.Deferred.reject()
-
-  # upload everything we haven't so far. Store this value for callbacks
-  endIndex = eventLog.length
+  # upload everything we haven't so far
+  #
+  # Store value of eventUploadEndIndex in local scope just in case something
+  # weird happens with multiple overlapping callbacks
+  endIndex = eventUploadEndIndex = eventLog.length
 
   # This is only called by tabcat.task.start(), so we can safely assume
   # taskDoc exists and has the fields we want.
@@ -163,11 +166,9 @@ tabcat.task.uploadEventLogChunk = ->
     taskId: taskDoc._id
     encounterId: taskDoc.encounterId
     patientCode: taskDoc.patientCode
-    startIndex: eventUploadIndex
-    items: eventLog.slice(eventUploadIndex, endIndex)
+    startIndex: eventUploadStartIndex
+    items: eventLog.slice(eventUploadStartIndex, endIndex)
   }
-
-  eventUploadAttemptIndex = endIndex
 
   eventUploadXHR = tabcat.couch.putDoc(DATA_DB, eventLogDoc)
 
@@ -175,8 +176,7 @@ tabcat.task.uploadEventLogChunk = ->
   eventUploadXHR.always(-> eventUploadXHR = null)
 
   # track that events were successfully uploaded
-  eventUploadXHR.then(-> eventUploadIndex = endIndex)
-
+  eventUploadXHR.then(-> eventUploadStartIndex = endIndex)
 
 
 # Log an event whenever the viewport changes (scroll/resize). You can also
@@ -194,7 +194,7 @@ tabcat.task.trackViewportInEventLog = _.once(->
   handler = (event) ->
     # if the last event log item is also a viewport event, delete it, assuming
     # we haven't already tried to upload it to the DB
-    if (eventLog.length > eventUploadAttemptIndex and
+    if (eventLog.length > eventUploadEndIndex and
         isViewportLogItem(_.last(eventLog)))
       eventLog.pop()
 
@@ -240,14 +240,20 @@ tabcat.task.finish = (options) ->
   $body.html('<p>Task complete!</p>')
   $body.fadeIn(duration: fadeDuration)
 
-  uploadPromise = tabcat.task.start().then(->
+  taskDocPromise = tabcat.task.start().then(->
     taskDoc.finishedAt = now
     if options?.interpretation
       taskDoc.interpretation = options.interpretation
     tabcat.couch.putDoc(DATA_DB, taskDoc)
   )
 
-  $.when(uploadPromise, minWaitDeferred).then(->
+  if eventUploadIntervalId?
+    window.clearInterval(eventUploadIntervalId)
+    eventUploadIntervalId = null
+
+  eventChunkPromise = tabcat.task.uploadEventLogChunk(force: true)
+
+  $.when(taskDocPromise, eventChunkPromise, minWaitDeferred).then(->
     if tabcat.task.patientHasDevice()
       window.location = '../core/return-to-examiner.html'
     else
