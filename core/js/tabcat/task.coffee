@@ -215,6 +215,12 @@ tabcat.task.ready = (handler) ->
   $.when($.ready.promise(), tabcat.task.start()).then(-> handler())
 
 
+waitFor = (milliseconds) ->
+  deferred = $.Deferred()
+  window.setTimeout((-> deferred.resolve()), milliseconds)
+  return deferred
+
+
 # splash a "Task complete!" page for the user, upload task info to the DB, and
 #  return to the task selector page.
 #
@@ -232,8 +238,7 @@ tabcat.task.finish = (options) ->
   fadeDuration = options.fadeDuration ? 200
 
   # start the timer
-  minWaitDeferred = $.Deferred()
-  window.setTimeout((-> minWaitDeferred.resolve()), minWait)
+  waitedForMinWait = waitFor(minWait)
 
   # splash up Task complete! screen
   $body = $('body')
@@ -248,31 +253,45 @@ tabcat.task.finish = (options) ->
 
   $statusP.text('Uploading task data...')
 
+  withRetry = (func, args) ->
+    func(args...).then(
+      ((successArgs...) -> successArgs),
+      (xhr) -> switch xhr.status
+        when 0
+          $statusP.text('Network error, retrying in 3 seconds...')
+          waitFor(3000).then(
+            ->
+              $statusP.text('Retrying upload')
+              waitFor(1000).then(-> withRetry(func, args))
+          )
+        else xhr
+    )
+
   taskDocPromise = tabcat.task.start().then(->
     taskDoc.finishedAt = now
     if options?.interpretation
       taskDoc.interpretation = options.interpretation
-    tabcat.couch.putDoc(DATA_DB, taskDoc)
+    withRetry(tabcat.couch.putDoc, [DATA_DB, taskDoc])
   )
 
   if eventSyncIntervalId?
     window.clearInterval(eventSyncIntervalId)
     eventSyncIntervalId = null
 
-  eventSyncPromise = tabcat.task.syncEventLog(force: true)
+  eventSyncPromise = withRetry(tabcat.task.syncEventLog, [force: true])
 
   $.when(taskDocPromise, eventSyncPromise).then(
     (->
       $statusP.text('Task data uploaded')
-      minWaitDeferred.then(->
+      $.when(waitFor(1000), waitedForMinWait).then(->
         if tabcat.task.patientHasDevice()
           window.location = '../core/return-to-examiner.html'
         else
           window.location = '../core/tasks.html'
       )
     ),
-    ->
-      $statusP.text('Upload failed')
+    (xhr) ->
+      $statusP.text("Task data upload failed: #{xhr.statusText}")
   )
 
 
