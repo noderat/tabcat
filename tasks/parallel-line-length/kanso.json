@@ -3,7 +3,13 @@
     "index": "/task.html",
     "version": "0.2.0",
     "description": "Parallel Line Length",
-    "attachments": ["css/task.css", "img", "js/task.js", "task.html"],
+    "attachments": [
+	"css/task.css",
+	"img/icon.ico",
+	"img/icon.png",
+	"js/task.js",
+	"task.html"
+    ],
     "dependencies": {
         "attachments": null
     },
