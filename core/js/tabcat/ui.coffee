@@ -57,6 +57,11 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
   # real pixel size (devices generally use a fake dpi by convention).
   $element = $($element)
 
+  # handle multiple elements correctly
+  if $element.length > 1
+    for e in $element
+      tabcat.ui.fixAspectRatio(e, ratio)
+
   fixElement = ->
     $parent = $($element.parent())
     parentWidth = $parent.width()
@@ -111,6 +116,11 @@ tabcat.ui.linkEmToPercentOfHeight = ($element) ->
     $element = $('body')
   else
     $element = $($element)
+
+  # handle multiple elements correctly
+  if $element.length > 1
+    for e in $element
+      tabcat.ui.linkEmToPercentOfHeight(e)
 
   fixElement = ->
     # for font-size, "%" means % of default font size, not % of height.

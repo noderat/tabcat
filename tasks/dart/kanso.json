@@ -1,0 +1,16 @@
+{
+    "name": "dart",
+    "index": "/task.html",
+    "version": "0.3.0-dev",
+    "description": "DART",
+    "attachments": [
+	"css/task.css",
+	"js/task.js",
+	"task.html",
+	"videos/1.mp4",
+	"videos/1.ogv"
+    ],
+    "dependencies": {
+        "attachments": null
+    }
+}

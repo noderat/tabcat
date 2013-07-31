@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen">
+  <head>
+    <title>Parallel Line Length</title>
+    <meta charset="utf-8" />
+    <!-- allow launching this in fullscreen like an app on iPad -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- turn off zooming -->
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" href="img/icon.png"/>
+    <link rel="shortcut icon" href="img/icon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/task.css">
+  </head>
+  <body class="fullscreen unselectable">
+    <div id="instructions" class="fullscreen blueBackground" style="display:none">
+      <div class="inner">
+	<p>Watch the following videos.</p>
+	<p>After each one, pick the emotion that best matches the video.</p>
+	<p>
+	  <button type="button">Begin</button>
+	</p>
+      </div>
+    </div>
+    <div id="viewVideo" class="fullscreen" style="display:none">
+      <div class="inner">
+	<video id="video">
+	  <source id="mp4Source" type="video/mp4">
+	  <source id="oggSource" type="video/ogg">
+	</video>
+	<span class="videoLabel"></span>
+      </div>
+    </div>
+    <div id="selectResponse" class="fullscreen blueBackground" style="display:none">
+      <div class="inner">
+	<button type="button" id="option-0"></button>
+	<button type="button" id="option-1"></button>
+	<button type="button" id="option-2"></button>
+	<button type="button" id="option-3"></button>
+	<button type="button" id="option-4"></button>
+	<button type="button" id="option-5"></button>
+	<button type="submit" id="continueButton">Continue</button>
+	<span class="videoLabel"></span>
+      </div>
+    </div>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/task.js"></script>
+  </body>
+</html>
