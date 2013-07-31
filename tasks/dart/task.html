@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="fullscreen">
   <head>
-    <title>Parallel Line Length</title>
+    <title>DART</title>
     <meta charset="utf-8" />
     <!-- allow launching this in fullscreen like an app on iPad -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,15 +29,16 @@
 	<button type="submit" id="continueButton">Continue</button>
 	<span class="videoLabel"></span>
       </div>
-      <div id="videoContainer" class="fullscreen" style="display:none">
-	<video id="video">
+      <div id="videoContainer" style="display:none">
+	<video>
 	  <source id="mp4Source" type="video/mp4">
 	  <source id="oggSource" type="video/ogg">
 	</video>
-	<span class="videoLabel"></span>
+	<p class="videoLabel"></span>
       </div>
     </div>
     <script src="../core/js/tabcat.js"></script>
     <script src="js/task.js"></script>
+    <script>taskInit();</script>
   </body>
 </html>

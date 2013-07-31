@@ -13,3 +13,25 @@
     border-radius: 0.25em;
     margin: 0.5em;
 }
+
+#videoContainer {
+    position: relative;
+}
+
+#videoContainer video {
+    height: 100%;
+    width: auto;
+    z-index: 1000;
+}
+
+#videoContainer .videoLabel {
+    position: absolute;
+    margin: 0;
+    top: 43%;
+    width: 100%;
+    font-size: 14em;
+    text-align: center;
+    color: #eeeeee;
+    z-index: 1001;
+    opacity: 50%;
+}

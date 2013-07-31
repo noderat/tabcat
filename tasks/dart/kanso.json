@@ -7,8 +7,7 @@
 	"css/task.css",
 	"js/task.js",
 	"task.html",
-	"videos/1.mp4",
-	"videos/1.ogv"
+	"videos"
     ],
     "dependencies": {
         "attachments": null
