@@ -1,0 +1,15 @@
+#instructions {
+    text-align: center;
+}
+
+#instructions p {
+    margin: 1em;
+    font-size: 8em;
+}
+
+#instructions button {
+    clear: both;
+    font-size: 8em;
+    border-radius: 0.25em;
+    margin: 0.5em;
+}

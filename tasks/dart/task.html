@@ -12,27 +12,14 @@
     <link rel="stylesheet" href="../core/css/tabcat.css">
     <link rel="stylesheet" href="css/task.css">
   </head>
-  <body class="fullscreen unselectable">
-    <div id="instructions" class="fullscreen blueBackground" style="display:none">
-      <div class="inner">
+  <body class="fullscreen unselectable blueBackground">
+    <div class="square">
+      <div id="instructions" style="display:none">
 	<p>Watch the following videos.</p>
 	<p>After each one, pick the emotion that best matches the video.</p>
-	<p>
-	  <button type="button">Begin</button>
-	</p>
+	<button type="button">Begin</button>
       </div>
-    </div>
-    <div id="viewVideo" class="fullscreen" style="display:none">
-      <div class="inner">
-	<video id="video">
-	  <source id="mp4Source" type="video/mp4">
-	  <source id="oggSource" type="video/ogg">
-	</video>
-	<span class="videoLabel"></span>
-      </div>
-    </div>
-    <div id="selectResponse" class="fullscreen blueBackground" style="display:none">
-      <div class="inner">
+      <div id="choices" style="display:none">
 	<button type="button" id="option-0"></button>
 	<button type="button" id="option-1"></button>
 	<button type="button" id="option-2"></button>
@@ -40,6 +27,13 @@
 	<button type="button" id="option-4"></button>
 	<button type="button" id="option-5"></button>
 	<button type="submit" id="continueButton">Continue</button>
+	<span class="videoLabel"></span>
+      </div>
+      <div id="videoContainer" class="fullscreen" style="display:none">
+	<video id="video">
+	  <source id="mp4Source" type="video/mp4">
+	  <source id="oggSource" type="video/ogg">
+	</video>
 	<span class="videoLabel"></span>
       </div>
     </div>

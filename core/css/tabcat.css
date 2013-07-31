@@ -11,6 +11,7 @@ body {
 /* fullscreen mode. set this class on html and body to simulate an app */
 
 .fullscreen {
+    position: absolute;
     top: 0%;
     height: 100%;
     bottom: 100%;

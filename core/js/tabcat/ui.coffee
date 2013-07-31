@@ -104,13 +104,16 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
 # preserved on window resize. This ensures we get similar text layouts on
 # different devices.
 #
+# Make sure to wrap the text inside some other element (e.g. span) and set
+# font-size on that (since this works by setting font-size)
+#
 # Make sure your element is part of the DOM (that is, has a meaningful height)
 # before calling this function on it.
 #
 # (TODO: check the above with element.closest('html'))
 #
 # Also, it is a good not to show text in elements sized this way until after
-# this method is called; on some
+# this method is called.
 tabcat.ui.linkEmToPercentOfHeight = ($element) ->
   if not $element?
     $element = $('body')

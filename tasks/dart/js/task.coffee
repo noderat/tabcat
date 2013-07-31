@@ -1,9 +1,13 @@
 
 
 # INITIALIZATION
+tabcat.ui.enableFastClick()
+tabcat.ui.turnOffBounce()
 
-$innerDivs = $('div.inner')
-tabcat.ui.fixAspectRatio($innerDivs, 1)
-tabcat.ui.linkEmToPercentOfHeight($innerDivs)
+$(->
+  $squareDiv = $('div.square')
+  tabcat.ui.fixAspectRatio($squareDiv, 1)
+  tabcat.ui.linkEmToPercentOfHeight($squareDiv)
 
-$('#instructions').show()
+  $('#instructions').show()
+)
