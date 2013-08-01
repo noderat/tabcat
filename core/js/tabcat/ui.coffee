@@ -309,3 +309,10 @@ tabcat.ui.requireLandscapeMode = ($element) ->
   $element.addClass('portrait-hide')
   $element.parent().append($pleaseReturnDiv)
   tabcat.ui.linkEmToPercentOfHeight($pleaseReturnDiv)
+
+
+# Make a Deferred that resolves after the given number of milliseconds
+tabcat.ui.wait = (milliseconds) ->
+  deferred = $.Deferred()
+  window.setTimeout((-> deferred.resolve()), milliseconds)
+  return deferred

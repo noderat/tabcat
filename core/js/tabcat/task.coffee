@@ -238,7 +238,7 @@ tabcat.task.finish = (options) ->
   fadeDuration = options.fadeDuration ? 200
 
   # start the timer
-  waitedForMinWait = waitFor(minWait)
+  waitedForMinWait = tabcat.ui.wait(minWait)
 
   # splash up Task complete! screen
   $body = $('body')
@@ -259,10 +259,10 @@ tabcat.task.finish = (options) ->
       (xhr) -> switch xhr.status
         when 0
           $statusP.text('Network error, retrying in 3 seconds...')
-          waitFor(3000).then(
+          tabcat.ui.wait(3000).then(
             ->
               $statusP.text('Retrying upload')
-              waitFor(1000).then(-> withRetry(func, args))
+              tabcat.ui.wait(1000).then(-> withRetry(func, args))
           )
         else xhr
     )
@@ -283,7 +283,7 @@ tabcat.task.finish = (options) ->
   $.when(taskDocPromise, eventSyncPromise).then(
     (->
       $statusP.text('Task data uploaded')
-      $.when(waitFor(1000), waitedForMinWait).then(->
+      $.when(tabcat.ui.wait(1000), waitedForMinWait).then(->
         if tabcat.task.patientHasDevice()
           window.location = '../core/return-to-examiner.html'
         else

@@ -27,18 +27,18 @@
 	<button type="button" id="option-4"></button>
 	<button type="button" id="option-5"></button>
 	<button type="submit" id="continueButton">Continue</button>
-	<span class="videoLabel"></span>
+	<span id="videoLabel"></span>
       </div>
       <div id="videoContainer" style="display:none">
 	<video>
 	  <source id="mp4Source" type="video/mp4">
 	  <source id="oggSource" type="video/ogg">
 	</video>
-	<p class="videoLabel"></span>
+	<p id="videoOverlay"></p>
       </div>
     </div>
     <script src="../core/js/tabcat.js"></script>
     <script src="js/task.js"></script>
-    <script>taskInit();</script>
+    <script>initTask();</script>
   </body>
 </html>

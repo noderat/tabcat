@@ -24,7 +24,7 @@
     z-index: 1000;
 }
 
-#videoContainer .videoLabel {
+#videoOverlay {
     position: absolute;
     margin: 0;
     top: 43%;
@@ -33,5 +33,4 @@
     text-align: center;
     color: #eeeeee;
     z-index: 1001;
-    opacity: 50%;
 }

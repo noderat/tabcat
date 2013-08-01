@@ -1,6 +1,9 @@
 # VIDEOS
 NUM_VIDEOS = 13
 
+VIDEO_OVERLAY_SHOW_TIME = 1000
+VIDEO_OVERLAY_FADE_OUT_TIME = 1500
+
 
 
 videoNum = 0
@@ -13,7 +16,7 @@ videoLabel = ->
 
 
 # INITIALIZATION
-@taskInit = ->
+@initTask = ->
   tabcat.task.start()
 
   tabcat.ui.enableFastClick()
@@ -32,6 +35,9 @@ initVideoEvents = _.once(->
 
   $video.on('play', (event) ->
     tabcat.task.logEvent(videoNum: videoNum, event)
+    tabcat.ui.wait(VIDEO_OVERLAY_SHOW_TIME).then(->
+      $('#videoOverlay').fadeOut(duration: VIDEO_OVERLAY_FADE_OUT_TIME)
+    )
   )
 
   $video.on('ended', (event) ->
@@ -60,12 +66,15 @@ showVideo = ->
   $('#choices').hide()
   $('body').removeClass('blueBackground')
 
-  $('.videoLabel').text(videoLabel())
+  $videoContainer = $('#videoContainer')
+
+  $videoOverlay = $('#videoOverlay')
+  $videoOverlay.text(videoLabel())
+  $videoOverlay.show()
 
   $('#mp4Source').attr('src', "videos/#{videoNum}.mp4")
   $('#oggSource').attr('src', "videos/#{videoNum}.ogv")
 
-  $videoContainer = $('#videoContainer')
   video = $videoContainer.find('video')[0]
 
   video.load()
