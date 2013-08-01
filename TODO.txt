@@ -1,5 +1,10 @@
 Tasks:
 - DART
+  - choices screen
+  - clean up state
+
+Format:
+- trialNum should be 0-indexed after all
 
 Issues:
 
