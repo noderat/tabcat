@@ -1,24 +1,28 @@
-#instructions {
+/* instructions */
+
+#instructionsScreen {
     text-align: center;
 }
 
-#instructions p {
+#instructionsScreen p {
     margin: 1em;
     font-size: 8em;
 }
 
-#instructions button {
+#instructionsScreen button {
     clear: both;
     font-size: 8em;
     border-radius: 0.25em;
     margin: 0.5em;
 }
 
-#videoContainer {
+/* video */
+
+#videoScreen {
     position: relative;
 }
 
-#videoContainer video {
+#videoScreen video {
     height: 100%;
     width: auto;
     z-index: 1000;
@@ -33,4 +37,23 @@
     text-align: center;
     color: #eeeeee;
     z-index: 1001;
+}
+
+/* choices */
+
+#choicesForm {
+    font-size: 5em;
+}
+
+#choicesForm input[type=radio] {
+    height: 5em;
+}
+
+#choicesForm fieldset {
+    border: 0;
+}
+
+#videoLabel {
+    text-align: center;
+    font-size: 2.5em;
 }

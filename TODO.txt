@@ -4,6 +4,8 @@ Tasks:
   - clean up state
 
 Issues:
+- don't need tasks to be launchable
+- fix favicon
 
 General features:
 
