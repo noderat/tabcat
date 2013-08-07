@@ -17,9 +17,11 @@ getTaskInfo = ->
     (designDocs, encounter) ->
       taskInfo = _.sortBy(
         _.compact(designDocToTaskInfo(doc) for doc in designDocs),
-        # temporary hack: put Line Orientation task last
+        # temporary hack: put Line Orientation and DART task last
         #(item) -> item.description))
-        (item) -> [item.description[0] is "L", item.description])
+        (item) -> [item.description[0] is "D",
+                   item.description[0] is "L",
+                   item.description])
 
       # add info about which tasks were finished
       finished = _.object(
@@ -35,13 +37,22 @@ getTaskInfo = ->
 # valid task
 designDocToTaskInfo = (doc) ->
   urlRoot = '../../' + doc._id
-
   c = doc.kanso?.config
-  if (c? and c.index? and c.tabcat?.icon? and c.name? and c.description?)
+
+  if not (c? and c.index? and c.name? and c.description?)
+    return
+
+  if c.tabcat?.icon?
+    icon = urlRoot + '/' + c.tabcat.icon
+  else
+    icon = 'img/icon.png'
+
+  return {
     url: urlRoot + c.index
-    icon: urlRoot + '/' + c.tabcat.icon
+    icon: icon
     description: c.description
     name: c.name
+  }
 
 
 # get task info from the server, and then display an icon and a description
