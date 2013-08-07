@@ -108,7 +108,7 @@ getState = ->
 
   $radioButtons = $('#choicesForm:visible').find('input[type=radio]')
   if $radioButtons.length
-    state.choices = [$(rb).attr('value') for rb in $radioButtons]
+    state.choices = ($(rb).attr('value') for rb in $radioButtons)
 
   if inPracticeMode()
     state.practiceMode = true
