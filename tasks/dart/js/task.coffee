@@ -87,35 +87,26 @@ initChoiceScreen = _.once(->
 )
 
 
-getVideoNumStimuli = ->
-  if $('#videoScreen:visible').length
-    trialNum
-
-
-# get choices displayed on the screen
-getChoicesStimuli = ->
-  $choiceDivs = $('#choices:visible').find('div')
-  ($(c).text() for c in $choiceDivs)
-
-
 # get the choice already selected on the screen
-getChosenStimuli = ->
-  return $('#choices:visible').find('div.chosen').text()
+getChosen = ->
+  return $('#choices:visible').find('div.chosen').text() or null
 
 
 getStimuli = ->
   stimuli = {}
 
   if $('#videoScreen:visible').length
-    stimuli.videoNum = trialNum
+    stimuli.video = true
 
   $choiceDivs = $('#choices:visible').find('div')
   if $choiceDivs.length
     stimuli.choices = ($(c).text() for c in $choiceDivs)
 
-  $chosen = $('#choices:visible').find('div.chosen')
-  if $chosen.length
-    stimuli.chosen = $chosen.text()
+  chosen = getChosen()
+  if chosen
+    stimuli.chosen = chosen
+
+  return stimuli
 
 
 getState = ->
@@ -145,6 +136,10 @@ interpretChoice = (choice) ->
   return interpretation
 
 
+interpretSubmission = ->
+  $.extend(interpretChoice(getChosen()), submit: true)
+
+
 onPickChoice = (event) ->
   $target = $(event.target)
   $choices = $('#choices').find('div')
@@ -166,10 +161,7 @@ onPickChoice = (event) ->
 
 
 onSubmitChoice = (event) ->
-
-  # pretend it's a form submit, for clarity
-  event = $.extend({}, event, type: 'submit')
-  tabcat.task.logEvent(getState(), event)
+  tabcat.task.logEvent(getState(), event, interpretSubmission())
 
   trialNum += 1
 
