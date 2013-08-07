@@ -52,8 +52,8 @@ lastIntensityChange = 0
 
 # number of reversals so far
 numReversals = 0
-# number of trials completed
-numTrials = 0
+# which trial we're on (0-indexed)
+trialNum = 0
 
 # state of the current trial (set by getNextTrial())
 currentStimuli = null
@@ -109,7 +109,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  numTrials += 1
+  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -230,7 +230,7 @@ getTaskState = ->
   state =
     intensity: intensity
     stimuli: getStimuli()
-    trialNum: numTrials + 1
+    trialNum: trialNum
 
   if inPracticeMode()
     state.practiceMode = true

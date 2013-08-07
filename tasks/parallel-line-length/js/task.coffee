@@ -50,8 +50,8 @@ lastIntensityChange = 0
 
 # number of reversals so far
 numReversals = 0
-# number of trials completed
-numTrials = 0
+# which trial we're on (0-indexed)
+trialNum = 0
 
 
 # FUNCTIONS
@@ -103,7 +103,7 @@ registerResult = (event) ->
 
   tabcat.task.logEvent(state, event, interpretation)
 
-  numTrials += 1
+  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -196,7 +196,7 @@ getNextTrialDiv = ->
   $bottomLineTargetDiv.on('click', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
-  $containerDiv = $('<div></div>', class: 'layout-' + numTrials % NUM_LAYOUTS)
+  $containerDiv = $('<div></div>', class: 'layout-' + trialNum % NUM_LAYOUTS)
   $containerDiv.hide()
   $containerDiv.append(
     $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
@@ -217,7 +217,7 @@ getTaskState = ->
   state =
     intensity: intensity
     stimuli: getStimuli()
-    trialNum: numTrials + 1
+    trialNum: trialNum
 
   if inPracticeMode()
     state.practiceMode = true
