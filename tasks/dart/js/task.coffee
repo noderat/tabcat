@@ -1,8 +1,7 @@
 # Content
 
+# Note: CSS layout currently only supports up to 6 choices
 CHOICES = ['afraid', 'angry', 'disgusted', 'happy', 'sad', 'surprised']
-
-NUM_CHOICES = CHOICES.length
 
 CORRECT_CHOICES = [
   'happy',
@@ -50,12 +49,12 @@ trialNum = 0
 
 
 onReady = ->
-  initVideo()
-  initChoices()
+  initVideoScreen()
+  initChoiceScreen()
   showInstructions()
 
 
-initVideo = _.once(->
+initVideoScreen = _.once(->
   $video = $('#videoScreen').find('video')
 
   $video.on('play', (event) ->
@@ -70,54 +69,70 @@ initVideo = _.once(->
     showChoices()
   )
 
-  # TODO: remove this
-  $video.on('click', (event) ->
-    event.target.pause()
-    showChoices()
-  )
-
   $video.on('canplay', (event) ->
     event.target.play()
   )
 )
 
 
-initChoices = _.once(->
-  $choicesDiv = $('#choicesDiv')
+initChoiceScreen = _.once(->
+  $choices = $('#choices')
 
-  for i in [0..NUM_CHOICES-1]
-    $label = $('<label></label>')
-    $input = $('<input>', type: 'radio', name: 'emotion', id: 'choice-' + i)
-    $span = $('<span></span>', id: 'choice-span-' + i)
-    $label.append($input, $span, $('<br>'))
-    $choicesDiv.append($label)
+  for __, i in CHOICES
+    $choice = $('<div></div>', class: 'choice', id: 'choice-' + i)
+    $choices.append($choice)
+    $choice.on('click', i, onPickChoice)
 
-    $label.on('click', i, onPickChoice)
-
-  $('#choicesForm').on('submit', onChoiceSubmit)
+  $('#choiceSubmitButton').on('click', onSubmitChoice)
 )
 
 
-getChoice = ->
-  return _.object($('#choicesForm').serializeArray())['emotion']
+getVideoNumStimuli = ->
+  if $('#videoScreen:visible').length
+    trialNum
+
+
+# get choices displayed on the screen
+getChoicesStimuli = ->
+  $choiceDivs = $('#choices:visible').find('div')
+  ($(c).text() for c in $choiceDivs)
+
+
+# get the choice already selected on the screen
+getChosenStimuli = ->
+  return $('#choices:visible').find('div.chosen').text()
+
+
+getStimuli = ->
+  stimuli = {}
+
+  if $('#videoScreen:visible').length
+    stimuli.videoNum = trialNum
+
+  $choiceDivs = $('#choices:visible').find('div')
+  if $choiceDivs.length
+    stimuli.choices = ($(c).text() for c in $choiceDivs)
+
+  $chosen = $('#choices:visible').find('div.chosen')
+  if $chosen.length
+    stimuli.chosen = $chosen.text()
 
 
 getState = ->
   state =
     trialNum: trialNum
 
-  $radioButtons = $('#choicesForm:visible').find('input[type=radio]')
-  if $radioButtons.length
-    state.choices = ($(rb).attr('value') for rb in $radioButtons)
-
   if inPracticeMode()
     state.practiceMode = true
+
+  stimuli = getStimuli()
+  if not _.isEmpty(stimuli)
+    state.stimuli = stimuli
 
   return state
 
 
-interpretChoice = ->
-  choice = getChoice()
+interpretChoice = (choice) ->
   correctChoice = CORRECT_CHOICES[trialNum]
 
   interpretation =
@@ -131,19 +146,30 @@ interpretChoice = ->
 
 
 onPickChoice = (event) ->
-  $submitButton = $('#choicesSubmitButton')
+  $target = $(event.target)
+  $choices = $('#choices').find('div')
+
+  choice = $target.text()
+  tabcat.task.logEvent(getState(), event, interpretChoice(choice))
+
+  # make choices act like radio buttons
+  if not $target.hasClass('chosen')
+    $choices.removeClass('chosen')
+    $target.addClass('chosen')
+
+  # show button if it's not already shown
+  $submitButton = $('#choiceSubmitButton')
   if $submitButton.length
     tabcat.ui.wait(CHOICES_SUBMIT_SHOW_WAIT).then(->
       $submitButton.fadeIn(duration: FADE_DURATION)
     )
 
-  tabcat.task.logEvent(getState(), event, interpretChoice())
 
+onSubmitChoice = (event) ->
 
-onChoiceSubmit = (event) ->
-  event.preventDefault()
-
-  tabcat.task.logEvent(getState(), event, interpretChoice())
+  # pretend it's a form submit, for clarity
+  event = $.extend({}, event, type: 'submit')
+  tabcat.task.logEvent(getState(), event)
 
   trialNum += 1
 
@@ -156,15 +182,18 @@ onChoiceSubmit = (event) ->
 
 showChoices = ->
   $('#videoScreen').hide()
-  $('#choicesSubmitButton').hide()
+  $('#choiceSubmitButton').hide()
 
   # randomly populate choices
   choices = _.shuffle(CHOICES)
   for choice, i in choices
-    $('#choice-' + i).attr('value', choice)
-    $('#choice-span-' + i).text(choice)
+    $('#choice-' + i).text(choice)
 
-  $('#videoLabel').text(videoLabel())
+  # don't choose any of them
+  $choices = $('#choices').find('div')
+  $choices.removeClass('chosen')
+
+  $('#trialLabel').text(trialLabel())
 
   $('body').addClass('blueBackground')
   $('#choicesScreen').fadeIn(duration: FADE_DURATION)
@@ -188,7 +217,7 @@ showVideo = ->
   $videoContainer = $('#videoScreen')
 
   $videoOverlay = $('#videoOverlay')
-  $videoOverlay.text(videoLabel())
+  $videoOverlay.text(trialLabel())
   $videoOverlay.show()
 
   $('#mp4Source').attr('src', "videos/#{trialNum}.mp4")
@@ -202,5 +231,5 @@ showVideo = ->
 
 inPracticeMode = -> trialNum is 0
 
-videoLabel = ->
+trialLabel = ->
   if inPracticeMode() then 'Practice Item' else trialNum

@@ -20,17 +20,14 @@
 	<button type="button">Begin</button>
       </div>
       <div id="choicesScreen" style="display:none">
-	<form id="choicesForm">
-	  <fieldset>
-	    <legend>
+	<p class="question">
 	      Which emotion best matches the video you just saw?
-	    </legend>
-	    <div id="choicesDiv">
-	    </div>
-	  </fieldset>
-	  <button id="choicesSubmitButton" type="submit">Continue</button>
-	</form>
-	<p id="videoLabel"></p>
+	</p>
+	<div id="choices"></div>
+	<div id="choiceSubmitContainer">
+	  <button id="choiceSubmitButton">Continue</button>
+	</div>
+	<p id="trialLabel"></p>
       </div>
       <div id="videoScreen" style="display:none">
 	<video>
