@@ -2,14 +2,18 @@
     "name": "dart",
     "index": "/task.html",
     "version": "0.3.0-dev",
-    "description": "DART (Dynamic Affect Recognition Test)",
+    "description": "DART",
     "attachments": [
 	"css/task.css",
+	"img/icon.png",
 	"js/task.js",
 	"task.html",
 	"videos"
     ],
     "dependencies": {
         "attachments": null
+    },
+    "tabcat": {
+	"icon": "img/icon.png"
     }
 }
