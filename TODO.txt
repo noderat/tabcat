@@ -1,14 +1,10 @@
 Tasks:
-- DART
-  - choices screen
-  - clean up state
 
-Issues:
+Cleanup:
 - don't need tasks to be launchable
 - fix favicon
 
 General features:
-
 - protect against poor network connectivity
   - error handling
   - use localStorage

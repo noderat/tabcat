@@ -40,7 +40,7 @@ trialNum = 0
 
 # INITIALIZATION
 @initTask = ->
-  tabcat.task.start()
+  tabcat.task.start(trackViewport: true)
 
   tabcat.ui.enableFastClick()
   tabcat.ui.turnOffBounce()
@@ -140,6 +140,14 @@ interpretSubmission = ->
   $.extend(interpretChoice(getChosen()), submit: true)
 
 
+finalInterpretation = ->
+  numCorrect:
+    (item for item in tabcat.task.getEventLog() when (
+      not item.state?.practiceMode and
+      item.interpretation?.submit and
+      item.interpretation?.correct)).length
+
+
 onPickChoice = (event) ->
   $target = $(event.target)
   $choices = $('#choices').find('div')
@@ -166,8 +174,7 @@ onSubmitChoice = (event) ->
   trialNum += 1
 
   if trialNum >= NUM_VIDEOS
-    # TODO: final interpretation
-    tabcat.task.finish()
+    tabcat.task.finish(interpretation: finalInterpretation())
   else
     showVideo()
 

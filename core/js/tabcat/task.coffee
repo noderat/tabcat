@@ -376,3 +376,8 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
 # Get a (shallow) copy of the event log
 tabcat.task.getEventLog = ->
   eventLog.slice(0)
+
+
+# Get the ID of the current task, or null if start() hasn't been called
+tabcat.task.getTaskId = ->
+  taskDoc?._id
