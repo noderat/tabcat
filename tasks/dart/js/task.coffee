@@ -68,10 +68,6 @@ initVideoScreen = _.once(->
     tabcat.task.logEvent(getState(), event)
     showChoices()
   )
-
-  $video.on('canplay', (event) ->
-    event.target.play()
-  )
 )
 
 
@@ -219,12 +215,21 @@ showVideo = ->
   $videoOverlay.text(trialLabel())
   $videoOverlay.show()
 
-  $('#mp4Source').attr('src', "videos/#{trialNum}.mp4")
-  $('#oggSource').attr('src', "videos/#{trialNum}.ogv")
+  $video = $videoContainer.find('video')
+  video = $video[0]
 
-  video = $videoContainer.find('video')[0]
+  $video.attr('height', $('div.square').height())
+  $video.attr('width', $('div.square').height())
+
+  if video.canPlayType('video/ogg')
+    video.src = "videos/#{trialNum}.ogv"
+  else
+    video.src = "videos/#{trialNum}.mp4"
 
   video.load()
+  video.play()
+  # would be better to do this on canplay, but iOS only allows
+  # videos to be played from user-triggered events
   $videoContainer.show()
 
 
