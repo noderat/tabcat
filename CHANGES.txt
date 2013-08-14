@@ -1,3 +1,7 @@
+v0.4.0, ????-??-?? -- offline mode?
+
+v0.3.1, ????-??-?? -- data dumps
+
 v0.3.0, 2013-08-14 -- take better care of our data, more cleanup
 - core library:
   - task event logging:
