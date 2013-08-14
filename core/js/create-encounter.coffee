@@ -17,6 +17,7 @@ if tabcat.encounter.getEncounterId()
   window.location = 'tasks.html'
 
 tabcat.ui.enableFastClick()
+tabcat.ui.turnOffBounce()
 
 $(->
   $form = $('#createEncounter').find('form')

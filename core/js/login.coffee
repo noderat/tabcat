@@ -27,6 +27,8 @@ submitLoginForm = (event) ->
       else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
+tabcat.ui.enableFastClick()
+tabcat.ui.turnOffBounce()
 
 $(->
   if tabcat.encounter.isOpen() and not window.location.hash
