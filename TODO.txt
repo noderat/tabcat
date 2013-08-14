@@ -1,6 +1,4 @@
 Tasks:
-- DART
-  - on iPad, video is shifted to right side of screen
 
 Cleanup:
 - don't need tasks to be launchable

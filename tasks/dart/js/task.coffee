@@ -218,16 +218,21 @@ showVideo = ->
   $video = $videoContainer.find('video')
   video = $video[0]
 
-  $video.attr('height', $('div.square').height())
-  $video.attr('width', $('div.square').height())
-
   if video.canPlayType('video/ogg')
     video.src = "videos/#{trialNum}.ogv"
   else
     video.src = "videos/#{trialNum}.mp4"
 
+  # manually set the size of the video, for iPad
+  #
+  # don't use $video.attr('width', ...); it just confuses jQuery/iOS Safari
+  squareDivHeight = $('div.square').height()
+  $video.width(squareDivHeight)
+  $video.height(squareDivHeight)
+
   video.load()
   video.play()
+
   # would be better to do this on canplay, but iOS only allows
   # videos to be played from user-triggered events
   $videoContainer.show()
