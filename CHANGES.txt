@@ -1,3 +1,22 @@
+v0.3.0, 2013-08-14 -- take better care of our data, more cleanup
+- core library:
+  - task event logging:
+    - task events are uploaded incrementally in "eventLog" documents
+    - at end of task, keep trying to re-upload data if network is down
+    - trialNum is now 0-indexed
+  - build system:
+    - makefiles do proper dependency managment
+    - tabcat library has one file per module
+    - tabcat library + third-party libraries are all minified into tabcat.js
+  - couchDB:
+    - added "task" view
+    - "encounter" view is now chronological, to match "task" view
+- console UI:
+  - tasks.html will show TabCAT icon for tasks with no icon
+  - turned off bounce on login and create-encounter
+- tasks
+  - dart (new!)
+
 v0.2.0, 2013-06-17 -- cleanup based on initial pilot
 - core library:
   - tabcat.config is simplified down to tabcat.config.get()
