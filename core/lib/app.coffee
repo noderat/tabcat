@@ -6,10 +6,12 @@
 encounterMap = (doc) ->
   switch doc.type
     when 'encounter'
-      emit([doc._id, 0, 'encounter'],
-        patientCode: doc.patientCode,
-        limitedPHI:
-          clockOffset: doc.limitedPHI?.clockOffset)
+      value =
+        patientCode: doc.patientCode
+      if doc.limitedPHI?
+        value.limitedPHI =
+          clockOffset: doc.limitedPHI?.clockOffset
+      emit([doc._id, 0, 'encounter'], value)
     when 'eventLog'
       emit([doc.encounterId, doc.items[0].now, 'eventLog'],
         taskId: doc.taskId,
@@ -34,9 +36,12 @@ encounterMap = (doc) ->
 patientMap = (doc) ->
   switch doc.type
     when 'encounter'
-      emit([doc.patientCode, doc._id, 0, 'encounter'],
-        limitedPHI:
-          clockOffset: doc.limitedPHI?.clockOffset)
+      value =
+        patientCode: doc.patientCode
+      if doc.limitedPHI?
+        value.limitedPHI =
+          clockOffset: doc.limitedPHI?.clockOffset
+      emit([doc.patientCode, doc._id, 0, 'encounter'], value)
     when 'eventLog'
       emit([doc.patientCode, doc.encounterId, doc.items[0].now, 'eventLog'],
         taskId: doc.taskId,
@@ -69,7 +74,9 @@ taskMap = (doc) ->
         interpretation: doc.interpretation)
 
 
-# piece together
+# piece together patients, encounters, tasks, and task event logs
+#
+# TODO: break some of this out into a library
 dumpList = (head, req) ->
   _ = require('views/lib/underscore')._
 
