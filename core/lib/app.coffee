@@ -26,8 +26,7 @@ encounterMap = (doc) ->
     when 'task'
       emit([doc.encounterId, doc.startedAt, 'task'],
         name: doc.name,
-        finishedAt: doc.finishedAt,
-        interpretation: doc.interpretation)
+        finishedAt: doc.finishedAt)
 
 
 # group docs by patient code and enounter ID
@@ -53,8 +52,7 @@ patientMap = (doc) ->
     when 'task'
       emit([doc.patientCode, doc.encounterId, doc.startedAt, 'task'],
         name: doc.name,
-        finishedAt: doc.finishedAt,
-        interpretation: doc.interpretation)
+        finishedAt: doc.finishedAt)
 
 
 # group docs by task ID, and order chronologically
@@ -70,8 +68,7 @@ taskMap = (doc) ->
       emit([doc._id, doc.startedAt, 'task'],
         name: doc.name,
         patientCode: doc.patientCode,
-        finishedAt: doc.finishedAt,
-        interpretation: doc.interpretation)
+        finishedAt: doc.finishedAt)
 
 
 # piece together patients, encounters, tasks, and task event logs

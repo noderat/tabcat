@@ -1,3 +1,8 @@
+v0.3.2, 2013-??-?? -- ???
+- core library:
+  - couchDB:
+    - task.interpretation is no longer included in views
+
 v0.3.1, 2013-08-13 -- data dumps
 - core library:
   - couchDB:
