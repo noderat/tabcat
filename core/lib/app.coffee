@@ -7,13 +7,11 @@ encounterMap = (doc) ->
   switch doc.type
     when 'encounter'
       emit([doc._id, 0, 'encounter'],
-        _id: doc._id,
         patientCode: doc.patientCode,
         limitedPHI:
           clockOffset: doc.limitedPHI?.clockOffset)
     when 'eventLog'
       emit([doc.encounterId, doc.items[0].now, 'eventLog'],
-        _id: doc._id,
         taskId: doc.taskId,
         startIndex: doc.startIndex,
         endIndex: doc.startIndex + doc.items.length)
@@ -21,12 +19,10 @@ encounterMap = (doc) ->
       if doc.encounterIds?
         for encounterId, i in doc.encounterIds
           emit([encounterId, null, 'patient'],
-            _id: doc._id,
             encounterNum: i + 1,
             patientCode: doc.patientCode)
     when 'task'
       emit([doc.encounterId, doc.startedAt, 'task'],
-        _id: doc._id,
         name: doc.name,
         finishedAt: doc.finishedAt)
 
@@ -38,12 +34,10 @@ taskMap = (doc) ->
   switch doc.type
     when 'eventLog'
       emit([doc.taskId, doc.items[0].now, 'eventLog'],
-        _id: doc._id,
         startIndex: doc.startIndex,
         endIndex: doc.startIndex + doc.items.length)
     when 'task'
       emit([doc._id, doc.startedAt, 'task'],
-        _id: doc._id,
         name: doc.name,
         patientCode: doc.patientCode,
         finishedAt: doc.finishedAt)
@@ -75,7 +69,7 @@ dumpList = (head, req) ->
       continue
 
     # reconstruct the document
-    doc = _.extend({type: docType}, row.value, row.doc)
+    doc = _.extend({type: docType}, row.value, {_id: row.id}, row.doc)
     if doc.type is 'task'
       doc.startedAt = startedAt
       # fix for old format where trialNum was 1-indexed
