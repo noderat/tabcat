@@ -67,57 +67,67 @@ dumpList = (head, req) ->
   while row = getRow()
     [keyId, startedAt, docType] = row.key
 
+    # skip docs created with no encounter ID
+    if not keyId?
+      continue
+
     # reconstruct the document
     doc = _.extend({type: docType}, row.value, row.doc)
     if doc.type is 'task'
       doc.startedAt = startedAt
       # fix for old format where trialNum was 1-indexed
       if doc.eventLog?
-        for item in eventLog
+        for item in doc.eventLog
           if item.state?.trialNum?
             item.state.trialNum -= 1
 
     # when we encounter a new keyId, dump the last document we constructed
-    if keyDoc?._id != keyId
+    if keyDoc?._id isnt keyId
       if keyDoc?
-        send(JSON.stringify(doc, null, 2))
+        send(JSON.stringify(keyDoc, null, 2))
         send(',\n')
       keyDoc =
         _id: keyId
         type: keyType
-      tasksById = {}
+      taskToEventLog = {}
+      encounterToTasks = {}
 
     # link documents together
-    if doc.type is 'encounter'
-      # make sure doc.tasks and encounterToTasks[doc._id] are the same list
-      tasks = doc.tasks ? encounterToTasks[doc._id] ? []
-      doc.tasks ?= tasks
-      encounterToTasks[doc._id] ?= tasks
+    switch doc.type
+      when 'encounter'
+        # make sure doc.tasks and encounterToTasks[doc._id] are the same list
+        tasks = doc.tasks ? encounterToTasks[doc._id] ? []
+        doc.tasks ?= tasks
+        encounterToTasks[doc._id] ?= tasks
 
-    else if doc.type is 'eventLog'
-      taskId = doc.taskId ? if keyType is 'task' then keyId
-      if taskId?
-        eventLog = (taskToEventLog[taskId] ?= [])
-        if doc.items?
-          for item, i in doc.items
-            eventLog[i + doc.startIndex] = item
+      when 'eventLog'
+        # don't create eventLog if there's no way to construct it
+        if req.query.include_docs
+          taskId = doc.taskId ? if keyType is 'task' then keyId
+          if taskId?
+            eventLog = (taskToEventLog[taskId] ?= [])
+            if doc.items?
+              for item, i in doc.items
+                eventLog[i + doc.startIndex] = item
 
-    else if doc.type is 'patient'
-      # right now we just want patient code
+      when 'patient'
+        # right now we don't want this doc, patient code is enough
 
-      # the encounter view figures out encounterNum from patient.encounterIds
-      if doc.encounterNum? and keyType is 'encounter'
-        keyDoc.encounterNum = doc.encounterNum
+        # the encounter view figures out encounterNum from patient.encounterIds
+        if doc.encounterNum? and keyType is 'encounter'
+          keyDoc.encounterNum = doc.encounterNum
 
-    else if doc.type is 'task'
-      eventLog = doc.eventLog ? taskToEventLog[doc._id] ? []
-      doc.eventLog ?= eventLog
-      taskToEventLog[doc._id] ?= eventLog
+      when 'task'
+        # don't create eventLog if there's no way to construct it
+        if req.query.include_docs
+          eventLog = doc.eventLog ? taskToEventLog[doc._id] ? []
+          doc.eventLog ?= eventLog
+          taskToEventLog[doc._id] ?= eventLog
 
-      if keyType is not 'task'
-        encounterId = doc.encounterId ? if keyType is 'encounter' then keyId
-        if encounterId?
-          (encounterToTasks[encounterId] ?= []).push(task)
+        if keyType isnt 'task'
+          encounterId = doc.encounterId ? if keyType is 'encounter' then keyId
+          if encounterId?
+            (encounterToTasks[encounterId] ?= []).push(doc)
 
     # if this the key document, dump all its fields into keyDoc
     if doc._id is keyDoc._id and doc.type is keyDoc.type
@@ -126,8 +136,8 @@ dumpList = (head, req) ->
 
   # dump last key document
   if keyDoc?
-    send(JSON.stringify(doc, null, 2))
-    send('\n')  # no comma!
+    send(JSON.stringify(keyDoc, null, 2))
+    send('\n')  # no comma, since this is the last one
 
   send(']\n')
 

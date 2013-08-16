@@ -1,11 +1,11 @@
 Tasks:
 - DART:
   - handle video network errors
-  - get krankin's feedback
 
 Cleanup:
 - don't need tasks to be launchable
 - fix favicon
+- task.start() should require user and encounter ID
 
 Offline Mode:
 - offline manifest
