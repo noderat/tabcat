@@ -7,12 +7,14 @@
 encounterMap = (doc) ->
   if doc.type is 'encounter'
     emit([doc._id, 0, 'encounter'],
-      _id: doc._id,  # just for consistency
+      _id: doc._id,
       patientCode: doc.patientCode,
-      clockOffset: doc.limitedPHI?.clockOffset)
+      limitedPHI:
+        clockOffset: doc.limitedPHI?.clockOffset)
   else if doc.type is 'eventLog'
     emit([doc.encounterId, doc.items[0].now, 'eventLog'],
       _id: doc._id,
+      taskId: doc.taskId,
       startIndex: doc.startIndex,
       endIndex: doc.startIndex + doc.items.length)
   else if doc.type is 'task'
@@ -42,6 +44,96 @@ taskMap = (doc) ->
       name: doc.name,
       patientCode: doc.patientCode,
       finishedAt: doc.finishedAt)
+
+
+# piece together
+dumpList = (head, req) ->
+  _ = require('views/lib/underscore')._
+
+  keyType = _.last(req.path)
+
+  if not (req.path.length is 6 and keyType in ['encounter', 'task'])
+    throw new Error('You may only dump the encounter or task view')
+
+  start(headers:
+    'Content-Type': 'application/json')
+
+  send('[\n')
+
+  keyDoc = null
+  taskToEventLog = {}
+  encounterToTasks = {}
+
+  while row = getRow()
+    [keyId, startedAt, docType] = row.key
+
+    # reconstruct the document
+    doc = _.extend({type: docType}, row.value, row.doc)
+    if doc.type is 'task'
+      doc.startedAt = startedAt
+      # fix for old format where trialNum was 1-indexed
+      if doc.eventLog?
+        for item in eventLog
+          if item.state?.trialNum?
+            item.state.trialNum -= 1
+
+    # when we encounter a new keyId, dump the last document we constructed
+    if keyDoc?._id != keyId
+      if keyDoc?
+        send(JSON.stringify(doc, null, 2))
+        send(',\n')
+      keyDoc =
+        _id: keyId
+        type: keyType
+      tasksById = {}
+
+    # link documents together
+    if doc.type is 'encounter'
+      # make sure doc.tasks and encounterToTasks[doc._id] are the same list
+      tasks = doc.tasks ? encounterToTasks[doc._id] ? []
+      doc.tasks ?= tasks
+      encounterToTasks[doc._id] ?= tasks
+
+    else if doc.type is 'eventLog'
+      taskId = doc.taskId ? if keyType is 'task' then keyId
+      if taskId?
+        eventLog = (taskToEventLog[taskId] ?= [])
+        if doc.items?
+          for item, i in doc.items
+            eventLog[i + doc.startIndex] = item
+
+    else if doc.type is 'patient'
+      # right now we just want patient code
+
+      # the encounter view figures out encounterNum from patient.encounterIds
+      if doc.encounterNum? and keyType is 'encounter'
+        keyDoc.encounterNum = doc.encounterNum
+
+    else if doc.type is 'task'
+      eventLog = doc.eventLog ? taskToEventLog[doc._id] ? []
+      doc.eventLog ?= eventLog
+      taskToEventLog[doc._id] ?= eventLog
+
+      if keyType is not 'task'
+        encounterId = doc.encounterId ? if keyType is 'encounter' then keyId
+        if encounterId?
+          (encounterToTasks[encounterId] ?= []).push(task)
+
+    # if this the key document, dump all its fields into keyDoc
+    if doc._id is keyDoc._id and doc.type is keyDoc.type
+      _.extend(keyDoc, doc)
+
+
+  # dump last key document
+  if keyDoc?
+    send(JSON.stringify(doc, null, 2))
+    send('\n')  # no comma!
+
+  send(']\n')
+
+
+exports.lists =
+  dump: dumpList
 
 
 exports.views =
