@@ -163,7 +163,12 @@ dumpList = (head, req) ->
 
         # add to encounters
         if keyType is 'patient'
-          encounters.push(doc)
+          if req.query.include_docs
+            encounter = doc
+          else
+            # strip redundant fields
+            encounter = _.omit(doc, 'patientCode', 'type')
+          encounters.push(encounter)
 
       when 'eventLog'
         # don't create eventLog if there's no way to construct it
@@ -194,7 +199,12 @@ dumpList = (head, req) ->
         if keyType isnt 'task'
           encounterId = doc.encounterId ? if keyType is 'encounter' then key
           if encounterId?
-            (encounterToTasks[encounterId] ?= []).push(doc)
+            if req.query.include_docs
+              task = doc
+            else
+              # strip redundant fields
+              task = _.omit(doc, 'encounterId', 'patientCode', 'type')
+            (encounterToTasks[encounterId] ?= []).push(task)
 
     # if this the key document, dump all its fields into keyDoc
     if doc.type is keyType
