@@ -24,7 +24,8 @@ encounterMap = (doc) ->
     when 'task'
       emit([doc.encounterId, doc.startedAt, 'task'],
         name: doc.name,
-        finishedAt: doc.finishedAt)
+        finishedAt: doc.finishedAt,
+        interpretation: doc.interpretation)
 
 
 # group docs by patient code and enounter ID
@@ -47,7 +48,8 @@ patientMap = (doc) ->
     when 'task'
       emit([doc.patientCode, doc.encounterId, doc.startedAt, 'task'],
         name: doc.name,
-        finishedAt: doc.finishedAt)
+        finishedAt: doc.finishedAt,
+        interpretation: doc.interpretation)
 
 
 # group docs by task ID, and order chronologically
@@ -63,7 +65,8 @@ taskMap = (doc) ->
       emit([doc._id, doc.startedAt, 'task'],
         name: doc.name,
         patientCode: doc.patientCode,
-        finishedAt: doc.finishedAt)
+        finishedAt: doc.finishedAt,
+        interpretation: doc.interpretation)
 
 
 # piece together
@@ -102,7 +105,7 @@ dumpList = (head, req) ->
     if doc.type is 'patient'
       fixPatientEncounters(doc)
 
-    send(JSON.stringify(keyDoc, null, 2))
+    send(JSON.stringify(doc, null, 2))
 
   while row = getRow()
     if keyType is 'patient'
