@@ -73,7 +73,7 @@ dumpList = (head, req) ->
     if doc.type is 'task'
       doc.startedAt = startedAt
       # fix for old format where trialNum was 1-indexed
-      if doc.eventLog?
+      if doc.eventLog? and doc.version in ['0.1.0', '0.2.0']
         for item in doc.eventLog
           if item.state?.trialNum?
             item.state.trialNum -= 1
