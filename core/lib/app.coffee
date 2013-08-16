@@ -27,6 +27,29 @@ encounterMap = (doc) ->
         finishedAt: doc.finishedAt)
 
 
+# group docs by patient code and enounter ID
+#
+# key is [patientCode, encounterId, encounterClockTime, docType]
+patientMap = (doc) ->
+  switch doc.type
+    when 'encounter'
+      emit([doc.patientCode, doc._id, 0, 'encounter'],
+        limitedPHI:
+          clockOffset: doc.limitedPHI?.clockOffset)
+    when 'eventLog'
+      emit([doc.patientCode, doc.encounterId, doc.items[0].now, 'eventLog'],
+        taskId: doc.taskId,
+        startIndex: doc.startIndex,
+        endIndex: doc.startIndex + doc.items.length)
+    when 'patient'
+      emit([doc.patientCode, null, null, 'patient'],
+        encounterIds: doc.encounterIds)
+    when 'task'
+      emit([doc.patientCode, doc.encounterId, doc.startedAt, 'task'],
+        name: doc.name,
+        finishedAt: doc.finishedAt)
+
+
 # group docs by task ID, and order chronologically
 #
 # key is [taskId, encounterClockTime, docType]
@@ -49,27 +72,56 @@ dumpList = (head, req) ->
 
   keyType = _.last(req.path)
 
-  if not (req.path.length is 6 and keyType in ['encounter', 'task'])
-    throw new Error('You may only dump the encounter or task view')
+  if not (req.path.length is 6 and keyType in ['encounter', 'patient', 'task'])
+    throw new Error('You may only dump the encounter, patient, or task view')
 
   start(headers:
     'Content-Type': 'application/json')
 
   send('[\n')
 
+  currentKey = null
   keyDoc = null
   taskToEventLog = {}
   encounterToTasks = {}
+  encounters = []
+
+  # add encounterNum to each encounter in patient.encounters, and sort
+  fixPatientEncounters = (patient) ->
+    if patient.encounters?
+      if patient.encounterIds?
+        encounterToNum = _.object([id, i] for id, i in patient.encounterIds)
+        for encounter in patient.encounters
+          encounter.encounterNum = encounterToNum[encounter._id]
+
+      # sort by encounter start if we have it, otherwise go with encounterNum
+      patient.encounters = _.sortBy(
+        patient.encounters, (e) -> [e.limitedPHI?.clockOffset, e.encounterNum])
+
+  sendDoc = (doc) ->
+    if doc.type is 'patient'
+      fixPatientEncounters(doc)
+
+    send(JSON.stringify(keyDoc, null, 2))
 
   while row = getRow()
-    [keyId, startedAt, docType] = row.key
+    if keyType is 'patient'
+      [key, encounterId, startedAt, docType] = row.key
+    else
+      [key, startedAt, docType] = row.key
+      encounterId = null
 
     # skip docs created with no encounter ID
-    if not keyId?
+    if not key?
       continue
 
     # reconstruct the document
     doc = _.extend({type: docType}, row.value, {_id: row.id}, row.doc)
+    if keyType is 'patient'
+      doc.patientCode ?= key
+      if encounterId? and doc.type isnt 'encounter'
+        doc.encounterId ?= encounterId
+
     if doc.type is 'task'
       doc.startedAt = startedAt
       # fix for old format where trialNum was 1-indexed
@@ -78,16 +130,18 @@ dumpList = (head, req) ->
           if item.state?.trialNum?
             item.state.trialNum -= 1
 
-    # when we encounter a new keyId, dump the last document we constructed
-    if keyDoc?._id isnt keyId
+    # when we encounter a new key, dump the last document we constructed
+    if key isnt currentKey
       if keyDoc?
-        send(JSON.stringify(keyDoc, null, 2))
+        sendDoc(keyDoc)
         send(',\n')
       keyDoc =
-        _id: keyId
+        _id: if keyType is 'patient' then 'patient-' + key else key
         type: keyType
+      currentKey = key
       taskToEventLog = {}
       encounterToTasks = {}
+      encounters = []
 
     # link documents together
     switch doc.type
@@ -97,10 +151,14 @@ dumpList = (head, req) ->
         doc.tasks ?= tasks
         encounterToTasks[doc._id] ?= tasks
 
+        # add to encounters
+        if keyType is 'patient'
+          encounters.push(doc)
+
       when 'eventLog'
         # don't create eventLog if there's no way to construct it
         if req.query.include_docs
-          taskId = doc.taskId ? if keyType is 'task' then keyId
+          taskId = doc.taskId ? if keyType is 'task' then key
           if taskId?
             eventLog = (taskToEventLog[taskId] ?= [])
             if doc.items?
@@ -108,11 +166,12 @@ dumpList = (head, req) ->
                 eventLog[i + doc.startIndex] = item
 
       when 'patient'
-        # right now we don't want this doc, patient code is enough
-
-        # the encounter view figures out encounterNum from patient.encounterIds
-        if doc.encounterNum? and keyType is 'encounter'
-          keyDoc.encounterNum = doc.encounterNum
+        switch keyType
+          when 'encounter'
+            if doc.encounterNum?
+              keyDoc.encounterNum = doc.encounterNum
+          when 'patient'
+            doc.encounters ?= encounters
 
       when 'task'
         # don't create eventLog if there's no way to construct it
@@ -121,19 +180,20 @@ dumpList = (head, req) ->
           doc.eventLog ?= eventLog
           taskToEventLog[doc._id] ?= eventLog
 
+        # add to encounterToTasks
         if keyType isnt 'task'
-          encounterId = doc.encounterId ? if keyType is 'encounter' then keyId
+          encounterId = doc.encounterId ? if keyType is 'encounter' then key
           if encounterId?
             (encounterToTasks[encounterId] ?= []).push(doc)
 
     # if this the key document, dump all its fields into keyDoc
-    if doc._id is keyDoc._id and doc.type is keyDoc.type
+    if doc.type is keyType
       _.extend(keyDoc, doc)
 
 
   # dump last key document
   if keyDoc?
-    send(JSON.stringify(keyDoc, null, 2))
+    sendDoc(keyDoc)
     send('\n')  # no comma, since this is the last one
 
   send(']\n')
@@ -146,5 +206,7 @@ exports.lists =
 exports.views =
   encounter:
     map: encounterMap
+  patient:
+    map: patientMap
   task:
     map: taskMap
