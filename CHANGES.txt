@@ -1,6 +1,9 @@
-v0.4.0, ????-??-?? -- offline mode?
-
-v0.3.1, ????-??-?? -- data dumps
+v0.3.1, 2013-08-13 -- data dumps
+- core library:
+  - couchDB:
+    - added "patient" view
+    - task.interpretation is included in views
+    - added "dump" list which stitches together patients/encounters/tasks
 
 v0.3.0, 2013-08-14 -- take better care of our data, more cleanup
 - core library:
