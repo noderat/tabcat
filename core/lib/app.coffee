@@ -2,48 +2,51 @@
 #
 # key is [encounterId, encounterClockTime, docType]
 #
-# encounterNum is with the patient doc (since that contains the list
-# of encounter IDs)
+# encounterNum is in the value emitted by the patient doc
 encounterMap = (doc) ->
-  if doc.type is 'encounter'
-    emit([doc._id, 0, 'encounter'],
-      _id: doc._id,
-      patientCode: doc.patientCode,
-      limitedPHI:
-        clockOffset: doc.limitedPHI?.clockOffset)
-  else if doc.type is 'eventLog'
-    emit([doc.encounterId, doc.items[0].now, 'eventLog'],
-      _id: doc._id,
-      taskId: doc.taskId,
-      startIndex: doc.startIndex,
-      endIndex: doc.startIndex + doc.items.length)
-  else if doc.type is 'task'
-    emit([doc.encounterId, doc.startedAt, 'task'],
-      _id: doc._id,
-      name: doc.name,
-      finishedAt: doc.finishedAt)
-  else if doc.type is 'patient'
-    if doc.encounterIds?
-      for encounterId, i in doc.encounterIds
-        emit([encounterId, null, 'patient'],
-          _id: doc._id,
-          encounterNum: i + 1,
-          patientCode: doc.patientCode)
+  switch doc.type
+    when 'encounter'
+      emit([doc._id, 0, 'encounter'],
+        _id: doc._id,
+        patientCode: doc.patientCode,
+        limitedPHI:
+          clockOffset: doc.limitedPHI?.clockOffset)
+    when 'eventLog'
+      emit([doc.encounterId, doc.items[0].now, 'eventLog'],
+        _id: doc._id,
+        taskId: doc.taskId,
+        startIndex: doc.startIndex,
+        endIndex: doc.startIndex + doc.items.length)
+    when 'patient'
+      if doc.encounterIds?
+        for encounterId, i in doc.encounterIds
+          emit([encounterId, null, 'patient'],
+            _id: doc._id,
+            encounterNum: i + 1,
+            patientCode: doc.patientCode)
+    when 'task'
+      emit([doc.encounterId, doc.startedAt, 'task'],
+        _id: doc._id,
+        name: doc.name,
+        finishedAt: doc.finishedAt)
 
 
 # group docs by task ID, and order chronologically
+#
+# key is [taskId, encounterClockTime, docType]
 taskMap = (doc) ->
-  if doc.type is 'eventLog'
-    emit([doc.taskId, doc.items[0].now, 'eventLog'],
-      _id: doc._id,
-      startIndex: doc.startIndex,
-      endIndex: doc.startIndex + doc.items.length)
-  else if doc.type is 'task'
-    emit([doc._id, doc.startedAt, 'task'],
-      _id: doc._id,
-      name: doc.name,
-      patientCode: doc.patientCode,
-      finishedAt: doc.finishedAt)
+  switch doc.type
+    when 'eventLog'
+      emit([doc.taskId, doc.items[0].now, 'eventLog'],
+        _id: doc._id,
+        startIndex: doc.startIndex,
+        endIndex: doc.startIndex + doc.items.length)
+    when 'task'
+      emit([doc._id, doc.startedAt, 'task'],
+        _id: doc._id,
+        name: doc.name,
+        patientCode: doc.patientCode,
+        finishedAt: doc.finishedAt)
 
 
 # piece together
