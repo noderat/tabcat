@@ -2,7 +2,7 @@
 COFFEE_SRC = $(wildcard *.coffee)
 COFFEE_JS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 
-NODE_MODULE_NAMES = csv JSONStream
+NODE_MODULE_NAMES = csv JSONStream underscore
 NODE_MODULES = $(patsubst %, node_modules/%, $(NODE_MODULE_NAMES))
 
 
