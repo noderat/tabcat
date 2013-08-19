@@ -1,3 +1,10 @@
+# transform a dump of the patient list:
+#
+#  /tabcat-data/_design/core/_list/dump/patient?include_docs=true
+#
+# into a CSV with summary data for all completed line tasks
+#
+# usage: node line-tasks-report.js patient-list-dump.json > out.csv
 csv = require('csv')
 fs = require('fs')
 JSONStream = require('JSONStream')
