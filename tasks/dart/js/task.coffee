@@ -30,6 +30,14 @@ CHOICES_SUBMIT_SHOW_WAIT = 1000
 
 FADE_DURATION = 200
 
+# how long after loading to show the "video is stalled" message
+VIDEO_LOAD_WAIT_TIME = 3000
+
+# how long to wait before showing the "video is stalled" message
+# (because the video might un-stall on its own)
+VIDEO_STALLED_WAIT_TIME = 1000
+
+
 
 # GLOBALS
 
@@ -37,6 +45,9 @@ trialNum = 0
 
 # used to help restart the video if it stalls due to flaky network
 restartVideoAt = null
+
+# used to track whether the video is still stalled
+videoIsStalled = false
 
 
 # INITIALIZATION
@@ -57,6 +68,7 @@ onReady = ->
 
 initVideoScreen = _.once(->
   $video = $('#videoScreen').find('video')
+  video = $video[0]
 
   $video.on('play', (event) ->
     tabcat.task.logEvent(getState(), event)
@@ -70,43 +82,47 @@ initVideoScreen = _.once(->
     showChoices()
   )
 
+  fixVideoCurrentTime = ->
+    #console.log('fixVideoCurrentTime()')
+    if restartVideoAt?
+      console.log('setting video.currentTime to ' + restartVideoAt)
+      video.currentTime = restartVideoAt
+      console.log('video.currentTime == ' + video.currentTime)
+      restartVideoAt = null
+
   # click to resume stalled video
-  #
-  # attach this to the entire video screen; video may be covered by overlays
-  $('#videoScreen').on('click', (event) ->
+  resumeVideo = (event) ->
     tabcat.task.logEvent(getState(), event)
-
-    video = $video[0]
-
-    # don't do anything if the video is fine
-    if (video.readyState >= video.HAVE_CURRENT_DATA \
-        and not $('#videoStalled').is(':visible'))
-      return
 
     # store this for when the video is ready to be fast-forwarded
     # see .on('loadedmetadata', ...) below
     restartVideoAt = video.currentTime ? 0
-
+    console.log('restartVideoAt == ' + restartVideoAt)
+    # if we stalled at the end of the video, just show choices
     $('#videoStalled').hide()
-
     loadAndPlayVideo()
-  )
 
-  $video.on('loadedmetadata', (event) ->
-    if restartVideoAt?
-      video = event.target
-      video.currentTime = restartVideoAt
-  )
+  $video.on('click', resumeVideo)
+  $('#videoStalled').on('click', resumeVideo)
+  $('#videoScreen').find('button').on('click', resumeVideo)
 
   $video.on('abort error stalled', (event) ->
     tabcat.task.logEvent(getState(), event)
 
-    $('#videoOverlay').hide()
-    $('#videoStalled').show()
+    videoIsStalled = true
+
+    tabcat.ui.wait(VIDEO_STALLED_WAIT_TIME).then(->
+      if videoIsStalled
+        $('#videoOverlay').hide()
+        $('#videoStalled').show()
+    )
   )
 
   $video.on('timeupdate', ->
+    #console.log('timeupdate')
+    videoIsStalled = false
     $('#videoStalled').hide()
+    fixVideoCurrentTime()
   )
 
 )
@@ -132,11 +148,16 @@ getChosen = ->
 getStimuli = ->
   stimuli = {}
 
-  if $('#videoScreen').is(':visible')
+  $videoScreen = $('#videoScreen')
+  if $videoScreen.is(':visible')
+    video = $videoScreen.find('video')[0]
     stimuli.video = {}
-    stimuli.video.currentTime = $('video')[0].currentTime
+    stimuli.video.currentTime = video.currentTime
     if $('#videoStalled').is(':visible')
       stimuli.video.stalled = true
+    stimuli.video.duration = video.duration
+    stimuli.video.readyState = video.readyState
+    stimuli.video.networkState = video.networkState
     # not including video number, because it's the same as trialNum
 
   $choiceDivs = $('#choices:visible').find('div')
@@ -221,6 +242,11 @@ onSubmitChoice = (event) ->
 
 
 showChoices = ->
+  # if video stalls near the end, things can get messy; don't
+  # show choices twice
+  if $('choicesScreen').is(':visible')
+    return
+
   $('#videoScreen').hide()
   $('#choiceSubmitButton').hide()
 
@@ -273,6 +299,9 @@ loadAndPlayVideo = ->
 
   video = $video[0]
 
+  # clear video.src, in case we are trying to reload the same video
+  video.src = null
+
   if video.canPlayType('video/ogg')
     video.src = "videos/#{trialNum}.ogv"
   else
@@ -285,8 +314,6 @@ loadAndPlayVideo = ->
   $video.width(squareDivHeight)
   $video.height(squareDivHeight)
 
-  # don't fast-forward the video based on the previous video
-  restartVideoAt = null
   video.load()
 
   # would be better to do this on canplay, but iOS Safari only allows

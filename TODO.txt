@@ -1,6 +1,9 @@
 Tasks:
 - DART:
-  - handle video network errors
+  - "video" is stall message should be on a timer
+  - click to resume video needs to work on iOS safari (doesn't attach to video)
+  - fix video restart logic
+  - make video files smaller?
 
 Cleanup:
 - don't need tasks to be launchable
