@@ -35,7 +35,8 @@ FADE_DURATION = 200
 
 trialNum = 0
 
-
+# used to help re-start the video if it stalls due to flaky network
+restartVideoAt = null
 
 
 # INITIALIZATION
@@ -68,6 +69,24 @@ initVideoScreen = _.once(->
     tabcat.task.logEvent(getState(), event)
     showChoices()
   )
+
+  # reload the video and restart it from the current point on click
+  $video.on('click', (event) ->
+    video = event.target
+
+    # store this for when the video is ready to be fast-forwarded
+    restartVideoAt = video.currentTime ? 0
+
+    video.load()
+    video.play()
+  )
+
+  $video.on('loadedmetadata', (event) ->
+    if restartVideoAt?
+      video = event.target
+      video.currentTime = restartVideoAt
+  )
+
 )
 
 
@@ -230,6 +249,8 @@ showVideo = ->
   $video.width(squareDivHeight)
   $video.height(squareDivHeight)
 
+  # don't fast-forward the video based on the previous video
+  restartVideoAt = null
   video.load()
   video.play()
 
