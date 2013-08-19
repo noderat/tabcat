@@ -6,6 +6,7 @@ Cleanup:
 - don't need tasks to be launchable
 - fix favicon
 - task.start() should require user and encounter ID
+- use single patient/encounter/task view
 
 Offline Mode:
 - offline manifest
