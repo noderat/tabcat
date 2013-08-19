@@ -43,7 +43,23 @@
     text-align: center;
     color: #eeeeee;
     z-index: 1001;
+    pointer-events: none;
 }
+
+
+#videoStalled {
+    position: absolute;
+    margin: 0;
+    top: 33%;
+    left: 5%;
+    width: 90%;
+    font-size: 12em;
+    text-align: center;
+    color: #eeeeee;
+    z-index: 1002;
+    pointer-events: none;
+}
+
 
 /* choices */
 

@@ -35,7 +35,7 @@ FADE_DURATION = 200
 
 trialNum = 0
 
-# used to help re-start the video if it stalls due to flaky network
+# used to help restart the video if it stalls due to flaky network
 restartVideoAt = null
 
 
@@ -70,21 +70,43 @@ initVideoScreen = _.once(->
     showChoices()
   )
 
-  # reload the video and restart it from the current point on click
-  $video.on('click', (event) ->
-    video = event.target
+  # click to resume stalled video
+  #
+  # attach this to the entire video screen; video may be covered by overlays
+  $('#videoScreen').on('click', (event) ->
+    tabcat.task.logEvent(getState(), event)
+
+    video = $video[0]
+
+    # don't do anything if the video is fine
+    if (video.readyState >= video.HAVE_CURRENT_DATA \
+        and not $('#videoStalled').is(':visible'))
+      return
 
     # store this for when the video is ready to be fast-forwarded
+    # see .on('loadedmetadata', ...) below
     restartVideoAt = video.currentTime ? 0
 
-    video.load()
-    video.play()
+    $('#videoStalled').hide()
+
+    loadAndPlayVideo()
   )
 
   $video.on('loadedmetadata', (event) ->
     if restartVideoAt?
       video = event.target
       video.currentTime = restartVideoAt
+  )
+
+  $video.on('abort error stalled', (event) ->
+    tabcat.task.logEvent(getState(), event)
+
+    $('#videoOverlay').hide()
+    $('#videoStalled').show()
+  )
+
+  $video.on('timeupdate', ->
+    $('#videoStalled').hide()
   )
 
 )
@@ -110,8 +132,12 @@ getChosen = ->
 getStimuli = ->
   stimuli = {}
 
-  if $('#videoScreen:visible').length
-    stimuli.video = true
+  if $('#videoScreen').is(':visible')
+    stimuli.video = {}
+    stimuli.video.currentTime = $('video')[0].currentTime
+    if $('#videoStalled').is(':visible')
+      stimuli.video.stalled = true
+    # not including video number, because it's the same as trialNum
 
   $choiceDivs = $('#choices:visible').find('div')
   if $choiceDivs.length
@@ -228,13 +254,23 @@ showVideo = ->
   $('#choicesScreen').hide()
   $('body').removeClass('blueBackground')
 
-  $videoContainer = $('#videoScreen')
+  $videoScreen = $('#videoScreen')
 
   $videoOverlay = $('#videoOverlay')
   $videoOverlay.text(trialLabel())
   $videoOverlay.show()
 
-  $video = $videoContainer.find('video')
+  # we're playing a new video, so clear out old restart time, if any
+  restartVideoAt = null
+  loadAndPlayVideo()
+
+  $videoScreen.show()
+
+
+# load and play video, in the tiresome way that Safari requires
+loadAndPlayVideo = ->
+  $video = $('#videoScreen').find('video')
+
   video = $video[0]
 
   if video.canPlayType('video/ogg')
@@ -242,7 +278,7 @@ showVideo = ->
   else
     video.src = "videos/#{trialNum}.mp4"
 
-  # manually set the size of the video, for iPad
+  # manually set the size of the video, for Safari
   #
   # don't use $video.attr('width', ...); it just confuses jQuery/iOS Safari
   squareDivHeight = $('div.square').height()
@@ -252,11 +288,10 @@ showVideo = ->
   # don't fast-forward the video based on the previous video
   restartVideoAt = null
   video.load()
-  video.play()
 
-  # would be better to do this on canplay, but iOS only allows
+  # would be better to do this on canplay, but iOS Safari only allows
   # videos to be played from user-triggered events
-  $videoContainer.show()
+  video.play()
 
 
 inPracticeMode = -> trialNum is 0
