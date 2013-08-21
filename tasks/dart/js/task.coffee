@@ -30,12 +30,8 @@ CHOICES_SUBMIT_SHOW_WAIT = 1000
 
 FADE_DURATION = 200
 
-# how long after loading to show the "video is stalled" message
-VIDEO_LOAD_WAIT_TIME = 3000
-
-# how long to wait before showing the "video is stalled" message
-# (because the video might un-stall on its own)
-VIDEO_STALLED_WAIT_TIME = 1000
+# how long to the video can stall before we show user a message
+VIDEO_MAX_STALL_TIME = 3000
 
 
 
@@ -46,11 +42,12 @@ trialNum = 0
 # used to help restart the video if it stalls due to flaky network
 restartVideoAt = null
 
-# used to track whether the video is still stalled
-videoIsStalled = false
+# used to show the "video is stalled" message
+videoStalledTimeoutId = null
 
 
 # INITIALIZATION
+
 @initTask = ->
   tabcat.task.start(trackViewport: true)
 
@@ -66,10 +63,26 @@ onReady = ->
   showInstructions()
 
 
+# INSTRUCTIONS
+
+showInstructions = ->
+  $squareDiv = $('div.square')
+  tabcat.ui.fixAspectRatio($squareDiv, 1)
+  tabcat.ui.linkEmToPercentOfHeight($squareDiv)
+
+  $('#instructionsScreen').show()
+
+  $('#instructionsScreen').find('button').on('click', showVideo)
+
+
+# VIDEO
+
+# set up all the events for the video screen
 initVideoScreen = _.once(->
   $video = $('#videoScreen').find('video')
   video = $video[0]
 
+  # when the video starts playing, hide the label overlay
   $video.on('play', (event) ->
     tabcat.task.logEvent(getState(), event)
     tabcat.ui.wait(VIDEO_OVERLAY_SHOW_TIME).then(->
@@ -77,11 +90,36 @@ initVideoScreen = _.once(->
     )
   )
 
+  # if the video ended, show choices
   $video.on('ended', (event) ->
     tabcat.task.logEvent(getState(), event)
+    clearStalledMessage()
     showChoices()
   )
 
+  # video elements can't receive click events on iPad Safari, so attach them
+  # to a transparent overlay instead.
+  $('#videoResume').on('click', (event) ->
+    tabcat.task.logEvent(getState(), event)
+
+    if $('#videoStalled').is(':visible')
+      # store this for when the video is ready to be fast-forwarded
+      # if a previous click event already tried to reload the video, don't
+      # lose the old restartVideoAt time
+      restartVideoAt = Math.max(restartVideoAt, video.currentTime, 0)
+      # if we stalled at the end of the video, just show choices
+      $('#videoStalled').hide()
+      loadAndPlayVideo()
+      deferStalledMessage()
+  )
+
+  # handle resume if we can, and defer showing the "video stalled" message
+  $video.on('loadedmetadata progress timeupdate', ->
+    deferStalledMessage()
+    fixVideoCurrentTime()
+  )
+
+  # implements resume
   fixVideoCurrentTime = ->
     # seeking on the iPad is a pain; see goo.gl/vvy8oq for details
     if (
@@ -91,39 +129,90 @@ initVideoScreen = _.once(->
       video.currentTime = restartVideoAt
       restartVideoAt = null
 
-  # video elements can't receive click events on iPad Safari, so attach them
-  # to a transparent overlay instead.
-  $('#videoResume').on('click', (event) ->
-    tabcat.task.logEvent(getState(), event)
-
-    # store this for when the video is ready to be fast-forwarded
-    # see .on('loadedmetadata', ...) below
-    restartVideoAt = video.currentTime ? 0
-    # if we stalled at the end of the video, just show choices
-    $('#videoStalled').hide()
-    loadAndPlayVideo()
-  )
-
+  # log problems loading the video, but don't do anything about them
   $video.on('abort error stalled', (event) ->
     tabcat.task.logEvent(getState(), event)
-
-    videoIsStalled = true
-
-    tabcat.ui.wait(VIDEO_STALLED_WAIT_TIME).then(->
-      if videoIsStalled
-        $('#videoLabel').hide()
-        $('#videoStalled').show()
-    )
-  )
-
-  $video.on('timeupdate', ->
-    videoIsStalled = false
-    $('#videoStalled').hide()
-    fixVideoCurrentTime()
   )
 
 )
 
+# show the video screen and start playing the video
+showVideo = ->
+  $('#instructionsScreen').hide()
+  $('#choicesScreen').hide()
+  $('body').removeClass('blueBackground')
+
+  $videoScreen = $('#videoScreen')
+
+  $videoLabel = $('#videoLabel')
+  $videoLabel.text(videoLabel())
+  $videoLabel.show()
+
+  # we're playing a new video, so clear out old restart time, if any
+  restartVideoAt = null
+  loadAndPlayVideo()
+  deferStalledMessage()
+
+  $videoScreen.show()
+
+
+# load and play video, in the tiresome way that Safari requires
+loadAndPlayVideo = ->
+  $video = $('#videoScreen').find('video')
+
+  video = $video[0]
+
+  # clear video.src, in case we are trying to reload the same video
+  video.src = null
+
+  if video.canPlayType('video/ogg')
+    video.src = "videos/#{trialNum}.ogv"
+  else
+    video.src = "videos/#{trialNum}.mp4"
+
+  # manually set the size of the video, for Safari
+  #
+  # don't use $video.attr('width', ...); it just confuses jQuery/iOS Safari
+  squareDivHeight = $('div.square').height()
+  $video.width(squareDivHeight)
+  $video.height(squareDivHeight)
+
+  video.load()
+
+  # would be better to do this on canplay, but iOS Safari only allows
+  # videos to be played from user-triggered events
+  video.play()
+
+# how to label
+videoLabel = ->
+  if inPracticeMode() then 'Practice Item' else trialNum
+
+# show the "video stalled" message after a certain amount of time (unless
+# this function or clearStalledMessage() gets called before then)
+deferStalledMessage = (milliseconds) ->
+  milliseconds ?= VIDEO_MAX_STALL_TIME
+  clearStalledMessage()
+  videoStalledTimeoutId = window.setTimeout(showStalledMessage, milliseconds)
+
+# hide the "video stalled" message
+clearStalledMessage = ->
+  if videoStalledTimeoutId?
+    window.clearTimeout(videoStalledTimeoutId)
+  videoStalledTimeoutId = null
+  if $('#videoStalled').is(':visible')
+    $('#videoStalled').hide()
+    # log that we hid the message
+    tabcat.task.logEvent(getState())
+
+# show the "video stalled" message (helper for call deferStalledMessage())
+showStalledMessage = ->
+  $('#videoLabel').hide()
+  $('#videoStalled').fadeIn(duration: FADE_DURATION)
+  # log that we showed the message
+  tabcat.task.logEvent(getState())
+
+
+# CHOICES
 
 initChoiceScreen = _.once(->
   $choices = $('#choices')
@@ -141,70 +230,6 @@ initChoiceScreen = _.once(->
 getChosen = ->
   return $('#choices:visible').find('div.chosen').text() or null
 
-
-getStimuli = ->
-  stimuli = {}
-
-  $videoScreen = $('#videoScreen')
-  if $videoScreen.is(':visible')
-    video = $videoScreen.find('video')[0]
-    stimuli.video = {}
-    stimuli.video.currentTime = video.currentTime
-    if $('#videoStalled').is(':visible')
-      stimuli.video.stalled = true
-    stimuli.video.duration = video.duration
-    stimuli.video.readyState = video.readyState
-    stimuli.video.networkState = video.networkState
-    # not including video number, because it's the same as trialNum
-
-  $choiceDivs = $('#choices:visible').find('div')
-  if $choiceDivs.length
-    stimuli.choices = ($(c).text() for c in $choiceDivs)
-
-  chosen = getChosen()
-  if chosen
-    stimuli.chosen = chosen
-
-  return stimuli
-
-
-getState = ->
-  state =
-    trialNum: trialNum
-
-  if inPracticeMode()
-    state.practiceMode = true
-
-  stimuli = getStimuli()
-  if not _.isEmpty(stimuli)
-    state.stimuli = stimuli
-
-  return state
-
-
-interpretChoice = (choice) ->
-  correctChoice = CORRECT_CHOICES[trialNum]
-
-  interpretation =
-    choice: choice
-    correct: choice is correctChoice
-
-  if not interpretation.correct
-    interpretation.correctChoice = correctChoice
-
-  return interpretation
-
-
-interpretSubmission = ->
-  $.extend(interpretChoice(getChosen()), submit: true)
-
-
-finalInterpretation = ->
-  numCorrect:
-    (item for item in tabcat.task.getEventLog() when (
-      not item.state?.practiceMode and
-      item.interpretation?.submit and
-      item.interpretation?.correct)).length
 
 
 onPickChoice = (event) ->
@@ -256,69 +281,75 @@ showChoices = ->
   $choices = $('#choices').find('div')
   $choices.removeClass('chosen')
 
-  $('#videoLabel').text(videoLabel())
+  $('#choicesVideoLabel').text(videoLabel())
 
   $('body').addClass('blueBackground')
   $('#choicesScreen').fadeIn(duration: FADE_DURATION)
 
 
-showInstructions = ->
-  $squareDiv = $('div.square')
-  tabcat.ui.fixAspectRatio($squareDiv, 1)
-  tabcat.ui.linkEmToPercentOfHeight($squareDiv)
-
-  $('#instructionsScreen').show()
-
-  $('#instructionsScreen').find('button').on('click', showVideo)
 
 
-showVideo = ->
-  $('#instructionsScreen').hide()
-  $('#choicesScreen').hide()
-  $('body').removeClass('blueBackground')
+# STATE AND INTERPRETATION
+
+getState = ->
+  state =
+    trialNum: trialNum
+
+  if inPracticeMode()
+    state.practiceMode = true
+
+  stimuli = getStimuli()
+  if not _.isEmpty(stimuli)
+    state.stimuli = stimuli
+
+  return state
+
+getStimuli = ->
+  stimuli = {}
 
   $videoScreen = $('#videoScreen')
+  if $videoScreen.is(':visible')
+    video = $videoScreen.find('video')[0]
+    stimuli.video = {}
+    stimuli.video.currentTime = video.currentTime
+    if $('#videoStalled').is(':visible')
+      stimuli.video.stalled = true
+    # not including video number, because it's the same as trialNum
 
-  $videoLabel = $('#videoLabel')
-  $videoLabel.text(videoLabel())
-  $videoLabel.show()
+  $choiceDivs = $('#choices:visible').find('div')
+  if $choiceDivs.length
+    stimuli.choices = ($(c).text() for c in $choiceDivs)
 
-  # we're playing a new video, so clear out old restart time, if any
-  restartVideoAt = null
-  loadAndPlayVideo()
+  chosen = getChosen()
+  if chosen
+    stimuli.chosen = chosen
 
-  $videoScreen.show()
+  return stimuli
 
 
-# load and play video, in the tiresome way that Safari requires
-loadAndPlayVideo = ->
-  $video = $('#videoScreen').find('video')
+interpretChoice = (choice) ->
+  correctChoice = CORRECT_CHOICES[trialNum]
 
-  video = $video[0]
+  interpretation =
+    choice: choice
+    correct: choice is correctChoice
 
-  # clear video.src, in case we are trying to reload the same video
-  video.src = null
+  if not interpretation.correct
+    interpretation.correctChoice = correctChoice
 
-  if video.canPlayType('video/ogg')
-    video.src = "videos/#{trialNum}.ogv"
-  else
-    video.src = "videos/#{trialNum}.mp4"
+  return interpretation
 
-  # manually set the size of the video, for Safari
-  #
-  # don't use $video.attr('width', ...); it just confuses jQuery/iOS Safari
-  squareDivHeight = $('div.square').height()
-  $video.width(squareDivHeight)
-  $video.height(squareDivHeight)
 
-  video.load()
+interpretSubmission = ->
+  $.extend(interpretChoice(getChosen()), submit: true)
 
-  # would be better to do this on canplay, but iOS Safari only allows
-  # videos to be played from user-triggered events
-  video.play()
+
+finalInterpretation = ->
+  numCorrect:
+    (item for item in tabcat.task.getEventLog() when (
+      not item.state?.practiceMode and
+      item.interpretation?.submit and
+      item.interpretation?.correct)).length
 
 
 inPracticeMode = -> trialNum is 0
-
-videoLabel = ->
-  if inPracticeMode() then 'Practice Item' else trialNum
