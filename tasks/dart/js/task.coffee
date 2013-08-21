@@ -73,7 +73,7 @@ initVideoScreen = _.once(->
   $video.on('play', (event) ->
     tabcat.task.logEvent(getState(), event)
     tabcat.ui.wait(VIDEO_OVERLAY_SHOW_TIME).then(->
-      $('#videoOverlay').fadeOut(duration: VIDEO_OVERLAY_FADE_OUT_TIME)
+      $('#videoLabel').fadeOut(duration: VIDEO_OVERLAY_FADE_OUT_TIME)
     )
   )
 
@@ -83,28 +83,26 @@ initVideoScreen = _.once(->
   )
 
   fixVideoCurrentTime = ->
-    #console.log('fixVideoCurrentTime()')
-    if restartVideoAt?
-      console.log('setting video.currentTime to ' + restartVideoAt)
+    # seeking on the iPad is a pain; see goo.gl/vvy8oq for details
+    if (
+      restartVideoAt? and video.seekable?.length and \
+      video.seekable.start(0) <= restartVideoAt <= video.seekable.end(0))
+
       video.currentTime = restartVideoAt
-      console.log('video.currentTime == ' + video.currentTime)
       restartVideoAt = null
 
-  # click to resume stalled video
-  resumeVideo = (event) ->
+  # video elements can't receive click events on iPad Safari, so attach them
+  # to a transparent overlay instead.
+  $('#videoResume').on('click', (event) ->
     tabcat.task.logEvent(getState(), event)
 
     # store this for when the video is ready to be fast-forwarded
     # see .on('loadedmetadata', ...) below
     restartVideoAt = video.currentTime ? 0
-    console.log('restartVideoAt == ' + restartVideoAt)
     # if we stalled at the end of the video, just show choices
     $('#videoStalled').hide()
     loadAndPlayVideo()
-
-  $video.on('click', resumeVideo)
-  $('#videoStalled').on('click', resumeVideo)
-  $('#videoScreen').find('button').on('click', resumeVideo)
+  )
 
   $video.on('abort error stalled', (event) ->
     tabcat.task.logEvent(getState(), event)
@@ -113,13 +111,12 @@ initVideoScreen = _.once(->
 
     tabcat.ui.wait(VIDEO_STALLED_WAIT_TIME).then(->
       if videoIsStalled
-        $('#videoOverlay').hide()
+        $('#videoLabel').hide()
         $('#videoStalled').show()
     )
   )
 
   $video.on('timeupdate', ->
-    #console.log('timeupdate')
     videoIsStalled = false
     $('#videoStalled').hide()
     fixVideoCurrentTime()
@@ -259,7 +256,7 @@ showChoices = ->
   $choices = $('#choices').find('div')
   $choices.removeClass('chosen')
 
-  $('#trialLabel').text(trialLabel())
+  $('#videoLabel').text(videoLabel())
 
   $('body').addClass('blueBackground')
   $('#choicesScreen').fadeIn(duration: FADE_DURATION)
@@ -282,9 +279,9 @@ showVideo = ->
 
   $videoScreen = $('#videoScreen')
 
-  $videoOverlay = $('#videoOverlay')
-  $videoOverlay.text(trialLabel())
-  $videoOverlay.show()
+  $videoLabel = $('#videoLabel')
+  $videoLabel.text(videoLabel())
+  $videoLabel.show()
 
   # we're playing a new video, so clear out old restart time, if any
   restartVideoAt = null
@@ -323,5 +320,5 @@ loadAndPlayVideo = ->
 
 inPracticeMode = -> trialNum is 0
 
-trialLabel = ->
+videoLabel = ->
   if inPracticeMode() then 'Practice Item' else trialNum

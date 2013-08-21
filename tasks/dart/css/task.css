@@ -34,7 +34,7 @@
     z-index: 1000;
 }
 
-#videoOverlay {
+#videoLabel {
     position: absolute;
     margin: 0;
     top: 43%;
@@ -55,22 +55,18 @@
     font-size: 12em;
     text-align: center;
     color: #eeeeee;
-    z-index: 1002;
     opacity: 80%;
+    z-index: 1002;
 }
 
-#videoScreen button {
+#videoResume {
     position: absolute;
-    margin: 0;
-    top: 33%;
-    left: 5%;
-    width: 90%;
-    font-size: 12em;
-    text-align: center;
-    color: #eeeeee;
+    left: 0;
+    width: 100%;
+    top: 0;
+    height: 100%;
     z-index: 1003;
 }
-
 
 /* choices */
 
