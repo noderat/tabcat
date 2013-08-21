@@ -1,7 +1,10 @@
-v0.3.2, 2013-??-?? -- ???
+v0.3.2, 2013-08-21 -- bulletproof DART
 - core library:
   - couchDB:
     - task.interpretation is no longer included in views
+- tasks
+  - dart
+    - detect when video is stalled and give user ability to resume
 
 v0.3.1, 2013-08-13 -- data dumps
 - core library:
