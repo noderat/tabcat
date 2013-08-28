@@ -7,8 +7,6 @@ Tasks:
   - make video files smaller?
 
 - CouchDB:
-  - single patient/encounter/task view
-  - index by taskName (requires adding taskName to eventLog docs)
   - handle interpretations through lists
     - e.g. /tabcat-data/_design/dart/_list/interpret/core/task?include_docs=true&startkey=["dart"]&endkey=["dart",[]]
 
@@ -16,14 +14,13 @@ Cleanup:
 - don't need tasks to be launchable
 - fix favicon
 - task.start() should require user and encounter ID
-- use single patient/encounter/task view
 
 Offline Mode:
 - offline manifest
   - http://appcachefacts.info/ has good info
   - add a nonce/version number to manifest so it gets reloaded
   - /tabcat-data/config must not 404; this will kill the manifest
-    - use kanso upload
+    - use kanso upload/curl to create it
   - just have to assume that we need the same paths from /tabcat-data
     as we need from /tabcat
 - simple local storage of docs
