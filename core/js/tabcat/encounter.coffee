@@ -121,45 +121,62 @@ tabcat.encounter.clear = ->
 
 # Promise: fetch info about an encounter.
 #
-# By default, we return info about the current encounter:
+# Returns:
 # - _id: doc ID for encounter (same as encounterId), if encounter exsists
-# - clockOffset: real start time of encounter (if allowed by PHI settings)
+# - limitedPHI.clockOffset: real start time of encounter
 # - patientCode: patient in encounter
 # - tasks: list of task info, sorted by start time, with these fields:
 #   - _id: doc ID for task
 #   - name: name of task's design doc (e.g. "line-orientation")
 #   - startedAt: timestamp for start of task (using encounter clock)
 #   - finishedAt: timestamp for end of task, if task was finished
-tabcat.encounter.getInfo = (encounterId) ->
+# - type: always "encounter"
+# - year: year encounter started
+#
+# By default (no args), we return info about the current encounter.
+#
+# You may provide patientCode if you know it; otherwise we'll look it up.
+tabcat.encounter.getInfo = (encounterId, patientCode) ->
   if not encounterId?
     encounterId = tabcat.encounter.getEncounterId()
-    if not encounterId?
+    patientCode = tabcat.encounter.getPatientCode()
+
+    if not (encounterId? and patientCode?)
       return $.Deferred().resolve(null)
 
-  encounterUrl = (
-    "/#{DATA_DB}/_design/core/_view/encounter?startkey=" +
-    encodeURIComponent(JSON.stringify([encounterId])) +
-    '&endkey=' +
-    # "" sorts just after null and all numbers
-    encodeURIComponent(JSON.stringify([encounterId, ""])))
+  if patientCode?
+    patientCodePromise = $.Deferred().resolve(patientCode)
+  else
+    patientCodePromise = $.getJSON("/#{DATA_DB}/#{encounterId}").then(
+      (encounterDoc) -> encounterDoc.patientCode)
 
-  $.getJSON(encounterUrl).then((results) ->
-    info = {tasks: [], results: results}
+  patientCodePromise.then((patientCode) ->
+    encounterUrl = (
+      "/#{DATA_DB}/_design/core/_view/patient?startkey=" +
+      encodeURIComponent(JSON.stringify(
+        [patientCode, encounterId])) +
+      '&endkey=' +
+      # "" sorts just after null and all numbers
+      encodeURIComponent(JSON.stringify(
+        [patientCode, encounterId, []])))
 
-    # arrange encounter, patients, and tasks into a single doc
-    #
-    # for now, don't bother with eventLog docs
-    for {key: [__, startedAt, docType], value: doc} in results.rows
-      if docType is 'encounter'
-        $.extend(info, _.doc)
-      else if docType is 'patient'
-        # encounter number is determined from patient's list of encounters
-        info.encounterNum = doc.encounterNum
-      else if docType is 'task'
-        doc.startedAt = startedAt
-        info.tasks.push(doc)
+    $.getJSON(encounterUrl).then((results) ->
+      info = {_id: encounterId, patientCode: patientCode, tasks: []}
 
-    info.tasks = _.sortBy(info.tasks, (task) -> task.startedAt)
+      # arrange encounter, patients, and tasks into a single doc
+      # TODO: this code is similar to lib/app/dumpList(); merge common code?
+      for {key: [__, ___, taskId, startedAt], value: doc} in results.rows
+        switch doc.type
+          when 'encounter'
+            $.extend(info, doc)
+          when 'encounterNum'
+            info.encounterNum = doc.encounterNum
+          when 'task'
+            doc.startedAt = startedAt
+            info.tasks.push(_.extend({_id: taskId}, _.omit(doc, 'type')))
 
-    return info
+      info.tasks = _.sortBy(info.tasks, (task) -> task.startedAt)
+
+      return info
+    )
   )
