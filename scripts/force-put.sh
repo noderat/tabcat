@@ -10,7 +10,8 @@ if [ -z "$MIME_TYPE" ]; then MIME_TYPE=application-json; fi
 
 # figure out CouchDB doc revision.
 REV_URL=$(echo $URL | cut -d / -f 1-5)  # get parent doc's URL
-REV=$(curl -i -I -s -X HEAD $REV_URL | grep ETag | cut -d '"' -f 2)
+REV=$(curl -X HEAD $REV_URL -I -s | grep ETag | cut -d '"' -f 2)
 if [ -n "$REV" ]; then REV_QUERY="?rev=$REV"; fi
 
-curl -f -X PUT "$URL$REV_QUERY" -H "Content-Type: $MIME_TYPE" --data-binary "@$FILENAME"
+curl -X PUT "$URL$REV_QUERY" \
+    -f -ss -H "Content-Type: $MIME_TYPE" --data-binary "@$FILENAME" > /dev/null

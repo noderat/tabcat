@@ -7,6 +7,7 @@ TASK_TARGETS = $(patsubst tasks/%/kanso.json, %, $(wildcard tasks/*/kanso.json))
 TASK_MAKEFILES = $(patsubst %, tasks/%/Makefile, $(TASK_TARGETS))
 
 # tabcat config. this needs to not 404 for offline manifest to work
+DEFAULT_CONFIG = config-default.json
 TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
 
 # offline manifest
@@ -31,8 +32,8 @@ $(TASK_MAKEFILES): %:
 	if [ ! -e $@ ]; then cd $(@D); ln -s ../Makefile.default Makefile; fi
 
 # create the config file, if it exists, and upload the manifest
-$(PUSHED): $(MANIFEST)
-	curl -f $(TABCAT_CONFIG_URL) &> /dev/null || curl -X PUT -H "Content-Type: application/json" -d {} $(TABCAT_CONFIG_URL)
+$(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
+	scripts/put-default.sh $(DEFAULT_CONFIG) $(TABCAT_CONFIG_URL)
 	scripts/force-put.sh $(MANIFEST) $(TABCAT_MANIFEST_URL) text/cache-manifest
 	touch $@
 
