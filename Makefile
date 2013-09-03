@@ -33,7 +33,7 @@ $(TASK_MAKEFILES): %:
 # create the config file, if it exists, and upload the manifest
 $(PUSHED): $(MANIFEST)
 	curl -f $(TABCAT_CONFIG_URL) &> /dev/null || curl -X PUT -H "Content-Type: application/json" -d {} $(TABCAT_CONFIG_URL)
-	REV=$$(curl -i -I -X HEAD $(TABCAT_HOST)/tabcat/offline | grep ETag | cut -d '"' -f 2); if [ -n $$REV ]; then REV_QUERY=?rev=$$REV; fi; URL=$(TABCAT_MANIFEST_URL)$$REV_QUERY;curl -X PUT $$URL --data-binary @$(MANIFEST) -H "Content-Type: text/cache-manifest"
+	scripts/force-put.sh $(MANIFEST) $(TABCAT_MANIFEST_URL) text/cache-manifest
 	touch $@
 
 clean:
