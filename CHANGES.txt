@@ -1,3 +1,9 @@
+v0.3.3, 2013-09-03 -- tweaking views
+- core library:
+  - couchDB:
+    - there's now just a single view: "patient"
+    - tabcat.encounter.getInfo() now takes patientCode as an optional argument
+
 v0.3.2, 2013-08-21 -- bulletproof DART
 - core library:
   - couchDB:
