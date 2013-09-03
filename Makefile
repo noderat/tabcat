@@ -12,7 +12,7 @@ TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
 
 # offline manifest
 KANSO_FILES = core/kanso.json $(wildcard tasks/*/kanso.json)
-MANIFEST = MANIFEST.appcache
+MANIFEST = cache.manifest
 TABCAT_MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
 
 .PHONY: all core tasks clean $(TASK_TARGETS)
