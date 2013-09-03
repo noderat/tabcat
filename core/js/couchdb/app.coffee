@@ -1,3 +1,9 @@
+# keep track of documents needed for offline mode
+offlineMap = (doc) ->
+  #  if substring(doc._id, 8) is '_design/'
+  emit(doc._id, attachments: doc._attachments)
+
+
 # sort docs by patient, encounter, and task
 #
 # key is [patientCode, encounterId, taskId, encounterClockTime], with
@@ -151,5 +157,7 @@ exports.lists =
 
 
 exports.views =
+  offline:
+    map: offlineMap
   patient:
     map: patientMap
