@@ -22,8 +22,8 @@
 		    "login.html",
 		    "return-to-examiner.html",
 		    "tasks.html"],
-    "modules": ["lib/app.js", "views/lib/underscore.js"],
-    "load": "lib/app",
+    "modules": ["js/couchdb/app.js", "views/lib/underscore.js"],
+    "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
 	"modules": null,

@@ -8,5 +8,5 @@
 /tasks/*/Makefile
 
 /core/js/*.js
-/core/lib/*.js
+/core/js/couchdb/*.js
 /core/js/tabcat/*.js
