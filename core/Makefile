@@ -15,6 +15,10 @@ KANSO_DEPS = $(shell node ../scripts/kanso-deps.js)
 # url of TabCAT config. Offline manifest needs this to not 404.
 TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
 
+# url of offline manifest
+MANIFEST = MANIFEST.appcache
+TABCAT_MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
+
 .PHONY: all
 all: $(PUSHED)
 	@: # suppress "nothing to be done for "all" message
@@ -29,11 +33,12 @@ clean:
 # $(KANSO_DEPS) should include js/tabcat.js
 #
 # It's fine if we can't upload the config; we just want to ensure there is one.
-$(PUSHED): kanso.json $(KANSO_DEPS)
+$(PUSHED): kanso.json $(KANSO_DEPS) $(MANIFEST)
 	kanso install
 	kanso push $(TABCAT_HOST)/tabcat
 	kanso push $(TABCAT_HOST)/tabcat-data
 	curl -f $(TABCAT_CONFIG_URL) &> /dev/null || curl -X PUT -H "Content-Type: application/json" -d {} $(TABCAT_CONFIG_URL)
+	REV=$$(curl -i -I -X HEAD $(TABCAT_HOST)/tabcat/offline | grep ETag | cut -d '"' -f 2); if [ -n $$REV ]; then REV_QUERY=?rev=$$REV; fi; URL=$(TABCAT_MANIFEST_URL)$$REV_QUERY;curl -X PUT $$URL --data-binary @$(MANIFEST) -H "Content-Type: text/cache-manifest"
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
