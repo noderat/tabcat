@@ -12,6 +12,9 @@ VENDOR_JS = $(wildcard js/vendor/*.js)
 # files kanso expects to push
 KANSO_DEPS = $(shell node ../scripts/kanso-deps.js)
 
+# url of TabCAT config. Offline manifest needs this to not 404.
+TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
+
 .PHONY: all
 all: $(PUSHED)
 	@: # suppress "nothing to be done for "all" message
@@ -26,11 +29,11 @@ clean:
 # $(KANSO_DEPS) should include js/tabcat.js
 #
 # It's fine if we can't upload the config; we just want to ensure there is one.
-$(PUSHED): kanso.json $(KANSO_DEPS) default-config.json
+$(PUSHED): kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso push $(TABCAT_HOST)/tabcat
 	kanso push $(TABCAT_HOST)/tabcat-data
-	kanso upload default-config.json $(TABCAT_HOST)/tabcat-data &> /dev/null || true
+	curl -f $(TABCAT_CONFIG_URL) &> /dev/null || curl -X PUT -H "Content-Type: application/json" -d {} $(TABCAT_CONFIG_URL)
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
