@@ -11,6 +11,7 @@ DEFAULT_CONFIG = config-default.json
 TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
 
 # offline manifest
+KANSO_FILES = core/kanso.json $(wildcard tasks/*/kanso.json)
 MANIFEST = MANIFEST.appcache
 TABCAT_MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
 
@@ -30,6 +31,9 @@ $(TASK_TARGETS): %: tasks/%/Makefile
 # have its own Makefile
 $(TASK_MAKEFILES): %:
 	if [ ! -e $@ ]; then cd $(@D); ln -s ../Makefile.default Makefile; fi
+
+$(MANIFEST): $(KANSO_FILES)
+	node scripts/kanso-manifest.js $^ > $@
 
 # create the config file, if it exists, and upload the manifest
 $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)

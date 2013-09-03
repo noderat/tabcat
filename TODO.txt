@@ -17,10 +17,9 @@ Cleanup:
 
 Offline Mode:
 - offline manifest
-  - http://appcachefacts.info/ has good info
   - add a nonce/version number to manifest so it gets reloaded
-  - just have to assume that we need the same paths from /tabcat-data
-    as we need from /tabcat
+  - don't bother caching /tabcat-data
+  - cache config in localStorage
 - simple local storage of docs
   - don't use pouchDB; our goal is to only store docs until we can
     dump them to the server

@@ -3,6 +3,8 @@
 .#*
 .pushed-*
 
+/MANIFEST.appcache
+
 /core/packages
 /tasks/*/packages
 /tasks/*/Makefile
