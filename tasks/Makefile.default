@@ -1,6 +1,6 @@
 # The default makefile for tasks, if they don't have their own Makefile
 
-include ../../Makefile.common
+include ../../Makefile.vars  # $(TABCAT_HOST) and $(PUSHED)
 
 # CoffeeScript to compile into JavaScript
 COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.*')
