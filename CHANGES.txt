@@ -1,3 +1,5 @@
+v0.4.0, 2013-??-?? -- offline mode
+
 v0.3.3, 2013-09-03 -- tweaking views
 - core library:
   - couchDB:
