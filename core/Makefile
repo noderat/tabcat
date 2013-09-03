@@ -23,11 +23,14 @@ clean:
 	rm -f .pushed-*
 	find . -name '*~' -delete
 
-# note that $(KANSO_DEPS) should include js/tabcat.js
-$(PUSHED): kanso.json $(KANSO_DEPS)
+# $(KANSO_DEPS) should include js/tabcat.js
+#
+# It's fine if we can't upload the config; we just want to ensure there is one.
+$(PUSHED): kanso.json $(KANSO_DEPS) default-config.json
 	kanso install
 	kanso push $(TABCAT_HOST)/tabcat
 	kanso push $(TABCAT_HOST)/tabcat-data
+	kanso upload default-config.json $(TABCAT_HOST)/tabcat-data &> /dev/null || true
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
