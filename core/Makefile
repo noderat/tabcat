@@ -40,7 +40,7 @@ js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
 	cat $^ > $@
 else
 js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
-	uglifyjs $^ -c -o $@
+	uglifyjs $^ -c warnings=false -o $@
 endif
 
 $(COFFEE_JS): %.js: %.coffee

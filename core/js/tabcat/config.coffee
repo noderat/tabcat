@@ -12,14 +12,18 @@ tabcat.config = {}
 # DB where config doc is stored
 DATA_DB = 'tabcat-data'
 
+# so we don't have to type window.localStorage in functions
+localStorage = @localStorage
 
 # Helper for tabcat.config.get()
-fixConfig = (configDoc) ->
+fixAndRememberConfig = (configDoc) ->
   configDoc._id ?= 'config'
   configDoc.type ?= 'config'
 
   configDoc.PHI = !!configDoc.PHI
   configDoc.limitedPHI = configDoc.PHI or !!configDoc.limitedPHI
+
+  localStorage.config = JSON.stringify(configDoc)
 
   return configDoc
 
@@ -36,9 +40,21 @@ fixConfig = (configDoc) ->
 # - type: should always be "config"
 tabcat.config.get = _.once(->
   $.getJSON("/#{DATA_DB}/config").then(
-    (configDoc) -> fixConfig(configDoc),
+    (configDoc) -> fixAndRememberConfig(configDoc),
     (xhr) -> switch xhr.status
-      when 404 then $.Deferred().resolve(fixConfig({}))
+      # network error
+      when 0
+        # if we're offline, use the config we last stored, if any
+        if not navigator.onLine and localStorage.config?
+          $.Deferred().resolve(JSON.parse(localStorage.config))
+        else
+          xhr  # pass through failure
+
+      # config doesn't exist
+      when 404
+        $.Deferred().resolve(fixAndRememberConfig({}))
+
+      # some other kind of error
       else xhr  # pass through failure
   )
 )

@@ -16,10 +16,11 @@ Cleanup:
 - task.start() should require user and encounter ID
 
 Offline Mode:
-- offline manifest
-  - add a nonce/version number to manifest so it gets reloaded
-  - don't bother caching /tabcat-data
+- get by without network
   - cache config in localStorage
+  - allow user to log in without password (detour to login page if back online)
+    - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
+  - keep track of tasks completed in current encounter
 - simple local storage of docs
   - don't use pouchDB; our goal is to only store docs until we can
     dump them to the server
