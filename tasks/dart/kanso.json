@@ -4,16 +4,41 @@
     "version": "0.3.2",
     "description": "DART",
     "attachments": [
-	"css/task.css",
-	"img/icon.png",
-	"js/task.js",
-	"task.html",
-	"videos"
-    ],
+        "css/task.css",
+        "img/icon.png",
+        "js/task.js",
+        "task.html",
+        "videos/0.mp4",
+        "videos/0.ogv",
+        "videos/1.mp4",
+        "videos/1.ogv",
+        "videos/10.mp4",
+        "videos/10.ogv",
+        "videos/11.mp4",
+        "videos/11.ogv",
+        "videos/12.mp4",
+        "videos/12.ogv",
+        "videos/2.mp4",
+        "videos/2.ogv",
+        "videos/3.mp4",
+        "videos/3.ogv",
+        "videos/4.mp4",
+        "videos/4.ogv",
+        "videos/5.mp4",
+        "videos/5.ogv",
+        "videos/6.mp4",
+        "videos/6.ogv",
+        "videos/7.mp4",
+        "videos/7.ogv",
+        "videos/8.mp4",
+        "videos/8.ogv",
+        "videos/9.mp4",
+        "videos/9.ogv"
+   ],
     "dependencies": {
         "attachments": null
     },
     "tabcat": {
-	"icon": "img/icon.png"
+        "icon": "img/icon.png"
     }
 }
