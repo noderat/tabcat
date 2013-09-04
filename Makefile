@@ -32,8 +32,8 @@ $(TASK_TARGETS): %: tasks/%/Makefile
 $(TASK_MAKEFILES): %:
 	if [ ! -e $@ ]; then cd $(@D); ln -s ../Makefile.default Makefile; fi
 
-$(MANIFEST): $(KANSO_FILES)
-	node scripts/kanso-manifest.js $^ > $@
+$(MANIFEST): scripts/kanso-manifest.js $(KANSO_FILES)
+	node $< $(KANSO_FILES) > $@
 
 # create the config file, if it exists, and upload the manifest
 $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)

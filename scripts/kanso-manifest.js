@@ -1,15 +1,15 @@
 // very simple NodeJS script that reads attachments out of kanso.json files and
 // outputs a manifest file
 fs = require('fs');
+path = require('path');
 
 var out = process.stdout;
 
 out.write('CACHE MANIFEST\n')
 
 for (var i = 2; i < process.argv.length; i++) {
-    data = fs.readFileSync(process.argv[i], 'utf8');
-
-    var kanso = JSON.parse(data);
+    var kansoPath = process.argv[i]
+    var kanso = JSON.parse(fs.readFileSync(kansoPath, 'utf8'));
 
     // add header comment
     if (i === 2) {
@@ -27,9 +27,23 @@ for (var i = 2; i < process.argv.length; i++) {
     out.write('/tabcat/_design/' + kanso.name + '\n');
     // add attachments
     if (kanso.attachments) {
-        kanso.attachments.forEach(function(path) {
+        var dirname = path.dirname(kansoPath)
+        kanso.attachments.forEach(function(subPath) {
+            // only allow files, not directories
+            fullPath = path.join(dirname, subPath)
+            if (!fs.existsSync(fullPath)) {
+                process.stderr.write(
+                    fullPath + '(from ' + kansoPath + ') does not exist!\n')
+                process.exit(1)
+            } else if (!fs.statSync(fullPath).isFile()) {
+                process.stderr.write('"attachments" in ' + kansoPath +
+                                     ' must only include files (' +
+                                     fullPath + ' is a directory)\n');
+                process.exit(1);
+            }
+
             out.write(
-                '/tabcat/_design/' + kanso.name + '/' + path + '\n');
+                '/tabcat/_design/' + kanso.name + '/' + subPath + '\n');
         });
     }
 }
