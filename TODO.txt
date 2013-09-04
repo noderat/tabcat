@@ -17,10 +17,9 @@ Cleanup:
 
 Offline Mode:
 - get by without network
-  - cache config in localStorage
-  - allow user to log in without password (detour to login page if back online)
+  - allow user to log in without password (detour to login page on next page load when online)
     - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
-  - keep track of tasks completed in current encounter
+  - keep track encounterTasksFinished in localStorage
 - simple local storage of docs
   - don't use pouchDB; our goal is to only store docs until we can
     dump them to the server
