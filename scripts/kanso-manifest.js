@@ -47,3 +47,7 @@ for (var i = 2; i < process.argv.length; i++) {
         });
     }
 }
+
+out.write('\n');
+out.write('NETWORK:\n');
+out.write('*\n');
