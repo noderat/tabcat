@@ -2,7 +2,7 @@
 
 # Upload a CouchDB doc if it doesn't already exist
 
-# Usage: ./put-default.sh filename URL [ mime-type ]
+# Usage: ./put-default filename URL [ mime-type ]
 FILENAME=$1
 URL=$2
 MIME_TYPE=$3

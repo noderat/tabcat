@@ -2,7 +2,7 @@
 
 # Forcibly update a CouchDB doc
 
-# Usage: ./force-put.sh filename URL [ mime-type ]
+# Usage: ./force-put filename URL [ mime-type ]
 FILENAME=$1
 URL=$2
 MIME_TYPE=$3

@@ -37,8 +37,8 @@ $(MANIFEST): scripts/kanso-manifest.js $(KANSO_FILES)
 
 # create the config file, if it exists, and upload the manifest
 $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
-	scripts/put-default.sh $(DEFAULT_CONFIG) $(TABCAT_CONFIG_URL)
-	scripts/force-put.sh $(MANIFEST) $(TABCAT_MANIFEST_URL) text/cache-manifest
+	scripts/put-default $(DEFAULT_CONFIG) $(TABCAT_CONFIG_URL)
+	scripts/force-put $(MANIFEST) $(TABCAT_MANIFEST_URL) text/cache-manifest
 	touch $@
 
 clean:

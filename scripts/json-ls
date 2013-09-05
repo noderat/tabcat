@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // print paths from a json file, each followed by a newline.
 //
 // This supports computing makefile dependencies

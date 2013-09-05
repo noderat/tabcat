@@ -10,8 +10,7 @@ TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 VENDOR_JS = $(wildcard js/vendor/*.js)
 
 # files kanso expects to push
-KANSO_DEPS = $(shell node ../scripts/json-ls.js \
-	/attachments+/modules kanso.json)
+KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)
 
 .PHONY: all
 all: $(PUSHED)
