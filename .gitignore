@@ -3,7 +3,7 @@
 .#*
 .pushed-*
 
-/cache.manifest
+/cache.manifest*
 
 /core/packages
 /tasks/*/packages

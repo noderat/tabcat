@@ -8,12 +8,13 @@ TASK_MAKEFILES = $(patsubst %, tasks/%/Makefile, $(TASK_TARGETS))
 
 # tabcat config. this needs to not 404 for offline manifest to work
 DEFAULT_CONFIG = config-default.json
-TABCAT_CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
+CONFIG_URL = $(TABCAT_HOST)/tabcat-data/config
 
 # offline manifest
 KANSO_FILES = core/kanso.json $(wildcard tasks/*/kanso.json)
 MANIFEST = cache.manifest
-TABCAT_MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
+MANIFEST_DEPS = $(shell scripts/json-ls /attachments $(KANSO_FILES))
+MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
 
 .PHONY: all core tasks clean $(TASK_TARGETS)
 
@@ -32,13 +33,14 @@ $(TASK_TARGETS): %: tasks/%/Makefile
 $(TASK_MAKEFILES): %:
 	if [ ! -e $@ ]; then cd $(@D); ln -s ../Makefile.default Makefile; fi
 
-$(MANIFEST): scripts/kanso-manifest.js $(KANSO_FILES)
-	node $< $(KANSO_FILES) > $@
+$(MANIFEST): scripts/make-manifest $(KANSO_FILES) $(MANIFEST_DEPS)
+	$< $(KANSO_FILES) > $@.tmp
+	mv -f $@.tmp $@
 
 # create the config file, if it exists, and upload the manifest
 $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
-	scripts/put-default $(DEFAULT_CONFIG) $(TABCAT_CONFIG_URL)
-	scripts/force-put $(MANIFEST) $(TABCAT_MANIFEST_URL) text/cache-manifest
+	scripts/put-default $(DEFAULT_CONFIG) $(CONFIG_URL)
+	scripts/force-put $(MANIFEST) $(MANIFEST_URL) text/cache-manifest
 	touch $@
 
 clean:

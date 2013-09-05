@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# take paths of kanso files on input (with core/kanso.json first),
+# print out a manifest file
+set -e
+
+JSON_LS=$(dirname $0)/json-ls
+
+echo CACHE MANIFEST
+# use date as a nonce, so browser will check if files were updated
+echo "# TabCat v$($JSON_LS version $1) $(date)"
+echo
+echo "CACHE:"
+for KANSO in "$@"; do
+    NAME=$($JSON_LS name $KANSO)
+    for FILENAME in $($JSON_LS attachments $KANSO); do
+	echo "/tabcat/_design/$NAME/$FILENAME"
+    done
+done
+
+echo
+echo "NETWORK:"
+echo "*"

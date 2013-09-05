@@ -16,7 +16,6 @@ Cleanup:
 - task.start() should require user and encounter ID
 
 Offline Mode:
-- rebuild offline manifest when any deps change
 - get by without network
   - allow user to log in without password (detour to login page on next page load when online)
     - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
