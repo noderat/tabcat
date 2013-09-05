@@ -1,4 +1,6 @@
-// print paths from a json file. This supports computing makefile dependencies
+// print paths from a json file, each followed by a newline.
+//
+// This supports computing makefile dependencies
 // and making cache manifests.
 //
 // usage: node json-ls.js <levels> [ <file1> [ <file2> ... ] ]
@@ -26,9 +28,6 @@ if (process.argv.length > 3) {
     inputPaths = [''];
 }
 
-
-var printed = false;
-
 var printAtLevel = function(data, level, dirName) {
     // handle level as string from the command line
     if (typeof level == 'string') {
@@ -54,15 +53,11 @@ var printAtLevel = function(data, level, dirName) {
             printAtLevel(data[level[0]], level.slice(1), dirName);
         }
     } else if (typeof data == 'string') {
-        if (printed) {
-            // don't put a newline before the first item
-            process.stdout.write('\n')
-        }
         if (dirName) {
             data = path.join(dirName, data);
         }
         process.stdout.write(data);
-        printed = true;
+        process.stdout.write('\n');
     }
 };
 
