@@ -27,8 +27,6 @@ submitLoginForm = (event) ->
       else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
-$(window.applicationCache).on('error', (e) -> alert(JSON.stringify(e)))
-
 tabcat.ui.enableFastClick()
 tabcat.ui.turnOffBounce()
 
@@ -48,6 +46,4 @@ $(->
 
   $('#loginForm').on('submit', submitLoginForm)
   $('#loginForm button').removeAttr('disabled')
-
-  $('img.logo').on('click', -> alert(window.applicationCache.status))
 )
