@@ -16,6 +16,8 @@ Cleanup:
 - task.start() should require user and encounter ID
 
 Offline Mode:
+- cache manifest
+  - status of application cache (so i can tell what's going on on Safari)
 - get by without network
   - allow user to log in without password (detour to login page on next page load when online)
     - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
