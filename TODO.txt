@@ -4,6 +4,7 @@ Tasks:
   - margins at top and bottom of video are mysterious; is it not square?
     - no, it's 512x480
   - videos don't auto-play on Android (probably need to use canplay event)
+  - videos are too tall on android (even when played independently)
   - make video files smaller?
 
 - CouchDB:
@@ -16,7 +17,12 @@ Cleanup:
 - task.start() should require user and encounter ID
 
 Offline Mode:
+- show status of offline mode
+- exclude videos from offline mode
 - get by without network
+  - allow tasks to start without network
+  - store taskInfo in localStorage
+    - separate out global task info (which tasks are available) from encounter task info (which tasks are done)
   - allow user to log in without password (detour to login page on next page load when online)
     - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
   - keep track encounterTasksFinished in localStorage
