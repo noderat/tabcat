@@ -18,18 +18,28 @@ Cleanup:
 - require user before attempting to continue encounter
 
 Offline Mode:
+- separate generic CouchDB code (tabcat.couch) from DB code (tabcat.db)
 - show status of offline mode
+  - status of manifest
+  - documents waiting for upload?
+- might as well spill whenever we get error 0 (navigator.onLine is unreliable anyway)
 - get by without network
   - allow tasks to start without network
   - store taskInfo in localStorage
     - separate out global task info (which tasks are available) from encounter task info (which tasks are done)
   - allow user to log in without password (detour to login page on next page load when online)
+    - don't close current encounter if user is just entering their password!
   - keep track of encounterTasksFinished in localStorage
 - simple local storage of docs
   - sync locally stored docs with server
 
 Security/authentication:
-- if 'user' field doesn't match userCtx, uploadedBy must
+- user field must match userCtx or end with '?'
+- uploadedBy field must match userCtx
+- auto-uploading of offline docs should reflect this
+- keep track of docs spilled by current session
+  - other docs are uploaded with '?' appended to user field, even if they match your
+    user. We assume that anyone could have put stuff into localStorage on your browser.
 - tag task and event docs with user too
 
 - support for re-opening tasks where we left off
@@ -50,6 +60,3 @@ Puzzling issues to revisit:
   - currently manually expiring login cookies
 - iOS Safari and chrome do not save login, password (actually submit form,
   target iframe?)
-
-Features for later:
-- offline mode
