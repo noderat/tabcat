@@ -13,7 +13,9 @@ echo
 echo "CACHE:"
 for KANSO in "$@"; do
     NAME=$($JSON_LS name $KANSO)
-    for FILENAME in $($JSON_LS attachments $KANSO); do
+    # don't include videos because mobile browers can't play them from the
+    # application cache anyway
+    for FILENAME in $($JSON_LS attachments $KANSO | grep -v -E '\.(mp4|ogv)'); do
 	echo "/tabcat/_design/$NAME/$FILENAME"
     done
 done

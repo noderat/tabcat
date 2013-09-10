@@ -18,7 +18,6 @@ Cleanup:
 
 Offline Mode:
 - show status of offline mode
-- exclude videos from offline mode
 - get by without network
   - allow tasks to start without network
   - store taskInfo in localStorage
