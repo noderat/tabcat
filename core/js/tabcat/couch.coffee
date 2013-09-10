@@ -56,7 +56,7 @@ tabcat.couch.forcePutDoc = (db, doc, merge) ->
     (xhr) -> switch xhr.status
       when 409
         $.getJSON("/#{db}/#{doc._id}").then(
-          (oldDoc) ->
+          ((oldDoc) ->
             # resolve conflict
             if merge?
               merge(oldDoc, doc)
@@ -65,9 +65,19 @@ tabcat.couch.forcePutDoc = (db, doc, merge) ->
             # recursively call forcePutDoc, in the unlikely event
             # that the old doc was changed since calling getJSON()
             tabcat.couch.forcePutDoc(db, doc, merge)
+          ),
+          (xhr) -> switch xhr.status
+            # catch docs with bad _rev field (and very rare race conditions)
+            when 404
+              if doc._rev?
+                delete doc._rev
+              alert(JSON.stringify(doc))
+              tabcat.couch.forcePutDoc(db, doc, merge)
+            else
+              xhr
         )
       else
-        xhr  # pass error through
+        xhr
   )
 
 
