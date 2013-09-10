@@ -1,4 +1,4 @@
-# logic for creating patients and opening encounters with them.
+# logic for opening encounters with patients.
 #
 # Patient codes should always be uppercase. We may eventually restrict which
 # characters they can contain.

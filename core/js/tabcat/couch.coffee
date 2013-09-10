@@ -47,8 +47,8 @@ tabcat.couch.putDoc = (db, doc) ->
 
 # Promise: forcibly upload a document to couch DB, overriding conflicts
 #
-# You may optionally resolve conflicts with a function merge(oldDoc, newDoc)
-# which modifies newDoc accordingly. We always update newDoc's _rev
+# You may optionally resolve conflicts with a function merge(oldDoc, doc)
+# which modifies doc accordingly. We always update newDoc's _rev
 # to match oldDoc as well.
 tabcat.couch.forcePutDoc = (db, doc, merge) ->
   tabcat.couch.putDoc(db, doc).then(
