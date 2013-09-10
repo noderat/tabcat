@@ -15,6 +15,7 @@ Cleanup:
 - don't need tasks to be launchable
 - fix favicon
 - task.start() should require user and encounter ID
+- require user before attempting to continue encounter
 
 Offline Mode:
 - show status of offline mode

@@ -45,6 +45,31 @@ tabcat.couch.putDoc = (db, doc) ->
       return doc
   )
 
+# Promise: forcibly upload a document to couch DB, overriding conflicts
+#
+# You may optionally resolve conflicts with a function merge(oldDoc, newDoc)
+# which modifies newDoc accordingly. We always update newDoc's _rev
+# to match oldDoc as well.
+tabcat.couch.forcePutDoc = (db, doc, merge) ->
+  tabcat.couch.putDoc(db, doc).then(
+    ((doc) -> doc),
+    (xhr) -> switch xhr.status
+      when 409
+        $.getJSON("/#{db}/#{doc._id}").then(
+          (oldDoc) ->
+            # resolve conflict
+            if merge?
+              merge(oldDoc, doc)
+            # update doc's rev
+            doc._rev = oldDoc._rev
+            # recursively call forcePutDoc, in the unlikely event
+            # that the old doc was changed since calling getJSON()
+            tabcat.couch.forcePutDoc(db, doc, merge)
+        )
+      else
+        xhr  # pass error through
+  )
+
 
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
 # we don't put timestamps in UUIDs, and works offline.
