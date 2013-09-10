@@ -45,37 +45,48 @@ tabcat.couch.putDoc = (db, doc) ->
       return doc
   )
 
+
 # Promise: forcibly upload a document to couch DB, overriding conflicts
 #
 # You may optionally resolve conflicts with a function merge(oldDoc, doc)
 # which modifies doc accordingly. We always update newDoc's _rev
 # to match oldDoc as well.
-tabcat.couch.forcePutDoc = (db, doc, merge) ->
-  tabcat.couch.putDoc(db, doc).then(
-    ((doc) -> doc),
+#
+# If assumeConflict is true, we always try to GET the old version of the doc
+# before we PUT the new one. This is just an optimization.
+tabcat.couch.forcePutDoc = (db, doc, merge, assumeConflict) ->
+  if assumeConflict
+    resolvePutConflict(db, doc, merge)
+  else
+    tabcat.couch.putDoc(db, doc).then(
+      ((doc) -> doc),
+      (xhr) -> switch xhr.status
+        when 409
+          resolvePutConflict(db, doc, merge)
+        else
+          xhr
+    )
+
+
+# helper for tabcat.couch.forcePutDoc()
+resolvePutConflict = (db, doc, merge) ->
+  $.getJSON("/#{db}/#{doc._id}").then(
+    ((oldDoc) ->
+      # resolve conflict
+      if merge?
+        merge(oldDoc, doc)
+      # update doc's rev
+      doc._rev = oldDoc._rev
+      # recursively call forcePutDoc, in the unlikely event
+      # that the old doc was changed since calling getJSON()
+      tabcat.couch.forcePutDoc(db, doc, merge)
+    ),
     (xhr) -> switch xhr.status
-      when 409
-        $.getJSON("/#{db}/#{doc._id}").then(
-          ((oldDoc) ->
-            # resolve conflict
-            if merge?
-              merge(oldDoc, doc)
-            # update doc's rev
-            doc._rev = oldDoc._rev
-            # recursively call forcePutDoc, in the unlikely event
-            # that the old doc was changed since calling getJSON()
-            tabcat.couch.forcePutDoc(db, doc, merge)
-          ),
-          (xhr) -> switch xhr.status
-            # catch docs with bad _rev field (and very rare race conditions)
-            when 404
-              if doc._rev?
-                delete doc._rev
-              alert(JSON.stringify(doc))
-              tabcat.couch.forcePutDoc(db, doc, merge)
-            else
-              xhr
-        )
+      # catch docs with bad _rev field (and very rare race conditions)
+      when 404
+        if doc._rev?
+          delete doc._rev
+        tabcat.couch.forcePutDoc(db, doc, merge)
       else
         xhr
   )

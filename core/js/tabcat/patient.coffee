@@ -28,3 +28,16 @@ tabcat.patient.merge = (oldDoc, doc) ->
     doc[key] ?= value
 
   return
+
+
+# return a new patient doc (don't upload it)
+#
+# this coerces patientCode to be uppercase
+tabcat.patient.newDoc = (patientCode) ->
+  patientCode = String(patientCode ? 0).toUpperCase()
+
+  return {
+    _id: 'patient-' + patientCode
+    type: 'patient'
+    patientCode: patientCode
+  }

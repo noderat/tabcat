@@ -1,8 +1,4 @@
 # logic for opening encounters with patients.
-#
-# Patient codes should always be uppercase. We may eventually restrict which
-# characters they can contain.
-
 @tabcat ?= {}
 tabcat.encounter = {}
 
@@ -36,6 +32,30 @@ tabcat.encounter.getEncounterNum = ->
   catch error
     undefined
 
+# return a new encounter doc (don't upload it)
+#
+# Call tabcat.clock.reset() before this so that time fields are properly set.
+tabcat.encounter.newDoc = (patientCode, configDoc, user) ->
+  clockOffset = tabcat.clock.offset()
+  date = new Date(clockOffset)
+
+  doc =
+    _id: tabcat.couch.randomUUID()
+    type: 'encounter'
+    patientCode: patientCode
+    year: date.getFullYear()
+
+  if user?
+    doc.user = user
+
+  if configDoc?.limitedPHI
+    doc.limitedPHI =
+      month: date.getMonth()
+      day: date.getDate()
+      clockOffset: clockOffset
+
+  return doc
+
 
 # Promise: start an encounter and update patient doc and localStorage
 # appropriately. Patient code will always be converted to all uppercase.
@@ -43,50 +63,33 @@ tabcat.encounter.getEncounterNum = ->
 # Sample usage:
 #
 # tabcat.encounter.create(patientCode: "AAAAA").then(
-#   (patientDoc) -> ... # proceed,
-#   (xhr) -> ... # show error message on failure)
+#   (-> ... # proceed),
+#   (xhr) -> ... # show error message on failure
+# )
 tabcat.encounter.create = (options) ->
-  patientCode = String(options?.patientCode ? 0).toUpperCase()
-  patientDocId = 'patient-' + patientCode
-  encounterId = tabcat.couch.randomUUID()
-
-  date = new Date
-
-  encounterDoc =
-    _id: encounterId
-    type: 'encounter'
-    patientCode: patientCode
-    year: date.getFullYear()
+  patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
   tabcat.clock.reset()
 
-  updatePatientDoc = (patientDoc) ->
-    patientDoc.encounterIds ?= []
-    patientDoc.encounterIds.push(encounterId)
-    tabcat.couch.putDoc(DATA_DB, patientDoc)
-
   $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
     (configDoc, user) ->
-      # store today's date, and timestamp if we're allowed
-      if configDoc.limitedPHI
-        encounterDoc.limitedPHI =
-          month: date.getMonth()
-          day: date.getDate()
-          clockOffset: tabcat.clock.offset()
+      encounterDoc = tabcat.encounter.newDoc(
+        patientDoc.patientCode, configDoc, user)
 
-      encounterDoc.user = user
-      tabcat.couch.putDoc(DATA_DB, encounterDoc).then(->
-        $.getJSON("/#{DATA_DB}/#{patientDocId}").then(
-          updatePatientDoc,
-          (xhr) -> switch xhr.status
-            when 404 then updatePatientDoc(
-              _id: patientDocId, type: 'patient', patientCode: patientCode)
-            else xhr  # pass failure through
-        ).then((patientDoc) ->
-          localStorage.patientCode = patientCode
-          localStorage.encounterId = encounterId
+      patientDoc.encounterIds = [encounterDoc._id]
+
+      # if there's already a doc for the patient, our new encounter ID will
+      # be appended to the existing patient.encounterIds
+      tabcat.couch.forcePutDoc(
+        DATA_DB, patientDoc, tabcat.patient.merge, true).then(->
+
+        tabcat.couch.putDoc(DATA_DB, encounterDoc).then(->
+
+          # update localStorage
+          localStorage.patientCode = encounterDoc.patientCode
+          localStorage.encounterId = encounterDoc._id
           localStorage.encounterNum = patientDoc.encounterIds.length
-          return patientDoc
+          return
         )
       )
   )
