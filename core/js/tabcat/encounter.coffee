@@ -81,7 +81,7 @@ tabcat.encounter.create = (options) ->
       # if there's already a doc for the patient, our new encounter ID will
       # be appended to the existing patient.encounterIds
       tabcat.couch.forcePutDoc(
-        DATA_DB, patientDoc, tabcat.patient.merge, true).then(->
+        DATA_DB, patientDoc, expectConflict: true).then(->
 
         tabcat.couch.putDoc(DATA_DB, encounterDoc).then(->
 

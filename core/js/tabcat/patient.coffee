@@ -5,12 +5,13 @@
 @tabcat ?= {}
 tabcat.patient = {}
 
-# merge info from oldDoc into doc
+# merge info from oldDoc into doc. You rarely need to call this directly;
+# tabcat.couch will do this automatically.
 #
-# currently this just merges the encounterIds field and
+# Currently this just merges the encounterIds field and
 # copies over fields that don't exist in doc. encounter IDs found in
 # doc but not oldDoc are added to the END of encounterIds.
-tabcat.patient.merge = (oldDoc, doc) ->
+tabcat.patient.merge = (doc, oldDoc) ->
 
   if oldDoc.encounterIds?
     # use a set so that merge time isn't quadratic in number of encounters
