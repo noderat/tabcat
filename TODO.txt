@@ -25,11 +25,9 @@ Offline Mode:
     - separate out global task info (which tasks are available) from encounter task info (which tasks are done)
   - allow user to log in without password (detour to login page on next page load when online)
     - (add ? to end of email; e.g. "dmarin@memory.ucsf.edu?")
-  - keep track encounterTasksFinished in localStorage
+  - keep track of encounterTasksFinished in localStorage
 - simple local storage of docs
-  - don't use pouchDB; our goal is to only store docs until we can
-    dump them to the server
-  - possibly compress with https://github.com/pieroxy/lz-string/blob/master/libs/lz-string-1.3.0.js
+  - sync locally stored docs with server
 
 - support for re-opening tasks where we left off
 - demo mode for tasks

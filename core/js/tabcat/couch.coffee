@@ -29,13 +29,20 @@ tabcat.couch.logout = ->
 
 # Promise: get the username of the current user, or null. Will only do this
 # once for each page.
-#
-# For debugging, return user "nobody"
 tabcat.couch.getUser = _.once(->
   if window.location.protocol is 'file:'
+    # for ease of debugging
     $.Deferred().resolve('nobody')
   else
-    $.getJSON('/_session').then((sessionDoc) -> sessionDoc.userCtx.name))
+    $.getJSON('/_session').then(
+      ((sessionDoc) -> sessionDoc.userCtx.name),
+      (xhr) ->
+        if xhr.status is 0 and navigator.onLine is false
+          '???'
+        else
+          xhr
+    )
+)
 
 
 # jQuery ought to have this, but it doesn't
