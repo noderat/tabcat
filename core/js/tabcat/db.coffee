@@ -54,7 +54,7 @@ resolvePutConflict = (db, doc, options) ->
   if options?
     options = _.omit(options, 'expectConflict')
 
-  tabcat.db.getDoc(db, doc._id).then(
+  tabcat.couch.getDoc(db, doc._id).then(
     ((oldDoc) ->
       # resolve conflict
       tabcat.db.merge(doc, oldDoc)
