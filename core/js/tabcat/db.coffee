@@ -8,6 +8,16 @@ tabcat.db = {}
 localStorage = @localStorage
 
 
+# Promise: download a document from CouchDB
+#
+# This does NOT look at localStorage; documents are only there temporarily
+# until we're able to uplaod them.
+#
+# This is a very VERY thin wrapper around $.getJSON()
+tabcat.db.getDoc = (db, docId) ->
+  $.getJSON("/#{db}/#{docId}")
+
+
 # Promise: upload a document to CouchDB, auto-resolving conflicts,
 # and spilling to localStorage on network error.
 #
@@ -52,7 +62,7 @@ resolvePutConflict = (db, doc, options) ->
   if options?
     options = _.omit(options, 'expectConflict')
 
-  $.getJSON("/#{db}/#{doc._id}").then(
+  tabcat.db.getDoc(db, doc._id).then(
     ((oldDoc) ->
       # resolve conflict
       tabcat.db.merge(doc, oldDoc)

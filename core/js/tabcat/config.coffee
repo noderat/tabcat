@@ -39,14 +39,13 @@ fixAndRememberConfig = (configDoc) ->
 # - _id: should always be "config"
 # - type: should always be "config"
 tabcat.config.get = _.once(->
-  $.getJSON("/#{DATA_DB}/config").then(
+  tabcat.db.getDoc(DATA_DB, 'config').then(
     (configDoc) -> fixAndRememberConfig(configDoc),
     (xhr) -> switch xhr.status
       # network error
       when 0
         # if we're offline, use the config we last stored, if any
-        if navigator.onLine is false
-          $.Deferred().resolve(JSON.parse(localStorage.config ? '{}'))
+        $.Deferred().resolve(JSON.parse(localStorage.config ? '{}'))
 
       # config doesn't exist
       when 404
