@@ -80,10 +80,10 @@ tabcat.encounter.create = (options) ->
 
       # if there's already a doc for the patient, our new encounter ID will
       # be appended to the existing patient.encounterIds
-      tabcat.couch.forcePutDoc(
+      tabcat.db.putDoc(
         DATA_DB, patientDoc, expectConflict: true).then(->
 
-        tabcat.couch.putDoc(DATA_DB, encounterDoc).then(->
+        tabcat.db.putDoc(DATA_DB, encounterDoc).then(->
 
           # update localStorage
           localStorage.patientCode = encounterDoc.patientCode
@@ -108,7 +108,7 @@ tabcat.encounter.close = ->
   if encounterId?
     $.getJSON("/#{DATA_DB}/#{encounterId}").then((encounterDoc) ->
       encounterDoc.finishedAt = now
-      tabcat.couch.putDoc(DATA_DB, encounterDoc)
+      tabcat.db.putDoc(DATA_DB, encounterDoc)
     )
   else
     $.Deferred().reject()

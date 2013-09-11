@@ -32,6 +32,7 @@ Offline Mode:
   - keep track of encounterTasksFinished in localStorage
 - simple local storage of docs
   - sync locally stored docs with server
+- rework/remove retrying of data uploading on task finish
 
 Security/authentication:
 - user field must match userCtx or end with '?'

@@ -109,7 +109,7 @@ tabcat.task.start = _.once((options) ->
   # but not finished.
   createTaskDoc = (additionalFields) ->
     $.extend(taskDoc, additionalFields)
-    tabcat.couch.putDoc(DATA_DB, taskDoc)
+    tabcat.db.putDoc(DATA_DB, taskDoc)
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
@@ -174,7 +174,7 @@ tabcat.task.syncEventLog = (options) ->
     items: eventLog.slice(eventSyncStartIndex, endIndex)
   }
 
-  eventSyncXHR = tabcat.couch.putDoc(DATA_DB, eventLogDoc)
+  eventSyncXHR = tabcat.db.putDoc(DATA_DB, eventLogDoc)
 
   # track that we're ready for a new XHR
   eventSyncXHR.always(-> eventSyncXHR = null)
@@ -271,7 +271,7 @@ tabcat.task.finish = (options) ->
     taskDoc.finishedAt = now
     if options?.interpretation
       taskDoc.interpretation = options.interpretation
-    withRetry(tabcat.couch.putDoc, [DATA_DB, taskDoc])
+    withRetry(tabcat.db.putDoc, [DATA_DB, taskDoc])
   )
 
   if eventSyncIntervalId?
