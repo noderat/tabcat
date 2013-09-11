@@ -7,15 +7,7 @@ tabcat.db = {}
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
-
-# Promise: download a document from CouchDB
-#
-# This does NOT look at localStorage; documents are only there temporarily
-# until we're able to uplaod them.
-#
-# This is a very VERY thin wrapper around $.getJSON()
-tabcat.db.getDoc = (db, docId) ->
-  $.getJSON("/#{db}/#{docId}")
+# there isn't a tabcat.db.getDoc(); use tabcat.couch.getDoc() instead
 
 
 # Promise: upload a document to CouchDB, auto-resolving conflicts,

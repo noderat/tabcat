@@ -39,7 +39,7 @@ fixAndRememberConfig = (configDoc) ->
 # - _id: should always be "config"
 # - type: should always be "config"
 tabcat.config.get = _.once(->
-  tabcat.db.getDoc(DATA_DB, 'config').then(
+  tabcat.couch.getDoc(DATA_DB, 'config').then(
     (configDoc) -> fixAndRememberConfig(configDoc),
     (xhr) -> switch xhr.status
       # network error

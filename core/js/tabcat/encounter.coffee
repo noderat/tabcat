@@ -106,7 +106,7 @@ tabcat.encounter.close = ->
   tabcat.encounter.clear()
 
   if encounterId?
-    tabcat.db.getDoc(DATA_DB, encounterId).then((encounterDoc) ->
+    tabcat.couch.getDoc(DATA_DB, encounterId).then((encounterDoc) ->
       encounterDoc.finishedAt = now
       tabcat.db.putDoc(DATA_DB, encounterDoc)
     )
@@ -150,7 +150,7 @@ tabcat.encounter.getInfo = (encounterId, patientCode) ->
   if patientCode?
     patientCodePromise = $.Deferred().resolve(patientCode)
   else
-    patientCodePromise = tabcat.db.getDoc(DATA_DB, encounterId).then(
+    patientCodePromise = tabcat.couch.getDoc(DATA_DB, encounterId).then(
       (encounterDoc) -> encounterDoc.patientCode)
 
   patientCodePromise.then((patientCode) ->

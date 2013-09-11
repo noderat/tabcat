@@ -1,6 +1,4 @@
 # Utilities for couchDB
-#
-# You usually won't need to use these directly; use tabcat.db instead
 
 @tabcat ?= {}
 tabcat.couch = {}
@@ -44,6 +42,14 @@ tabcat.couch.getUser = _.once(->
 )
 
 
+
+# Promise: download a document from CouchDB
+#
+# This is a very VERY thin wrapper around $.getJSON()
+tabcat.couch.getDoc = (db, docId) ->
+  $.getJSON("/#{db}/#{docId}")
+
+
 # jQuery ought to have this, but it doesn't
 putJSON = (url, data, success) ->
   $.ajax(
@@ -57,7 +63,7 @@ putJSON = (url, data, success) ->
 
 # Promise: upload a document to couch DB, and update its _rev field.
 #
-# (Usually you'll want to use tabcat.db.putDoc())
+# You RARELY want to use this; tabcat.db.putDoc handles this better.
 tabcat.couch.putDoc = (db, doc) ->
   url = "/#{db}/#{doc._id}"
   putJSON(url, doc).then(
