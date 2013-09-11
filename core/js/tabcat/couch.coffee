@@ -42,12 +42,27 @@ tabcat.couch.getUser = _.once(->
 )
 
 
+# keys that always have to be JSON
+COUCHDB_JSON_KEYS = ['key', 'keys', 'startkey', 'endkey']
 
 # Promise: download a document from CouchDB
 #
+# You can optionally specify query params (for querying views, etc.)
+#
 # This is a very VERY thin wrapper around $.getJSON()
-tabcat.couch.getDoc = (db, docId) ->
-  $.getJSON("/#{db}/#{docId}")
+tabcat.couch.getDoc = (db, docId, queryParams) ->
+  query = ''
+  if queryParams?
+    for own key, value of queryParams
+      if key in COUCHDB_JSON_KEYS
+        value = JSON.stringify(value)
+      if query
+        query += '&'
+      else
+        query += '?'
+      query += "#{key}=#{encodeURIComponent(value)}"
+
+  $.getJSON("/#{db}/#{docId}#{query}")
 
 
 # jQuery ought to have this, but it doesn't

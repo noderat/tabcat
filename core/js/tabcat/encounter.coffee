@@ -154,16 +154,11 @@ tabcat.encounter.getInfo = (encounterId, patientCode) ->
       (encounterDoc) -> encounterDoc.patientCode)
 
   patientCodePromise.then((patientCode) ->
-    encounterUrl = (
-      "/#{DATA_DB}/_design/core/_view/patient?startkey=" +
-      encodeURIComponent(JSON.stringify(
-        [patientCode, encounterId])) +
-      '&endkey=' +
-      # "" sorts just after null and all numbers
-      encodeURIComponent(JSON.stringify(
-        [patientCode, encounterId, []])))
 
-    $.getJSON(encounterUrl).then((results) ->
+    tabcat.couch.getDoc(DATA_DB, '_design/core/_view/patient',
+      startkey: [patientCode, encounterId]
+      endkey: [patientCode, encounterId, []]).then((results) ->
+
       info = {_id: encounterId, patientCode: patientCode, tasks: []}
 
       # arrange encounter, patients, and tasks into a single doc
