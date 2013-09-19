@@ -7,12 +7,17 @@ set -e
 JSON_LS=$(dirname $0)/json-ls
 
 echo CACHE MANIFEST
-# use date as a nonce, so browser will check if files were updated
+# use datetime as a nonce, so browser will check if files were updated
 echo "# TabCat v$($JSON_LS version $1) $(date)"
 echo
 echo "CACHE:"
+# need this to find the design docs
+echo "/tabcat/_all_docs"
 for KANSO in "$@"; do
     NAME=$($JSON_LS name $KANSO)
+    echo "/tabcat/_design/$NAME"
+    # include version with trailing slash, for convenience
+    echo "/tabcat/_design/$NAME/"
     # don't include videos because mobile browers can't play them from the
     # application cache anyway
     for FILENAME in $($JSON_LS attachments $KANSO | grep -v -E '\.(mp4|ogv)'); do

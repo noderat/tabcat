@@ -24,6 +24,21 @@ tabcat.encounter.isOpen = ->
   tabcat.encounter.getEncounterId()?
 
 
+# keep track of tasks finished during the encounter, in localStorate
+tabcat.encounter.getTasksFinished = ->
+  JSON.parse(localStorage.encounterTasksFinished ? '{}')
+
+
+# mark a task as finished in localStorage.
+#
+# tabcat.task.finish() does this automatically
+tabcat.encounter.markTaskFinished = (taskName) ->
+  finished = tabcat.encounter.getTasksFinished()
+  finished[taskName] = true
+  localStorage.encounterTasksFinished = JSON.stringify(finished)
+  return
+
+
 # get the encounter number. This should only be used in the UI, not
 # stored in the database. May be undefined.
 tabcat.encounter.getEncounterNum = ->
@@ -67,9 +82,10 @@ tabcat.encounter.newDoc = (patientCode, configDoc, user) ->
 #   (xhr) -> ... # show error message on failure
 # )
 tabcat.encounter.create = (options) ->
-  patientDoc = tabcat.patient.newDoc(options?.patientCode)
-
+  tabcat.encounter.clear()
   tabcat.clock.reset()
+
+  patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
   $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
     (configDoc, user) ->
@@ -119,6 +135,7 @@ tabcat.encounter.clear = ->
   localStorage.removeItem('patientCode')
   localStorage.removeItem('encounterId')
   localStorage.removeItem('encounterNum')
+  localStorage.removeItem('encounterTasksFinished')
   tabcat.clock.clear()
 
 

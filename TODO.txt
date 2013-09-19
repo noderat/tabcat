@@ -16,23 +16,24 @@ Cleanup:
 - fix favicon
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
+- gracefully recover from unparseable data in localStorage
 
 Offline Mode:
-- separate generic CouchDB code (tabcat.couch) from DB code (tabcat.db)
-- show status of offline mode
-  - status of manifest
-  - documents waiting for upload?
+- status bar should work offline
+  - omit encounter number if unknown
+  - show whether online or offline
+  - show status of manifest
 - might as well spill whenever we get error 0 (navigator.onLine is unreliable anyway)
 - get by without network
-  - allow tasks to start without network
-  - store taskInfo in localStorage
-    - separate out global task info (which tasks are available) from encounter task info (which tasks are done)
   - allow user to log in without password (detour to login page on next page load when online)
     - don't close current encounter if user is just entering their password!
   - keep track of encounterTasksFinished in localStorage
 - simple local storage of docs
   - sync locally stored docs with server
-- rework/remove retrying of data uploading on task finish
+- remove retrying of data uploading on task finish
+- show status of offline mode
+  - documents waiting for upload?
+
 
 Security/authentication:
 - user field must match userCtx or end with '?'

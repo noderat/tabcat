@@ -1,33 +1,34 @@
 # TASK INFO
 
-# Promise: get all design docs (most of which are tasks)
-getAllDesignDocs = ->
-  $.getJSON('../../_all_docs?' +
-            'startkey="_design"&endkey="_design0"&include_docs=true').then(
-    (response) ->
-      (row.doc for row in response.rows))
+# return a promise that returns all task docs, in an array
+getAllTaskDesignDocs = ->
+  tabcat.task.getAllTaskNames().then(
+    (taskNames) ->
+      taskDesignDocPromises = ($.getJSON('../' + name) for name in taskNames)
+      $.when(taskDesignDocPromises...).then(
+        (responses...) ->
+          (response[0] for response in responses)
+      )
+  )
 
 
 # Promise: get a list of info about each task, with the keys index, icon,
 # and description (index and icon are URLs), sorted by description.
-#
-# This automatically filters out design docs that aren't valid tasks.
 getTaskInfo = ->
-  $.when(getAllDesignDocs(), tabcat.encounter.getInfo()).then(
-    (designDocs, encounter) ->
+  getAllTaskDesignDocs().then(
+    (taskDesignDocs) ->
       taskInfo = _.sortBy(
-        _.compact(designDocToTaskInfo(doc) for doc in designDocs),
-        # temporary hack: put Line Orientation and DART task last
-        #(item) -> item.description))
-        (item) -> [item.description[0] is "D",
-                   item.description[0] is "L",
-                   item.description])
+        _.compact(designDocToTaskInfo(ddoc) for ddoc in taskDesignDocs),
+          # temporary hack: put Line Orientation and DART task last
+          #(item) -> item.description))
+          (item) -> [item.description[0] is "D",
+                     item.description[0] is "L",
+                     item.description])
 
       # add info about which tasks were finished
-      finished = _.object(
-        [task.name, true] for task in encounter.tasks when task.finishedAt?)
+      finished = tabcat.encounter.getTasksFinished()
       for task in taskInfo
-        task.finished = finished[task.name]
+        task.finished = !!finished[task.name]
 
       return taskInfo
   )

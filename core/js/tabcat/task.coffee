@@ -10,7 +10,6 @@ tabcat.task = {}
 # by default, we attempt to upload a chunk of events every 5 seconds
 DEFAULT_EVENT_LOG_SYNC_INTERVAL = 5000
 
-
 # DB where we store patient and encounter docs
 DATA_DB = 'tabcat-data'
 
@@ -86,6 +85,7 @@ tabcat.task.start = _.once((options) ->
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
+      name: tabcat.task.getTaskName()
 
   if options?.trackViewport
     tabcat.task.trackViewportInEventLog()
@@ -116,7 +116,6 @@ tabcat.task.start = _.once((options) ->
   $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
     (user, [designDoc], configDoc) ->
       additionalFields =
-        name: designDoc?.kanso.config.name
         version: designDoc?.kanso.config.version
         user: user
 
@@ -251,6 +250,8 @@ tabcat.task.finish = (options) ->
   $body.append($messageP, $statusP)
   $body.fadeIn(duration: fadeDuration)
 
+  tabcat.encounter.markTaskFinished(tabcat.task.getTaskName())
+
   $statusP.text('Uploading task data...')
 
   withRetry = (func, args) ->
@@ -381,3 +382,24 @@ tabcat.task.getEventLog = ->
 # Get the ID of the current task, or null if start() hasn't been called
 tabcat.task.getTaskId = ->
   taskDoc?._id
+
+
+# Get the task name from the URL
+tabcat.task.getTaskName = ->
+  _.last(window.location.pathname.split('/'), 2)[0]
+
+
+NON_TASK_DESIGN_DOCS = ['core']
+
+# Get the name of all tabcat tasks. This assumes our current URL points
+# to a doc in the tabcat DB
+tabcat.task.getAllTaskNames = ->
+  tabcatBase = window.location.pathname.split('/')[0..1]
+  path = tabcatBase.concat('_all_docs').join('/')
+
+  $.getJSON(path).then(
+    (response) ->
+      (row.key[8..] for row in response.rows \
+        when row.key[0..7] is '_design/' and \
+          row.key[8..] not in NON_TASK_DESIGN_DOCS)
+  )
