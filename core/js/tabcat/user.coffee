@@ -53,7 +53,7 @@ tabcat.user.getDocsSpilled = ->
     []
 
 
-# add the given path to docsSpilled,
+# add the given path to userDocsSpilled,
 tabcat.user.addDocSpilled = (path) ->
   spilled = localStorage.userDocsSpilled or ''
 
@@ -69,9 +69,12 @@ tabcat.user.addDocSpilled = (path) ->
   return
 
 
-# remove the given path from docsSpilled, optimizing for it
-# removing the first path
+# remove the given path from userDocsSpilled, optimizing for it
+# removing the first path or userDocsSpilled being empty
 tabcat.user.removeDocSpilled = (path) ->
+  if not localStorage.userDocsSpilled
+    return
+
   if path is tabcat.user.getNextDocSpilled()
     localStorage.userDocsSpilled = (
       localStorage.userDocsSpilled[(path.length + 1)..])

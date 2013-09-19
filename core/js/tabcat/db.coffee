@@ -9,7 +9,6 @@ localStorage = @localStorage
 
 # there isn't a tabcat.db.getDoc(); use tabcat.couch.getDoc() instead
 
-
 # Promise: upload a document to CouchDB, auto-resolving conflicts,
 # and spilling to localStorage on network error.
 #
@@ -114,6 +113,106 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
 
   localStorage[key] = JSON.stringify(doc)
 
+  # keep track of this as a doc the current user can vouch for
   tabcat.user.addDocSpilled(key)
 
+  tabcat.db.startSpilledDocSync()
+
   return $.Deferred().resolve()
+
+
+# kick off syncing of spilled docs. This is called automatically by
+# spillDocToLocalStorage(), so you usually don't need to call it
+tabcat.db.startSpilledDocSync = ->
+  if not syncSpilledDocsIsActive
+    syncSpilledDocs()
+    syncSpilledDocsIsActive = true
+
+  return
+
+syncSpilledDocsIsActive = false
+
+tabcat.db.ssdia = ->
+  syncSpilledDocsIsActive
+
+SYNC_SPILLED_DOCS_WAIT_TIME = 5000
+
+
+tabcat.db.ssd = syncSpilledDocs = ->
+  # if offline, wait until we're back online
+  if navigator.onLine is false
+    console.log('syncSpilledDocs() waiting to go back online')
+    # not going to use 'online' event; it doesn't seem to be
+    # well synced with navigator.onLine
+    callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
+    return
+
+  # pick a document to upload. start with list of docs spilled by
+  # this user, and then handle other docs
+  docPath = getNextDocPathToSync()
+  if not docPath?
+    # no more docs; we are done!
+    console.log('syncSpilledDocs() is done (no docs left)')
+    localStorage.removeItem('dbLastSpillDoc')
+    syncSpilledDocsIsActive = false
+    return
+
+  console.log('syncSpilledDocs() attempting to sync' + docPath)
+
+  localStorage.dbLastSpillDoc = docPath
+
+  doc = null
+  try
+    doc = JSON.parse(localStorage[docPath])
+  [__, db, docId] = docPath.split('/')
+
+  # whoops, something wrong with this doc, remove it
+  if not (doc? and db? and doc._id is docId)
+    localStorage.removeItem(docPath)
+    tabcat.user.removeDocSpilled(docPath)
+    callSyncSpilledDocsAgainIn(0)
+    return
+
+  # try syncing the doc
+  putDocIntoCouchDB(db, doc).then(
+    (->
+      # success!
+      localStorage.removeItem(docPath)
+      tabcat.user.removeDocSpilled(docPath)
+      callSyncSpilledDocsAgainIn(0)
+    ),
+    (xhr) ->
+      if xhr.status isnt 0
+        # auth problem or something, demote to a leftover doc
+        tabcat.user.removeDocSpilled(docPath)
+      callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
+  )
+
+  return
+
+
+# get the next doc to sync, giving priority to docs spilled by this user
+tabcat.db.gndpts = getNextDocPathToSync = ->
+  docPath = tabcat.user.getNextDocSpilled()
+  if not docPath?
+    docPaths = (path for path in _.keys(localStorage) \
+      when path[0] is '/').sort()
+    if _.isEmpty(docPaths)
+      return null
+
+    docPath = docPaths[0]
+    # this allows us to skip over documents and try them later
+    if localStorage.dbLastSpillDoc
+      index = _.sortedIndex(docPaths, localStorage.dbLastSpillDoc)
+      if docPaths[index] = localStorage.dbLastSpillDoc
+        index += 1
+      if index < docPaths.length
+        docPath = docPaths[index]
+
+  return docPath
+
+
+# hopefully this can keep up from exceeding max recursion depth
+callSyncSpilledDocsAgainIn = (milliseconds) ->
+  tabcat.ui.wait(milliseconds).then(syncSpilledDocs)
+  return

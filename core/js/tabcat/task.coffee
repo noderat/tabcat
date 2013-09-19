@@ -175,11 +175,11 @@ tabcat.task.syncEventLog = (options) ->
 
   eventSyncXHR = tabcat.db.putDoc(DATA_DB, eventLogDoc)
 
-  # track that we're ready for a new XHR
-  eventSyncXHR.always(-> eventSyncXHR = null)
-
   # track that events were successfully uploaded
   eventSyncXHR.then(-> eventSyncStartIndex = endIndex)
+
+  # track that we're ready for a new XHR
+  eventSyncXHR.always(-> eventSyncXHR = null)
 
 
 # Log an event whenever the viewport changes (scroll/resize). You can also
