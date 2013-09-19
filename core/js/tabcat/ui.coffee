@@ -218,17 +218,20 @@ tabcat.ui.updateStatusBar = ->
   )
 
 
-# log out, warning that this will close the current e
+# log out, warning that this will close the current encounter, then
+# redirect to the login page
 tabcat.ui.logout = ->
-  logoutAndRedirect = ->
-    # delete the login cookie manually until I can get logout to work
-    # in Safari standalone mode
-    document.cookie = 'AuthSession=; expires=Thu, 01-Jan-70 00:00:01 GMT;'
+  if not tabcat.encounter.isOpen() or window.confirm(
+    'Logging out will close the current encounter. Proceed?')
 
-    tabcat.couch.logout().then(->
+    tabcat.user.logout().then(->
       window.location = (
-        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
-    )
+        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true)))
+
+
+
+
+  tabcat.user.clearDocsSpilledByUser()
 
   if tabcat.encounter.isOpen()
     if window.confirm('Logging out will close the current encounter. Proceed?')

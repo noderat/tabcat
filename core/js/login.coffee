@@ -18,6 +18,8 @@ submitLoginForm = (event) ->
       # don't magically restart an encounter just because it's sitting
       # around in localStorage
       tabcat.encounter.clear()
+      # don't vouch for docs uploaded by other people
+      tabcat.user.clearDocsSpilled()
 
       window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
     ),

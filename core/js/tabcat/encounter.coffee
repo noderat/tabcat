@@ -111,8 +111,9 @@ tabcat.encounter.create = (options) ->
   )
 
 
-# finish the current patient encounter. this clears local storage even
-# if there is a problem updating the encounter doc
+# Promise: finish the current patient encounter. this clears local storage
+# even if there is a problem updating the encounter doc. If there is no
+# current encounter, does nothing.
 #
 # you will usually use tabcat.ui.closeEncounter(), which also redirects
 # to the encounter page
@@ -127,7 +128,7 @@ tabcat.encounter.close = ->
       tabcat.db.putDoc(DATA_DB, encounterDoc)
     )
   else
-    $.Deferred().reject()
+    $.Deferred().resolve()
 
 
 # clear local storage relating to the current encounter

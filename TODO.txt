@@ -19,20 +19,16 @@ Cleanup:
 - gracefully recover from unparseable data in localStorage
 
 Offline Mode:
+- simple local storage of docs
+  - sync locally stored docs with server
 - status bar should work offline
   - omit encounter number if unknown
   - show whether online or offline
   - show status of manifest
-- might as well spill whenever we get error 0 (navigator.onLine is unreliable anyway)
-- get by without network
-  - allow user to log in without password (detour to login page on next page load when online)
-    - don't close current encounter if user is just entering their password!
-  - keep track of encounterTasksFinished in localStorage
-- simple local storage of docs
-  - sync locally stored docs with server
+  - show status of locally stored docs
+- allow user to log in without password (detour to login page on next page load when online)
+  - don't close current encounter if user is just entering their password!
 - remove retrying of data uploading on task finish
-- show status of offline mode
-  - documents waiting for upload?
 
 
 Security/authentication:

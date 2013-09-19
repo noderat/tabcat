@@ -113,4 +113,7 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
     delete doc._rev
 
   localStorage[key] = JSON.stringify(doc)
+
+  tabcat.user.addDocSpilled(key)
+
   return $.Deferred().resolve()
