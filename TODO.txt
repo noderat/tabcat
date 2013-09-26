@@ -27,15 +27,12 @@ Offline Mode:
   - show status of locally stored docs
 - remove retrying of data uploading on task finish
 
-
 Security/authentication:
 - user field must match userCtx or end with '?'
 - uploadedBy field must match userCtx
 - auto-uploading of offline docs should reflect this
-- keep track of docs spilled by current session
-  - other docs are uploaded with '?' appended to user field, even if they match your
-    user. We assume that anyone could have put stuff into localStorage on your browser.
 - tag task and event docs with user too
+
 
 - support for re-opening tasks where we left off
 - demo mode for tasks
