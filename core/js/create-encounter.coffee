@@ -11,26 +11,29 @@ submitCreateEncounterForm = (event) ->
     window.location = tabcat.ui.srcPath() ? 'tasks.html')
 
 
-tabcat.ui.requireLogin()
+@initPage = ->
+  tabcat.ui.requireLogin()
 
-if tabcat.encounter.getEncounterId()
-  window.location = 'tasks.html'
+  if tabcat.encounter.getEncounterId()
+    window.location = 'tasks.html'
 
-tabcat.ui.enableFastClick()
-tabcat.ui.turnOffBounce()
+  tabcat.ui.enableFastClick()
+  tabcat.ui.turnOffBounce()
 
-$(->
-  $form = $('#createEncounter').find('form')
-  $form.on('submit', submitCreateEncounterForm)
-  $form.find('button[type=submit]').removeAttr('disabled')
-)
-$(->
-  if tabcat.ui.srcPath()
-    $('p.message').text('You need to create an encounter to view that page')
-  else
-    closedEncounterWith = tabcat.ui.readHashJSON().closedEncounterWith
-    if closedEncounterWith?
-      $('p.message').text(
-        'Closed encounter with Patient ' + closedEncounterWith)
-)
-$(tabcat.ui.updateStatusBar)
+  $(->
+    $form = $('#createEncounter').find('form')
+    $form.on('submit', submitCreateEncounterForm)
+    $form.find('button[type=submit]').removeAttr('disabled')
+  )
+  $(->
+    if tabcat.ui.srcPath()
+      $('p.message').text('You need to create an encounter to view that page')
+    else
+      closedEncounterWith = tabcat.ui.readHashJSON().closedEncounterWith
+      if closedEncounterWith?
+        $('p.message').text(
+          'Closed encounter with Patient ' + closedEncounterWith)
+  )
+  $(tabcat.ui.updateStatusBar)
+
+  tabcat.db.startSpilledDocSync()

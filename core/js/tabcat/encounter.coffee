@@ -40,12 +40,17 @@ tabcat.encounter.markTaskFinished = (taskName) ->
 
 
 # get the encounter number. This should only be used in the UI, not
-# stored in the database. May be undefined.
+# stored in the database. null if unknown.
 tabcat.encounter.getEncounterNum = ->
+  encounterNum = undefined
   try
-    parseInt(localStorage.encounterNum)
-  catch error
-    undefined
+    encounterNum = parseInt(localStorage.encounterNum)
+
+  if not encounterNum? or _.isNaN(encounterNum)
+    return null
+  else
+    return encounterNum
+
 
 # return a new encounter doc (don't upload it)
 #
@@ -104,7 +109,11 @@ tabcat.encounter.create = (options) ->
           # update localStorage
           localStorage.patientCode = encounterDoc.patientCode
           localStorage.encounterId = encounterDoc._id
-          localStorage.encounterNum = patientDoc.encounterIds.length
+          # only show encounter number if we're online
+          if encounterDoc._rev
+            localStorage.encounterNum = patientDoc.encounterIds.length
+          else
+            localStorage.removeItem('encounterNum')
           return
         )
       )

@@ -106,7 +106,7 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   if localStorage[key]?
     merge = pickMergeFunc(doc)
     if merge?
-      merge(JSON.parse(localStorage[key]), doc)
+      merge(doc, JSON.parse(localStorage[key]))
 
   if doc._rev?
     delete doc._rev
@@ -121,24 +121,22 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   return $.Deferred().resolve()
 
 
-# kick off syncing of spilled docs. This is called automatically by
-# spillDocToLocalStorage(), so you usually don't need to call it
+# Kick off syncing of spilled docs. You can pretty much call this anywhere
+# (e.g. on page load)
 tabcat.db.startSpilledDocSync = ->
   if not syncSpilledDocsIsActive
-    syncSpilledDocs()
     syncSpilledDocsIsActive = true
+    syncSpilledDocs()
 
   return
 
-syncSpilledDocsIsActive = false
 
-tabcat.db.ssdia = ->
-  syncSpilledDocsIsActive
+syncSpilledDocsIsActive = false
 
 SYNC_SPILLED_DOCS_WAIT_TIME = 5000
 
 
-tabcat.db.ssd = syncSpilledDocs = ->
+syncSpilledDocs = ->
   # if offline, wait until we're back online
   if navigator.onLine is false
     console.log('syncSpilledDocs() waiting to go back online')
@@ -153,13 +151,13 @@ tabcat.db.ssd = syncSpilledDocs = ->
   if not docPath?
     # no more docs; we are done!
     console.log('syncSpilledDocs() is done (no docs left)')
-    localStorage.removeItem('dbLastSpillDoc')
+    localStorage.removeItem('dbSpillSyncLastDoc')
     syncSpilledDocsIsActive = false
     return
 
   console.log('syncSpilledDocs() attempting to sync ' + docPath)
 
-  localStorage.dbLastSpillDoc = docPath
+  localStorage.dbSpillSyncLastDoc = docPath
 
   doc = null
   try
@@ -193,7 +191,7 @@ tabcat.db.ssd = syncSpilledDocs = ->
 
 
 # get the next doc to sync, giving priority to docs spilled by this user
-tabcat.db.gndpts = getNextDocPathToSync = ->
+getNextDocPathToSync = ->
   docPath = tabcat.user.getNextDocSpilled()
   if not docPath?
     docPaths = (path for path in _.keys(localStorage) \
@@ -203,9 +201,9 @@ tabcat.db.gndpts = getNextDocPathToSync = ->
 
     docPath = docPaths[0]
     # this allows us to skip over documents and try them later
-    if localStorage.dbLastSpillDoc
-      index = _.sortedIndex(docPaths, localStorage.dbLastSpillDoc)
-      if docPaths[index] = localStorage.dbLastSpillDoc
+    if localStorage.dbSpillSyncLastDoc
+      index = _.sortedIndex(docPaths, localStorage.dbSpillSyncLastDoc)
+      if docPaths[index] = localStorage.dbSpillSyncLastDoc
         index += 1
       if index < docPaths.length
         docPath = docPaths[index]
@@ -213,7 +211,7 @@ tabcat.db.gndpts = getNextDocPathToSync = ->
   return docPath
 
 
-# hopefully this can keep up from exceeding max recursion depth
+# hopefully this can keep us from exceeding max recursion depth
 callSyncSpilledDocsAgainIn = (milliseconds) ->
   tabcat.ui.wait(milliseconds).then(syncSpilledDocs)
   return

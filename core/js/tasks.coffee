@@ -83,17 +83,17 @@ showTasks = ->
   )
 
 
+# initialization
+@initPage = ->
+  tabcat.ui.requireLoginAndEncounter()
 
+  tabcat.ui.enableFastClick()
 
-# INTIALIZATION
+  $(->
+    tabcat.ui.updateStatusBar()
+    showTasks()
+    $('#closeEncounter').on('click', tabcat.ui.closeEncounter)
+    $('#closeEncounter').removeAttr('disabled')
+  )
 
-tabcat.ui.requireLoginAndEncounter()
-
-tabcat.ui.enableFastClick()
-
-$(->
-  tabcat.ui.updateStatusBar()
-  showTasks()
-  $('#closeEncounter').on('click', tabcat.ui.closeEncounter)
-  $('#closeEncounter').removeAttr('disabled')
-)
+  tabcat.db.startSpilledDocSync()

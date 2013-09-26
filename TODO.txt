@@ -17,11 +17,9 @@ Cleanup:
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
 - gracefully recover from unparseable data in localStorage
-- don't use relative paths
+- don't use relative paths in code
 
 Offline Mode:
-- status bar should work offline
-  - omit encounter number if unknown
 - status bar should show offline info
   - show whether online or offline
   - show status of manifest

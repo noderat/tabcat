@@ -81,4 +81,6 @@ tabcat.user.removeDocSpilled = (path) ->
   else
     localStorage.userDocsSpilled = (
       _.without(tabcat.user.getDocsSpilled(), path)).join(' ')
+    if localStorage.userDocsSpilled is ''
+      delete localStorage.userDocsSpilled
   return
