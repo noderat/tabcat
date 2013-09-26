@@ -23,7 +23,8 @@ fixAndRememberConfig = (configDoc) ->
   configDoc.PHI = !!configDoc.PHI
   configDoc.limitedPHI = configDoc.PHI or !!configDoc.limitedPHI
 
-  localStorage.config = JSON.stringify(configDoc)
+  # store locally. Remove _rev, since this is an offline document
+  localStorage.config = JSON.stringify(_.omit(configDoc, '_rev'))
 
   return configDoc
 
