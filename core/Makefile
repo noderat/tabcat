@@ -43,5 +43,5 @@ js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
 endif
 
 $(COFFEE_JS): %.js: %.coffee
-	if which coffeelint; then coffeelint -q $<; fi
 	coffee -c $<
+	if which coffeelint; then coffeelint -q $< || rm $@; fi

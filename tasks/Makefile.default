@@ -26,5 +26,5 @@ $(PUSHED): kanso.json $(KANSO_DEPS)
 	touch $@
 
 $(COFFEE_JS): %.js: %.coffee
-	if which coffeelint; then coffeelint -q $<; fi
 	coffee -c $<
+	if which coffeelint; then coffeelint -q $< || rm $@; fi
