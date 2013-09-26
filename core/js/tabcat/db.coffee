@@ -147,7 +147,6 @@ syncSpilledDocs = ->
 
   # if offline, wait until we're back online
   if navigator.onLine is false
-    console.log('syncSpilledDocs() waiting to go back online')
     # not going to use 'online' event; it doesn't seem to be
     # well synced with navigator.onLine
     callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
@@ -158,12 +157,9 @@ syncSpilledDocs = ->
   docPath = getNextDocPathToSync()
   if not docPath?
     # no more docs; we are done!
-    console.log('syncSpilledDocs() is done (no docs left)')
     localStorage.removeItem('dbSpillSyncLastDoc')
     syncSpilledDocsIsActive = false
     return
-
-  console.log('syncSpilledDocs() attempting to sync ' + docPath)
 
   localStorage.dbSpillSyncLastDoc = docPath
 
@@ -183,7 +179,6 @@ syncSpilledDocs = ->
   putDocIntoCouchDB(db, doc).then(
     (->
       # success!
-      console.log('syncSpilledDocs synced ' + docPath)
       localStorage.removeItem(docPath)
       tabcat.user.removeDocSpilled(docPath)
       callSyncSpilledDocsAgainIn(0)
