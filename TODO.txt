@@ -20,7 +20,6 @@ Cleanup:
 - don't use relative paths
 
 Offline Mode:
-- should be able to start tasks when offline
 - status bar should work offline
   - omit encounter number if unknown
 - status bar should show offline info

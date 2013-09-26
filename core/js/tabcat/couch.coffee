@@ -35,7 +35,7 @@ tabcat.couch.getUser = _.once(->
       # TODO: move this silliness to tabcat.user
       (xhr) ->
         if xhr.status is 0 and navigator.onLine is false
-          '???'
+          $.Deferred().resolve('???')
         else
           xhr
     )
