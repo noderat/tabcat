@@ -13,9 +13,9 @@ tabcat.couch.randomUUID = () ->
   (Math.floor(Math.random() * 16).toString(16) for _ in [0..31]).join('')
 
 
-# Promise: given an object with the keys "name" and "password", log in the user
-tabcat.couch.login = (nameAndPassword) ->
-  $.post('/_session', nameAndPassword)
+# Promise: log the user in. Usually you'll use tabcat.ui.login()
+tabcat.couch.login = (user, password) ->
+  $.post('/_session', name: user, password: password)
 
 
 # log out the user. Usually you'll use tabcat.ui.logout()
@@ -23,23 +23,10 @@ tabcat.couch.logout = ->
   $.ajax(type: 'DELETE', url: '/_session')
 
 
-# Promise: get the username of the current user, or null. Will only do this
-# once for each page.
-tabcat.couch.getUser = _.once(->
-  if window.location.protocol is 'file:'
-    # for ease of debugging
-    $.Deferred().resolve('nobody')
-  else
-    $.getJSON('/_session').then(
-      ((sessionDoc) -> sessionDoc.userCtx.name),
-      # TODO: move this silliness to tabcat.user
-      (xhr) ->
-        if xhr.status is 0 and navigator.onLine is false
-          $.Deferred().resolve('???')
-        else
-          xhr
-    )
-)
+# Promise: get the username of the current user, or null
+tabcat.couch.getUser = ->
+  $.getJSON('/_session').then(
+    (sessionDoc) -> sessionDoc.userCtx.name)
 
 
 # keys that always have to be JSON

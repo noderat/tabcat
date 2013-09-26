@@ -185,55 +185,65 @@ tabcat.ui.updateStatusBar = ->
         tabcat.ui.requestLogin()
     )
 
-  tabcat.couch.getUser().then((user) ->
-    emailP = $statusBar.find('p.email')
-    button =  $statusBar.find('button.login')
-    encounterP = $statusBar.find('p.encounter')
+  emailP = $statusBar.find('p.email')
+  button =  $statusBar.find('button.login')
+  encounterP = $statusBar.find('p.encounter')
 
-    if user?
-      emailP.text(user)
-      button.text('Log Out')
+  user = tabcat.user.get()
 
-    else
-      emailP.text('not logged in')
-      button.text('Log In')
+  if user?
+    emailP.text(user)
+    button.text('Log Out')
+  else
+    emailP.text('not logged in')
+    button.text('Log In')
 
-    button.show()
+  button.show()
 
-    # don't show encounter info unless patient is logged in
-    patientCode = tabcat.encounter.getPatientCode()
-    if patientCode? and user?
-      encounterNum = tabcat.encounter.getEncounterNum()
-      encounterNumText = if encounterNum? then ' #' + encounterNum else ''
+  # don't show encounter info unless patient is logged in
+  patientCode = tabcat.encounter.getPatientCode()
+  if patientCode? and user?
+    encounterNum = tabcat.encounter.getEncounterNum()
+    encounterNumText = if encounterNum? then ' #' + encounterNum else ''
 
-      encounterP.text(
-        'Encounter' + encounterNumText + ' with Patient ' + patientCode)
+    encounterP.text(
+      'Encounter' + encounterNumText + ' with Patient ' + patientCode)
 
-      if not tabcat.ui.updateStatusBar.clockInterval?
-        tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
-          tabcat.ui.updateEncounterClock, 50)
-    else
-      encounterP.empty()
-      if tabcat.ui.updateStatusBar.clockInterval?
-        window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
-      $statusBar.find('p.clock').empty()
+    if not tabcat.ui.updateStatusBar.clockInterval?
+      tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
+        tabcat.ui.updateEncounterClock, 50)
+  else
+    encounterP.empty()
+    if tabcat.ui.updateStatusBar.clockInterval?
+      window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
+    $statusBar.find('p.clock').empty()
+
+
+
+# Promise: log in.
+#
+# On success, note that the patient does not have the device, and
+# redirect to the appropriate page.
+tabcat.ui.login = (user, password) ->
+  tabcat.user.login(user, password).then(->
+    tabcat.task.patientHasDevice(false)
+    window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
   )
 
 
-# log out, warning that this will close the current encounter, then
-# redirect to the login page
+# Promise: log out, warning that this will close the current encounter.
+#
+# On success, redirect to the login page
 tabcat.ui.logout = ->
   if tabcat.encounter.isOpen()
     if not window.confirm(
       'Logging out will close the current encounter. Proceed?')
       return
 
-  tabcat.encounter.close().always(->
-    tabcat.user.logout().then(->
-      window.location = (
-        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))))
-
-  return
+  tabcat.user.logout().always(->
+    window.location = (
+      '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
+  )
 
 
 # redirect to the login page
@@ -241,17 +251,30 @@ tabcat.ui.requestLogin = ->
   tabcat.ui.detour('../core/login.html')
 
 
-# force the user to log in to this page
-tabcat.ui.requireLogin = ->
-  tabcat.couch.getUser().then((user) ->
-    if not user?
-      tabcat.ui.requestLogin()
+# Promise: force the user to log in to view this page.
+#
+# If we're online, actually check the user's session against the DB.
+tabcat.ui.requireUser = ->
+  if not tabcat.user.get()
+    tabcat.ui.requestLogin()
+    return $.Deferred().resolve()  # for consistency
+
+  tabcat.couch.getUser().then(
+    ((user) ->
+      if not user?
+        tabcat.ui.requestLogin()
+    ),
+    (xhr) ->
+      if xhr.status is 0
+        $.Deferred().resolve()
+      else
+        xhr
   )
 
 
 # force the user to log in to view this page, and to create an encounter
-tabcat.ui.requireLoginAndEncounter = ->
-  tabcat.ui.requireLogin()
+tabcat.ui.requireUserAndEncounter = ->
+  tabcat.ui.requireUser()
 
   if not tabcat.encounter.isOpen()
     tabcat.ui.detour('../core/create-encounter.html')

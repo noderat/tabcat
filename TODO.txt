@@ -20,14 +20,12 @@ Cleanup:
 - don't use relative paths in code
 
 Offline Mode:
+- login should say "please enter your password to continue your session"
 - status bar should show offline info
   - show whether online or offline
   - show status of manifest
   - show status of locally stored docs
-- allow user to log in without password (detour to login page on next page load when online)
-  - don't close current encounter if user is just entering their password!
 - remove retrying of data uploading on task finish
-- add ability to spill docs even on non-network error (everything but 409)
 
 
 Security/authentication:

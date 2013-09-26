@@ -86,6 +86,7 @@ tabcat.task.start = _.once((options) ->
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
       name: tabcat.task.getTaskName()
+      user: tabcat.user.get()
 
   if options?.trackViewport
     tabcat.task.trackViewportInEventLog()
@@ -113,11 +114,10 @@ tabcat.task.start = _.once((options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
-    (user, [designDoc], config) ->
+  $.when($.getJSON('.'), tabcat.config.get()).then(
+    ([designDoc], config) ->
       additionalFields =
         version: designDoc?.kanso.config.version
-        user: user
 
       if config.limitedPHI
         additionalFields.limitedPHI =

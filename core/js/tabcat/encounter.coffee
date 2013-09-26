@@ -9,6 +9,9 @@ DATA_DB = 'tabcat-data'
 localStorage = @localStorage
 
 
+# The CouchDB document for this encounter
+encounterDoc = null
+
 # get the patient code
 tabcat.encounter.getPatientCode = ->
   localStorage.patientCode
@@ -55,7 +58,7 @@ tabcat.encounter.getEncounterNum = ->
 # return a new encounter doc (don't upload it)
 #
 # Call tabcat.clock.reset() before this so that time fields are properly set.
-tabcat.encounter.newDoc = (patientCode, configDoc, user) ->
+tabcat.encounter.newDoc = (patientCode, configDoc) ->
   clockOffset = tabcat.clock.offset()
   date = new Date(clockOffset)
 
@@ -65,6 +68,7 @@ tabcat.encounter.newDoc = (patientCode, configDoc, user) ->
     patientCode: patientCode
     year: date.getFullYear()
 
+  user = tabcat.user.get()
   if user?
     doc.user = user
 
@@ -89,13 +93,13 @@ tabcat.encounter.newDoc = (patientCode, configDoc, user) ->
 tabcat.encounter.create = (options) ->
   tabcat.encounter.clear()
   tabcat.clock.reset()
+  encounterDoc = null
 
   patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
-  $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
-    (config, user) ->
-      encounterDoc = tabcat.encounter.newDoc(
-        patientDoc.patientCode, config, user)
+  $.when(tabcat.config.get()).then(
+    (config) ->
+      encounterDoc = tabcat.encounter.newDoc(patientDoc.patientCode, config)
 
       patientDoc.encounterIds = [encounterDoc._id]
 
@@ -127,15 +131,15 @@ tabcat.encounter.create = (options) ->
 # you will usually use tabcat.ui.closeEncounter(), which also redirects
 # to the encounter page
 tabcat.encounter.close = ->
-  encounterId = tabcat.encounter.getEncounterId()
   now = tabcat.clock.now()
   tabcat.encounter.clear()
 
-  if encounterId?
-    tabcat.couch.getDoc(DATA_DB, encounterId).then((encounterDoc) ->
-      encounterDoc.finishedAt = now
-      tabcat.db.putDoc(DATA_DB, encounterDoc)
-    )
+  if encounterDoc?
+    closedEncounterDoc = encounterDoc
+    encounterDoc = null
+
+    closedEncounterDoc.finishedAt = now
+    tabcat.db.putDoc(DATA_DB, closedEncounterDoc)
   else
     $.Deferred().resolve()
 

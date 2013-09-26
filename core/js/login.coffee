@@ -13,17 +13,8 @@ submitLoginForm = (event) ->
     errorP.text('Please enter your password')
     return
 
-  tabcat.couch.login(name: email, password: password).then(
-    (->
-      # don't magically restart an encounter just because it's sitting
-      # around in localStorage
-      tabcat.encounter.clear()
-      # don't vouch for docs uploaded by other people
-      tabcat.user.clearDocsSpilled()
-      tabcat.task.patientHasDevice(false)
-
-      window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
-    ),
+  tabcat.ui.login(email, password).then(
+    null,
     (xhr) -> switch xhr.status
       when 401 then errorP.text(
         'Incorrect email or password')

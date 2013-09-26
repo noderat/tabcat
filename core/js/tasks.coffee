@@ -85,7 +85,7 @@ showTasks = ->
 
 # initialization
 @initPage = ->
-  tabcat.ui.requireLoginAndEncounter()
+  tabcat.ui.requireUserAndEncounter()
 
   tabcat.ui.enableFastClick()
 

@@ -18,15 +18,19 @@ localStorage = @localStorage
 # If options.expectConflict is true, we always try to GET the old version of
 # the doc before we PUT the new one. This is just an optimization.
 tabcat.db.putDoc = (db, doc, options) ->
-  # optimization: don't even try if there's no network
-  if navigator.onLine is false
+  # don't even try if the user isn't authenticated; it'll cause 401s.
+  # also don't bother if we're offline (this is an optimization)
+  if not tabcat.user.isAuthenticated() or navigator.onLine is false
     tabcat.db.spillDocToLocalStorage(db, doc)
+    $.Deferred().resolve()
   else
     putDocIntoCouchDB(db, doc, options).then(
       null,
       (xhr) ->
+        # spill to local storage even if there's an error
+        tabcat.db.spillDocToLocalStorage(db, doc)
         if xhr.status is 0
-          tabcat.db.spillDocToLocalStorage(db, doc)
+          $.Deferred().resolve()
         else
           xhr
     )
@@ -92,10 +96,8 @@ pickMergeFunc = (doc) ->
       tabcat.patient.merge
 
 
-# Promise: put a document into localStorage for safe-keeping, possibly
+# Put a document into localStorage for safe-keeping, possibly
 # merging with a previously stored version of the document.
-#
-# (We return a promise for consistency; this returns immediately.)
 #
 # If doc._rev is set, delete it; we don't track revisions in localStorage.
 tabcat.db.spillDocToLocalStorage = (db, doc) ->
@@ -116,9 +118,10 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   # keep track of this as a doc the current user can vouch for
   tabcat.user.addDocSpilled(key)
 
+  # activate sync callback if it's not already running
   tabcat.db.startSpilledDocSync()
 
-  return $.Deferred().resolve()
+  return
 
 
 # Kick off syncing of spilled docs. You can pretty much call this anywhere
@@ -137,6 +140,11 @@ SYNC_SPILLED_DOCS_WAIT_TIME = 5000
 
 
 syncSpilledDocs = ->
+  # if we're not really logged in, there's nothing to do
+  if not tabcat.user.isAuthenticated()
+    syncSpilledDocsIsActive = false
+    return
+
   # if offline, wait until we're back online
   if navigator.onLine is false
     console.log('syncSpilledDocs() waiting to go back online')

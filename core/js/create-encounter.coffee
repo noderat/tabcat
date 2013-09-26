@@ -12,7 +12,7 @@ submitCreateEncounterForm = (event) ->
 
 
 @initPage = ->
-  tabcat.ui.requireLogin()
+  tabcat.ui.requireUser()
 
   if tabcat.encounter.getEncounterId()
     window.location = 'tasks.html'
