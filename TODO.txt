@@ -17,18 +17,20 @@ Cleanup:
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
 - gracefully recover from unparseable data in localStorage
+- don't use relative paths
 
 Offline Mode:
-- simple local storage of docs
-  - sync locally stored docs with server
+- should be able to start tasks when offline
 - status bar should work offline
   - omit encounter number if unknown
+- status bar should show offline info
   - show whether online or offline
   - show status of manifest
   - show status of locally stored docs
 - allow user to log in without password (detour to login page on next page load when online)
   - don't close current encounter if user is just entering their password!
 - remove retrying of data uploading on task finish
+- add ability to spill docs even on non-network error (everything but 409)
 
 
 Security/authentication:
