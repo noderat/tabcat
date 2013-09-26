@@ -72,15 +72,15 @@ tabcat.user.addDocSpilled = (path) ->
 # remove the given path from userDocsSpilled, optimizing for it
 # removing the first path or userDocsSpilled being empty
 tabcat.user.removeDocSpilled = (path) ->
-  if not localStorage.userDocsSpilled
-    return
+  if localStorage.userDocsSpilled
+    if path is tabcat.user.getNextDocSpilled()
+      localStorage.userDocsSpilled = (
+        localStorage.userDocsSpilled[(path.length + 1)..])
+    else
+      localStorage.userDocsSpilled = (
+        _.without(tabcat.user.getDocsSpilled(), path)).join(' ')
 
-  if path is tabcat.user.getNextDocSpilled()
-    localStorage.userDocsSpilled = (
-      localStorage.userDocsSpilled[(path.length + 1)..])
-  else
-    localStorage.userDocsSpilled = (
-      _.without(tabcat.user.getDocsSpilled(), path)).join(' ')
-    if localStorage.userDocsSpilled is ''
-      delete localStorage.userDocsSpilled
+  if localStorage.userDocsSpilled is ''
+    localStorage.removeItem('userDocsSpilled')
+
   return
