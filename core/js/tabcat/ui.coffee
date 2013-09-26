@@ -223,15 +223,17 @@ tabcat.ui.updateStatusBar = ->
 # log out, warning that this will close the current encounter, then
 # redirect to the login page
 tabcat.ui.logout = ->
-  if not tabcat.encounter.isOpen() or window.confirm(
-    'Logging out will close the current encounter. Proceed?')
+  if tabcat.encounter.isOpen()
+    if not window.confirm(
+      'Logging out will close the current encounter. Proceed?')
+    return
 
-    tabcat.encounter.close().always(->
-      tabcat.user.logout().then(->
-        window.location = (
-          '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
-      )
-    )
+  tabcat.encounter.close().always(->
+    tabcat.user.logout().then(->
+      window.location = (
+        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))))
+
+  return
 
 
 # redirect to the login page
