@@ -20,6 +20,7 @@ submitLoginForm = (event) ->
       tabcat.encounter.clear()
       # don't vouch for docs uploaded by other people
       tabcat.user.clearDocsSpilled()
+      tabcat.task.patientHasDevice(false)
 
       window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
     ),
