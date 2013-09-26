@@ -80,5 +80,5 @@ tabcat.user.removeDocSpilled = (path) ->
       localStorage.userDocsSpilled[(path.length + 1)..])
   else
     localStorage.userDocsSpilled = (
-      _without(tabcat.user.getDocsSpilled(), path)).join(' ')
+      _.without(tabcat.user.getDocsSpilled(), path)).join(' ')
   return

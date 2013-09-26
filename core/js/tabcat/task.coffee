@@ -146,7 +146,9 @@ tabcat.task.syncEventLog = (options) ->
   if eventSyncXHR?
     # if there's more to upload, abort the current upload and restart
     if options?.force and eventLog.length > eventSyncEndIndex
-      eventSyncXHR.abort()
+      # if we're spilling to localStorage, this won't be a real xhr
+      if eventSyncXHR.abort?
+        eventSyncXHR.abort()
       eventSyncXHR = null
     else
       return eventSyncXHR

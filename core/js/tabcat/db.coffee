@@ -157,7 +157,7 @@ tabcat.db.ssd = syncSpilledDocs = ->
     syncSpilledDocsIsActive = false
     return
 
-  console.log('syncSpilledDocs() attempting to sync' + docPath)
+  console.log('syncSpilledDocs() attempting to sync ' + docPath)
 
   localStorage.dbLastSpillDoc = docPath
 
@@ -177,6 +177,7 @@ tabcat.db.ssd = syncSpilledDocs = ->
   putDocIntoCouchDB(db, doc).then(
     (->
       # success!
+      console.log('syncSpilledDocs synced ' + docPath)
       localStorage.removeItem(docPath)
       tabcat.user.removeDocSpilled(docPath)
       callSyncSpilledDocsAgainIn(0)
