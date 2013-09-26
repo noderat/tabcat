@@ -114,12 +114,12 @@ tabcat.task.start = _.once((options) ->
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
   $.when(tabcat.couch.getUser(), $.getJSON('.'), tabcat.config.get()).then(
-    (user, [designDoc], configDoc) ->
+    (user, [designDoc], config) ->
       additionalFields =
         version: designDoc?.kanso.config.version
         user: user
 
-      if configDoc.limitedPHI
+      if config.limitedPHI
         additionalFields.limitedPHI =
           clockOffset: tabcat.clock.offset()
 

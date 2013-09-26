@@ -93,9 +93,9 @@ tabcat.encounter.create = (options) ->
   patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
   $.when(tabcat.config.get(), tabcat.couch.getUser()).then(
-    (configDoc, user) ->
+    (config, user) ->
       encounterDoc = tabcat.encounter.newDoc(
-        patientDoc.patientCode, configDoc, user)
+        patientDoc.patientCode, config, user)
 
       patientDoc.encounterIds = [encounterDoc._id]
 

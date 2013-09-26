@@ -226,7 +226,7 @@ tabcat.ui.logout = ->
   if tabcat.encounter.isOpen()
     if not window.confirm(
       'Logging out will close the current encounter. Proceed?')
-    return
+      return
 
   tabcat.encounter.close().always(->
     tabcat.user.logout().then(->

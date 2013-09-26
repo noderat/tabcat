@@ -17,16 +17,16 @@ localStorage = @localStorage
 
 # Helper for tabcat.config.get()
 fixAndRememberConfig = (configDoc) ->
-  configDoc._id ?= 'config'
-  configDoc.type ?= 'config'
+  # strip document fields; we just want the configs
+  config = _.omit(configDoc, '_id', '_rev', 'type')
 
-  configDoc.PHI = !!configDoc.PHI
-  configDoc.limitedPHI = configDoc.PHI or !!configDoc.limitedPHI
+  config.PHI = !!config.PHI
+  config.limitedPHI = config.PHI or !!config.limitedPHI
 
   # store locally. Remove _rev, since this is an offline document
-  localStorage.config = JSON.stringify(_.omit(configDoc, '_rev'))
+  localStorage.config = JSON.stringify(config)
 
-  return configDoc
+  return config
 
 
 # Promise: get the current config, based on the "config" document
