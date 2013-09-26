@@ -44,4 +44,4 @@ endif
 
 $(COFFEE_JS): %.js: %.coffee
 	coffee -c $<
-	if which coffeelint; then coffeelint -q $< || rm $@; fi
+	if which coffeelint; then coffeelint -q $<; fi
