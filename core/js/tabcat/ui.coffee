@@ -203,9 +203,11 @@ tabcat.ui.updateStatusBar = ->
     # don't show encounter info unless patient is logged in
     patientCode = tabcat.encounter.getPatientCode()
     if patientCode? and user?
+      encounterNum = tabcat.encounter.getEncounterNum()
+      encounterNumText = if encounterNum? then ' #' + encounterNum else ''
+
       encounterP.text(
-        'Encounter #' + tabcat.encounter.getEncounterNum() +
-        ' with Patient ' + patientCode)
+        'Encounter' + encounterNumText + ' with Patient ' + patientCode)
 
       if not tabcat.ui.updateStatusBar.clockInterval?
         tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
@@ -227,11 +229,6 @@ tabcat.ui.logout = ->
     tabcat.user.logout().then(->
       window.location = (
         '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true)))
-
-
-
-
-  tabcat.user.clearDocsSpilledByUser()
 
   if tabcat.encounter.isOpen()
     if window.confirm('Logging out will close the current encounter. Proceed?')
