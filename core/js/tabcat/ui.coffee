@@ -226,15 +226,12 @@ tabcat.ui.logout = ->
   if not tabcat.encounter.isOpen() or window.confirm(
     'Logging out will close the current encounter. Proceed?')
 
-    tabcat.user.logout().then(->
-      window.location = (
-        '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true)))
-
-  if tabcat.encounter.isOpen()
-    if window.confirm('Logging out will close the current encounter. Proceed?')
-      tabcat.encounter.close().always(logoutAndRedirect)
-  else
-    logoutAndRedirect()
+    tabcat.encounter.close().always(->
+      tabcat.user.logout().then(->
+        window.location = (
+          '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
+      )
+    )
 
 
 # redirect to the login page
