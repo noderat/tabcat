@@ -21,23 +21,27 @@ submitLoginForm = (event) ->
       else errorP.text(xhr.textStatus or 'Unknown error')
   )
 
-tabcat.ui.enableFastClick()
-tabcat.ui.turnOffBounce()
+@initPage = ->
+  tabcat.ui.enableFastClick()
+  tabcat.ui.turnOffBounce()
 
-$(->
-  if tabcat.encounter.isOpen() and not window.location.hash
-    $('#message').text('Continuing encounter...')
-    window.location = 'tasks.html'
-  else
-    if tabcat.ui.srcPath()?
-      message = 'You need to log in to view that page'
+  $(->
+    user = tabcat.user.get()
+    if user
+      if tabcat.encounter.isOpen() and not window.location.hash
+        $('#message').text('Continuing encounter...')
+        window.location = 'tasks.html'
+      else
+        $('#message').text('Please enter your password to continue')
+        $('#loginForm').attr('autocomplete', 'off')
+        $('#loginForm').find('input[name=email]').val(user)
+    else if tabcat.ui.srcPath()?
+      $('#message').text('You need to log in to view that page')
     else if tabcat.ui.readHashJSON().loggedOut
-      message = 'Logged out'
+      $('#message').text('Logged out')
     else
-      message = 'Please log in with your email and password'
+      $('#message').text('Please log in with your email and password')
 
-    $('#message').text(message)
-
-  $('#loginForm').on('submit', submitLoginForm)
-  $('#loginForm button').removeAttr('disabled')
-)
+    $('#loginForm').on('submit', submitLoginForm)
+    $('#loginForm button').removeAttr('disabled')
+  )

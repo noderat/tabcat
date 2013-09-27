@@ -225,9 +225,17 @@ tabcat.ui.updateStatusBar = ->
 # On success, note that the patient does not have the device, and
 # redirect to the appropriate page.
 tabcat.ui.login = (user, password) ->
+  previousUser = tabcat.user.get()
   tabcat.user.login(user, password).then(->
     tabcat.task.patientHasDevice(false)
-    window.location = tabcat.ui.srcPath() ? 'create-encounter.html'
+
+    destPath = 'create-encounter.html'
+    # respect srcPath unless we switched user accounts
+    srcPath = tabcat.ui.srcPath()
+    if srcPath? and not (previousUser? and previousUser isnt user)
+      destPath = srcPath
+
+    window.location = destPath
   )
 
 
