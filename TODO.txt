@@ -20,7 +20,6 @@ Cleanup:
 - don't use relative paths in code
 
 Offline Mode:
-- login should say "please enter your password to continue your session"
 - status bar should show offline info
   - show whether online or offline
   - show status of manifest
