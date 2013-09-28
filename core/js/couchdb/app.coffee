@@ -152,9 +152,20 @@ dumpList = (head, req) ->
         _.extend(currentTask, doc)
 
 
+validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
+  if newDoc.user?
+    if newDoc.user[newDoc.user.length - 1] is '?'
+      if not (newDoc.uploadedBy? and newDoc.uploadedBy is userCtx.name)
+        throw {forbidden: 'uploadedBy must match current user'}
+    else
+      if newDoc.user isnt userCtx.name
+        throw {forbidden: 'user must match current user, or end with "?"'}
+
+
 exports.lists =
   dump: dumpList
 
+exports.validate_doc_update = validateDocUpdate
 
 exports.views =
   offline:
