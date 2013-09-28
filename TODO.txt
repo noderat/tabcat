@@ -18,7 +18,6 @@ Cleanup:
 - require user before attempting to continue encounter
 - gracefully recover from unparseable data in localStorage
 - don't use relative paths in code
-- use https://github.com/carhartl/jquery-cookie
 
 Offline Mode:
 - status bar should show offline info
@@ -26,8 +25,7 @@ Offline Mode:
   - show status of manifest
   - show status of locally stored docs
 - remove retrying of data uploading on task finish
-- detect expired auth; maybe look at AuthSession cookie rather than
-  maintaining userIsAuthenticated
+- stop syncing data on 401, keep list of docs spilled by user
 
 Security/authentication:
 - auto-uploading of offline docs should respect validate_doc_update
