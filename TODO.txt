@@ -31,7 +31,7 @@ Security/authentication:
 - uploadedBy field must match userCtx
 - auto-uploading of offline docs should reflect this
 - tag task and event docs with user too
-
+- make separate page and tabcat.ui function for re-entering password
 
 - support for re-opening tasks where we left off
 - demo mode for tasks

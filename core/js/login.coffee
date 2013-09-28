@@ -33,11 +33,16 @@ submitLoginForm = (event) ->
         window.location = 'tasks.html'
       else
         $('#message').text('Please enter your password to continue')
-        form = $('#loginForm')
-        form.attr('autocomplete', 'off')
-        form.find('input[name=email]').val(user).removeAttr('autofocus')
-        form.find(
-          'input[name=password]').val(user).attr('autofocus', 'autofocus')
+
+        $form = $('#loginForm')
+        $form.attr('autocomplete', 'off')
+
+        $userInput = $form.find('input[name=email]')
+        $userInput.val(user)
+        $userInput.removeAttr('autofocus')
+
+        $passwordInput = $form.find('input[name=password]')
+        $passwordInput.attr('autofocus', 'autofocus')
     else if tabcat.ui.srcPath()?
       $('#message').text('You need to log in to view that page')
     else if tabcat.ui.readHashJSON().loggedOut
