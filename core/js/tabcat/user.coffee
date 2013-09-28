@@ -27,7 +27,7 @@ tabcat.user.get = ->
 # Return true if the user "logged in" while we were offline. If this
 # is true, there's no point in trying to store stuff in the DB.
 tabcat.user.isAuthenticated = ->
-  !!$.cookie('AuthSession')
+  !!localStorage.userIsAuthenticated
 
 
 # Promise: log the given user in with the given password.
@@ -39,9 +39,13 @@ tabcat.user.isAuthenticated = ->
 # security is on the DB server).
 tabcat.user.login = (user, password) ->
   tabcat.couch.login(user, password).then(
-    null,
+    (->
+      localStorage.userIsAuthenticated = 'true'
+      $.Deferred().resolve()
+    ),
     (xhr) ->
       if xhr.status is 0
+        localStorage.removeItem('userIsAuthenticated')
         $.Deferred().resolve()
       else
         xhr
@@ -61,15 +65,16 @@ tabcat.user.login = (user, password) ->
 # Usually you'll want to use tabcat.ui.logout()
 tabcat.user.logout = ->
   localStorage.removeItem('user')
+  localStorage.removeItem('userIsAuthenticated')
   tabcat.user.clearDocsSpilled()
 
   # the first then is just "always", except we return the promise
   # from logout(), not the one from encounter.close()
   tabcat.encounter.close().then(null, $.Deferred().resolve()).then(->
     tabcat.couch.logout().always(->
-      # forcibly remove cookie until I can figure out why it doesn't
-      # get removed in Safari
-      $.removeCookie('AuthSession')
+      # delete the login cookie manually until I verify logout works
+      # in Safari standalone mode
+      document.cookie = 'AuthSession=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     )
   )
 
