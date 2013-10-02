@@ -31,19 +31,9 @@ submitLoginForm = (event) ->
       if tabcat.encounter.isOpen() and not window.location.hash
         $('#message').text('Continuing encounter...')
         window.location = 'tasks.html'
-      else
-        $('#message').text('Please enter your password to continue')
+        return
 
-        $form = $('#loginForm')
-        $form.attr('autocomplete', 'off')
-
-        $userInput = $form.find('input[name=email]')
-        $userInput.val(user)
-        $userInput.removeAttr('autofocus')
-
-        $passwordInput = $form.find('input[name=password]')
-        $passwordInput.attr('autofocus', 'autofocus')
-    else if tabcat.ui.srcPath()?
+    if tabcat.ui.srcPath()?
       $('#message').text('You need to log in to view that page')
     else if tabcat.ui.readHashJSON().loggedOut
       $('#message').text('Logged out')
