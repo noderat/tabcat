@@ -7,7 +7,6 @@ tabcat.db = {}
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
-# there isn't a tabcat.db.getDoc(); use tabcat.couch.getDoc() instead
 
 # Promise: upload a document to CouchDB, auto-resolving conflicts,
 # and spilling to localStorage on network error.

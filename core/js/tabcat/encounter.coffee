@@ -9,22 +9,40 @@ DATA_DB = 'tabcat-data'
 localStorage = @localStorage
 
 
-# The CouchDB document for this encounter
-encounterDoc = null
+# Get a copy of the CouchDB doc for this encounter
+tabcat.encounter.get = ->
+  try
+    JSON.parse(localStorage.encounter)
+  catch error
+    null
+
 
 # get the patient code
 tabcat.encounter.getPatientCode = ->
-  localStorage.patientCode
+  tabcat.encounter.get()?.patientCode
 
 
 # get the (random) ID of this encounter.
 tabcat.encounter.getEncounterId = ->
-  localStorage.encounterId
+  tabcat.encounter.get()?._id
 
 
 # is there an open encounter?
 tabcat.encounter.isOpen = ->
-  tabcat.encounter.getEncounterId()?
+  tabcat.encounter.get()?
+
+
+# get the encounter number. This should only be used in the UI, not
+# stored in the database. null if unknown.
+tabcat.encounter.getEncounterNum = ->
+  encounterNum = undefined
+  try
+    encounterNum = parseInt(localStorage.encounterNum)
+
+  if not encounterNum? or _.isNaN(encounterNum)
+    return null
+  else
+    return encounterNum
 
 
 # keep track of tasks finished during the encounter, in localStorate
@@ -40,19 +58,6 @@ tabcat.encounter.markTaskFinished = (taskName) ->
   finished[taskName] = true
   localStorage.encounterTasksFinished = JSON.stringify(finished)
   return
-
-
-# get the encounter number. This should only be used in the UI, not
-# stored in the database. null if unknown.
-tabcat.encounter.getEncounterNum = ->
-  encounterNum = undefined
-  try
-    encounterNum = parseInt(localStorage.encounterNum)
-
-  if not encounterNum? or _.isNaN(encounterNum)
-    return null
-  else
-    return encounterNum
 
 
 # return a new encounter doc (don't upload it)
@@ -93,7 +98,6 @@ tabcat.encounter.newDoc = (patientCode, configDoc) ->
 tabcat.encounter.create = (options) ->
   tabcat.encounter.clear()
   tabcat.clock.reset()
-  encounterDoc = null
 
   patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
@@ -111,8 +115,7 @@ tabcat.encounter.create = (options) ->
         tabcat.db.putDoc(DATA_DB, encounterDoc).then(->
 
           # update localStorage
-          localStorage.patientCode = encounterDoc.patientCode
-          localStorage.encounterId = encounterDoc._id
+          localStorage.encounter = JSON.stringify(encounterDoc)
           # only show encounter number if we're online
           if encounterDoc._rev
             localStorage.encounterNum = patientDoc.encounterIds.length
@@ -132,22 +135,19 @@ tabcat.encounter.create = (options) ->
 # to the encounter page
 tabcat.encounter.close = ->
   now = tabcat.clock.now()
+  encounterDoc = tabcat.encounter.get()
   tabcat.encounter.clear()
 
   if encounterDoc?
-    closedEncounterDoc = encounterDoc
-    encounterDoc = null
-
-    closedEncounterDoc.finishedAt = now
-    tabcat.db.putDoc(DATA_DB, closedEncounterDoc)
+    encounterDoc.finishedAt = now
+    tabcat.db.putDoc(DATA_DB, encounterDoc)
   else
     $.Deferred().resolve()
 
 
 # clear local storage relating to the current encounter
 tabcat.encounter.clear = ->
-  localStorage.removeItem('patientCode')
-  localStorage.removeItem('encounterId')
+  localStorage.removeItem('encounter')
   localStorage.removeItem('encounterNum')
   localStorage.removeItem('encounterTasksFinished')
   tabcat.clock.clear()
