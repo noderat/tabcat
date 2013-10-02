@@ -60,19 +60,6 @@ body.taskComplete p.message {
     color: #eeeeee;
 }
 
-/* used to show status of data upload */
-body.taskComplete p.status {
-    position: absolute;
-    margin-top: 0;
-    top: 95%;
-    width: 98%;
-    margin-left: 0;
-    margin-right: 2%;
-    font-size: 2.5em;
-    text-align: right;
-    color: #eeeeee;
-}
-
 /* portrait mode selectors. use this to hide the task and show a message
 instead when the browser is in portrait mode */
 

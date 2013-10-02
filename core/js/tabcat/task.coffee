@@ -250,13 +250,9 @@ tabcat.task.finish = (options) ->
   tabcat.ui.linkEmToPercentOfHeight($body)
   $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
   $messageP = $('<p class="message">Task complete!</p>')
-  $statusP = $('<p class="status"></p>')
-  $body.append($messageP, $statusP)
   $body.fadeIn(duration: fadeDuration)
 
   tabcat.encounter.markTaskFinished(tabcat.task.getTaskName())
-
-  $statusP.text('Uploading task data...')
 
   # make sure start() has completed!
   tabcat.task.start().then(->
