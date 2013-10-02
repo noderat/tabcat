@@ -128,8 +128,8 @@ tabcat.task.start = _.once((options) ->
 )
 
 
-# Promise: upload the portion of the event log that has not already
-# been stored in the DB. You usually don't need to call this directly;
+# Promise (can't fail): upload the portion of the event log that has not
+# already been stored in the DB. You usually don't need to call this directly;
 # by default, tabcat.task.start() will cause it to be called periodically.
 #
 # The only option is "force". If true, this will abort pending syncs unless
@@ -155,7 +155,7 @@ tabcat.task.syncEventLog = (options) ->
 
   # if no new events to upload, do nothing
   if eventLog.length <= eventSyncStartIndex
-    return $.Deferred().resolve(eventSyncStartIndex)
+    return $.Deferred().resolve()
 
   # upload everything we haven't so far
   #
@@ -182,6 +182,7 @@ tabcat.task.syncEventLog = (options) ->
   eventSyncXHR.then(-> eventSyncStartIndex = endIndex)
 
   # track that we're ready for a new XHR
+  # (this also implicitly returns eventSyncXHR)
   eventSyncXHR.always(-> eventSyncXHR = null)
 
 
@@ -257,45 +258,22 @@ tabcat.task.finish = (options) ->
 
   $statusP.text('Uploading task data...')
 
-  withRetry = (func, args) ->
-    func(args...).then(
-      ((successArgs...) -> successArgs),
-      (xhr) -> switch xhr.status
-        when 0
-          $statusP.text('Network error, retrying in 3 seconds...')
-          tabcat.ui.wait(3000).then(
-            ->
-              $statusP.text('Retrying upload')
-              tabcat.ui.wait(1000).then(-> withRetry(func, args))
-          )
-        else xhr
-    )
-
-  taskDocPromise = tabcat.task.start().then(->
+  # make sure start() has completed!
+  tabcat.task.start().then(->
     taskDoc.finishedAt = now
     if options?.interpretation
       taskDoc.interpretation = options.interpretation
-    withRetry(tabcat.db.putDoc, [DATA_DB, taskDoc])
-  )
 
-  if eventSyncIntervalId?
-    window.clearInterval(eventSyncIntervalId)
-    eventSyncIntervalId = null
-
-  eventSyncPromise = withRetry(tabcat.task.syncEventLog, [force: true])
-
-  $.when(taskDocPromise, eventSyncPromise).then(
-    (->
-      $statusP.text('Task data uploaded')
-      $.when(tabcat.ui.wait(1000), waitedForMinWait).then(->
+    $.when(
+      tabcat.db.putDoc(DATA_DB, taskDoc),
+      tabcat.task.syncEventLog(force: true),
+      waitedForMinWait).then(
+      ->
         if tabcat.task.patientHasDevice()
           window.location = '../core/return-to-examiner.html'
         else
           window.location = '../core/tasks.html'
       )
-    ),
-    (xhr) ->
-      $statusP.text("Task data upload failed: #{xhr.statusText}")
   )
 
 

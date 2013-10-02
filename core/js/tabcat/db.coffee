@@ -8,8 +8,8 @@ tabcat.db = {}
 localStorage = @localStorage
 
 
-# Promise: upload a document to CouchDB, auto-resolving conflicts,
-# and spilling to localStorage on network error.
+# Promise (can't fail): upload a document to CouchDB, auto-resolving conflicts,
+# and spilling to localStorage on any error.
 #
 # This will update the _rev field of doc, or, if we spill it to
 # localStorage, _rev will be deleted.
@@ -25,17 +25,13 @@ tabcat.db.putDoc = (db, doc, options) ->
   else
     putDocIntoCouchDB(db, doc, options).then(
       null,
-      (xhr) ->
-        # spill to local storage even if there's an error
+      ->
         tabcat.db.spillDocToLocalStorage(db, doc)
-        if xhr.status is 0
-          $.Deferred().resolve()
-        else
-          xhr
+        $.Deferred().resolve()
     )
 
 
-# putDoc() minus handling of offline/network errors
+# Promise: putDoc() minus handling of offline/network errors. This can fail.
 putDocIntoCouchDB = (db, doc, options) ->
   if options?.expectConflict
     resolvePutConflict(db, doc, options)

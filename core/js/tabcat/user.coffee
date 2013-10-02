@@ -68,10 +68,7 @@ tabcat.user.logout = ->
   localStorage.removeItem('userIsAuthenticated')
   tabcat.user.clearDocsSpilled()
 
-  # the first then is just like .always(), except we return the promise
-  # from logout(), not the one from encounter.close()
-  tabcat.encounter.close().then(null, $.Deferred().resolve()).then(
-    tabcat.couch.logout())
+  tabcat.encounter.close().then(tabcat.couch.logout)
 
 
 # localStorage.userDocsSpilled keeps a space-separated list of spilled

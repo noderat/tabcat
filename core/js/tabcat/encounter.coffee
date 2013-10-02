@@ -125,9 +125,9 @@ tabcat.encounter.create = (options) ->
   )
 
 
-# Promise: finish the current patient encounter. this clears local storage
-# even if there is a problem updating the encounter doc. If there is no
-# current encounter, does nothing.
+# Promise (can't fail): finish the current patient encounter. this clears
+# local storage even if there is a problem updating the encounter doc. If
+# there is no current encounter, does nothing.
 #
 # you will usually use tabcat.ui.closeEncounter(), which also redirects
 # to the encounter page
