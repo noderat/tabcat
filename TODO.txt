@@ -6,9 +6,6 @@ Offline Mode:
   - show status of manifest
   - show status of locally stored docs
 
-Security/authentication:
-- make separate page and tabcat.ui function for re-entering password
-
 
 
 Tasks:
