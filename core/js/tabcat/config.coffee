@@ -46,7 +46,7 @@ tabcat.config.get = _.once(->
       # network error
       when 0
         # if we're offline, use the config we last stored, if any
-        $.Deferred().resolve(JSON.parse(localStorage.config ? '{}'))
+        $.Deferred().resolve((try JSON.parse(localStorage.config)) ? {})
 
       # config doesn't exist
       when 404

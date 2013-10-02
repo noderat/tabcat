@@ -16,7 +16,6 @@ Cleanup:
 - fix favicon
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
-- gracefully recover from unparseable data in localStorage
 - don't use relative paths in code
 
 Offline Mode:

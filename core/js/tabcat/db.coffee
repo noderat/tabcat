@@ -107,7 +107,9 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   if localStorage[key]?
     merge = pickMergeFunc(doc)
     if merge?
-      merge(doc, JSON.parse(localStorage[key]))
+      oldDoc = try JSON.parse(localStorage[key])
+      if oldDoc?
+        merge(doc, oldDoc)
 
   if doc._rev?
     delete doc._rev
@@ -162,9 +164,7 @@ syncSpilledDocs = ->
 
   localStorage.dbSpillSyncLastDoc = docPath
 
-  doc = null
-  try
-    doc = JSON.parse(localStorage[docPath])
+  doc = try JSON.parse(localStorage[docPath])
   [__, db, docId] = docPath.split('/')
 
   # whoops, something wrong with this doc, remove it

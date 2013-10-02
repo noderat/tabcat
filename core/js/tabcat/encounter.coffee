@@ -11,10 +11,8 @@ localStorage = @localStorage
 
 # Get a copy of the CouchDB doc for this encounter
 tabcat.encounter.get = ->
-  try
-    JSON.parse(localStorage.encounter)
-  catch error
-    null
+  if localStorage.encounter?
+    try JSON.parse(localStorage.encounter)
 
 
 # get the patient code
@@ -47,7 +45,7 @@ tabcat.encounter.getNum = ->
 
 # keep track of tasks finished during the encounter, in localStorate
 tabcat.encounter.getTasksFinished = ->
-  JSON.parse(localStorage.encounterTasksFinished ? '{}')
+  (try JSON.parse(localStorage.encounterTasksFinished)) ? {}
 
 
 # mark a task as finished in localStorage.

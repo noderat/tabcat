@@ -308,10 +308,8 @@ tabcat.ui.srcPath = ->
 
 # read a json from the HTML fragment
 tabcat.ui.readHashJSON = ->
-  try
-    JSON.parse(decodeURIComponent(window.location.hash.substring(1)))
-  catch error
-    {}
+  (try JSON.parse(decodeURIComponent(window.location.hash.substring(1)))) ? {}
+
 
 # encode json into HTML fragment. This includes the leading "#"
 tabcat.ui.encodeHashJSON = (json) ->
