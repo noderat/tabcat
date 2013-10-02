@@ -5,7 +5,6 @@ Offline Mode:
   - show whether online or offline
   - show status of manifest
   - show status of locally stored docs
-- remove retrying of data uploading on task finish
 
 Security/authentication:
 - make separate page and tabcat.ui function for re-entering password
@@ -32,6 +31,7 @@ Cleanup:
 - require user before attempting to continue encounter
 - don't use relative paths in code
 - can't clear couch's login cookie when offline
+- timeout for creating encounter and task.finish() (better to spill)
 
 - support for re-opening tasks where we left off
 - demo mode for tasks

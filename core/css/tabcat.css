@@ -170,7 +170,7 @@ button:disabled {
     margin-bottom: -10px;
 }
 
-#loginMain label {
+#loginForm label {
     width: 130px;
 }
 
@@ -227,21 +227,15 @@ form.big button[type=submit] {
     margin: 0px;
 }
 
-#encounter {
+#createEncounter {
     text-align: center;
-}
-
-#encounter button {
-    font-size: 24px;
-    border-radius: 10px;
-    border-width: 5px;
 }
 
 #createEncounter form label {
     width: 170px;
 }
 
-#createEncounter {
+#enterPassword {
     text-align: center;
 }
 
