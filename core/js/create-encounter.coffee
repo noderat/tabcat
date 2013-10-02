@@ -14,8 +14,9 @@ submitCreateEncounterForm = (event) ->
 @initPage = ->
   tabcat.ui.requireUser()
 
-  if tabcat.encounter.getEncounterId()
+  if tabcat.encounter.isOpen()
     window.location = 'tasks.html'
+    return
 
   tabcat.ui.enableFastClick()
   tabcat.ui.turnOffBounce()

@@ -203,7 +203,7 @@ tabcat.ui.updateStatusBar = ->
   # don't show encounter info unless patient is logged in
   patientCode = tabcat.encounter.getPatientCode()
   if patientCode? and user?
-    encounterNum = tabcat.encounter.getEncounterNum()
+    encounterNum = tabcat.encounter.getNum()
     encounterNumText = if encounterNum? then ' #' + encounterNum else ''
 
     encounterP.text(

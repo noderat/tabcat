@@ -23,7 +23,7 @@ tabcat.encounter.getPatientCode = ->
 
 
 # get the (random) ID of this encounter.
-tabcat.encounter.getEncounterId = ->
+tabcat.encounter.getId = ->
   tabcat.encounter.get()?._id
 
 
@@ -34,7 +34,7 @@ tabcat.encounter.isOpen = ->
 
 # get the encounter number. This should only be used in the UI, not
 # stored in the database. null if unknown.
-tabcat.encounter.getEncounterNum = ->
+tabcat.encounter.getNum = ->
   encounterNum = undefined
   try
     encounterNum = parseInt(localStorage.encounterNum)
@@ -172,7 +172,7 @@ tabcat.encounter.clear = ->
 # You may provide patientCode if you know it; otherwise we'll look it up.
 tabcat.encounter.getInfo = (encounterId, patientCode) ->
   if not encounterId?
-    encounterId = tabcat.encounter.getEncounterId()
+    encounterId = tabcat.encounter.getId()
     patientCode = tabcat.encounter.getPatientCode()
 
     if not (encounterId? and patientCode?)

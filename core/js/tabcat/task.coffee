@@ -81,7 +81,7 @@ tabcat.task.start = _.once((options) ->
       type: 'task'
       browser: tabcat.task.getBrowserInfo()
       clockLastStarted: tabcat.clock.lastStarted()
-      encounterId: tabcat.encounter.getEncounterId()
+      encounterId: tabcat.encounter.getId()
       patientCode: tabcat.encounter.getPatientCode()
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
