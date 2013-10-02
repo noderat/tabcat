@@ -184,8 +184,14 @@ syncSpilledDocs = ->
       callSyncSpilledDocsAgainIn(0)
     ),
     (xhr) ->
+      # if there's an auth issue, wait for user to be prompted
+      # to log in again
+      if xhr.status is 401
+        syncSpilledDocsIsActive = false
+        return
+
       if xhr.status isnt 0
-        # auth problem or something, demote to a leftover doc
+        # demote to a leftover doc
         tabcat.user.removeDocSpilled(docPath)
       callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
   )
