@@ -1,3 +1,17 @@
+v0.4.0:
+
+Offline Mode:
+- status bar should show offline info
+  - show whether online or offline
+  - show status of manifest
+  - show status of locally stored docs
+- remove retrying of data uploading on task finish
+
+Security/authentication:
+- make separate page and tabcat.ui function for re-entering password
+
+
+
 Tasks:
 - DART (cleanup)
   - trim blackness at beginning and end of video, handle with JS instead.
@@ -17,17 +31,7 @@ Cleanup:
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
 - don't use relative paths in code
-
-Offline Mode:
-- status bar should show offline info
-  - show whether online or offline
-  - show status of manifest
-  - show status of locally stored docs
-- remove retrying of data uploading on task finish
-
-Security/authentication:
-- auto-uploading of offline docs should respect validate_doc_update
-- make separate page and tabcat.ui function for re-entering password
+- can't clear couch's login cookie when offline
 
 - support for re-opening tasks where we left off
 - demo mode for tasks

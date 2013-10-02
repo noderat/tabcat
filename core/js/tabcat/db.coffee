@@ -174,6 +174,13 @@ syncSpilledDocs = ->
     callSyncSpilledDocsAgainIn(0)
     return
 
+  # respect security policy
+  user = tabcat.user.get()
+  if doc.user? and doc.user isnt user
+    if doc.user.slice(-1) isnt '?'
+      doc.user += '?'
+      doc.uploadedBy = user
+
   # try syncing the doc
   putDocIntoCouchDB(db, doc).then(
     (->
@@ -183,14 +190,14 @@ syncSpilledDocs = ->
       callSyncSpilledDocsAgainIn(0)
     ),
     (xhr) ->
-      # if there's an auth issue, wait for user to be prompted
-      # to log in again
+      # if there's an auth issue, user will need to log in again
+      # befor we can make any progress
       if xhr.status is 401
         syncSpilledDocsIsActive = false
         return
 
+      # if it's not a network error, demote to a leftover doc
       if xhr.status isnt 0
-        # demote to a leftover doc
         tabcat.user.removeDocSpilled(docPath)
       callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
   )
