@@ -18,7 +18,7 @@ localStorage = @localStorage
 
 
 # The CouchDB document for this task. This stores information about the task as
-# a whole.
+# a whole. We can store this in memory because each task is a single page.
 taskDoc = null
 
 # An array of events recorded during the task (e.g. user clicked). These are
@@ -171,6 +171,7 @@ tabcat.task.syncEventLog = (options) ->
     taskId: taskDoc._id
     encounterId: taskDoc.encounterId
     patientCode: taskDoc.patientCode
+    user: tabcat.user.get()
     startIndex: eventSyncStartIndex
     items: eventLog.slice(eventSyncStartIndex, endIndex)
   }

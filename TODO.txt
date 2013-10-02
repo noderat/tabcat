@@ -25,11 +25,9 @@ Offline Mode:
   - show status of manifest
   - show status of locally stored docs
 - remove retrying of data uploading on task finish
-- stop syncing data on 401, keep list of docs spilled by user
 
 Security/authentication:
 - auto-uploading of offline docs should respect validate_doc_update
-- tag task and event docs with user too
 - make separate page and tabcat.ui function for re-entering password
 
 - support for re-opening tasks where we left off
