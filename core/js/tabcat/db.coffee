@@ -226,3 +226,20 @@ getNextDocPathToSync = ->
 callSyncSpilledDocsAgainIn = (milliseconds) ->
   tabcat.ui.wait(milliseconds).then(syncSpilledDocs)
   return
+
+
+
+
+
+# get number of bytes used by localStorage
+tabcat.db.bytesUsedByLocalStorage = ->
+  bytes = 0
+  for own key, value of localStorage
+    # assume 2-byte unicode characters
+    bytes += 2 * key.length
+    bytes += 2 * value.length
+
+  return bytes
+
+
+tabcat.db.LOCAL_STORAGE_MAX_BYTES = 5 * 1024 * 1024

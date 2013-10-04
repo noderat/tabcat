@@ -155,6 +155,16 @@ tabcat.ui.updateEncounterClock = ->
     $('#statusBar p.clock').empty()
 
 
+# update the offline status on the statusBar
+tabcat.ui.updateOfflineStatus = ->
+
+
+  if navigator.onLine is false
+    $('#statusBar p.offline').text('offline mode')
+  else
+    $('#statusBar p.offline').text('ready for offline mode')
+
+
 # update the statusBar div, populating it if necessary
 tabcat.ui.updateStatusBar = ->
   $statusBar = $('#statusBar')
@@ -165,6 +175,7 @@ tabcat.ui.updateStatusBar = ->
       """
       <div class="left">
         <img class="banner" src="img/banner-white.png">
+        <p class="offline"></p>
       </div>
       <div class="right">
         <p class="email">&nbsp;</p>
@@ -199,6 +210,11 @@ tabcat.ui.updateStatusBar = ->
     button.text('Log In')
 
   button.show()
+
+  # only check offline status occasionally
+  tabcat.ui.updateOfflineStatus()
+  tabcat.ui.updateStatusBar.offlineInterval = window.setInterval(
+    tabcat.ui.updateOfflineStatus, 1000)
 
   # don't show encounter info unless patient is logged in
   patientCode = tabcat.encounter.getPatientCode()

@@ -112,10 +112,16 @@ button:disabled {
 #statusBar div.left {
     float: left;
     width: 250px;
+    text-align: left;
 }
 
 #statusBar img.banner {
-    height: 50px;
+    height: 33px;
+}
+
+#statusBar p.offline {
+    font-size: 12px;
+    margin: -1px 0px 0px 2px;
 }
 
 #statusBar div.right {
