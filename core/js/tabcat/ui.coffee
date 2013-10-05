@@ -273,6 +273,8 @@ tabcat.ui.updateStatusBar = ->
 #
 # On success, note that the patient does not have the device, and
 # redirect to the appropriate page.
+#
+# Set user to null to re-enter current user's password
 tabcat.ui.login = (user, password) ->
   previousUser = tabcat.user.get()
   tabcat.user.login(user, password).then(->
@@ -322,12 +324,9 @@ tabcat.ui.requireUser = ->
     requestLogin()
     return $.Deferred().resolve()  # for consistency
 
-  if not tabcat.user.isAuthenticated()
-    requestPassword()
-
   tabcat.couch.getUser().then(
     ((user) ->
-      if not user?
+      if not (user? and tabcat.user.isAuthenticated())
         requestPassword()
     ),
     (xhr) ->

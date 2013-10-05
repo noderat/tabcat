@@ -8,7 +8,7 @@ submitEnterPasswordForm = (event) ->
     errorP.text('Please enter your password')
     return
 
-  tabcat.ui.login(tabcat.user.get(), password).then(
+  tabcat.ui.login(null, password).then(
     null,
     (xhr) -> switch xhr.status
       when 401 then errorP.text(

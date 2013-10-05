@@ -37,7 +37,16 @@ tabcat.user.isAuthenticated = ->
 # This also sets localStorage.user on success. If there's a network error,
 # just treat user as logged in until we're back online (the only real
 # security is on the DB server).
+#
+# Set user to null to re-enter current user's password
 tabcat.user.login = (user, password) ->
+  # clear out old session if user isn't just re-entering their password
+  if user?
+    tabcat.encounter.clear()
+    tabcat.user.clearDocsSpilled()
+
+  user ?= tabcat.user.get()
+
   tabcat.couch.login(user, password).then(
     (->
       localStorage.userIsAuthenticated = 'true'
@@ -50,12 +59,7 @@ tabcat.user.login = (user, password) ->
       else
         xhr
   ).then(->
-    # if we're not just re-authenticating the same user, clean out
-    # old encounter info, and don't vouch for other people's docs.
-    if localStorage.user isnt user
-      tabcat.encounter.clear()
-      tabcat.user.clearDocsSpilled()
-
+    if user?
       localStorage.user = user
   )
 
@@ -64,11 +68,13 @@ tabcat.user.login = (user, password) ->
 #
 # Usually you'll want to use tabcat.ui.logout()
 tabcat.user.logout = ->
-  localStorage.removeItem('user')
-  localStorage.removeItem('userIsAuthenticated')
-  tabcat.user.clearDocsSpilled()
+  tabcat.encounter.close().then(->
+    localStorage.removeItem('user')
+    localStorage.removeItem('userIsAuthenticated')
+    tabcat.user.clearDocsSpilled()
 
-  tabcat.encounter.close().then(tabcat.couch.logout)
+    tabcat.couch.logout()
+  )
 
 
 # localStorage.userDocsSpilled keeps a space-separated list of spilled

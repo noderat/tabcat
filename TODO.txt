@@ -1,6 +1,7 @@
 v0.4.0:
 - hand-test on iPad
 
+
 Tasks:
 - DART (cleanup)
   - trim blackness at beginning and end of video, handle with JS instead.
