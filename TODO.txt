@@ -1,12 +1,5 @@
 v0.4.0:
-
-Offline Mode:
-- status bar should show offline info
-  - show whether online or offline
-  - show status of manifest
-  - show status of locally stored docs
-
-
+- hand-test on iPad
 
 Tasks:
 - DART (cleanup)

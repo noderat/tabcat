@@ -115,6 +115,8 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   # keep track of this as a doc the current user can vouch for
   tabcat.user.addDocSpilled(key)
 
+  localStorage.percentUsedAtLastSpill = tabcat.db.percentOfLocalStorageUsed()
+
   # activate sync callback if it's not already running
   tabcat.db.startSpilledDocSync()
 
@@ -149,9 +151,16 @@ syncSpilledDocs = ->
     callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
     return
 
-  # pick a document to upload. start with list of docs spilled by
-  # this user, and then handle other docs
-  docPath = getNextDocPathToSync()
+  # pick a document to upload
+
+  # start with docs spilled by this user
+  docPath = tabcat.user.getNextDocSpilled()
+  vouchForDoc = !!docPath
+
+  # if there aren't any, grab any doc
+  if not docPath?
+    docPath = getNextDocPathToSync()
+
   if not docPath?
     # no more docs; we are done!
     localStorage.removeItem('dbSpillSyncLastDoc')
@@ -172,7 +181,7 @@ syncSpilledDocs = ->
 
   # respect security policy
   user = tabcat.user.get()
-  if doc.user? and doc.user isnt user
+  if doc.user? and not (vouchForDoc and doc.user is user)
     if doc.user.slice(-1) isnt '?'
       doc.user += '?'
       doc.uploadedBy = user
@@ -202,24 +211,41 @@ syncSpilledDocs = ->
 
 
 # get the next doc to sync, giving priority to docs spilled by this user
-getNextDocPathToSync = ->
-  docPath = tabcat.user.getNextDocSpilled()
-  if not docPath?
-    docPaths = (path for path in _.keys(localStorage) \
-      when path[0] is '/').sort()
-    if _.isEmpty(docPaths)
-      return null
+tabcat.db.gndpts = getNextDocPathToSync = ->
+  docPaths = (path for path in _.keys(localStorage) \
+    when path[0] is '/').sort()
+  if _.isEmpty(docPaths)
+    return null
 
-    docPath = docPaths[0]
-    # this allows us to skip over documents and try them later
-    if localStorage.dbSpillSyncLastDoc
-      index = _.sortedIndex(docPaths, localStorage.dbSpillSyncLastDoc)
-      if docPaths[index] = localStorage.dbSpillSyncLastDoc
-        index += 1
-      if index < docPaths.length
-        docPath = docPaths[index]
+  docPath = docPaths[0]
+  # this allows us to skip over documents and try them later
+  if localStorage.dbSpillSyncLastDoc
+    index = _.sortedIndex(docPaths, localStorage.dbSpillSyncLastDoc)
+    if docPaths[index] = localStorage.dbSpillSyncLastDoc
+      index += 1
+    if index < docPaths.length
+      docPath = docPaths[index]
 
   return docPath
+
+
+# are we actually syncing docs?
+tabcat.db.syncingSpilledDocs = ->
+  syncSpilledDocsIsActive
+
+
+# how much is there left to sync?
+tabcat.db.percentLeftToSync = ->
+  if not getNextDocPathToSync()
+    localStorage.removeItem('percentUsedAtLastSpill')
+
+  if not localStorage.percentUsedAtLastSpill?
+    return 0
+
+  percentUsedAtLastSpill = parseFloat(localStorage.percentUsedAtLastSpill)
+  percentUsed = tabcat.db.percentOfLocalStorageUsed()
+
+  return 100 * Math.min((percentUsed / percentUsedAtLastSpill), 1)
 
 
 # hopefully this can keep us from exceeding max recursion depth
@@ -228,18 +254,29 @@ callSyncSpilledDocsAgainIn = (milliseconds) ->
   return
 
 
+# Estimate % of local storage used. Probably right for the browsers
+# we care about!
+tabcat.db.percentOfLocalStorageUsed = ->
+  return 100 * charsInLocalStorage() / maxCharsInLocalStorage()
 
 
-
-# get number of bytes used by localStorage
-tabcat.db.bytesUsedByLocalStorage = ->
-  bytes = 0
+# number of chars currently stored in localStorage
+charsInLocalStorage = ->
+  numChars = 0
   for own key, value of localStorage
-    # assume 2-byte unicode characters
-    bytes += 2 * key.length
-    bytes += 2 * value.length
+    numChars += key.length + value.length
 
-  return bytes
+  return numChars
 
 
-tabcat.db.LOCAL_STORAGE_MAX_BYTES = 5 * 1024 * 1024
+# Loosely based on:
+# http://dev-test.nemikor.com/web-storage/support-test/.
+# Could be improved
+maxCharsInLocalStorage = ->
+  ua = navigator.userAgent
+  if ua.indexOf('Firefox') isnt -1
+    return 4.98 * 1024 * 1024
+  else if ua.indexOf('IE') isnt -1
+    return 4.75 * 1024 * 1024
+  else
+    return 2.49 * 1024 * 1024

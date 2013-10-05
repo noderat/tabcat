@@ -155,14 +155,47 @@ tabcat.ui.updateEncounterClock = ->
     $('#statusBar p.clock').empty()
 
 
+# warn when local storage is more than 75% full
+# typical tasks use 0.5% of browser storage
+LOCAL_STORAGE_WARNING_THRESHOLD = 75
+
+
 # update the offline status on the statusBar
 tabcat.ui.updateOfflineStatus = ->
+  $('#statusBar').find('p.offline').html(offlineStatusHtml())
 
+
+offlineStatusHtml = ->
+  appcache = window.applicationCache
 
   if navigator.onLine is false
-    $('#statusBar p.offline').text('offline mode')
-  else
-    $('#statusBar p.offline').text('ready for offline mode')
+    if (appcache.status is appcache.UNCACHED or \
+        appcache.status >= appcache.OBSOLETE)
+      return '<span class="warning">PLEASE CONNECT TO NETWORK</span>'
+
+    html = 'OFFLINE MODE'
+    percentFull = tabcat.db.percentOfLocalStorageUsed()
+    if percentFull >= 0.05
+      percentHtml = Math.min(percentFull, 100).toFixed(1) + '% full'
+      if percentFull >= LOCAL_STORAGE_WARNING_THRESHOLD
+        percentHtml = '<span class="warning">' + percentHtml + '</span>'
+      html += ' (storage ' + percentHtml + ')'
+    return html
+
+  if appcache.status is appcache.DOWNLOADING
+    return 'loading content for offline mode'
+
+  if (appcache.status is appcache.UNCACHED or \
+      appcache.status >= appcache.OBSOLETE)
+    return '<span class="warning">offline mode unavailable</span>'
+
+  if tabcat.db.syncingSpilledDocs()
+    return ('uploading data collected offline (' +
+            (100 - tabcat.db.percentLeftToSync()).toFixed(0) + '% done)')
+
+  return ''
+
+
 
 
 # update the statusBar div, populating it if necessary
@@ -214,7 +247,7 @@ tabcat.ui.updateStatusBar = ->
   # only check offline status occasionally
   tabcat.ui.updateOfflineStatus()
   tabcat.ui.updateStatusBar.offlineInterval = window.setInterval(
-    tabcat.ui.updateOfflineStatus, 1000)
+    tabcat.ui.updateOfflineStatus, 500)
 
   # don't show encounter info unless patient is logged in
   patientCode = tabcat.encounter.getPatientCode()
@@ -288,6 +321,9 @@ tabcat.ui.requireUser = ->
   if not tabcat.user.get()
     requestLogin()
     return $.Deferred().resolve()  # for consistency
+
+  if not tabcat.user.isAuthenticated()
+    requestPassword()
 
   tabcat.couch.getUser().then(
     ((user) ->

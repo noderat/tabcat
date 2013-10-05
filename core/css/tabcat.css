@@ -124,6 +124,11 @@ button:disabled {
     margin: -1px 0px 0px 2px;
 }
 
+#statusBar p.offline span.warning {
+    font-weight: bold;
+    color: #ffcc99;
+}
+
 #statusBar div.right {
     float: right;
     text-align: right;
