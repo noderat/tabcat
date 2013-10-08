@@ -16,13 +16,24 @@ localStorage = @localStorage
 #
 # If options.expectConflict is true, we always try to GET the old version of
 # the doc before we PUT the new one. This is just an optimization.
+#
+# You can set options.timeout to a timeout in milliseconds, or use
+# options.timeoutBy to set a timestamp to timeout after
 tabcat.db.putDoc = (db, doc, options) ->
+  now = $.now()
+
   # don't even try if the user isn't authenticated; it'll cause 401s.
   # also don't bother if we're offline (this is an optimization)
   if not tabcat.user.isAuthenticated() or navigator.onLine is false
     tabcat.db.spillDocToLocalStorage(db, doc)
     $.Deferred().resolve()
   else
+    # convert timeout to timeoutBy, since we may make multiple
+    # ajax calls if there's a conflict
+    if options?.timeout? and options.timeout > 0
+      options = _.extend(
+        _.omit(options, 'timeout'), timeoutBy: now + options.timeout)
+
     putDocIntoCouchDB(db, doc, options).then(
       null,
       ->
@@ -31,12 +42,20 @@ tabcat.db.putDoc = (db, doc, options) ->
     )
 
 
+# convert options.timeoutBy to a timeout for use with tabcat.couch methods
+#
+# if timeoutBy is in the past, return 1 (one millisecond)
+timeoutFrom = (options) ->
+  if options?.timeoutBy?
+    Math.max(options.timeoutBy - $.now(), 1)
+
+
 # Promise: putDoc() minus handling of offline/network errors. This can fail.
 putDocIntoCouchDB = (db, doc, options) ->
   if options?.expectConflict
     resolvePutConflict(db, doc, options)
   else
-    tabcat.couch.putDoc(db, doc).then(
+    tabcat.couch.putDoc(db, doc, timeout: timeoutFrom(options)).then(
       null,
       (xhr) -> switch xhr.status
         when 409
@@ -52,7 +71,7 @@ resolvePutConflict = (db, doc, options) ->
   if options?
     options = _.omit(options, 'expectConflict')
 
-  tabcat.couch.getDoc(db, doc._id).then(
+  tabcat.couch.getDoc(db, doc._id, timeout: timeoutFrom(options)).then(
     ((oldDoc) ->
       # resolve conflict
       tabcat.db.merge(doc, oldDoc)

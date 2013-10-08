@@ -93,13 +93,20 @@ tabcat.encounter.newDoc = (patientCode, configDoc) ->
 #   (-> ... # proceed),
 #   (xhr) -> ... # show error message on failure
 # )
+#
+# You can set a timeout in milliseconds with options.timeout
 tabcat.encounter.create = (options) ->
+  now = $.now()
   tabcat.encounter.clear()
   tabcat.clock.reset()
 
+  timeoutBy = null
+  if options?.timeout? and options.timeout > 0
+    timeoutBy = now + options.timeout
+
   patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
-  $.when(tabcat.config.get()).then(
+  $.when(tabcat.config.get(timeout: options?.timeout)).then(
     (config) ->
       encounterDoc = tabcat.encounter.newDoc(patientDoc.patientCode, config)
 
@@ -108,9 +115,10 @@ tabcat.encounter.create = (options) ->
       # if there's already a doc for the patient, our new encounter ID will
       # be appended to the existing patient.encounterIds
       tabcat.db.putDoc(
-        DATA_DB, patientDoc, expectConflict: true).then(->
+        DATA_DB, patientDoc,
+        expectConflict: true, timeoutBy: timeoutBy).then(->
 
-        tabcat.db.putDoc(DATA_DB, encounterDoc).then(->
+        tabcat.db.putDoc(DATA_DB, encounterDoc, timeoutBy: timeoutBy).then(->
 
           # update localStorage
           localStorage.encounter = JSON.stringify(encounterDoc)

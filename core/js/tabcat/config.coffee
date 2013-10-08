@@ -39,8 +39,10 @@ fixAndRememberConfig = (configDoc) ->
 #
 # - _id: should always be "config"
 # - type: should always be "config"
-tabcat.config.get = _.once(->
-  tabcat.couch.getDoc(DATA_DB, 'config').then(
+#
+# You can set a timeout in milliseconds with options.timeout
+tabcat.config.get = _.once((options) ->
+  tabcat.couch.getDoc(DATA_DB, 'config', timeout: options?.timeout).then(
     (configDoc) -> fixAndRememberConfig(configDoc),
     (xhr) -> switch xhr.status
       # network error

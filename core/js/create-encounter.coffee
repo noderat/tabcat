@@ -1,3 +1,7 @@
+# if it takes longer than 5 seconds to create an encounter, spill to
+# local storage and continue
+TIMEOUT = 5000
+
 submitCreateEncounterForm = (event) ->
   event.preventDefault()
   form = $(event.target)
@@ -7,7 +11,7 @@ submitCreateEncounterForm = (event) ->
     form.find('#error').text('Please enter a patient code')
     return
 
-  tabcat.encounter.create(patientCode: patientCode).then(->
+  tabcat.encounter.create(patientCode: patientCode, timeout: TIMEOUT).then(->
     window.location = tabcat.ui.srcPath() ? 'tasks.html')
 
 
