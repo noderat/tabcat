@@ -16,8 +16,6 @@ Tasks:
     - e.g. /tabcat-data/_design/dart/_list/interpret/core/task?include_docs=true&startkey=["dart"]&endkey=["dart",[]]
 
 Cleanup:
-- don't need tasks to be launchable
-- fix favicon
 - task.start() should require user and encounter ID
 - require user before attempting to continue encounter
 - don't use relative paths in code

@@ -4,16 +4,15 @@
     "version": "0.3.0",
     "description": "Parallel Line Length",
     "attachments": [
-	"css/task.css",
-	"img/icon.ico",
-	"img/icon.png",
-	"js/task.js",
-	"task.html"
+        "css/task.css",
+        "img/icon.png",
+        "js/task.js",
+        "task.html"
     ],
     "dependencies": {
         "attachments": null
     },
     "tabcat": {
-	"icon": "img/icon.png"
+        "icon": "img/icon.png"
     }
 }
