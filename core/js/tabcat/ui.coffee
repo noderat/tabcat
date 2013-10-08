@@ -226,7 +226,7 @@ tabcat.ui.updateStatusBar = ->
       if button.text() == 'Log Out'
         tabcat.ui.logout()
       else
-        requestLogin()
+        tabcat.ui.requestLogin()
     )
 
   emailP = $statusBar.find('p.email')
@@ -306,12 +306,12 @@ tabcat.ui.logout = ->
 
 
 # redirect to the login page
-requestLogin = ->
+tabcat.ui.requestLogin = ->
   tabcat.ui.detour('../core/login.html')
 
 
 # redirect to the enter-password page
-requestPassword = ->
+tabcat.ui.requestPassword = ->
   tabcat.ui.detour('../core/enter-password.html')
 
 
@@ -321,13 +321,13 @@ requestPassword = ->
 # If we're online, actually check the user's session against the DB.
 tabcat.ui.requireUser = ->
   if not tabcat.user.get()
-    requestLogin()
+    tabcat.ui.requestLogin()
     return $.Deferred().resolve()  # for consistency
 
   tabcat.couch.getUser().then(
     ((user) ->
       if not (user? and tabcat.user.isAuthenticated())
-        requestPassword()
+        tabcat.ui.requestPassword()
     ),
     (xhr) ->
       if xhr.status is 0

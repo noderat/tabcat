@@ -16,22 +16,22 @@ Tasks:
     - e.g. /tabcat-data/_design/dart/_list/interpret/core/task?include_docs=true&startkey=["dart"]&endkey=["dart",[]]
 
 Cleanup:
-- task.start() should require user and encounter ID
-- require user before attempting to continue encounter
 - don't use relative paths in code
-- can't clear couch's login cookie when offline
-- timeout for creating encounter and task.finish() (better to spill)
-
-- support for re-opening tasks where we left off
-- demo mode for tasks
+- timeout for creating encounter and task.finish() (better to spill than hang)
 - Android fullscreen mode (window.scrollTo(0, 1))
 - fix max height of inner div in inches, when possible, using something like:
   https://github.com/tombigel/detect-zoom
+- use on() rather than bind() in tasks, attach new div before binding events
+
+Nice to Have:
+- support for re-opening tasks where we left off
+- demo mode for tasks
 - Back button in standalone mode
 
 Refactors/Fixes:
-- use on() rather than bind() in tasks, attach new div before binding events
 - break out staircasing code into TabCAT module
+
+Tests:
 - automated JavaScript testing framework
 - automated Selenium testing framework
 

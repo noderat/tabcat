@@ -76,6 +76,10 @@ tabcat.task.patientHasDevice = (value) ->
 # - trackViewport: should we log changes to the viewport in the event log?
 #   (see tabcat.task.trackViewportInEventLog())
 tabcat.task.start = _.once((options) ->
+  # require user and encounter, but don't require user to be authenticated
+  if not (tabcat.user.get() and tabcat.encounter.isOpen())
+    tabcat.ui.requestLogin()
+
   taskDoc =
       _id: tabcat.couch.randomUUID()
       type: 'task'
