@@ -25,22 +25,35 @@ tabcat.couch.logout = ->
 
 # Promise: get the username of the current user, or null
 tabcat.couch.getUser = ->
-  $.getJSON('/_session').then(
+  tabcat.couch.getDoc(null, '/_session').then(
     (sessionDoc) -> sessionDoc.userCtx.name)
 
 
 # keys that always have to be JSON
 COUCHDB_JSON_KEYS = ['key', 'keys', 'startkey', 'endkey']
 
+
+# make the given DB name and doc ID into a URL, or, if DB is not
+# set, just return docId (for relative URLs)
+dbUrl = (db, docId) ->
+  if db?
+    "/#{db}/#{docId}"
+  else
+    docId
+
+
 # Promise: download a document from CouchDB
+#
+# If db is null, just use docId as the URL.
 #
 # You can optionally specify query params (for querying views, etc.)
 #
-# This is a very VERY thin wrapper around $.getJSON()
-tabcat.couch.getDoc = (db, docId, queryParams) ->
+# You can specify query parameters with options.query
+# You can specify a timeout in milliseconds with options.timeout
+tabcat.couch.getDoc = (db, docId, options) ->
   query = ''
-  if queryParams?
-    for own key, value of queryParams
+  if options?.query?
+    for own key, value of options.query
       if key in COUCHDB_JSON_KEYS
         value = JSON.stringify(value)
       if query
@@ -49,27 +62,33 @@ tabcat.couch.getDoc = (db, docId, queryParams) ->
         query += '?'
       query += "#{key}=#{encodeURIComponent(value)}"
 
-  $.getJSON("/#{db}/#{docId}#{query}")
+  url = dbUrl(db, docId) + query
 
-
-# jQuery ought to have this, but it doesn't
-putJSON = (url, data, success) ->
+  # don't use $.getJSON() because it doesn't allow for timeout
   $.ajax(
-    contentType: 'application/json'
-    data: JSON.stringify(data)
-    success: success
-    type: 'PUT'
+    dataType: 'json'
+    timeout: options?.timeout
     url: url
-  )
+  ).then((doc) -> doc)  # just return a single argument
 
 
 # Promise: upload a document to couch DB, and update its _rev field.
 #
-# You RARELY want to use this; tabcat.db.putDoc handles this better.
-tabcat.couch.putDoc = (db, doc) ->
-  url = "/#{db}/#{doc._id}"
-  putJSON(url, doc).then(
+# You RARELY want to use this; tabcat.db.putDoc() handles this more robustly.
+#
+# If db is null, just use docId as the URL.
+#
+# You can set timeout in milliseconds with options.timeout
+tabcat.couch.putDoc = (db, doc, options) ->
+  ajaxParams =
+    contentType: 'application/json'
+    data: JSON.stringify(doc)
+    timeout: options?.timeout
+    type: 'PUT'
+    url: dbUrl(db, doc._id)
+
+  $.ajax(ajaxParams).then(
     (data, textStatus, xhr) ->
-      doc._rev = $.parseJSON(xhr.getResponseHeader('ETag'))
+      doc._rev = JSON.parse(xhr.getResponseHeader('ETag'))
       return
   )

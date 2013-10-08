@@ -1,36 +1,30 @@
 # TASK INFO
 
-# return a promise that returns all task docs, in an array
-getAllTaskDesignDocs = ->
-  tabcat.task.getAllTaskNames().then(
-    (taskNames) ->
-      taskDesignDocPromises = ($.getJSON('../' + name) for name in taskNames)
-      $.when(taskDesignDocPromises...).then(
-        (responses...) ->
-          (response[0] for response in responses)
-      )
-  )
-
-
 # Promise: get a list of info about each task, with the keys index, icon,
 # and description (index and icon are URLs), sorted by description.
 getTaskInfo = ->
-  getAllTaskDesignDocs().then(
-    (taskDesignDocs) ->
-      taskInfo = _.sortBy(
-        _.compact(designDocToTaskInfo(ddoc) for ddoc in taskDesignDocs),
-          # temporary hack: put Line Orientation and DART task last
-          #(item) -> item.description))
-          (item) -> [item.description[0] is "D",
-                     item.description[0] is "L",
-                     item.description])
+  tabcat.task.getAllTaskNames().then(
+    (taskNames) ->
+      taskDesignDocPromises = (
+        tabcat.couch.getDoc(null, '../' + name) for name in taskNames)
 
-      # add info about which tasks were finished
-      finished = tabcat.encounter.getTasksFinished()
-      for task in taskInfo
-        task.finished = !!finished[task.name]
+      $.when(taskDesignDocPromises...).then(
+        (taskDesignDocs...) ->
+          taskInfo = _.sortBy(
+            _.compact(designDocToTaskInfo(ddoc) for ddoc in taskDesignDocs),
+              # temporary hack: put Line Orientation and DART task last
+              #(item) -> item.description))
+              (item) -> [item.description[0] is "D",
+                         item.description[0] is "L",
+                         item.description])
 
-      return taskInfo
+          # add info about which tasks were finished
+          finished = tabcat.encounter.getTasksFinished()
+          for task in taskInfo
+            task.finished = !!finished[task.name]
+
+          return taskInfo
+      )
   )
 
 

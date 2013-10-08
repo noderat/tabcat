@@ -184,7 +184,7 @@ tabcat.encounter.getInfo = (encounterId, patientCode) ->
 
   patientCodePromise.then((patientCode) ->
 
-    tabcat.couch.getDoc(DATA_DB, '_design/core/_view/patient',
+    tabcat.couch.getDoc(DATA_DB, '_design/core/_view/patient', query:
       startkey: [patientCode, encounterId]
       endkey: [patientCode, encounterId, []]).then((results) ->
 

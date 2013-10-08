@@ -59,7 +59,7 @@ resolvePutConflict = (db, doc, options) ->
       doc._rev = oldDoc._rev
 
       # recursively call putDoc(), in the unlikely event
-      # that the old doc was changed since calling getJSON()
+      # that the old doc was changed since calling tabcat.couch.getDoc()
       tabcat.db.putDoc(db, doc, options)
     ),
     (xhr) -> switch xhr.status

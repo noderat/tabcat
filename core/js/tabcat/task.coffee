@@ -10,6 +10,9 @@ tabcat.task = {}
 # by default, we attempt to upload a chunk of events every 5 seconds
 DEFAULT_EVENT_LOG_SYNC_INTERVAL = 5000
 
+# DB where design docs and task content is stored
+TABCAT_DB = 'tabcat'
+
 # DB where we store patient and encounter docs
 DATA_DB = 'tabcat-data'
 
@@ -118,7 +121,7 @@ tabcat.task.start = _.once((options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when($.getJSON('.'), tabcat.config.get()).then(
+  $.when(tabcat.couch.getDoc(null, '.'), tabcat.config.get()).then(
     ([designDoc], config) ->
       taskDoc.version = designDoc?.kanso?.config?.version
 
@@ -363,10 +366,7 @@ NON_TASK_DESIGN_DOCS = ['core']
 # Get the name of all tabcat tasks. This assumes our current URL points
 # to a doc in the tabcat DB
 tabcat.task.getAllTaskNames = ->
-  tabcatBase = window.location.pathname.split('/')[0..1]
-  path = tabcatBase.concat('_all_docs').join('/')
-
-  $.getJSON(path).then(
+  tabcat.couch.getDoc(TABCAT_DB, '_all_docs').then(
     (response) ->
       (row.key[8..] for row in response.rows \
         when row.key[0..7] is '_design/' and \
