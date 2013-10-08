@@ -120,14 +120,13 @@ tabcat.task.start = _.once((options) ->
   # the task document, with some additional fields filled in
   $.when($.getJSON('.'), tabcat.config.get()).then(
     ([designDoc], config) ->
-      additionalFields =
-        version: designDoc?.kanso.config.version
+      taskDoc.version = designDoc?.kanso?.config?.version
 
       if config.limitedPHI
-        additionalFields.limitedPHI =
+        taskDoc.limitedPHI =
           clockOffset: tabcat.clock.offset()
 
-      createTaskDoc(additionalFields)
+      tabcat.db.putDoc(DATA_DB, taskDoc)
   )
 )
 
@@ -214,18 +213,6 @@ tabcat.task.trackViewportInEventLog = _.once(->
   $(window).resize(handler)
   $(window).scroll(handler)
 )
-
-
-# Use this instead of $(document).ready(), so that we can also wait for
-# tabcat.task.start() to complete
-tabcat.task.ready = (handler) ->
-  $.when($.ready.promise(), tabcat.task.start()).then(-> handler())
-
-
-waitFor = (milliseconds) ->
-  deferred = $.Deferred()
-  window.setTimeout((-> deferred.resolve()), milliseconds)
-  return deferred
 
 
 # splash a "Task complete!" page for the user, upload task info to the DB, and

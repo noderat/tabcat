@@ -320,12 +320,12 @@ catchStrayClick = (event) ->
 
 
 # INITIALIZATION
+@initTask = ->
+  tabcat.task.start(trackViewport: true)
 
-tabcat.task.start(trackViewport: true)
+  tabcat.ui.enableFastClick()
+  tabcat.ui.turnOffBounce()
 
-tabcat.ui.enableFastClick()
-tabcat.ui.turnOffBounce()
+  tabcat.ui.requireLandscapeMode($('#task'))
 
-tabcat.ui.requireLandscapeMode($('#task'))
-
-tabcat.task.ready(showNextTrial)
+  $(showNextTrial)
