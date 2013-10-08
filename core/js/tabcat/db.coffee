@@ -123,17 +123,46 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   return
 
 
+# are we attempting to sync spilled docs?
+spilledDocsSyncIsActive = false
+
+# are we actually succeeding in syncing spilled docs?
+syncingSpilledDocs = false
+
+# are we currently syncing spilled docs? (for status bar)
+tabcat.db.syncingSpilledDocs = ->
+  syncingSpilledDocs
+
+
+# are there any spilled docs left to sync?
+tabcat.db.spilledDocsRemain = ->
+  !!getNextDocPathToSync()
+
+
+# how much is there left to sync?
+tabcat.db.percentLeftToSync = ->
+  if not tabcat.db.spilledDocsRemain()
+    localStorage.removeItem('percentUsedAtLastSpill')
+
+  if not localStorage.percentUsedAtLastSpill?
+    return 0
+
+  percentUsedAtLastSpill = parseFloat(localStorage.percentUsedAtLastSpill)
+  percentUsed = tabcat.db.percentOfLocalStorageUsed()
+
+  return 100 * Math.min((percentUsed / percentUsedAtLastSpill), 1)
+
+
+
 # Kick off syncing of spilled docs. You can pretty much call this anywhere
 # (e.g. on page load)
 tabcat.db.startSpilledDocSync = ->
-  if not syncSpilledDocsIsActive
-    syncSpilledDocsIsActive = true
+  if not spilledDocSyncIsActive
+    spilledDocSyncIsActive = true
     syncSpilledDocs()
 
   return
 
-
-syncSpilledDocsIsActive = false
 
 SYNC_SPILLED_DOCS_WAIT_TIME = 5000
 
@@ -141,13 +170,14 @@ SYNC_SPILLED_DOCS_WAIT_TIME = 5000
 syncSpilledDocs = ->
   # if we're not really logged in, there's nothing to do
   if not tabcat.user.isAuthenticated()
-    syncSpilledDocsIsActive = false
+    spilledDocSyncIsActive = false
     return
 
   # if offline, wait until we're back online
   if navigator.onLine is false
     # not going to use 'online' event; it doesn't seem to be
     # well synced with navigator.onLine
+    syncingSpilledDocs = false
     callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
     return
 
@@ -164,7 +194,8 @@ syncSpilledDocs = ->
   if not docPath?
     # no more docs; we are done!
     localStorage.removeItem('dbSpillSyncLastDoc')
-    syncSpilledDocsIsActive = false
+    spilledDocSyncIsActive = false
+    syncingSpilledDocs = false
     return
 
   localStorage.dbSpillSyncLastDoc = docPath
@@ -192,26 +223,31 @@ syncSpilledDocs = ->
       # success!
       localStorage.removeItem(docPath)
       tabcat.user.removeDocSpilled(docPath)
+      syncingSpilledDocs = true
       callSyncSpilledDocsAgainIn(0)
     ),
     (xhr) ->
-      # if there's an auth issue, user will need to log in again
-      # befor we can make any progress
-      if xhr.status is 401
-        syncSpilledDocsIsActive = false
-        return
-
       # if it's not a network error, demote to a leftover doc
       if xhr.status isnt 0
         tabcat.user.removeDocSpilled(docPath)
+
+      # if there's an auth issue, user will need to log in again
+      # befor we can make any progress
+      if xhr.status is 401
+        spilledDocSyncIsActive = false
+        syncingSpilledDocs = false
+        return
+
+      syncingSpilledDocs = false
       callSyncSpilledDocsAgainIn(SYNC_SPILLED_DOCS_WAIT_TIME)
   )
 
   return
 
 
-# get the next doc to sync, giving priority to docs spilled by this user
-tabcat.db.gndpts = getNextDocPathToSync = ->
+# get the next doc to sync. If you want to prioritize docs spilled by
+# this user, use tabcat.user.getNextDocSpilled() first.
+getNextDocPathToSync = ->
   docPaths = (path for path in _.keys(localStorage) \
     when path[0] is '/').sort()
   if _.isEmpty(docPaths)
@@ -227,25 +263,6 @@ tabcat.db.gndpts = getNextDocPathToSync = ->
       docPath = docPaths[index]
 
   return docPath
-
-
-# are we actually syncing docs?
-tabcat.db.syncingSpilledDocs = ->
-  syncSpilledDocsIsActive
-
-
-# how much is there left to sync?
-tabcat.db.percentLeftToSync = ->
-  if not getNextDocPathToSync()
-    localStorage.removeItem('percentUsedAtLastSpill')
-
-  if not localStorage.percentUsedAtLastSpill?
-    return 0
-
-  percentUsedAtLastSpill = parseFloat(localStorage.percentUsedAtLastSpill)
-  percentUsed = tabcat.db.percentOfLocalStorageUsed()
-
-  return 100 * Math.min((percentUsed / percentUsedAtLastSpill), 1)
 
 
 # hopefully this can keep us from exceeding max recursion depth

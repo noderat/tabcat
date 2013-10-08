@@ -160,40 +160,78 @@ tabcat.ui.updateEncounterClock = ->
 LOCAL_STORAGE_WARNING_THRESHOLD = 75
 
 
-# update the offline status on the statusBar
+# keep status messages for at least a second
+OFFLINE_STATUS_MIN_CHANGE_TIME = 2000
+
+keepOfflineStatusUntil = null
+lastOfflineStatusType = 0
+
+# update the offline status on the statusBar, while attempting not
+# to flicker status messages so quickly that we can't read them
 tabcat.ui.updateOfflineStatus = ->
-  $('#statusBar').find('p.offline').html(offlineStatusHtml())
+  now = $.now()
+  [statusType, statusHtml] = offlineStatusTypeAndHtml()
+
+  if (keepOfflineStatusUntil? and now < keepOfflineStatusUntil \
+      and statusType isnt lastOfflineStatusType)
+    return
+
+  # don't bother holding blank message for a second
+  if statusHtml
+    lastOfflineStatusType = statusType
+    keepOfflineStatusUntil = now + OFFLINE_STATUS_MIN_CHANGE_TIME
+
+  $('#statusBar').find('p.offline').html(statusHtml)
 
 
-offlineStatusHtml = ->
+# return the type of offline status and html to display.
+offlineStatusTypeAndHtml = ->
+  now = $.now()
+
   appcache = window.applicationCache
 
   if navigator.onLine is false
     if (appcache.status is appcache.UNCACHED or \
         appcache.status >= appcache.OBSOLETE)
-      return '<span class="warning">PLEASE CONNECT TO NETWORK</span>'
-
-    html = 'OFFLINE MODE'
-    percentFull = tabcat.db.percentOfLocalStorageUsed()
-    if percentFull >= 0.05
-      percentHtml = Math.min(percentFull, 100).toFixed(1) + '% full'
-      if percentFull >= LOCAL_STORAGE_WARNING_THRESHOLD
-        percentHtml = '<span class="warning">' + percentHtml + '</span>'
-      html += ' (storage ' + percentHtml + ')'
-    return html
+      return [1, '<span class="warning">PLEASE CONNECT TO NETWORK</span>']
+    else
+      percentFullHtml = offlineStatusStoragePercentFullHtml()
+      if percentFullHtml
+        return [2, 'OFFLINE MODE (storage ' + percentFullHtml + ')']
+      else
+        return [2, 'OFFLINE MODE']
 
   if appcache.status is appcache.DOWNLOADING
-    return 'loading content for offline mode'
+    return [3, 'loading content for offline mode']
 
   if (appcache.status is appcache.UNCACHED or \
       appcache.status >= appcache.OBSOLETE)
-    return '<span class="warning">offline mode unavailable</span>'
+    return [4, '<span class="warning">offline mode unavailable</span>']
 
   if tabcat.db.syncingSpilledDocs()
-    return ('uploading data collected offline (' +
-            (100 - tabcat.db.percentLeftToSync()).toFixed(0) + '% done)')
+    return [5, ('uploading data collected offline (' +
+            (100 - tabcat.db.percentLeftToSync()).toFixed(0) + '% done)')]
 
-  return ''
+  # not exactly offline, but can't sync (maybe wrong network?)
+  percentFullHtml = offlineStatusStoragePercentFullHtml()
+  if percentFullHtml
+    return [6, 'offline storage ' + percentFullHtml]
+
+  return [0, '']
+
+
+# helper for offlineStatusHtml()
+offlineStatusStoragePercentFullHtml = ->
+  if not tabcat.db.spilledDocsRemain()
+    return ''
+
+  percentFull = tabcat.db.percentOfLocalStorageUsed()
+  percentFullHtml = Math.min(percentFull, 100).toFixed(1) + '% full'
+  if percentFull >= LOCAL_STORAGE_WARNING_THRESHOLD
+    percentFullHtml = '<span class="warning">' + percentFullHtml + '</span>'
+
+  return percentFullHtml
+
 
 
 
