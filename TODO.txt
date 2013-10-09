@@ -1,8 +1,7 @@
 v0.4.0:
+- auto-resume user session (even if no encounter)
 - hand-test on iPad
-- localStorage.badNetwork
-  - attach to putDoc without timeout that has network error
-  - clear on successful putDoc
+
 
 Tasks:
 - DART (cleanup)
@@ -24,11 +23,18 @@ Cleanup:
 - fix max height of inner div in inches, when possible, using something like:
   https://github.com/tombigel/detect-zoom
 - use on() rather than bind() in tasks, attach new div before binding events
+- compress spilled data
+- some strategy for not running out of localStorage
 
 Nice to Have:
 - support for re-opening tasks where we left off
 - demo mode for tasks
 - Back button in standalone mode
+- tabcat.db.gotNetworkError()
+  - if we got status 0, statusText "error" from a putDoc request,
+    set localStorage.dbNetworkError
+  - clear on successful putDoc
+  - may flap between offline and "wrong network"
 
 Refactors/Fixes:
 - break out staircasing code into TabCAT module
@@ -39,6 +45,5 @@ Tests:
 
 Puzzling issues to revisit:
 - Log Out does not clear cookies in standalone browsing mode on iPad
-  - currently manually expiring login cookies
 - iOS Safari and chrome do not save login, password (actually submit form,
   target iframe?)
