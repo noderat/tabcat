@@ -25,6 +25,7 @@ Cleanup:
 - use on() rather than bind() in tasks, attach new div before binding events
 - compress spilled data
 - some strategy for not running out of localStorage
+- store UI messages in sessionStorage, not fragment
 
 Nice to Have:
 - support for re-opening tasks where we left off
