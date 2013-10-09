@@ -20,7 +20,9 @@ localStorage = @localStorage
 # You can set options.timeout to a timeout in milliseconds
 # You can also pass in options.now to make timeout relative to then
 tabcat.db.putDoc = (db, doc, options) ->
-  now = options?.now ? $.now()
+  # force timeout to be relative to now
+  if options?.timeout? and not options.now?
+    options = _.extend(options, now: $.now())
 
   # don't even try if the user isn't authenticated; it'll cause 401s.
   # also don't bother if we're offline (this is an optimization)
@@ -28,12 +30,6 @@ tabcat.db.putDoc = (db, doc, options) ->
     tabcat.db.spillDocToLocalStorage(db, doc)
     $.Deferred().resolve()
   else
-    # convert timeout to timeoutBy, since we may make multiple
-    # ajax calls if there's a conflict. This option is only used internally
-    if options?.timeout? and options.timeout > 0
-      options = _.extend(
-        _.omit(options, 'timeout'), timeoutBy: now + options.timeout)
-
     putDocIntoCouchDB(db, doc, options).then(
       null,
       ->
@@ -42,12 +38,15 @@ tabcat.db.putDoc = (db, doc, options) ->
     )
 
 
-# convert options.timeoutBy to a timeout for use with tabcat.couch methods
+# convert options.now and options.timeout to a timeout for use with
+# couchDB methods
 #
-# if timeoutBy is in the past, return 1 (one millisecond)
+# if it's supposed to time out sometime in the past, return 1 (one ms)
 timeoutFrom = (options) ->
-  if options?.timeoutBy?
-    Math.max(options.timeoutBy - $.now(), 1)
+  if options?.now? and options.timeout?
+    Math.max(options.now + options.timeout - $.now(), 1)
+  else
+    options?.timeout
 
 
 # Promise: putDoc() minus handling of offline/network errors. This can fail.
