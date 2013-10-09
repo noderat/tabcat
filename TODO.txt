@@ -1,5 +1,8 @@
 v0.4.0:
 - hand-test on iPad
+- localStorage.badNetwork
+  - attach to putDoc without timeout that has network error
+  - clear on successful putDoc
 
 Tasks:
 - DART (cleanup)
