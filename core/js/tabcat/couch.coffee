@@ -44,7 +44,7 @@ dbUrl = (db, docId) ->
     docId
 
 
-# Promise: download a document from CouchDB
+# Promise: download a (JSON) document from CouchDB
 #
 # If db is null, just use docId as the URL.
 #
