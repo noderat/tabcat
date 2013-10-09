@@ -28,6 +28,8 @@ Nice to Have:
 - support for re-opening tasks where we left off
 - demo mode for tasks
 - Back button in standalone mode
+- use lz-string (http://pieroxy.net/blog/pages/lz-string/index.html)
+  to compress spilled data
 - tabcat.db.gotNetworkError()
   - if we got status 0, statusText "error" from a putDoc request,
     set localStorage.dbNetworkError
