@@ -208,19 +208,15 @@ offlineStatusTypeAndHtml = ->
       appcache.status >= appcache.OBSOLETE)
     return [4, '<span class="warning">offline mode unavailable</span>']
 
-  if tabcat.db.syncingSpilledDocs()
-    return [5, ('uploading data collected offline (' +
-            (100 - tabcat.db.percentLeftToSync()).toFixed(0) + '% done)')]
-
   # not exactly offline, but can't sync (maybe wrong network?)
   percentFullHtml = offlineStatusStoragePercentFullHtml()
   if percentFullHtml
-    return [6, 'offline storage ' + percentFullHtml]
+    return [5, 'offline storage ' + percentFullHtml]
 
   return [0, '']
 
 
-# helper for offlineStatusHtml()
+# helper for offlineStatusHtml(). returns "#.#% full" plus markup
 offlineStatusStoragePercentFullHtml = ->
   if not tabcat.db.spilledDocsRemain()
     return ''

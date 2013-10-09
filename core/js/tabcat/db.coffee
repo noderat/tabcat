@@ -133,8 +133,6 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   # keep track of this as a doc the current user can vouch for
   tabcat.user.addDocSpilled(key)
 
-  localStorage.percentUsedAtLastSpill = tabcat.db.percentOfLocalStorageUsed()
-
   # activate sync callback if it's not already running
   tabcat.db.startSpilledDocSync()
 
@@ -155,21 +153,6 @@ tabcat.db.syncingSpilledDocs = ->
 # are there any spilled docs left to sync?
 tabcat.db.spilledDocsRemain = ->
   !!getNextDocPathToSync()
-
-
-# how much is there left to sync?
-tabcat.db.percentLeftToSync = ->
-  if not tabcat.db.spilledDocsRemain()
-    localStorage.removeItem('percentUsedAtLastSpill')
-
-  if not localStorage.percentUsedAtLastSpill?
-    return 0
-
-  percentUsedAtLastSpill = parseFloat(localStorage.percentUsedAtLastSpill)
-  percentUsed = tabcat.db.percentOfLocalStorageUsed()
-
-  return 100 * Math.min((percentUsed / percentUsedAtLastSpill), 1)
-
 
 
 # Kick off syncing of spilled docs. You can pretty much call this anywhere

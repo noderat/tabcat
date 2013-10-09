@@ -1,6 +1,5 @@
 v0.4.0:
 - hand-test on iPad
-- just show what % full offline storage is, not % done
 
 Tasks:
 - DART (cleanup)
