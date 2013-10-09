@@ -1,5 +1,4 @@
 v0.4.0:
-- auto-resume user session (even if no encounter)
 - hand-test on iPad
 
 

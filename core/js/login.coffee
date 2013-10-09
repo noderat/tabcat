@@ -26,12 +26,14 @@ submitLoginForm = (event) ->
   tabcat.ui.turnOffBounce()
 
   $(->
-    user = tabcat.user.get()
-    if user
-      if tabcat.encounter.isOpen() and not window.location.hash
+    if tabcat.user.get() and not window.location.hash
+      if tabcat.encounter.isOpen()
         $('#message').text('Continuing encounter...')
         window.location = 'tasks.html'
-        return
+      else
+        $('#message').text('Continuing session...')
+        window.location = 'create-encounter.html'
+      return
 
     if tabcat.ui.srcPath()?
       $('#message').text('You need to log in to view that page')
