@@ -17,7 +17,6 @@ Tasks:
 
 Cleanup:
 - don't use relative paths in code
-- timeout for creating encounter and task.finish() (better to spill than hang)
 - Android fullscreen mode (window.scrollTo(0, 1))
 - fix max height of inner div in inches, when possible, using something like:
   https://github.com/tombigel/detect-zoom
