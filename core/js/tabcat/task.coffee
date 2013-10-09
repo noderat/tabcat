@@ -10,6 +10,15 @@ tabcat.task = {}
 # by default, we attempt to upload a chunk of events every 5 seconds
 DEFAULT_EVENT_LOG_SYNC_INTERVAL = 5000
 
+# default timeout for tabcat.task.start() and tabcat.task.finish()
+DEFAULT_TIMEOUT = 3000
+
+# default time to wait after finishing task
+DEFAULT_MIN_WAIT = 1000
+
+# default duration of fade at end of task
+DEFAULT_FADE_DURATION = 200
+
 # DB where design docs and task content is stored
 TABCAT_DB = 'tabcat'
 
@@ -76,9 +85,13 @@ tabcat.task.patientHasDevice = (value) ->
 #   uploads.
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
+# - timeout: network timeout, in milliseconds (default 3000)
 # - trackViewport: should we log changes to the viewport in the event log?
 #   (see tabcat.task.trackViewportInEventLog())
 tabcat.task.start = _.once((options) ->
+  now = $.now()
+  timeout = options?.timeout ? DEFAULT_TIMEOUT
+
   # require user and encounter, but don't require user to be authenticated
   if not (tabcat.user.get() and tabcat.encounter.isOpen())
     tabcat.ui.requestLogin()
@@ -121,7 +134,8 @@ tabcat.task.start = _.once((options) ->
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when(tabcat.couch.getDoc(null, '.'), tabcat.config.get()).then(
+  $.when(tabcat.couch.getDoc(null, '.', timeout: timeout),
+         tabcat.config.get(timeout: timeout)).then(
     ([designDoc], config) ->
       taskDoc.version = designDoc?.kanso?.config?.version
 
@@ -129,7 +143,7 @@ tabcat.task.start = _.once((options) ->
         taskDoc.limitedPHI =
           clockOffset: tabcat.clock.offset()
 
-      tabcat.db.putDoc(DATA_DB, taskDoc)
+      tabcat.db.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout)
   )
 )
 
@@ -138,8 +152,11 @@ tabcat.task.start = _.once((options) ->
 # already been stored in the DB. You usually don't need to call this directly;
 # by default, tabcat.task.start() will cause it to be called periodically.
 #
-# The only option is "force". If true, this will abort pending syncs unless
+# If options.force is true, this will abort pending syncs unless
 # they were already uploading all the event log items we wanted to.
+#
+# You can set a timeout in milliseconds with options.timeout.
+# You can make this relative to a time in the past with options.now
 #
 # You must call tabcat.task.start() before calling this (you don't have to
 # wait for the promise it returns to resolve).
@@ -182,7 +199,8 @@ tabcat.task.syncEventLog = (options) ->
     items: eventLog.slice(eventSyncStartIndex, endIndex)
   }
 
-  eventSyncXHR = tabcat.db.putDoc(DATA_DB, eventLogDoc)
+  eventSyncXHR = tabcat.db.putDoc(
+    DATA_DB, eventLogDoc, _.pick(options ? {}, 'now', 'timeout'))
 
   # track that events were successfully uploaded
   eventSyncXHR.then(-> eventSyncStartIndex = endIndex)
@@ -225,14 +243,18 @@ tabcat.task.trackViewportInEventLog = _.once(->
 # you need before calling this method.
 #
 # options:
+# - fadeDuration: fade duration in milliseconds (default 200)
 # - minWait: minimum number of milliseconds to wait before redirecting to
-#   another page
+#   another page (default 1000)
+# - timeout: maximum amount of time for db operations to take (default 3000)
 tabcat.task.finish = (options) ->
-  now = tabcat.clock.now()
+  now = $.now()
+  timeout = options?.timeout ? DEFAULT_TIMEOUT
 
-  options ?= {}
-  minWait = options.minWait ? 1000
-  fadeDuration = options.fadeDuration ? 200
+  clockNow = tabcat.clock.now()
+
+  minWait = options?.minWait ? DEFAULT_MIN_WAIT
+  fadeDuration = options?.fadeDuration ? DEFAULT_FADE_DURATION
 
   # start the timer
   waitedForMinWait = tabcat.ui.wait(minWait)
@@ -251,13 +273,13 @@ tabcat.task.finish = (options) ->
 
   # make sure start() has completed!
   tabcat.task.start().then(->
-    taskDoc.finishedAt = now
-    if options?.interpretation
-      taskDoc.interpretation = options.interpretation
+    taskDoc.finishedAt = clockNow
+    if options?.interpretation?
+      taskDoc.interpretation = options?.interpretation
 
     $.when(
-      tabcat.db.putDoc(DATA_DB, taskDoc),
-      tabcat.task.syncEventLog(force: true),
+      tabcat.db.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
+      tabcat.task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
         if tabcat.task.patientHasDevice()

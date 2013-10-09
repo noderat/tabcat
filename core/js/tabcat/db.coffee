@@ -17,10 +17,10 @@ localStorage = @localStorage
 # If options.expectConflict is true, we always try to GET the old version of
 # the doc before we PUT the new one. This is just an optimization.
 #
-# You can set options.timeout to a timeout in milliseconds, or use
-# options.timeoutBy to set a timestamp to timeout after
+# You can set options.timeout to a timeout in milliseconds
+# You can also pass in options.now to make timeout relative to then
 tabcat.db.putDoc = (db, doc, options) ->
-  now = $.now()
+  now = options?.now ? $.now()
 
   # don't even try if the user isn't authenticated; it'll cause 401s.
   # also don't bother if we're offline (this is an optimization)
@@ -29,7 +29,7 @@ tabcat.db.putDoc = (db, doc, options) ->
     $.Deferred().resolve()
   else
     # convert timeout to timeoutBy, since we may make multiple
-    # ajax calls if there's a conflict
+    # ajax calls if there's a conflict. This option is only used internally
     if options?.timeout? and options.timeout > 0
       options = _.extend(
         _.omit(options, 'timeout'), timeoutBy: now + options.timeout)

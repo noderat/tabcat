@@ -100,10 +100,6 @@ tabcat.encounter.create = (options) ->
   tabcat.encounter.clear()
   tabcat.clock.reset()
 
-  timeoutBy = null
-  if options?.timeout? and options.timeout > 0
-    timeoutBy = now + options.timeout
-
   patientDoc = tabcat.patient.newDoc(options?.patientCode)
 
   $.when(tabcat.config.get(timeout: options?.timeout)).then(
@@ -116,9 +112,10 @@ tabcat.encounter.create = (options) ->
       # be appended to the existing patient.encounterIds
       tabcat.db.putDoc(
         DATA_DB, patientDoc,
-        expectConflict: true, timeoutBy: timeoutBy).then(->
+        expectConflict: true, now: now, timeout: options?.timeout).then(->
 
-        tabcat.db.putDoc(DATA_DB, encounterDoc, timeoutBy: timeoutBy).then(->
+        tabcat.db.putDoc(
+          DATA_DB, encounterDoc, now: now, timeout: options?.timeout).then(->
 
           # update localStorage
           localStorage.encounter = JSON.stringify(encounterDoc)
