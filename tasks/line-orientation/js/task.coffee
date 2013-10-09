@@ -257,7 +257,7 @@ catchStrayClick = (event) ->
 
 
 # INITIALIZATION
-initTask = ->
+@initTask = ->
   tabcat.task.start(trackViewport: true)
 
   tabcat.ui.enableFastClick()
