@@ -71,7 +71,16 @@ tabcat.couch.getDoc = (db, docId, options) ->
     dataType: 'json'
     timeout: options?.timeout
     url: url
-  ).then((doc) -> doc)  # just return a single argument
+  ).then(
+    ((doc) -> doc),  # just return a single argument
+    # workaround for egregious mobile browser standalone manifest bug
+    # see http://goo.gl/WV75t
+    (xhr) ->
+      if xhr.status is 0 and xhr.statusText is 'error' and xhr.responseText
+        try
+          return $.Deferred().resolve(JSON.parse(xhr.responseText))
+      return xhr
+  )
 
 
 # Promise: upload a document to couch DB, and update its _rev field.
