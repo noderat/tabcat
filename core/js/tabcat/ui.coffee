@@ -189,10 +189,16 @@ tabcat.ui.updateOfflineStatus = ->
 
 
 # return the type of offline status and html to display.
+#
+# This also swaps in an updated application cache, if necessary
 offlineStatusTypeAndHtml = ->
   now = $.now()
 
   appcache = window.applicationCache
+
+  # if there's an updated version of the cache ready, swap it in
+  if appcache.status is appcache.UPDATEREADY
+    appcache.swapCache()
 
   if navigator.onLine is false
     if (appcache.status is appcache.UNCACHED or \
@@ -237,6 +243,9 @@ offlineStatusStoragePercentFullHtml = ->
 
 
 # update the statusBar div, populating it if necessary
+#
+# this is also responsible for swapping in updated versions of the
+# application cache (Android browser seems to need this)
 tabcat.ui.updateStatusBar = ->
   $statusBar = $('#statusBar')
 

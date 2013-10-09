@@ -1,5 +1,7 @@
 v0.4.0:
 - hand-test on iPad
+- application cache gets stuck on Android
+
 
 
 Tasks:
