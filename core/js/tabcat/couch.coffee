@@ -24,8 +24,10 @@ tabcat.couch.logout = ->
 
 
 # Promise: get the username of the current user, or null
-tabcat.couch.getUser = ->
-  tabcat.couch.getDoc(null, '/_session').then(
+#
+# You can specify a timeout in milliseconds with options.timeout
+tabcat.couch.getUser = (options) ->
+  tabcat.couch.getDoc(null, '/_session', timeout: options?.timeout).then(
     (sessionDoc) -> sessionDoc.userCtx.name)
 
 

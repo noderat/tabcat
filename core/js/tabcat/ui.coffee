@@ -7,6 +7,10 @@
 tabcat.ui = {}
 
 
+# doesn't make sense to prompt the user for a password more than 2 seconds
+# or so after the page loads
+DEFAULT_REQUIRE_USER_TIMEOUT = 2000
+
 # Several things need to be done to make a web page look like an app.
 #
 # To turn off bounce/scrolling, call tabcat.ui.turnOffBounce() and
@@ -349,18 +353,38 @@ tabcat.ui.requestPassword = ->
   tabcat.ui.detour('../core/enter-password.html')
 
 
-
 # Promise: force the user to log in to view this page.
 #
-# If we're online, actually check the user's session against the DB.
-tabcat.ui.requireUser = ->
+# First we check localStorage.user.
+#
+# Then, if we're online, we also check the user's session against the DB.
+# If they're not logged in, prompt for a password unless the patient
+# has the device.
+#
+# You can specify a timeout on checking against the DB in milliseconds with
+# options.timeout (default is 2000)
+tabcat.ui.requireUser = (options) ->
+  resolved = $.Deferred().resolve()  # for consistency
+
+  # if there's no user whatsoever, we need them to log in before
+  # we can start storing data
   if not tabcat.user.get()
     tabcat.ui.requestLogin()
-    return $.Deferred().resolve()  # for consistency
+    return resolved
 
-  tabcat.couch.getUser().then(
+  # don't confuse patients by asking for the password
+  if tabcat.task.patientHasDevice()
+    return resolved
+
+  if not tabcat.user.isAuthenticated()
+    tabcat.ui.requestPassword()
+    return resolved
+
+  # localStorage says user is logged in. Let's check if the DB agrees
+  timeout = options?.timeout ? DEFAULT_REQUIRE_USER_TIMEOUT
+  tabcat.couch.getUser(timeout: timeout).then(
     ((user) ->
-      if not (user? and tabcat.user.isAuthenticated())
+      if not user?
         tabcat.ui.requestPassword()
     ),
     (xhr) ->
@@ -372,8 +396,10 @@ tabcat.ui.requireUser = ->
 
 
 # force the user to log in to view this page, and to create an encounter
-tabcat.ui.requireUserAndEncounter = ->
-  tabcat.ui.requireUser()
+#
+# You can specify a timeout in milliseconds with options.timeout
+tabcat.ui.requireUserAndEncounter = (options) ->
+  tabcat.ui.requireUser(options)
 
   if not tabcat.encounter.isOpen()
     tabcat.ui.detour('../core/create-encounter.html')
@@ -383,6 +409,7 @@ tabcat.ui.requireUserAndEncounter = ->
 tabcat.ui.detour = (path) ->
   srcPath = window.location.pathname + window.location.hash
   window.location = path + tabcat.ui.encodeHashJSON(srcPath: srcPath)
+  return
 
 
 # return srcPath from the hash, if it's set and is actually a path

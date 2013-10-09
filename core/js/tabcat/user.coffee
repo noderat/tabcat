@@ -27,7 +27,7 @@ tabcat.user.get = ->
 # Return true if the user "logged in" while we were offline. If this
 # is true, there's no point in trying to store stuff in the DB.
 tabcat.user.isAuthenticated = ->
-  !!localStorage.userIsAuthenticated
+  !!(tabcat.user.get() and localStorage.userIsAuthenticated)
 
 
 # Promise: log the given user in with the given password.

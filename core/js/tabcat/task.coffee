@@ -92,9 +92,17 @@ tabcat.task.start = _.once((options) ->
   now = $.now()
   timeout = options?.timeout ? DEFAULT_TIMEOUT
 
-  # require user and encounter, but don't require user to be authenticated
-  if not (tabcat.user.get() and tabcat.encounter.isOpen())
-    tabcat.ui.requestLogin()
+  # TODO: redirect to the return-to-examiner page if the patient has the device
+  # and this is examiner-administered
+  if not options?.examinerAdministered
+    tabcat.task.patientHasDevice(true)
+
+  # important to do this AFTER patientHasDevice(true), to keep from prompting
+  # the patient for the password
+  #
+  # timeout won't actually come into play here unless the examiner has
+  # the device
+  tabcat.ui.requireUserAndEncounter(timeout: options?.timeout)
 
   taskDoc =
       _id: tabcat.couch.randomUUID()
@@ -110,11 +118,6 @@ tabcat.task.start = _.once((options) ->
 
   if options?.trackViewport
     tabcat.task.trackViewportInEventLog()
-
-  # TODO: redirect to the return-to-examiner page if the patient has the device
-  # and this is examiner-administered
-  if not options?.examinerAdministered
-    tabcat.task.patientHasDevice(true)
 
   # periodically upload chunks of the event log
   eventLogSyncInterval = (
