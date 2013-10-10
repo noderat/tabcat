@@ -1,4 +1,15 @@
-v0.4.0, 2013-??-?? -- offline mode
+v0.4.0, 2013-10-10 -- offline mode
+- core library:
+  - offline mode
+    - everything except vidoes goes into the application cache
+    - data we can't upload gets spilled to local storage
+    - can "log in" while offline and then re-enter password later
+    - info about current encounter stored in localStorage
+  - security model
+    - user field in docs must match user uploading them or end with "?"
+    - if you upload another user's doc, you must set uploadedBy to your user
+- tasks:
+  - small refactors but no real changes, bumped version to 0.4.0 just in case
 
 v0.3.3, 2013-09-03 -- tweaking views
 - core library:
