@@ -195,9 +195,13 @@ getNextTrial = ->
   }
 
 
-# event handler for clicks on lines. either fade in the next trial,
+# event handler for taps on lines. either fade in the next trial,
 # or call finishTask()
 showNextTrial = (event) ->
+  # don't emulate mousedown event if we get a touch event
+  if event?.preventDefault?
+    event.preventDefault()
+
   if event?.data?
     registerResult(event)
 
@@ -227,19 +231,19 @@ getNextTrialDiv = ->
   $line1Div.css(trial.line1.css)
   $line1TargetDiv = $('<div></div>', class: 'line-target')
   $line1TargetDiv.css(trial.line1.targetCss)
-  $line1TargetDiv.on('click', trial.line1, showNextTrial)
+  $line1TargetDiv.on('mousedown touchstart', trial.line1, showNextTrial)
 
   $line2Div = $('<div></div>', class: 'line')
   $line2Div.css(trial.line2.css)
   $line2TargetDiv = $('<div></div>', class: 'line-target')
   $line2TargetDiv.css(trial.line2.targetCss)
-  $line2TargetDiv.on('click', trial.line2, showNextTrial)
+  $line2TargetDiv.on('mousedown touchstart', trial.line2, showNextTrial)
 
   # put them in an offscreen div
   $containerDiv = $('<div></div>')
   $containerDiv.hide()
   $containerDiv.append($line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv)
-  $containerDiv.on('click', catchStrayClick)
+  $containerDiv.on('mousedown touchstart', catchStrayTouchStart)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -315,7 +319,7 @@ getStimuli = ->
   return stimuli
 
 
-catchStrayClick = (event) ->
+catchStrayTouchStart = (event) ->
   tabcat.task.logEvent(getTaskState(), event)
 
 
@@ -323,7 +327,6 @@ catchStrayClick = (event) ->
 @initTask = ->
   tabcat.task.start(trackViewport: true)
 
-  tabcat.ui.enableFastClick()
   tabcat.ui.turnOffBounce()
 
   tabcat.ui.requireLandscapeMode($('#task'))
