@@ -99,7 +99,8 @@ initVideoScreen = _.once(->
 
   # video elements can't receive click events on iPad Safari, so attach them
   # to a transparent overlay instead.
-  $('#videoResume').on('click', (event) ->
+  $('#videoResume').on('mousedown touchstart', (event) ->
+    event.preventDefault()  # stop mousedown emulation
     tabcat.task.logEvent(getState(), event)
 
     if $('#videoStalled').is(':visible')
@@ -220,7 +221,7 @@ initChoiceScreen = _.once(->
   for __, i in CHOICES
     $choice = $('<div></div>', class: 'choice', id: 'choice-' + i)
     $choices.append($choice)
-    $choice.on('click', i, onPickChoice)
+    $choice.on('mousedown touchstart', i, onPickChoice)
 
   $('#choiceSubmitButton').on('click', onSubmitChoice)
 )
@@ -233,6 +234,8 @@ getChosen = ->
 
 
 onPickChoice = (event) ->
+  event.preventDefault()  # stop mouseDown emulation
+
   $target = $(event.target)
   $choices = $('#choices').find('div')
 
