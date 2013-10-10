@@ -14,7 +14,7 @@ TARGET_BORDER_WIDTH = 3 / ASPECT_RATIO
 # these work with the layout-0 and layout-1 CSS classes
 NUM_LAYOUTS = 2
 # how long a fade should take, in msec
-FADE_DURATION = FADE_DURATION
+FADE_DURATION = 400
 
 
 # STAIRCASING PARAMETERS
