@@ -9,7 +9,7 @@ MIN_ORIENTATION_DIFFERENCE = 20
 # min orientation in practice mode (to avoid the caption)
 MIN_PRACTICE_MODE_ORIENTATION = 25
 # how long a fade should take, in msec
-FADE_DURATION = FADE_DURATION
+FADE_DURATION = 400
 
 
 # STAIRCASING PARAMETERS
@@ -146,9 +146,13 @@ getNextOrientation = ->
     return orientation
 
 
-# event handler for clicks on lines. either fade in the next trial or
+# event handler for taps on lines. either fade in the next trial or
 # call tabcat.task.finish()
 showNextTrial = (event) ->
+  # don't emulate mousedown event if we get a touch event
+  if event?.preventDefault?
+    event.preventDefault()
+
   if event?.data?
     registerResult(event)
 
@@ -179,13 +183,13 @@ getNextTrialDiv = ->
   $line1Div.css(rotationCss(trial.line1.skew))
   $line1TargetAreaDiv = $('<div></div>', class: 'line line-1-target')
   $line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
-  $line1TargetAreaDiv.bind('click', trial.line1, showNextTrial)
+  $line1TargetAreaDiv.bind('mousedown touchstart', trial.line1, showNextTrial)
 
   $line2Div = $('<div></div>', class: 'line line-2')
   $line2Div.css(rotationCss(trial.line2.skew))
   $line2TargetAreaDiv = $('<div></div>', class: 'line line-2-target')
   $line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
-  $line2TargetAreaDiv.bind('click', trial.line2, showNextTrial)
+  $line2TargetAreaDiv.bind('mousedown touchstart', trial.line2, showNextTrial)
 
   # put them in a container, and rotate it
   $containerDiv = $('<div></div>', class: 'line-container')
@@ -194,7 +198,7 @@ getNextTrialDiv = ->
     $referenceLineDiv,
     $line1Div, $line1TargetAreaDiv,
     $line2Div, $line2TargetAreaDiv)
-  $containerDiv.bind('click', catchStrayClick)
+  $containerDiv.bind('mousedown touchstart', catchStrayTouchStart)
 
   # put them in an offscreen div
   $trialDiv = $('<div></div>')
@@ -251,7 +255,7 @@ getStimuli = ->
   return stimuli
 
 
-catchStrayClick = (event) ->
+catchStrayTouchStart = (event) ->
   tabcat.task.logEvent(getTaskState(), event)
 
 
@@ -260,7 +264,6 @@ catchStrayClick = (event) ->
 @initTask = ->
   tabcat.task.start(trackViewport: true)
 
-  tabcat.ui.enableFastClick()
   tabcat.ui.turnOffBounce()
 
   tabcat.ui.requireLandscapeMode($('#task'))
