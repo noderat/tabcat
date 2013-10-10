@@ -385,18 +385,15 @@ tabcat.ui.requireUser = (options) ->
   if tabcat.task.patientHasDevice()
     return resolved
 
-  if not tabcat.user.isAuthenticated()
-    tabcat.ui.requestPassword()
-    return resolved
-
   # localStorage says user is logged in. Let's check if the DB agrees
   timeout = options?.timeout ? DEFAULT_REQUIRE_USER_TIMEOUT
   tabcat.couch.getUser(timeout: timeout).then(
     ((user) ->
-      if not user?
+      if not (user? and tabcat.user.isAuthenticated())
         tabcat.ui.requestPassword()
     ),
     (xhr) ->
+      # if there's no network, doesn't matter if user is authenticated
       if xhr.status is 0
         $.Deferred().resolve()
       else
