@@ -154,9 +154,13 @@ getNextTrial = ->
   }
 
 
-# event handler for clicks on lines. either fade in the next trial or
+# event handler for taps on lines. either fade in the next trial or
 # call tabcat.task.finish()
 showNextTrial = (event) ->
+  # don't emulate mousedown event if we get a touch event
+  if event?.preventDefault?
+    event.preventDefault()
+
   if event?.data?
     registerResult(event)
 
@@ -186,21 +190,23 @@ getNextTrialDiv = ->
   $topLineDiv.css(trial.topLine.css)
   $topLineTargetDiv = $('<div></div>', class: 'line-target top-line-target')
   $topLineTargetDiv.css(trial.topLine.targetCss)
-  $topLineTargetDiv.on('click', trial.topLine, showNextTrial)
+  $topLineTargetDiv.on(
+    'mousedown touchstart', trial.topLine, showNextTrial)
 
   $bottomLineDiv = $('<div></div>', class: 'line bottom-line')
   $bottomLineDiv.css(trial.bottomLine.css)
   $bottomLineTargetDiv = $(
     '<div></div>', class: 'line-target bottom-line-target')
   $bottomLineTargetDiv.css(trial.bottomLine.targetCss)
-  $bottomLineTargetDiv.on('click', trial.bottomLine, showNextTrial)
+  $bottomLineTargetDiv.on(
+    'mousedown touchstart', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
   $containerDiv = $('<div></div>', class: 'layout-' + trialNum % NUM_LAYOUTS)
   $containerDiv.hide()
   $containerDiv.append(
     $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
-  $containerDiv.on('click', catchStrayClick)
+  $containerDiv.on('mousedown touchstart', catchStrayTouchStart)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -247,7 +253,8 @@ getElementBounds = (element) ->
   _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
 
 
-catchStrayClick = (event) ->
+catchStrayTouchStart = (event) ->
+  event.preventDefault()
   tabcat.task.logEvent(getTaskState(), event)
 
 
@@ -256,7 +263,6 @@ catchStrayClick = (event) ->
 @initTask = ->
   tabcat.task.start(trackViewport: true)
 
-  tabcat.ui.enableFastClick()
   tabcat.ui.turnOffBounce()
 
   tabcat.ui.requireLandscapeMode($('#task'))

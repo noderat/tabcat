@@ -1,7 +1,7 @@
 {
     "name": "parallel-line-length",
     "index": "/task.html",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "Parallel Line Length",
     "attachments": [
         "css/task.css",
