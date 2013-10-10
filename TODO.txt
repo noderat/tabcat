@@ -18,26 +18,27 @@ Tasks:
     - e.g. /tabcat-data/_design/dart/_list/interpret/core/task?include_docs=true&startkey=["dart"]&endkey=["dart",[]]
 
 Cleanup:
+- store config in tabcat DB, not data DB
+  - this avoids auth issues, and allows us to keep configs in cache manifest
+  - can still allow DB-specific configs too
+- use lz-string (http://pieroxy.net/blog/pages/lz-string/index.html)
+  to compress spilled data
+- some strategy for not running out of localStorage
+  - simplest is to stop spilling when we get within 256K of limit
+  - most robust is to evict spilled data in favor of core TabCAT functionality
 - don't use relative paths in code
 - Android fullscreen mode (window.scrollTo(0, 1))
 - fix max height of inner div in inches, when possible, using something like:
   https://github.com/tombigel/detect-zoom
 - use on() rather than bind() in tasks, attach new div before binding events
 - compress spilled data
-- some strategy for not running out of localStorage
 - store UI messages in sessionStorage, not fragment
 
 Nice to Have:
 - support for re-opening tasks where we left off
+  - keep task doc in localStorage, like encounter doc
+  - allow tracking of taskState too
 - demo mode for tasks
-- Back button in standalone mode
-- use lz-string (http://pieroxy.net/blog/pages/lz-string/index.html)
-  to compress spilled data
-- tabcat.db.gotNetworkError()
-  - if we got status 0, statusText "error" from a putDoc request,
-    set localStorage.dbNetworkError
-  - clear on successful putDoc
-  - may flap between offline and "wrong network"
 
 Refactors/Fixes:
 - break out staircasing code into TabCAT module
