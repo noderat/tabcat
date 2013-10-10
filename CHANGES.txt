@@ -1,4 +1,6 @@
-v0.4.1, 2013-??-?? -- stargazer?
+v0.4.1, 2013-10-10 -- more responsive tasks
+- tasks:
+  - all tasks use touchstart rather than click wherever appropriate
 
 v0.4.0, 2013-10-10 -- offline mode
 - core library:
@@ -11,7 +13,8 @@ v0.4.0, 2013-10-10 -- offline mode
     - user field in docs must match user uploading them or end with "?"
     - if you upload another user's doc, you must set uploadedBy to your user
 - tasks:
-  - small refactors but no real changes, bumped version to 0.4.0 just in case
+  - line tasks:
+    - small refactors but no real changes, bumped version to 0.4.0 anyway
 
 v0.3.3, 2013-09-03 -- tweaking views
 - core library:
