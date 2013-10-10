@@ -28,7 +28,7 @@ submitEnterPasswordForm = (event) ->
 
   $(->
     $('#howToLogout').text(
-      'Not ' + user + '? Tap the button in the upper right' +
+      'Not ' + user + '? Tap the Log Out button (in the upper right)' +
       ' to log in as a different user.')
 
     $loginForm = $('#loginForm')
