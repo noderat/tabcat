@@ -29,7 +29,8 @@ fixAndRememberConfig = (configDoc) ->
   return config
 
 
-# Promise: get the current config, based on the "config" document
+# Promise (can't fail): get the current config from the DB, falling back
+# to configs in localStorage, or the default.
 #
 # Fields we will make sure are filled in the config doc returned:
 #
@@ -44,17 +45,12 @@ fixAndRememberConfig = (configDoc) ->
 tabcat.config.get = _.once((options) ->
   tabcat.couch.getDoc(DATA_DB, 'config', timeout: options?.timeout).then(
     (configDoc) -> fixAndRememberConfig(configDoc),
-    (xhr) -> switch xhr.status
-      # network error
-      when 0
-        # if we're offline, use the config we last stored, if any
-        $.Deferred().resolve((try JSON.parse(localStorage.config)) ? {})
-
-      # config doesn't exist
-      when 404
+    (xhr) ->
+      if xhr.status is 404
+        # config doesn't exist
         $.Deferred().resolve(fixAndRememberConfig({}))
-
-      # some other kind of error
-      else xhr  # pass through failure
+      else
+        # offline or can't authenticate, use stored config
+        $.Deferred().resolve((try JSON.parse(localStorage.config)) ? {})
   )
 )
