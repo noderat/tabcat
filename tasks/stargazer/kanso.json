@@ -1,0 +1,18 @@
+{
+    "name": "stargazer",
+    "index": "/task.html",
+    "version": "0.4.2-dev",
+    "description": "Stargazer",
+    "attachments": [
+        "css/task.css",
+        "img/star.png",
+        "js/task.js",
+        "task.html"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "icon": "img/star.png"
+    }
+}
