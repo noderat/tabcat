@@ -42,6 +42,8 @@ STAR_IMG_PATH = 'img/star.png'
 # target areas can't touch.
 STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
 
+# how long a fade should take, in msec
+FADE_DURATION = 400
 
 
 # return x squared
@@ -71,12 +73,18 @@ makeStarImg = ([x1, y1]) ->
   return $img
 
 
-# used by untilSucceeds to indicate a retriable failure
+# used by untilSucceeds (below)
 class Failure
 
 
-# wrapper to call a function up to n times until it returns, otherwise
-# throw Failure
+# there's lots of space for stars, but it's possible to get into a state where
+# we've randomly selected some of the stars and it's impossible to proceed, and
+# we have to start the random selection process from the beginning.
+#
+# untilSucceeds() calls a function a certain number of times, and then raises
+# Failure. It also gracefully handles Failure, allowing you to nest it.
+#
+# if maxFailures is null, tries forever
 untilSucceeds = (f, maxFailures) ->
   numFailures = 0
 
@@ -98,6 +106,12 @@ pickStar = ->
     tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_WIDTH - SKY_BORDER),
     tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_HEIGHT - SKY_BORDER)
   ]
+
+
+# is the given star in the sky?
+isInSky = ([x, y]) ->
+  SKY_BORDER <= x <= SKY_STAR_WIDTH - SKY_BORDER and \
+  SKY_BORDER <= y <= SKY_STAR_HEIGHT - SKY_BORDER
 
 
 # pick *n* target stars at random
@@ -139,7 +153,89 @@ isCloserThanToAny = (candidateStar, distance, stars) ->
   return false
 
 
+# pick one of the target stars and add distractors.
+#
+# returns a list of points; the first one is the correct answer
+pickTestStars = (targetStars) ->
+  untilSucceeds(->
+    # start with the correct choice
+    stars = [_.sample(targetStars)]
 
+    for distance in DISTRACTOR_STAR_DISTANCES
+      stars.push(untilSucceeds(
+        (-> nextDistractorStar(distance, stars, targetStars)),
+        MAX_FAILURES))
+
+    return stars
+  )
+
+
+# pick a distractor star at the given distance, at random, or throw Failure
+nextDistractorStar = (distance, stars, targetStars) ->
+  targetStar = _.sample(targetStars)
+  otherStars = _.without(stars.concat(targetStars), targetStar)
+
+  candidateStar = pickStarAtDistanceFrom(distance, targetStar)
+
+  if (isInSky(candidateStar) and \
+      not isCloserThanToAny( \
+        candidateStar, Math.max(distance, MIN_STAR_DISTANCE), otherStars))
+    return candidateStar
+  else
+    throw new Failure
+
+
+
+# randomly pick a star that is the given distance from another star
+#
+# may return stars outside the sky! use isInSky()
+pickStarAtDistanceFrom = (distance, [x, y]) ->
+  angle = tabcat.math.randomUniform(0, 2 * Math.PI)
+  return [x + Math.cos(angle) * distance, y + Math.sin(angle) * distance]
+
+
+
+showTargetStars = ->
+  if event?.preventDefault?
+    event.preventDefault()
+
+  $sky = $('<div></div>', class: 'sky')
+  targetStars = pickTargetStars(MAX_TARGET_STARS)
+  for targetStar in targetStars
+    $sky.append(makeStarImg(targetStar))
+
+  $sky.hide()
+  $('#rectangle').empty()
+  $('#rectangle').append($sky)
+
+  $sky.on('mousedown touchStart', (event) ->
+    event.preventDefault()
+    showTestStars(targetStars)
+  )
+
+  $sky.fadeIn(fadeDuration: FADE_DURATION)
+
+
+showTestStars = (targetStars) ->
+  if event?.preventDefault?
+    event.preventDefault()
+
+  $sky = $('<div></div>', class: 'sky')
+  testStars = pickTestStars(targetStars)
+  for testStar in testStars
+    # TODO: first star is correct, others are wrong
+    $testStarImg = makeStarImg(testStar)
+    $testStarImg.on('mousedown touchStart', (event) ->
+      event.preventDefault()
+      showTargetStars()
+    )
+    $sky.append($testStarImg)
+
+  $sky.hide()
+  $('#rectangle').empty()
+  $('#rectangle').append($sky)
+
+  $sky.fadeIn(fadeDuration: FADE_DURATION)
 
 
 # INITIALIZATION
@@ -148,14 +244,9 @@ isCloserThanToAny = (candidateStar, distance, stars) ->
 
   tabcat.ui.turnOffBounce()
 
-  tabcat.ui.requireLandscapeMode($('#task'))
-
   $(->
-    $sky = $('<div></div>', class: 'sky')
-    targetStars = pickTargetStars(MAX_TARGET_STARS)
-    for targetStar in targetStars
-      $sky.append(makeStarImg(targetStar))
+    tabcat.ui.requireLandscapeMode($('#task'))
+    tabcat.ui.fixAspectRatio($('#rectangle'), ASPECT_RATIO)
 
-    $('#task').append($sky)
-    tabcat.ui.fixAspectRatio($sky, ASPECT_RATIO)
+    showTargetStars()
   )
