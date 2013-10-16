@@ -15,12 +15,12 @@ MAX_FAILURES = 30
 MIN_STAR_DISTANCE = 2
 
 # target stars' centers can never be more than this many star diameters apart
-MAX_TARGET_STAR_DISTANCE = 5
+MAX_TARGET_STAR_DISTANCE = 6
 
 # Distances distractor stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
 # currently displayed
-DISTRACTOR_STAR_DISTANCES = [3, 2]
+DISTRACTOR_STAR_DISTANCES = [4, 3]
 
 # how many star diameters high the sky div is
 SKY_STAR_HEIGHT = 12
@@ -222,12 +222,15 @@ showTestStars = (targetStars) ->
 
   $sky = $('<div></div>', class: 'sky')
   testStars = pickTestStars(targetStars)
-  for testStar in testStars
-    # TODO: first star is correct, others are wrong
+  for testStar, i in testStars
     $testStarImg = makeStarImg(testStar)
-    $testStarImg.on('mousedown touchStart', (event) ->
+    $testStarImg.on('mousedown touchStart', i, (event) ->
       event.preventDefault()
-      showTargetStars()
+      i = event.data
+      if i is 0
+        showTargetStars()
+      else
+        alert('distractor at distance ' + DISTRACTOR_STAR_DISTANCES[i - 1])
     )
     $sky.append($testStarImg)
 
