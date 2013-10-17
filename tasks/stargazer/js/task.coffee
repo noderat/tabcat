@@ -34,6 +34,9 @@ SKY_BORDER = MIN_STAR_DISTANCE
 # path for the star image
 STAR_IMG_PATH = 'img/star.png'
 
+# path for the meteor image
+METEOR_IMG_PATH = 'img/meteor.png'
+
 # how many star diameters the star image file is
 # (the star fades smoothly, so this is kind of a judgment call).
 # the star's <img> element also serves as its target area for touch events
