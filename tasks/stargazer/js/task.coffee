@@ -101,7 +101,7 @@ untilSucceeds = (f, maxFailures) ->
 
 
 # pick coordinates for a star at random
-pickStar = ->
+pickStarInSky = ->
   [
     tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_WIDTH - SKY_BORDER),
     tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_HEIGHT - SKY_BORDER)
@@ -114,21 +114,33 @@ isInSky = ([x, y]) ->
   SKY_BORDER <= y <= SKY_STAR_HEIGHT - SKY_BORDER
 
 
-# pick *n* target stars at random
-pickTargetStars = (n) ->
+# pick *n* target stars at random, and then pick 3 test stars
+#
+# we do these together because there are some target star configurations
+# for which there are no valid test stars
+pickTargetAndTestStars = (n) ->
   untilSucceeds(->
-    stars = []
+    targetStars = []
 
-    while stars.length < n
-      stars.push(untilSucceeds((-> nextTargetStar(stars)), MAX_FAILURES))
+    while targetStars.length < n
+      targetStars.push(
+        untilSucceeds((-> nextTargetStar(targetStars)), MAX_FAILURES))
 
-    return stars
+    # start with the correct choice
+    testStars = [_.sample(targetStars)]
+
+    for distance in DISTRACTOR_STAR_DISTANCES
+      testStars.push(untilSucceeds(
+        (-> nextDistractorStar(distance, testStars, targetStars)),
+        MAX_FAILURES))
+
+    return [targetStars, testStars]
   )
 
 
 # return a target star that works with the existing stars, or undefined
 nextTargetStar = (stars) ->
-  candidateStar = pickStar()
+  candidateStar = pickStarInSky()
   if canAddTargetStar(candidateStar, stars)
     candidateStar
   else
@@ -200,7 +212,7 @@ showTargetStars = ->
     event.preventDefault()
 
   $sky = $('<div></div>', class: 'sky')
-  targetStars = pickTargetStars(MAX_TARGET_STARS)
+  [targetStars, testStars] = pickTargetAndTestStars(MAX_TARGET_STARS)
   for targetStar in targetStars
     $sky.append(makeStarImg(targetStar))
 
@@ -210,18 +222,17 @@ showTargetStars = ->
 
   $sky.on('mousedown touchStart', (event) ->
     event.preventDefault()
-    showTestStars(targetStars)
+    showTestStars(testStars)
   )
 
   $sky.fadeIn(fadeDuration: FADE_DURATION)
 
 
-showTestStars = (targetStars) ->
+showTestStars = (testStars) ->
   if event?.preventDefault?
     event.preventDefault()
 
   $sky = $('<div></div>', class: 'sky')
-  testStars = pickTestStars(targetStars)
   for testStar, i in testStars
     $testStarImg = makeStarImg(testStar)
     $testStarImg.on('mousedown touchStart', i, (event) ->
