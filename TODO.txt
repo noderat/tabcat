@@ -1,9 +1,10 @@
 Tasks:
 - stargazer
-  - make star (use supernova in GIMP)
-  - work out random placement of stars
-  - instructions
   - star sweep animation
+    - $img.animate({left: '+2000', top: '+2000'}, 1000, 'linear')
+      - use fact that we're in landscape mode to find max distance top and bottom
+        of screen can be
+  - instructions
 
 - DART (cleanup)
   - trim blackness at beginning and end of video, handle with JS instead.
