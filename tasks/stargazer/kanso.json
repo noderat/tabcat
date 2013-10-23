@@ -5,6 +5,7 @@
     "description": "Stargazer",
     "attachments": [
         "css/task.css",
+        "img/icon.png",
         "img/meteor.png",
         "img/star.png",
         "js/task.js",
@@ -14,6 +15,6 @@
         "attachments": null
     },
     "tabcat": {
-        "icon": "img/star.png"
+        "icon": "img/icon.png"
     }
 }
