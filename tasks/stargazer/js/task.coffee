@@ -118,8 +118,11 @@ METEOR_MAX_DURATION = 900
 # how long after meteors start to fade target stars
 TARGET_STAR_FADE_WAIT = 100
 
-# how long a fade should take, in msec
-FADE_DURATION = 400
+# how long to take to fade target stars
+TARGET_STAR_FADE_DURATION = 200
+
+# how long a fade in should take, in msec
+FADE_IN_DURATION = 400
 
 
 # return x squared
@@ -376,7 +379,7 @@ showTargetStars = ->
   )
 
   $testSky.hide()
-  $targetSky.fadeIn(fadeDuration: FADE_DURATION)
+  $targetSky.fadeIn(duration: FADE_IN_DURATION)
 
 
 # show star(s) to match against the target stars, after clearing
@@ -399,9 +402,12 @@ showTestStars = (testStars) ->
       event.preventDefault()
       i = event.data
       if i is 0
-        showTargetStars()
+        console.log('correct!')
       else
-        alert('distractor at distance ' + DISTRACTOR_STAR_DISTANCES[i - 1])
+        console.log(
+          'distractor at distance ' + DISTRACTOR_STAR_DISTANCES[i - 1])
+
+      showTargetStars()
     )
     $testSky.append($testStarImg)
 
@@ -416,12 +422,12 @@ showTestStars = (testStars) ->
     $meteorImg.animate(animation...)
 
   tabcat.ui.wait(TARGET_STAR_FADE_WAIT).then(->
-    $targetSky.fadeOut(fadeDuration: FADE_DURATION)
+    $targetSky.fadeOut(duration: TARGET_STAR_FADE_DURATION)
   )
 
   tabcat.ui.wait(METEOR_MAX_DURATION).then(->
     $meteorSky.hide()
-    $testSky.fadeIn(fadeDuration: FADE_DURATION)
+    $testSky.fadeIn(duration: FADE_IN_DURATION)
   )
 
 

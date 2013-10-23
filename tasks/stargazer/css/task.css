@@ -38,3 +38,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     padding: 0;
     background-color: transparent;
 }
+
+#targetSky {
+    z-index: 1000;
+}
+
+#testSky {
+    z-index: 1000;
+}
+
+#meteorSky {
+    z-index: 1001;
+}
