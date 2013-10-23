@@ -24,6 +24,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
@@ -49,9 +50,10 @@ MAX_TARGET_STAR_DISTANCE = 6
 DISTRACTOR_STAR_DISTANCES = [4, 3]
 
 # how many star diameters high the sky div is
-SKY_STAR_HEIGHT = 12
+SKY_HEIGHT = 12
+
 # how many star diameters wide the sky div is
-SKY_STAR_WIDTH = SKY_STAR_HEIGHT * ASPECT_RATIO
+SKY_WIDTH = SKY_HEIGHT * ASPECT_RATIO
 
 # star centers should be at least this many star diameters from the
 # edge of the sky div
@@ -60,9 +62,6 @@ SKY_BORDER = MIN_STAR_DISTANCE
 # path for the star image
 STAR_IMG_PATH = 'img/star.png'
 
-# path for the meteor image
-METEOR_IMG_PATH = 'img/meteor.png'
-
 # how many star diameters the star image file is
 # (the star fades smoothly, so this is kind of a judgment call).
 # the star's <img> element also serves as its target area for touch events
@@ -70,6 +69,48 @@ METEOR_IMG_PATH = 'img/meteor.png'
 # Make sure this isn't bigger than MIN_STAR_DISTANCE / sqrt(2), so that
 # target areas can't touch.
 STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
+
+# minimum y-coordinate for top of screen, in star coordinates
+# (it can't be any less than this because we don't allow portrait mode)
+SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
+
+# max y-coordinate for bottom of screen, in star coordinates
+SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
+
+# path for the meteor image
+METEOR_IMG_PATH = 'img/meteor.png'
+
+# how many star diameters the meteor image file is
+METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = 5
+
+# how much the Y coordinate of meteors can vary randomly
+METEOR_Y_RANGE = METEOR_IMG_HEIGHT * 2
+
+# max Y coordinate for meteor
+METEOR_MAX_Y = SCREEN_MIN_Y - (METEOR_IMG_HEIGHT / 2)
+
+# min Y coordinate for meteor
+METEOR_MIN_Y = METEOR_MAX_Y - METEOR_Y_RANGE
+
+# min X coordinate for meteor (so it can pass through the lower-left corner
+# of the sky no matter how low it starts)
+METEOR_MIN_X = METEOR_MAX_Y - SKY_HEIGHT
+
+# max X coordinate for meteor (so it can pass through the upper-right corner
+# of the sky no matter how high it starts)
+METEOR_MAX_X = SKY_WIDTH + METEOR_MIN_Y
+
+# how much to change a meteor's x/y coordinates to make it travel
+# through a path?
+# (meteors always travel at a 45-degree angle, down and to the right)
+METEOR_PATH_XY = (
+  SCREEN_MAX_Y - SCREEN_MIN_Y + METEOR_IMG_HEIGHT + METEOR_Y_RANGE)
+
+# how many meteors should we show?
+NUM_METEORS = 15
+
+# how long should meteor animation take? (in msec)
+METEOR_DURATION = 1000
 
 # how long a fade should take, in msec
 FADE_DURATION = 400
@@ -85,21 +126,38 @@ distSq = ([x1, y1], [x2, y2]) ->
   sq(x2 - x1) + sq(y2 - y1)
 
 
-# convert star-diameter coordinates to an image tag to add to the sky div
-makeStarImg = ([x1, y1]) ->
+# convert star x-coordinate/width to a % of sky width (for use in CSS)
+starXToSky = (x) ->
+  (100 * x / SKY_WIDTH) + '%'
+
+# convert star y-coordinate/height to a % of sky height (for use in CSS)
+starYToSky = (y) ->
+  (100 * y / SKY_HEIGHT) + '%'
+
+
+# helper for makeStarImg and makeMeteorImgAndAnimation
+makeImg = ([x1, y1], [width, height], attrs) ->
   $img = $('<img>')
 
-  $img.attr('class', 'star')
-  $img.attr('src', STAR_IMG_PATH)
+  for own key, value of attrs
+    $img.attr(key, value)
 
-  left = ((x1 - STAR_IMG_WIDTH / 2) / SKY_STAR_WIDTH * 100) + '%'
-  top = ((y1 - STAR_IMG_HEIGHT / 2) / SKY_STAR_HEIGHT * 100) + '%'
-  $img.css(left: left, top: top)
+  $img.css(
+    left: starXToSky(x1 - width / 2)
+    top: starYToSky(y1 - height / 2)
+  )
 
-  $img.attr('width', (STAR_IMG_WIDTH / SKY_STAR_WIDTH * 100) + '%')
-  $img.attr('height', (STAR_IMG_HEIGHT / SKY_STAR_HEIGHT * 100) + '%')
+  $img.attr('width', starXToSky(width))
+  $img.attr('height', starYToSky(height))
 
   return $img
+
+
+# convert star center (in star-diameter coordinates) to an image tag to add
+# to the sky div
+makeStarImg = ([x1, y1]) ->
+  makeImg([x1, y1], [STAR_IMG_WIDTH, STAR_IMG_HEIGHT],
+    class: 'star', src: STAR_IMG_PATH)
 
 
 # used by untilSucceeds (below)
@@ -132,15 +190,15 @@ untilSucceeds = (f, maxFailures) ->
 # pick coordinates for a star at random
 pickStarInSky = ->
   [
-    tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_WIDTH - SKY_BORDER),
-    tabcat.math.randomUniform(SKY_BORDER, SKY_STAR_HEIGHT - SKY_BORDER)
+    tabcat.math.randomUniform(SKY_BORDER, SKY_WIDTH - SKY_BORDER),
+    tabcat.math.randomUniform(SKY_BORDER, SKY_HEIGHT - SKY_BORDER)
   ]
 
 
 # is the given star in the sky?
 isInSky = ([x, y]) ->
-  SKY_BORDER <= x <= SKY_STAR_WIDTH - SKY_BORDER and \
-  SKY_BORDER <= y <= SKY_STAR_HEIGHT - SKY_BORDER
+  SKY_BORDER <= x <= SKY_WIDTH - SKY_BORDER and \
+  SKY_BORDER <= y <= SKY_HEIGHT - SKY_BORDER
 
 
 # pick *n* target stars at random, and then pick 3 test stars
@@ -233,6 +291,8 @@ nextDistractorStar = (distance, stars, targetStars) ->
 pickStarAtDistanceFrom = (distance, [x, y]) ->
   angle = tabcat.math.randomUniform(0, 2 * Math.PI)
   return [x + Math.cos(angle) * distance, y + Math.sin(angle) * distance]
+
+
 
 
 

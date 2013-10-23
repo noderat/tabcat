@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     height: 100%;
 }
 
-#rectangle div.sky img.star {
+#rectangle div.sky img {
     position: absolute;
     display: block;
     margin: 0;
