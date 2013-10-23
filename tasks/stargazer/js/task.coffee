@@ -77,52 +77,46 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 # max y-coordinate for bottom of screen, in star coordinates
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
+# how many meteors should we show?
+NUM_METEORS = 5
+
 # path for the meteor image
 METEOR_IMG_PATH = 'img/meteor.png'
 
 # how many star diameters the meteor image file is
-METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = 5
+METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = 9
 
-# how much the Y coordinate of meteors can vary randomly
-METEOR_Y_RANGE = METEOR_IMG_HEIGHT * 4
+# the tracks meteors follow must be at least this many star diameters apart
+MIN_METEOR_TRACK_SPACING = 2
 
-# max Y coordinate for meteor
-METEOR_MAX_Y = SCREEN_MIN_Y - (METEOR_IMG_HEIGHT / 2)
+# meteors' centers must be at least this far apart
+MIN_METEOR_DISTANCE = 5
 
-# min Y coordinate for meteor
-METEOR_MIN_Y = METEOR_MAX_Y - METEOR_Y_RANGE
+# where in the meteor sky can meteors be centered?
+METEOR_MIN_X = 0
+METEOR_MIN_Y = 0
+METEOR_MAX_X = SKY_WIDTH
+METEOR_MAX_Y = SKY_HEIGHT
 
-# min X coordinate for meteor (so it can pass through the lower-left corner
-# of the sky no matter how low it starts)
-METEOR_MIN_X = METEOR_MAX_Y - SKY_HEIGHT
+# Where does the meteor sky start its animation (upper-left corner)?
+#
+# This positions the sky just off-screen when the screen is nearly square
+#
+# Meteors always travel at a 45-degree angle, down and to the right,
+# so x and y coordinates are the same.
+METEOR_START_XY = SCREEN_MIN_Y - METEOR_MAX_Y - (METEOR_IMG_HEIGHT / 2)
 
-# max X coordinate for meteor (so it can pass through the upper-right corner
-# of the sky no matter how high it starts)
-METEOR_MAX_X = SKY_WIDTH + METEOR_MIN_Y
+# where does the meteor sky end its animation? (upper-left corner)
+#
+# This gives the meteors a little extra distance after they leave even
+# the squares of screens, which seems to help on slow devices
+METEOR_END_XY = SCREEN_MAX_Y - METEOR_MIN_Y + (3 * METEOR_IMG_HEIGHT / 2)
 
-# how much to change a meteor's x/y coordinates to make it travel
-# through a path?
-# (meteors always travel at a 45-degree angle, down and to the right)
-METEOR_PATH_XY = (
-  SCREEN_MAX_Y - SCREEN_MIN_Y + METEOR_IMG_HEIGHT + METEOR_Y_RANGE)
-
-# how many meteors should we show?
-NUM_METEORS = 15
-
-# shortest amount of time for a meteor to traverse its path
-METEOR_MIN_DURATION = 400
-
-# longest amount of time for a meteor to traverse its path
-METEOR_MAX_DURATION = 900
-
-# how long after meteors start to fade target stars
-TARGET_STAR_FADE_WAIT = 100
-
-# how long to take to fade target stars
-TARGET_STAR_FADE_DURATION = 200
+# how long does the meteor sky's animation last
+METEOR_DURATION = 1200
 
 # how long a fade in should take, in msec
-FADE_IN_DURATION = 400
+FADE_DURATION = 400
 
 
 # return x squared
@@ -144,7 +138,7 @@ starYToSky = (y) ->
   (100 * y / SKY_HEIGHT) + '%'
 
 
-# helper for makeStarImg and makeMeteorImgAndAnimation
+# helper for makeStarImg and makeMeteorImg
 makeImg = ([x, y], [width, height], attrs) ->
   $img = $('<img>')
 
@@ -169,25 +163,9 @@ makeStarImg = ([x, y]) ->
 
 
 # convert meteor center (in star coordinates) to an image tag
-# and arguments to pass to jQuery's animate()
-makeMeteorImgAndAnimation = ([x, y], duration) ->
-  $img = makeImg([x, y], [METEOR_IMG_WIDTH, METEOR_IMG_HEIGHT],
-    class: 'meteor', src: METEOR_IMG_PATH)
-
-  animation = [{
-    left: starXToSky(x - (METEOR_IMG_WIDTH / 2) + METEOR_PATH_XY)
-    top: starYToSky(y - (METEOR_IMG_HEIGHT / 2) + METEOR_PATH_XY)
-  }, {
-    duration: duration
-    easing: 'linear'
-  }]
-
-  return [$img, animation]
-
-
-# convert star y-coordinate/height to a % of sky height (for use in CSS)
-starYToSky = (y) ->
-  (100 * y / SKY_HEIGHT) + '%'
+makeMeteorImg = ([x, y]) ->
+  makeImg([x, y], [METEOR_IMG_WIDTH, METEOR_IMG_HEIGHT],
+    class: 'star', src: METEOR_IMG_PATH)
 
 
 # helper for makeStarImg and makeMeteorImgAndAnimation
@@ -243,16 +221,47 @@ pickStarInSky = ->
   ]
 
 
-# pick start coordinates and duration for a meteor at random
-pickMeteorStart = ->
+# pick center coordinates of a meteor
+pickMeteor = ->
   [
     tabcat.math.randomUniform(METEOR_MIN_X, METEOR_MAX_X),
     tabcat.math.randomUniform(METEOR_MIN_Y, METEOR_MAX_Y),
   ]
 
-# pick random duration for a metor
-pickMeteorDuration = ->
-  tabcat.math.randomUniform(METEOR_MIN_DURATION, METEOR_MAX_DURATION)
+
+# pick a field of n meteors
+pickMeteors = (n) ->
+  untilSucceeds(->
+    meteors = []
+
+    while meteors.length < n
+      meteors.push(
+        untilSucceeds((-> nextMeteor(meteors)), MAX_FAILURES))
+
+    return meteors
+  )
+
+
+# randomly pick next meteor for a group, throwing Failure if it's
+# too close to existing meteors
+nextMeteor = (meteors) ->
+  # come up with a number indicating which track this meteor will follow
+  track = ([x, y]) ->
+    x - y
+
+  candidateMeteor = pickMeteor()
+  candidateTrack = track(candidateMeteor)
+
+  for meteor in meteors
+    # tracks are at a 45-degree angle, so for tracks to be 1 unit apart,
+    # x - y has to be at least sqrt(2) apart
+    if sq(track(meteor) - candidateTrack) < sq(MIN_METEOR_TRACK_SPACING) * 2
+      throw new Failure
+
+    if distSq(meteor, candidateMeteor) < sq(MIN_METEOR_DISTANCE)
+      throw new Failure
+
+  return candidateMeteor
 
 
 # is the given star in the sky?
@@ -357,7 +366,7 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 
 # show stars to remember.
 #
-# This is also responsible for picking coordinates of test and target stars.
+# This is also responsible for setting up all skies
 showTargetStars = ->
   if event?.preventDefault?
     event.preventDefault()
@@ -366,34 +375,40 @@ showTargetStars = ->
   $testSky = $('#testSky')
   $meteorSky = $('#meteorSky')
 
-  $meteorSky.hide()
   $targetSky.hide()
-  $targetSky.empty()
+  $meteorSky.hide()
+
   [targetStars, testStars] = pickTargetAndTestStars(MAX_TARGET_STARS)
+
+  setUpTargetSky(targetStars)
+
+  $testSky.hide()
+  $targetSky.fadeIn(duration: FADE_DURATION)
+
+  setUpTestSky(testStars)
+
+  meteors = pickMeteors(NUM_METEORS)
+  setUpMeteorSky(meteors)
+
+
+# set up the #targetSky div. Not responsible for hiding/showing it
+setUpTargetSky = (targetStars) ->
+  $targetSky = $('#targetSky')
+
+  $targetSky.empty()
   for targetStar in targetStars
     $targetSky.append(makeStarImg(targetStar))
 
   $targetSky.one('mousedown touchStart', (event) ->
     event.preventDefault()
-    showTestStars(testStars)
+    showTestStars()
   )
 
-  $testSky.hide()
-  $targetSky.fadeIn(duration: FADE_IN_DURATION)
 
-
-# show star(s) to match against the target stars, after clearing
-# the screen with randomly chosen meteors
-showTestStars = (testStars) ->
-  if event?.preventDefault?
-    event.preventDefault()
-
-  $targetSky = $('#targetSky')
+# set up the #testSky div. Not responsible for hiding/showing it
+setUpTestSky = (testStars) ->
   $testSky = $('#testSky')
-  $meteorSky = $('#meteorSky')
 
-  # get test sky ready
-  $testSky.hide()
   $testSky.empty()
 
   for testStar, i in testStars
@@ -411,24 +426,46 @@ showTestStars = (testStars) ->
     )
     $testSky.append($testStarImg)
 
-  # clear the sky, with meteors!
+
+# setup the #meteorSky div. Not responsible for hiding/showing it,
+# but does put it in the correct initial position
+setUpMeteorSky = (meteors) ->
+  $meteorSky = $('#meteorSky')
+
   $meteorSky.empty()
+
+  for meteor in meteors
+    $meteorSky.append(makeMeteorImg(meteor))
+
+  $meteorSky.css(
+    left: starXToSky(METEOR_START_XY)
+    top: starYToSky(METEOR_START_XY)
+  )
+
+
+# show star(s) to match against the target stars, after clearing
+# the screen with randomly chosen meteors
+showTestStars = ->
+  if event?.preventDefault?
+    event.preventDefault()
+
+  $targetSky = $('#targetSky')
+  $testSky = $('#testSky')
+  $meteorSky = $('#meteorSky')
+
+  $targetSky.hide()
   $meteorSky.show()
 
-  for i in [0...NUM_METEORS]
-    [$meteorImg, animation] = makeMeteorImgAndAnimation(
-      pickMeteorStart(), pickMeteorDuration())
-    $meteorSky.append($meteorImg)
-    $meteorImg.animate(animation...)
-
-  tabcat.ui.wait(TARGET_STAR_FADE_WAIT).then(->
-    $targetSky.fadeOut(duration: TARGET_STAR_FADE_DURATION)
-  )
-
-  tabcat.ui.wait(METEOR_MAX_DURATION).then(->
-    $meteorSky.hide()
-    $testSky.fadeIn(duration: FADE_IN_DURATION)
-  )
+  $meteorSky.animate({
+    left: starXToSky(METEOR_END_XY),
+    top: starYToSky(METEOR_END_XY)
+  }, {
+    duration: METEOR_DURATION
+    easing: 'linear'
+    complete: ->
+      $meteorSky.hide()
+      $testSky.fadeIn(duration: FADE_DURATION)
+  })
 
 
 # INITIALIZATION
@@ -440,6 +477,9 @@ showTestStars = (testStars) ->
   $(->
     tabcat.ui.requireLandscapeMode($('#task'))
     tabcat.ui.fixAspectRatio($('#rectangle'), ASPECT_RATIO)
+
+    # don't let this get in the way of touch events
+    $('#meteorSky').hide()
 
     showTargetStars()
   )
