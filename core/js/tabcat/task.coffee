@@ -423,3 +423,94 @@ tabcat.task.getAllTaskNames = ->
         when row.key[0..7] is '_design/' and \
           row.key[8..] not in NON_TASK_DESIGN_DOCS)
   )
+
+
+# implements adaptive difficulty. Keeps track of an "intensity"
+# (higher intensity means easier) and raises or lowers intensity
+# depending on how the patient does.
+#
+# Sample usage:
+#
+# s = tabcat.task.Staircase(stepsUp: 2, maxIntensity: 50)
+# s.addResult(true)   # got it correct
+# s.addResult(false)  # got it wrong
+#
+# You can set the following instance variables from the constructor:
+#
+# intensity: how easy is the task? (default 0)
+# lastIntensityChange: previous intensity change (default 0)
+# maxIntensity: upper limit for intensity (default is no limit)
+# minIntensity: lower limit for intensity (default is no limit)
+# numReversals: how many reversals so far? (default 0)
+# stepsDown: how much to lower intensity on correct response? (default 1)
+# stepsUp: how much to raise intensity on incorrect response? (default 1)
+# trialNum: which trial number are we on?
+#
+# If multiple objects are provided, we'll combine them together with
+# _.extend(). Note that other Staircase objects can be used as options;
+# to continue where another staircase left off, with some changes, do
+# something like:
+#
+# s = tabcat.task.Staircase(oldStaircase, intensity: 15, stepsUp: 3)
+tabcat.task.Staircase = class
+  constructor: (options...) ->
+    options = _.extend({}, options...)
+
+    @intensity = options.intensity ? 0
+    @lastIntensityChange = options.lastIntensityChange ? 0
+    @maxIntensity = options.maxIntensity ? null
+    @minIntensity = options.minIntensity ? null
+    @numReversals = options.numReversals ? 0
+    @stepsDown = options.stepsDown ? 1
+    @stepsUp = options.stepsUp ? 1
+    @trialNum = options.trialNum ? 0
+
+  # add a result (true for correct, false for incorrect) and return an
+  # interpretation of the result, with these fields:
+  #
+  # correct: true, false or null
+  # intensityChange: change in intensity as a result (omitted if 0)
+  # reversal: did this change cause a reversal? (only included if true)
+  #
+  # If we are prevented by min/max intensity from changing intensity
+  # as much as we would like, we count that as a reversal. However, we
+  # if the next change is intensity is in the opposite direction, we
+  # don't count that as another reversal (essentially, we treat it as
+  # if the intensity value hit the wall and bounced back).
+  #
+  # if correct is null, @trialNum will be incremented, but nothing else
+  # will change.
+  addResult: (correct) ->
+    @trialNum += 1
+
+    # normalize to true, false, or null
+    correct = if correct? then !!correct else null
+
+    interpretation =
+      correct: correct
+
+    # bail out if result is not scored
+    if not correct?
+      return interpretation
+
+    change = if correct then -@stepsDown else @stepsUp
+    lastIntensity = @intensity
+
+    rawIntensity = lastIntensity + change
+    @intensity = tabcat.math.clamp(@minIntensity, rawIntensity, @maxIntensity)
+
+    intensityChange = @intensity - lastIntensity
+    if intensityChange
+      interpretation.intensityChange = intensityChange
+
+    reversal = (
+      intensityChange * @lastIntensityChange < 0 or
+      @intensity != rawIntensity)  # i.e. we hit the floor/ceiling
+
+    @lastIntensityChange = intensityChange
+
+    if reversal
+      @numReversals += 1
+      interpretation.reversal = true
+
+    return interpretation

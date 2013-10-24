@@ -30,8 +30,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 tabcat.math = {}
 
 
-# return x, clamped to between min and max
-tabcat.math.clamp = (min, x, max) -> Math.min(max, Math.max(min, x))
+# return x, clamped to between min and max (null min/max have no effect).
+tabcat.math.clamp = (min, x, max) ->
+  if min? and x < min
+    x = min
+  if max? and x > max
+    x = max
+  return x
 
 
 # randomly return true or false
