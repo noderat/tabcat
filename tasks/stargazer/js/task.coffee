@@ -131,6 +131,20 @@ REMEMBER_MSG_DURATION = 1500
 # how long to display target stars (not including fades)
 TARGET_STAR_DURATION = 2000
 
+# how many reversals before we stop
+MAX_REVERSALS = 18
+
+
+# staircase: keeps track of intensity, number of trials, etc
+staircase = new tabcat.task.Staircase(
+  intensity: -1
+  minIntensity: -MAX_TARGET_STARS
+  maxIntensity: -1
+  stepsUp: 2
+  stepsDown: 1
+)
+
+
 
 # return x squared
 sq = (x) ->
@@ -393,7 +407,7 @@ showTargetStars = ->
   $rememberMsg.hide()
 
 
-  numTargetStars = _.random(1, MAX_TARGET_STARS)
+  numTargetStars = -staircase.intensity
 
   if numTargetStars > 1
     $rememberMsg.text('Remember these stars')
@@ -421,6 +435,7 @@ showTargetStars = ->
       duration: FADE_DURATION
       complete: ->
         $targetSky.fadeIn(duration: FADE_DURATION)
+        tabcat.task.logEvent(getTaskState())
         tabcat.ui.wait(TARGET_STAR_DURATION).then(showTestStars)
     )
   )
@@ -443,17 +458,21 @@ setUpTestSky = (testStars) ->
   $testSky.empty()
 
   for testStar, i in testStars
+    correct = i is 0
     $testStarImg = makeStarImg(testStar)
-    $testStarImg.one('mousedown touchStart', i, (event) ->
+    $testStarImg.one('mousedown touchStart', correct, (event) ->
       event.preventDefault()
-      i = event.data
-      if i is 0
-        console.log('correct!')
-      else
-        console.log(
-          'distractor at distance ' + DISTRACTOR_STAR_DISTANCES[i - 1])
+      correct = event.data
 
-      showTargetStars()
+      state = getTaskState()  # do this before addResult()!
+      interpretation = staircase.addResult(correct)
+
+      tabcat.task.logEvent(state, event, interpretation)
+
+      if staircase.numReversals >= MAX_REVERSALS
+        tabcat.task.finish()
+      else
+        showTargetStars()
     )
     $testSky.append($testStarImg)
 
@@ -499,6 +518,40 @@ showTestStars = ->
       $testSky.fadeIn(duration: FADE_DURATION)
   })
 
+# summary of the current state of the task
+getTaskState = ->
+  state =
+    intensity: staircase.intensity
+    stimuli: getStimuli()
+    trialNum: staircase.trialNum
+
+
+# describe what's on the screen. helper for getTaskState()
+getStimuli = ->
+  skyIdToKey =
+    meteorSky: 'meteors'
+    targetSky: 'targetStars'
+    testSky: 'testStars'
+
+  stimuli = {}
+
+  for own id, key of skyIdToKey
+    $sky = $('#' + id)
+    if $sky.is(':visible')
+      stimuli[key] = (
+        tabcat.task.getElementBounds(img) for img in $sky.find('img'))
+
+  if $('#rememberMsg').is(':visible')
+    stimuli.rememberMessage = true
+
+  return stimuli
+
+
+catchStrayTouchStart = (event) ->
+  event.preventDefault()
+  tabcat.task.logEvent(getTaskState(), event)
+
+
 
 # INITIALIZATION
 @initTask = ->
@@ -507,12 +560,14 @@ showTestStars = ->
   tabcat.ui.turnOffBounce()
 
   $(->
-    tabcat.ui.requireLandscapeMode($('#task'))
-    tabcat.ui.fixAspectRatio($('#rectangle'), ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight($('#rectangle'))
+    $task = $('#task')
+    $rectangle = $('#rectangle')
 
-    # don't let this get in the way of touch events
-    $('#meteorSky').hide()
+    tabcat.ui.requireLandscapeMode($task)
+    $task.on('mousedown touchstart', catchStrayTouchStart)
+
+    tabcat.ui.fixAspectRatio($rectangle, ASPECT_RATIO)
+    tabcat.ui.linkEmToPercentOfHeight($rectangle)
 
     showTargetStars()
   )

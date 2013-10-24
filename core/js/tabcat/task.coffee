@@ -452,6 +452,9 @@ tabcat.task.getAllTaskNames = ->
 # something like:
 #
 # s = tabcat.task.Staircase(oldStaircase, intensity: 15, stepsUp: 3)
+#
+# We recommend using negative intensity values for tasks that get harder
+# as a number of things increases (e.g. more stars to remember)
 tabcat.task.Staircase = class
   constructor: (options...) ->
     options = _.extend({}, options...)
