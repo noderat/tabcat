@@ -47,4 +47,6 @@ tabcat.math.mod = (a, b) -> ((a % b) + b) % b
 
 
 # return a number chosen uniformly at random from [a, b)
+#
+# for random integers, use _.random()
 tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)

@@ -39,6 +39,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
+#rectangle div.msg {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 10em;
+    color: #99bbcc;
+    background-color: transparent;
+}
+
+#rememberMsg {
+    top: 40%
+}
+
+#whichStarMsg {
+    top: 3%
+}
+
 #targetSky {
     z-index: 1000;
 }

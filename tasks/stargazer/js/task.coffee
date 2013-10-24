@@ -55,9 +55,16 @@ SKY_HEIGHT = 12
 # how many star diameters wide the sky div is
 SKY_WIDTH = SKY_HEIGHT * ASPECT_RATIO
 
-# star centers should be at least this many star diameters from the
-# edge of the sky div
-SKY_BORDER = MIN_STAR_DISTANCE
+# stars' centers should be at least this many star diameters from the
+# edges of the sky div. This isn't actual CSS, but it works the same way
+#
+# leaving a larger margin at the top leaves space for the
+# "which star did you just see?" message, and keeps us away from the
+# status bar
+SKY_TOP = 4.5
+SKY_BOTTOM = SKY_HEIGHT - 2.5
+SKY_LEFT = 2.5
+SKY_RIGHT = SKY_WIDTH - 2.5
 
 # path for the star image
 STAR_IMG_PATH = 'img/star.png'
@@ -117,6 +124,12 @@ METEOR_DURATION = 1200
 
 # how long a fade in should take, in msec
 FADE_DURATION = 400
+
+# how long the "remember these star(s)" message shows (not including fades)
+REMEMBER_MSG_DURATION = 1500
+
+# how long to display target stars (not including fades)
+TARGET_STAR_DURATION = 2000
 
 
 # return x squared
@@ -215,9 +228,11 @@ untilSucceeds = (f, maxFailures) ->
 
 # pick coordinates for a star at random
 pickStarInSky = ->
+  # we're positioning centers of the stars and the padding specifies
+  # edges, so make the range smaller by the stars' radius (0.5)
   [
-    tabcat.math.randomUniform(SKY_BORDER, SKY_WIDTH - SKY_BORDER),
-    tabcat.math.randomUniform(SKY_BORDER, SKY_HEIGHT - SKY_BORDER)
+    tabcat.math.randomUniform(SKY_LEFT, SKY_RIGHT)
+    tabcat.math.randomUniform(SKY_TOP, SKY_BOTTOM)
   ]
 
 
@@ -266,8 +281,7 @@ nextMeteor = (meteors) ->
 
 # is the given star in the sky?
 isInSky = ([x, y]) ->
-  SKY_BORDER <= x <= SKY_WIDTH - SKY_BORDER and \
-  SKY_BORDER <= y <= SKY_HEIGHT - SKY_BORDER
+  SKY_LEFT <= x <= SKY_RIGHT and SKY_TOP <= y <= SKY_BOTTOM
 
 
 # pick *n* target stars at random, and then pick 3 test stars
@@ -366,29 +380,50 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 
 # show stars to remember.
 #
-# This is also responsible for setting up all skies
+# This is also responsible for setting everything up (stars in sky,
+# meteors, messages)
 showTargetStars = ->
-  if event?.preventDefault?
-    event.preventDefault()
-
+  $rememberMsg = $('#rememberMsg')
   $targetSky = $('#targetSky')
   $testSky = $('#testSky')
   $meteorSky = $('#meteorSky')
 
   $targetSky.hide()
   $meteorSky.hide()
+  $rememberMsg.hide()
 
-  [targetStars, testStars] = pickTargetAndTestStars(MAX_TARGET_STARS)
 
-  setUpTargetSky(targetStars)
+  numTargetStars = _.random(1, MAX_TARGET_STARS)
+
+  if numTargetStars > 1
+    $rememberMsg.text('Remember these stars')
+  else
+    $rememberMsg.text('Remember this star')
 
   $testSky.hide()
-  $targetSky.fadeIn(duration: FADE_DURATION)
 
+  $rememberMsg.fadeIn(duration: FADE_DURATION)
+
+  # start the clock for when we want to hide the message
+  showedMsgLongEnough = tabcat.ui.wait(FADE_DURATION + REMEMBER_MSG_DURATION)
+
+  # pick stars/meteors and set them up while message is being shown
+  [targetStars, testStars] = pickTargetAndTestStars(numTargetStars)
+
+  setUpTargetSky(targetStars)
   setUpTestSky(testStars)
 
   meteors = pickMeteors(NUM_METEORS)
   setUpMeteorSky(meteors)
+
+  showedMsgLongEnough.then(->
+    $rememberMsg.fadeOut(
+      duration: FADE_DURATION
+      complete: ->
+        $targetSky.fadeIn(duration: FADE_DURATION)
+        tabcat.ui.wait(TARGET_STAR_DURATION).then(showTestStars)
+    )
+  )
 
 
 # set up the #targetSky div. Not responsible for hiding/showing it
@@ -399,13 +434,9 @@ setUpTargetSky = (targetStars) ->
   for targetStar in targetStars
     $targetSky.append(makeStarImg(targetStar))
 
-  $targetSky.one('mousedown touchStart', (event) ->
-    event.preventDefault()
-    showTestStars()
-  )
 
-
-# set up the #testSky div. Not responsible for hiding/showing it
+# set up the #testSky div, including the "which star did you just see?"
+# message. Not responsible for hiding/showing it
 setUpTestSky = (testStars) ->
   $testSky = $('#testSky')
 
@@ -425,6 +456,10 @@ setUpTestSky = (testStars) ->
       showTargetStars()
     )
     $testSky.append($testStarImg)
+
+    $whichStarMsg = $('<div></div>', id: 'whichStarMsg', class: 'msg')
+    $whichStarMsg.text('Which star did you just see?')
+    $testSky.append($whichStarMsg)
 
 
 # setup the #meteorSky div. Not responsible for hiding/showing it,
@@ -446,9 +481,6 @@ setUpMeteorSky = (meteors) ->
 # show star(s) to match against the target stars, after clearing
 # the screen with randomly chosen meteors
 showTestStars = ->
-  if event?.preventDefault?
-    event.preventDefault()
-
   $targetSky = $('#targetSky')
   $testSky = $('#testSky')
   $meteorSky = $('#meteorSky')
@@ -477,6 +509,7 @@ showTestStars = ->
   $(->
     tabcat.ui.requireLandscapeMode($('#task'))
     tabcat.ui.fixAspectRatio($('#rectangle'), ASPECT_RATIO)
+    tabcat.ui.linkEmToPercentOfHeight($('#rectangle'))
 
     # don't let this get in the way of touch events
     $('#meteorSky').hide()

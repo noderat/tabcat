@@ -22,6 +22,7 @@ Cleanup:
 - store config in tabcat DB, not data DB
   - this avoids auth issues, and allows us to keep configs in cache manifest
   - can still allow DB-specific configs too
+- user not prompted for password on stale login
 - use lz-string (http://pieroxy.net/blog/pages/lz-string/index.html)
   to compress spilled data
 - some strategy for not running out of localStorage
