@@ -438,7 +438,8 @@ tabcat.task.getAllTaskNames = ->
 # You can set the following instance variables from the constructor:
 #
 # intensity: how easy is the task? (default 0)
-# lastIntensityChange: previous intensity change (default 0)
+# lastIntensityChange: previous intensity change (default 0, also
+#   clamped between min/max intensity)
 # maxIntensity: upper limit for intensity (default is no limit)
 # minIntensity: lower limit for intensity (default is no limit)
 # numReversals: how many reversals so far? (default 0)
@@ -467,6 +468,8 @@ tabcat.task.Staircase = class
     @stepsDown = options.stepsDown ? 1
     @stepsUp = options.stepsUp ? 1
     @trialNum = options.trialNum ? 0
+
+    @intensity = tabcat.math.clamp(@minIntensity, @intensity, @maxIntensity)
 
   # add a result (true for correct, false for incorrect) and return an
   # interpretation of the result, with these fields:

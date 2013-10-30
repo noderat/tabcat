@@ -131,19 +131,46 @@ REMEMBER_MSG_DURATION = 1500
 # how long to display target stars (not including fades)
 TARGET_STAR_DURATION = 2000
 
+# how long to display target stars in practice mode
+TARGET_STAR_PRACTICE_DURATION = 4000
+
 # how many reversals before we stop
 MAX_REVERSALS = 18
 
 
-# staircase: keeps track of intensity, number of trials, etc
-staircase = new tabcat.task.Staircase(
+
+# initial static "staircase" for practice mode.
+practiceStaircase = new tabcat.task.Staircase(
   intensity: -1
+  stepsUp: 0
+  stepsDown: 0
+)
+
+
+# staircase: keeps track of intensity, number of trials, etc
+staircase = practiceStaircase
+
+# use these to make the real staircase once we leave practice mode
+STAIRCASE_PARAMS =
+  intensity: -2
   minIntensity: -MAX_TARGET_STARS
   maxIntensity: -1
   stepsUp: 2
   stepsDown: 1
-)
 
+
+
+# are we in practice mode?
+inPracticeMode = ->
+  staircase is practiceStaircase
+
+
+# how long to show target stars?
+getTargetStarDuration = ->
+  if inPracticeMode()
+    TARGET_STAR_PRACTICE_DURATION
+  else
+    TARGET_STAR_DURATION
 
 
 # return x squared
@@ -436,7 +463,7 @@ showTargetStars = ->
       complete: ->
         $targetSky.fadeIn(duration: FADE_DURATION)
         tabcat.task.logEvent(getTaskState())
-        tabcat.ui.wait(TARGET_STAR_DURATION).then(showTestStars)
+        tabcat.ui.wait(getTargetStarDuration()).then(showTestStars)
     )
   )
 
@@ -469,7 +496,10 @@ setUpTestSky = (testStars) ->
 
       tabcat.task.logEvent(state, event, interpretation)
 
-      if staircase.numReversals >= MAX_REVERSALS
+      if inPracticeMode() and correct
+        staircase = new tabcat.task.Staircase(staircase, STAIRCASE_PARAMS)
+
+      if not inPracticeMode() and staircase.numReversals >= MAX_REVERSALS
         tabcat.task.finish()
       else
         showTargetStars()
@@ -524,6 +554,11 @@ getTaskState = ->
     intensity: staircase.intensity
     stimuli: getStimuli()
     trialNum: staircase.trialNum
+
+  if inPracticeMode
+    state.practiceMode = true
+
+  return state
 
 
 # describe what's on the screen. helper for getTaskState()
