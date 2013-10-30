@@ -85,19 +85,19 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
 # how many meteors should we show?
-NUM_METEORS = 5
+NUM_METEORS = 10
 
 # path for the meteor image
-METEOR_IMG_PATH = 'img/meteor.png'
+METEOR_IMG_PATH = STAR_IMG_PATH #'img/meteor.png'
 
 # how many star diameters the meteor image file is
-METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = 9
+METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = STAR_IMG_WIDTH #9
 
 # the tracks meteors follow must be at least this many star diameters apart
-MIN_METEOR_TRACK_SPACING = 2
+MIN_METEOR_TRACK_SPACING = 1
 
 # meteors' centers must be at least this far apart
-MIN_METEOR_DISTANCE = 5
+MIN_METEOR_DISTANCE = 3
 
 # where in the meteor sky can meteors be centered?
 METEOR_MIN_X = 0
@@ -120,7 +120,7 @@ METEOR_START_XY = SCREEN_MIN_Y - METEOR_MAX_Y - (METEOR_IMG_HEIGHT / 2)
 METEOR_END_XY = SCREEN_MAX_Y - METEOR_MIN_Y + (3 * METEOR_IMG_HEIGHT / 2)
 
 # how long does the meteor sky's animation last
-METEOR_DURATION = 1200
+METEOR_DURATION = 900
 
 # how long a fade in should take, in msec
 FADE_DURATION = 400
