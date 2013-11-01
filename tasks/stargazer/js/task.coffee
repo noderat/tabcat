@@ -85,7 +85,7 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
 # path for the meteor image
-METEOR_IMG_PATH = STAR_IMG_PATH #'img/meteor.png'
+METEOR_IMG_PATH = STAR_IMG_PATH
 
 # how many star diameters meteor images should be
 METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = STAR_IMG_WIDTH
