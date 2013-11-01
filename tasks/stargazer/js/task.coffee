@@ -84,25 +84,25 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 # max y-coordinate for bottom of screen, in star coordinates
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
-# how many meteors should we show?
-NUM_METEORS = 10
-
 # path for the meteor image
 METEOR_IMG_PATH = STAR_IMG_PATH #'img/meteor.png'
 
-# how many star diameters the meteor image file is
-METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = STAR_IMG_WIDTH #9
-
-# the tracks meteors follow must be at least this many star diameters apart
-MIN_METEOR_TRACK_SPACING = 1
-
-# meteors' centers must be at least this far apart
-MIN_METEOR_DISTANCE = 3
+# how many star diameters meteor images should be
+METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = STAR_IMG_WIDTH
+# we show one meteor, at the given scale, for each value in this arry
+METEOR_SCALES = [
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  4, 4, 4, 4, 4, 4, 4,
+  8, 8, 8, 8, 8, 8, 8
+]
+METEOR_IMG_MAX_HEIGHT = METEOR_IMG_HEIGHT * Math.max(METEOR_SCALES...)
 
 # where in the meteor sky can meteors be centered?
-METEOR_MIN_X = 0
+METEOR_MIN_X = -0.5 * SKY_WIDTH
 METEOR_MIN_Y = 0
-METEOR_MAX_X = SKY_WIDTH
+METEOR_MAX_X = 1.5 * SKY_WIDTH
 METEOR_MAX_Y = SKY_HEIGHT
 
 # Where does the meteor sky start its animation (upper-left corner)?
@@ -111,13 +111,13 @@ METEOR_MAX_Y = SKY_HEIGHT
 #
 # Meteors always travel at a 45-degree angle, down and to the right,
 # so x and y coordinates are the same.
-METEOR_START_XY = SCREEN_MIN_Y - METEOR_MAX_Y - (METEOR_IMG_HEIGHT / 2)
+METEOR_START_XY = SCREEN_MIN_Y - METEOR_MAX_Y - (METEOR_IMG_MAX_HEIGHT / 2)
 
 # where does the meteor sky end its animation? (upper-left corner)
 #
 # This gives the meteors a little extra distance after they leave even
 # the squares of screens, which seems to help on slow devices
-METEOR_END_XY = SCREEN_MAX_Y - METEOR_MIN_Y + (3 * METEOR_IMG_HEIGHT / 2)
+METEOR_END_XY = SCREEN_MAX_Y - METEOR_MIN_Y + (3 * METEOR_IMG_MAX_HEIGHT / 2)
 
 # how long does the meteor sky's animation last
 METEOR_DURATION = 900
@@ -216,9 +216,9 @@ makeStarImg = ([x, y]) ->
     class: 'star', src: STAR_IMG_PATH)
 
 
-# convert meteor center (in star coordinates) to an image tag
-makeMeteorImg = ([x, y]) ->
-  makeImg([x, y], [METEOR_IMG_WIDTH, METEOR_IMG_HEIGHT],
+# convert meteor center (in star coordinates) and height to an image tag
+makeMeteorImg = ([[x, y], scale]) ->
+  makeImg([x, y], [scale * METEOR_IMG_WIDTH, scale * METEOR_IMG_HEIGHT],
     class: 'star', src: METEOR_IMG_PATH)
 
 
@@ -278,46 +278,17 @@ pickStarInSky = ->
 
 
 # pick center coordinates of a meteor
-pickMeteor = ->
+pickMeteorCenter = ->
   [
     tabcat.math.randomUniform(METEOR_MIN_X, METEOR_MAX_X),
     tabcat.math.randomUniform(METEOR_MIN_Y, METEOR_MAX_Y),
   ]
 
 
+
 # pick a field of n meteors
 pickMeteors = (n) ->
-  untilSucceeds(->
-    meteors = []
-
-    while meteors.length < n
-      meteors.push(
-        untilSucceeds((-> nextMeteor(meteors)), MAX_FAILURES))
-
-    return meteors
-  )
-
-
-# randomly pick next meteor for a group, throwing Failure if it's
-# too close to existing meteors
-nextMeteor = (meteors) ->
-  # come up with a number indicating which track this meteor will follow
-  track = ([x, y]) ->
-    x - y
-
-  candidateMeteor = pickMeteor()
-  candidateTrack = track(candidateMeteor)
-
-  for meteor in meteors
-    # tracks are at a 45-degree angle, so for tracks to be 1 unit apart,
-    # x - y has to be at least sqrt(2) apart
-    if sq(track(meteor) - candidateTrack) < sq(MIN_METEOR_TRACK_SPACING) * 2
-      throw new Failure
-
-    if distSq(meteor, candidateMeteor) < sq(MIN_METEOR_DISTANCE)
-      throw new Failure
-
-  return candidateMeteor
+  [pickMeteorCenter(), scale] for scale in METEOR_SCALES
 
 
 # is the given star in the sky?
@@ -454,7 +425,7 @@ showTargetStars = ->
   setUpTargetSky(targetStars)
   setUpTestSky(testStars)
 
-  meteors = pickMeteors(NUM_METEORS)
+  meteors = pickMeteors()
   setUpMeteorSky(meteors)
 
   showedMsgLongEnough.then(->
