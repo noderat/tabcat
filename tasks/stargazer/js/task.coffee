@@ -487,7 +487,7 @@ setUpTestSky = (testStars) ->
   for testStar, i in testStars
     correct = i is 0
     $testStarImg = makeStarImg(testStar)
-    $testStarImg.one('mousedown touchStart', correct, (event) ->
+    $testStarImg.one('mousedown touchstart', correct, (event) ->
       event.preventDefault()
       correct = event.data
 
