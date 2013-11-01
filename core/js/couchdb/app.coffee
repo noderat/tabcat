@@ -24,11 +24,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
-# keep track of documents needed for offline mode
-offlineMap = (doc) ->
-  #  if substring(doc._id, 8) is '_design/'
-  emit(doc._id, attachments: doc._attachments)
-
 
 # sort docs by patient, encounter, and task
 #
@@ -194,7 +189,5 @@ exports.lists =
 exports.validate_doc_update = validateDocUpdate
 
 exports.views =
-  offline:
-    map: offlineMap
   patient:
     map: patientMap
