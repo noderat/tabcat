@@ -62,9 +62,14 @@ parser.on('data', (encounter) ->
       firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
       totalTime = (task.finishedAt - firstAction.now) / 1000
       timePerTrial = totalTime / numTrials
-      intensitiesAtReversal = (
-        item.state.intensity for item in task.eventLog \
-        when item?.interpretation?.reversal)
+
+      # use the "interpretation" field if we have it (phasing this out)
+      intensitiesAtReversal = task?.interpretation?.intensitiesAtReversal
+
+      if not intensitiesAtReversal?
+        intensitiesAtReversal = (
+          item.state.intensity for item in task.eventLog \
+          when item?.interpretation?.reversal)
 
       csvout.write([
         encounter.patientCode,
