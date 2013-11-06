@@ -58,13 +58,13 @@ parser.on('data', (encounter) ->
       # this isn't an off-by one; we discard the first trial because we
       # don't know when the patient first gets the task
       # using ? null because _.max() handles undefined differently
-      numTrials = _.max(item.state?.trialNum ? null for item in task.eventLog)
-      firstAction = _.find(task.eventLog, (item) -> item.interpretation?)
+      numTrials = _.max(item?.state?.trialNum ? null for item in task.eventLog)
+      firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
       totalTime = (task.finishedAt - firstAction.now) / 1000
       timePerTrial = totalTime / numTrials
       intensitiesAtReversal = (
         item.state.intensity for item in task.eventLog \
-        when item.interpretation?.reversal)
+        when item?.interpretation?.reversal)
 
       csvout.write([
         encounter.patientCode,
