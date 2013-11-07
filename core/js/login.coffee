@@ -52,7 +52,12 @@ submitLoginForm = (event) ->
   tabcat.ui.turnOffBounce()
 
   $(->
+    # continue session/encounter if user is restarting TabCAT
     if tabcat.user.get() and not window.location.hash
+
+      # trigger asking user for password if no valid session cookie
+      tabcat.task.patientHasDevice(false)
+
       if tabcat.encounter.isOpen()
         $('#message').text('Continuing encounter...')
         window.location = 'tasks.html'
