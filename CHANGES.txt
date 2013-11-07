@@ -1,3 +1,17 @@
+v0.4.2, 2013-11-07 -- public release
+- core library:
+  - added tabcat.task.Staircase (not yet used) for psychometric staircasing
+  - upgraded underscore.js from 1.4.4 to 1.5.2 to use _.sample()
+  - removed useless "offline" view
+  - tabcat.math.clamp() now treats null as "no limit"
+- console UI:
+  - assume patient does not have device when restarting TabCAT (fixes #10)
+- documentation:
+  - added README with install/setup instructions
+  - added BSD license to all source code files
+- scripts:
+  - line-tasks-report now puts all patient data on the same line
+
 v0.4.1, 2013-10-10 -- more responsive tasks
 - tasks:
   - all tasks use touchstart rather than click wherever appropriate
