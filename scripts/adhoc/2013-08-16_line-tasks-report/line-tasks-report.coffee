@@ -36,49 +36,83 @@ fs = require('fs')
 JSONStream = require('JSONStream')
 _ = require('underscore')._
 
+NUM_REVERSALS = 20
+
 LINE_TASKS = [
   'parallel-line-length',
   'perpendicular-line-length',
   'line-orientation'
 ]
 
+COLUMNS_PER_TASK = NUM_REVERSALS + 3
+
 stream = fs.createReadStream(process.argv[2], encoding: 'utf8')
-parser = JSONStream.parse('*.encounters.*')
+parser = JSONStream.parse('*')
 csvout = csv().to(process.stdout)
 
-csvout.write([
-  'patientCode', 'encounterNum', 'taskName',
-  'totalTime', 'numTrials', 'timePerTrial',
-  'intensitiesAtReversal'])
+taskHeader = (prefix) ->
+  [prefix + 'Time', prefix + 'Trials', prefix + 'TimePerTrial'].concat(
+    (prefix + i for i in [1..NUM_REVERSALS]))
+
+header = ['patientCode'].concat(
+  taskHeader('Par')).concat(
+  taskHeader('Prp')).concat(
+  taskHeader('LO'))
+
+csvout.write(header)
 
 
-parser.on('data', (encounter) ->
-  for task in encounter.tasks
-    if task.finishedAt and task.name in LINE_TASKS
-      # this isn't an off-by one; we discard the first trial because we
-      # don't know when the patient first gets the task
-      # using ? null because _.max() handles undefined differently
-      numTrials = _.max(item?.state?.trialNum ? null for item in task.eventLog)
-      firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
-      totalTime = (task.finishedAt - firstAction.now) / 1000
-      timePerTrial = totalTime / numTrials
+parser.on('data', (patient) ->
+  patientCode = patient.patientCode
 
-      # use the "interpretation" field if we have it (phasing this out)
-      intensitiesAtReversal = task?.interpretation?.intensitiesAtReversal
+  taskToInfo = {}
+  for encounter in patient.encounters
+    for task in encounter.tasks
+      if task.finishedAt and task.name in LINE_TASKS
+        # only keep the first task per patient
+        if taskToInfo[task.name]
+          continue
 
-      if not intensitiesAtReversal?
-        intensitiesAtReversal = (
-          item.state.intensity for item in task.eventLog \
-          when item?.interpretation?.reversal)
+        # this isn't an off-by one; we discard the first trial because we
+        # don't know when the patient first gets the task
+        # using ? null because _.max() handles undefined differently
+        numTrials = _.max(
+          item?.state?.trialNum ? null for item in task.eventLog)
 
-      csvout.write([
-        encounter.patientCode,
-        encounter.encounterNum,
-        task.name,
-        totalTime,
-        numTrials,
-        timePerTrial,
-      ].concat(intensitiesAtReversal))
+        firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
+        totalTime = (task.finishedAt - firstAction.now) / 1000
+
+        # use the "interpretation" field if we have it (phasing this out)
+        intensitiesAtReversal = task?.interpretation?.intensitiesAtReversal
+
+        if not intensitiesAtReversal?
+          intensitiesAtReversal = (
+            item.state.intensity for item in task.eventLog \
+            when item?.interpretation?.reversal)
+
+        taskToInfo[task.name] =
+          totalTime: totalTime
+          numTrials: numTrials
+          timePerTrial: totalTime / numTrials
+          intensitiesAtReversal: intensitiesAtReversal
+
+  if _.isEmpty(taskToInfo)
+    return
+
+  data = []
+
+  data[0] = patientCode
+  for taskName, i in LINE_TASKS
+    info = taskToInfo[taskName]
+    if info?
+      offset = i * COLUMNS_PER_TASK + 1
+      data[offset] = info.totalTime
+      data[offset + 1] = info.numTrials
+      data[offset + 2] = info.timePerTrial
+      for intensity, j in info.intensitiesAtReversal
+        data[offset + 3 + j] = intensity
+
+  csvout.write(data)
 )
 
 stream.pipe(parser)
