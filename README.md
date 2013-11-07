@@ -23,13 +23,14 @@ In order to build and install TabCAT, you will need:
  * [node.js](http://nodejs.org/)
  * [kanso](http://kan.so)
  * [CoffeeScript](http://coffeescript.org/)
+ * [curl](http://curl.haxx.se/download.html)
  * [GNU make](http://www.gnu.org/software/make/)
- 
+
 Don't panic! Once you have node.js, installing kanso and coffeescript is just a matter of running `npm`.
 
-If you are on a UNIX system, you probably have `make` already.
+If you are on a UNIX system, you probably have `make` (and `curl`) already.
 
-On Mac OS X, it's available as part of [XCode](https://developer.apple.com/xcode/); once you have XCode installed, install Command Line Tools from the Components tab of the Downloads preferences panel.
+On Mac OS X, `make` is available as part of [XCode](https://developer.apple.com/xcode/); once you have XCode installed, install Command Line Tools from the Components tab of the Downloads preferences panel.
 
 On Windows, you'll probably want to install [Cygwin](http://www.cygwin.com/).
 
@@ -82,7 +83,3 @@ Then log in with your email and password. It'll prompt you for a patient code; i
 If you're on Android, the best way to get the same kind of "standalone" behavior is to install [Firefox for Android](https://play.google.com/store/apps/details?id=org.mozilla.firefox). Add TabCAT to your home screen by clicking on the nav bar, the History tab, holding down on the entry for TabCAT (which should be at the top), and then choosing Add to Home Screen. Then, from Firefox, install [Full Screen mobile extension](https://addons.mozilla.org/En-us/mobile/addon/full-screen-252573/) and enable it from the Menu button.
 
 If you're on a Microsoft Surface, your best bet is to launch TabCAT from the desktop in Internet Explore, and then enable Full Screen mode (F11, I think?).
-
-
-
-
