@@ -67,7 +67,3 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #testSky {
     z-index: 1000;
 }
-
-#meteorSky {
-    z-index: 1001;
-}

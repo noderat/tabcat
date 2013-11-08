@@ -84,44 +84,6 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 # max y-coordinate for bottom of screen, in star coordinates
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
-# path for the meteor image
-METEOR_IMG_PATH = STAR_IMG_PATH #'img/meteor.png'
-
-# how many star diameters meteor images should be
-METEOR_IMG_WIDTH = METEOR_IMG_HEIGHT = STAR_IMG_WIDTH
-# we show one meteor, at the given scale, for each value in this arry
-METEOR_SCALES = [
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  4, 4, 4, 4, 4, 4, 4,
-  8, 8, 8, 8, 8, 8, 8
-]
-METEOR_IMG_MAX_HEIGHT = METEOR_IMG_HEIGHT * Math.max(METEOR_SCALES...)
-
-# where in the meteor sky can meteors be centered?
-METEOR_MIN_X = -0.5 * SKY_WIDTH
-METEOR_MIN_Y = 0
-METEOR_MAX_X = 1.5 * SKY_WIDTH
-METEOR_MAX_Y = SKY_HEIGHT
-
-# Where does the meteor sky start its animation (upper-left corner)?
-#
-# This positions the sky just off-screen when the screen is nearly square
-#
-# Meteors always travel at a 45-degree angle, down and to the right,
-# so x and y coordinates are the same.
-METEOR_START_XY = SCREEN_MIN_Y - METEOR_MAX_Y - (METEOR_IMG_MAX_HEIGHT / 2)
-
-# where does the meteor sky end its animation? (upper-left corner)
-#
-# This gives the meteors a little extra distance after they leave even
-# the squares of screens, which seems to help on slow devices
-METEOR_END_XY = SCREEN_MAX_Y - METEOR_MIN_Y + (3 * METEOR_IMG_MAX_HEIGHT / 2)
-
-# how long does the meteor sky's animation last
-METEOR_DURATION = 900
-
 # how long a fade in should take, in msec
 FADE_DURATION = 400
 
@@ -192,7 +154,7 @@ starYToSky = (y) ->
   (100 * y / SKY_HEIGHT) + '%'
 
 
-# helper for makeStarImg and makeMeteorImg
+# helper for makeStarImg
 makeImg = ([x, y], [width, height], attrs) ->
   $img = $('<img>')
 
@@ -216,13 +178,7 @@ makeStarImg = ([x, y]) ->
     class: 'star', src: STAR_IMG_PATH)
 
 
-# convert meteor center (in star coordinates) and height to an image tag
-makeMeteorImg = ([[x, y], scale]) ->
-  makeImg([x, y], [scale * METEOR_IMG_WIDTH, scale * METEOR_IMG_HEIGHT],
-    class: 'star', src: METEOR_IMG_PATH)
-
-
-# helper for makeStarImg and makeMeteorImgAndAnimation
+# helper for makeStarImg
 makeImg = ([x, y], [width, height], attrs) ->
   $img = $('<img>')
 
@@ -275,20 +231,6 @@ pickStarInSky = ->
     tabcat.math.randomUniform(SKY_LEFT, SKY_RIGHT)
     tabcat.math.randomUniform(SKY_TOP, SKY_BOTTOM)
   ]
-
-
-# pick center coordinates of a meteor
-pickMeteorCenter = ->
-  [
-    tabcat.math.randomUniform(METEOR_MIN_X, METEOR_MAX_X),
-    tabcat.math.randomUniform(METEOR_MIN_Y, METEOR_MAX_Y),
-  ]
-
-
-
-# pick a field of n meteors
-pickMeteors = (n) ->
-  [pickMeteorCenter(), scale] for scale in METEOR_SCALES
 
 
 # is the given star in the sky?
@@ -392,16 +334,14 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 
 # show stars to remember.
 #
-# This is also responsible for setting everything up (stars in sky,
-# meteors, messages)
+# This is also responsible for setting up star positions for the entire
+# trial.
 showTargetStars = ->
   $rememberMsg = $('#rememberMsg')
   $targetSky = $('#targetSky')
   $testSky = $('#testSky')
-  $meteorSky = $('#meteorSky')
 
   $targetSky.hide()
-  $meteorSky.hide()
   $rememberMsg.hide()
 
 
@@ -419,14 +359,11 @@ showTargetStars = ->
   # start the clock for when we want to hide the message
   showedMsgLongEnough = tabcat.ui.wait(FADE_DURATION + REMEMBER_MSG_DURATION)
 
-  # pick stars/meteors and set them up while message is being shown
+  # pick stars and set them up while message is being shown
   [targetStars, testStars] = pickTargetAndTestStars(numTargetStars)
 
   setUpTargetSky(targetStars)
   setUpTestSky(testStars)
-
-  meteors = pickMeteors()
-  setUpMeteorSky(meteors)
 
   showedMsgLongEnough.then(->
     $rememberMsg.fadeOut(
@@ -482,42 +419,13 @@ setUpTestSky = (testStars) ->
     $testSky.append($whichStarMsg)
 
 
-# setup the #meteorSky div. Not responsible for hiding/showing it,
-# but does put it in the correct initial position
-setUpMeteorSky = (meteors) ->
-  $meteorSky = $('#meteorSky')
-
-  $meteorSky.empty()
-
-  for meteor in meteors
-    $meteorSky.append(makeMeteorImg(meteor))
-
-  $meteorSky.css(
-    left: starXToSky(METEOR_START_XY)
-    top: starYToSky(METEOR_START_XY)
-  )
-
-
-# show star(s) to match against the target stars, after clearing
-# the screen with randomly chosen meteors
+# show star(s) to match against the target stars
 showTestStars = ->
   $targetSky = $('#targetSky')
   $testSky = $('#testSky')
-  $meteorSky = $('#meteorSky')
 
   $targetSky.hide()
-  $meteorSky.show()
-
-  $meteorSky.animate({
-    left: starXToSky(METEOR_END_XY),
-    top: starYToSky(METEOR_END_XY)
-  }, {
-    duration: METEOR_DURATION
-    easing: 'linear'
-    complete: ->
-      $meteorSky.hide()
-      $testSky.fadeIn(duration: FADE_DURATION)
-  })
+  $testSky.fadeIn(duration: FADE_DURATION)
 
 # summary of the current state of the task
 getTaskState = ->
@@ -535,7 +443,6 @@ getTaskState = ->
 # describe what's on the screen. helper for getTaskState()
 getStimuli = ->
   skyIdToKey =
-    meteorSky: 'meteors'
     targetSky: 'targetStars'
     testSky: 'testStars'
 
