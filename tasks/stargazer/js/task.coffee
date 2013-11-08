@@ -87,9 +87,6 @@ SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 # how long a fade in should take, in msec
 FADE_DURATION = 400
 
-# how long the "remember these star(s)" message shows (not including fades)
-REMEMBER_MSG_DURATION = 1500
-
 # how long to display target stars (not including fades)
 TARGET_STAR_DURATION = 2000
 
@@ -337,43 +334,22 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 # This is also responsible for setting up star positions for the entire
 # trial.
 showTargetStars = ->
-  $rememberMsg = $('#rememberMsg')
   $targetSky = $('#targetSky')
   $testSky = $('#testSky')
 
-  $targetSky.hide()
-  $rememberMsg.hide()
-
-
-  numTargetStars = -staircase.intensity
-
-  if numTargetStars > 1
-    $rememberMsg.text('Remember these stars')
-  else
-    $rememberMsg.text('Remember this star')
-
   $testSky.hide()
-
-  $rememberMsg.fadeIn(duration: FADE_DURATION)
-
-  # start the clock for when we want to hide the message
-  showedMsgLongEnough = tabcat.ui.wait(FADE_DURATION + REMEMBER_MSG_DURATION)
+  $targetSky.hide()
 
   # pick stars and set them up while message is being shown
+  numTargetStars = -staircase.intensity
   [targetStars, testStars] = pickTargetAndTestStars(numTargetStars)
 
   setUpTargetSky(targetStars)
   setUpTestSky(testStars)
 
-  showedMsgLongEnough.then(->
-    $rememberMsg.fadeOut(
-      duration: FADE_DURATION
-      complete: ->
-        $targetSky.fadeIn(duration: FADE_DURATION)
-        tabcat.task.logEvent(getTaskState())
-        tabcat.ui.wait(getTargetStarDuration()).then(showTestStars)
-    )
-  )
+  $targetSky.fadeIn(duration: FADE_DURATION)
+  tabcat.task.logEvent(getTaskState())
+  tabcat.ui.wait(getTargetStarDuration()).then(showTestStars)
 
 
 # set up the #targetSky div. Not responsible for hiding/showing it
@@ -383,6 +359,13 @@ setUpTargetSky = (targetStars) ->
   $targetSky.empty()
   for targetStar in targetStars
     $targetSky.append(makeStarImg(targetStar))
+
+  $msg = $('<div></div>', class: 'msg')
+  if inPracticeMode()
+    $msg.text('Remember where this star is')
+  else
+    $msg.text('Remember')
+  $targetSky.append($msg)
 
 
 # set up the #testSky div, including the "which star did you just see?"
@@ -414,9 +397,9 @@ setUpTestSky = (testStars) ->
     )
     $testSky.append($testStarImg)
 
-    $whichStarMsg = $('<div></div>', id: 'whichStarMsg', class: 'msg')
-    $whichStarMsg.text('Which star did you just see?')
-    $testSky.append($whichStarMsg)
+    $msg = $('<div></div>', class: 'msg')
+    $msg.text('Which star did you just see?')
+    $testSky.append($msg)
 
 
 # show star(s) to match against the target stars
@@ -453,9 +436,6 @@ getStimuli = ->
     if $sky.is(':visible')
       stimuli[key] = (
         tabcat.task.getElementBounds(img) for img in $sky.find('img'))
-
-  if $('#rememberMsg').is(':visible')
-    stimuli.rememberMessage = true
 
   return stimuli
 
