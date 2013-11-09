@@ -77,12 +77,46 @@ STAR_IMG_PATH = 'img/star.png'
 # target areas can't touch.
 STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
 
+# path for the comet image
+COMET_IMG_PATH = 'img/comet.png'
+
+# size of the comet, in star diameters
+COMET_IMG_HEIGHT = 4
+COMET_IMG_WIDTH = COMET_IMG_HEIGHT / 368 * 118
+
 # minimum y-coordinate for top of screen, in star coordinates
 # (it can't be any less than this because we don't allow portrait mode)
 SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 
 # max y-coordinate for bottom of screen, in star coordinates
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
+
+# max y-coordinate for comet centers, so as to be above the screen
+# (in theory, we should use the length of the diagonal of the comet,
+# but in practice, that part of the image is transparent anyway)
+COMET_START_MAX_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
+# arbitrary min y-coordinate for comet start
+COMET_START_MIN_Y = COMET_START_MAX_Y - SKY_HEIGHT
+
+# max y-coordinate for comet centers, so as to be below the screen
+COMET_END_MIN_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
+# arbitrary max y-coordinate for comet end
+COMET_END_MAX_Y = COMET_END_MIN_Y + SKY_HEIGHT
+
+# aribtrary x coordinate ranges for comets. The start x will be pulled
+# from one, and the end x from the other, so that comets will always cross
+# the screen.
+COMET_X_RANGES = [
+  [-SKY_WIDTH, SKY_WIDTH * 0.3],
+  [SKY_WIDTH * 0.7, SKY_WIDTH * 2]
+]
+
+COMET_MIN_DURATION = 500
+COMET_MAX_DURATION = 1000
+
+COMET_SKY_DURATION = 5000
+
+
 
 # how long a fade in should take, in msec
 FADE_DURATION = 400
@@ -116,6 +150,9 @@ STAIRCASE_PARAMS =
   maxIntensity: -1
   stepsUp: 2
   stepsDown: 1
+
+# how many comets has the patient caught so far?
+cometsCaught = 0
 
 
 
@@ -174,23 +211,6 @@ makeStarImg = ([x, y]) ->
   makeImg([x, y], [STAR_IMG_WIDTH, STAR_IMG_HEIGHT],
     class: 'star', src: STAR_IMG_PATH)
 
-
-# helper for makeStarImg
-makeImg = ([x, y], [width, height], attrs) ->
-  $img = $('<img>')
-
-  for own key, value of attrs
-    $img.attr(key, value)
-
-  $img.css(
-    left: starXToSky(x - width / 2)
-    top: starYToSky(y - height / 2)
-  )
-
-  $img.attr('width', starXToSky(width))
-  $img.attr('height', starYToSky(height))
-
-  return $img
 
 
 # used by untilSucceeds (below)
@@ -327,6 +347,52 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
   return [x + Math.cos(angle) * distance, y + Math.sin(angle) * distance]
 
 
+# pick start and end coordinates for comets
+pickCometStartEndAngleAndDuration = ->
+  [startX, endX] = (
+    tabcat.math.randomUniform(range...) for range in _.shuffle(COMET_X_RANGES))
+  startY = tabcat.math.randomUniform(COMET_START_MIN_Y, COMET_START_MAX_Y)
+  endY = tabcat.math.randomUniform(COMET_END_MIN_Y, COMET_END_MAX_Y)
+
+  angle = -Math.atan2(endY - startY, endX - startX) / Math.PI * 180
+
+  duration = tabcat.math.randomUniform(COMET_MIN_DURATION, COMET_MAX_DURATION)
+
+  return [[startX, startY], [endX, endY], angle, duration]
+
+
+# convert comet center and angle to an image
+makeCometImg = ([x, y], angle) ->
+  $img = makeImg([x, y], [COMET_IMG_WIDTH, COMET_IMG_HEIGHT],
+    class: 'comet', src: COMET_IMG_PATH)
+  $img.css(rotationCss(angle))
+  return $img
+
+
+# add a comet to the given div. stopAt is a timestamp to stop at
+# (using tabcat.clock())
+addComet = ($div, stopAt) ->
+  [start, end, angle, duration] = pickCometStartEndAngleAndDuration()
+  now = tabcat.clock.now()
+  if now + duration > stopAt
+    return
+
+  $cometImg = makeCometImg(start, angle)
+  $div.append($cometImg)
+
+  $cometImg.animate({
+    left: starXToSky(end[0] - COMET_IMG_WIDTH / 2),
+    top: starYToSky(end[1] - COMET_IMG_WIDTH / 2),
+  }, {
+    duration: duration
+    easing: 'linear'
+    complete: ->
+      $.remove($cometImg)
+      addComet()
+  })
+
+
+
 
 
 # show stars to remember.
@@ -443,6 +509,21 @@ getStimuli = ->
 catchStrayTouchStart = (event) ->
   event.preventDefault()
   tabcat.task.logEvent(getTaskState(), event)
+
+
+# TODO: use $.cssHooks instead
+rotationCss = (angle) ->
+  if angle == 0
+    return {}
+
+  value = 'rotate(' + angle + 'deg)'
+  return {
+    transform: value
+    '-moz-transform': value
+    '-ms-transform': value
+    '-o-transform': value
+    '-webkit-transform': value
+  }
 
 
 
