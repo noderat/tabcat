@@ -23,10 +23,15 @@ In order to build and install TabCAT, you will need:
  * [node.js](http://nodejs.org/)
  * [kanso](http://kan.so)
  * [CoffeeScript](http://coffeescript.org/)
+ * [UglifyJS](https://github.com/mishoo/UglifyJS2)
  * [curl](http://curl.haxx.se/download.html)
  * [GNU make](http://www.gnu.org/software/make/)
 
-Don't panic! Once you have node.js, installing kanso and coffeescript is just a matter of running `npm`.
+Don't panic! Once you have node.js, installing kanso, coffeescript, and UglifyJS is just a matter of running:
+
+```sh
+sudo npm install -g kanso coffee-script uglify-js
+```
 
 If you are on a UNIX system, you probably have `make` (and `curl`) already.
 
