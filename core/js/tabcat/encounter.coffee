@@ -103,7 +103,8 @@ tabcat.encounter.newDoc = (patientCode, configDoc) ->
 
   if configDoc?.limitedPHI
     doc.limitedPHI =
-      month: date.getMonth()
+      # in JavaScript, January is 0, February is 1, etc.
+      month: date.getMonth() + 1
       day: date.getDate()
       clockOffset: clockOffset
 
