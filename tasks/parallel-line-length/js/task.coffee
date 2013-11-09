@@ -24,6 +24,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+
 # LOOK AND FEEL
 
 # pretend div containing the test is on an iPad
@@ -63,7 +64,7 @@ PRACTICE_CAPTION_MAX_STREAK = 2
 # task is done after this many reversals (change in direction of
 # intensity change). Bumping against the floor/ceiling also counts
 # as a reversal
-MAX_REVERSALS = 20
+MAX_REVERSALS = 14
 
 
 # VARIABLES
