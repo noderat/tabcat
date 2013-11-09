@@ -1,3 +1,9 @@
+v0.4.3, 2013-11-09 -- 14 reversals is enough
+- core library:
+  - encounter.limitedPHI.month is now 1-indexed (fixes #45)
+- tasks:
+  - all line tasks stop after 14 reverals rather than 20 (see #44)
+
 v0.4.2, 2013-11-07 -- public release
 - core library:
   - added tabcat.task.Staircase (not yet used) for psychometric staircasing
