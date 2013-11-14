@@ -121,6 +121,11 @@ COMET_INITIAL_DELAY = 500
 # stop showing new comets after this time limit is up
 COMET_TIME_LIMIT = 5000
 
+# where the top of the comet message should start and stop,
+# as % of sky height
+COMET_MSG_INITIAL_TOP = 3
+COMET_MSG_FINAL_TOP = 85
+
 # how tall the score font is, as percentage of sky height
 SCORE_FONT_SIZE = 12
 
@@ -448,11 +453,11 @@ showTargetStars = ->
 
   $targetSky.fadeIn(duration: FADE_DURATION)
   tabcat.task.logEvent(getTaskState())
-  tabcat.ui.wait(getTargetStarDuration()).then(showComets)
+  tabcat.ui.wait(getTargetStarDuration()).then(showCometSky)
 
 
 # show comets to catch
-showComets = ->
+showCometSky = ->
   $targetSky = $('#targetSky')
   $cometSky = $('#cometSky')
 
@@ -463,6 +468,25 @@ showComets = ->
   else
     $msg.text('Catch comets!')
   $cometSky.append($msg)
+
+  # make message move down the screen, so it can't be used as
+  # an anchor
+
+  $msg.css('top', COMET_MSG_INITIAL_TOP + '%')
+  $msg.animate(top: COMET_MSG_FINAL_TOP + '%', {
+    duration: COMET_TIME_LIMIT - FADE_DURATION,
+    easing: 'linear',
+    complete: ->
+      $msg.fadeOut(duration: FADE_DURATION)
+  })
+
+  $targetSky.hide()
+  $cometSky.fadeIn(duration: FADE_DURATION)
+
+  showComets()
+
+# helper for showCometSky()
+showComets = (duration) ->
 
   stopAt = tabcat.clock.now() + COMET_TIME_LIMIT
 
@@ -503,8 +527,6 @@ showComets = ->
     else
       tabcat.ui.wait(SCORE_DURATION).then(showTestStars)
 
-  $targetSky.hide()
-  $cometSky.fadeIn(duration: FADE_DURATION)
   tabcat.ui.wait(COMET_INITIAL_DELAY).then(addComet)
 
 
