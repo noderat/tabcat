@@ -124,8 +124,8 @@ COMET_TIME_LIMIT = 5000
 # how tall the score font is, as percentage of sky height
 SCORE_FONT_SIZE = 12
 
-# how much to shift the score div up, as percentage of sky height
-SCORE_Y_PERCENT_OFFSET = -8
+# height of the score div, as percentage of sky height
+SCORE_HEIGHT = 16
 
 # how long to show the score after tapping a comet
 SCORE_DURATION = 1000
@@ -490,7 +490,13 @@ showComets = ->
     # with intensity
     cometsCaught += 1
     $(event.target).remove()
-    showScore(event.pageX, event.pageY, cometsCaught)
+
+    if event.type is 'mousedown'
+      touch = event
+    else
+      touch = event.originalEvent.changedTouches[0]
+
+    showScore(touch.pageX, touch.pageY, cometsCaught)
 
     if tabcat.clock.now() <= stopAt
       addComet()
@@ -517,10 +523,10 @@ showScore = (pageX, pageY, amount) ->
   $scoreDiv.text(amount)
 
   $scoreDiv.css(
-    top: (yPct + SCORE_Y_PERCENT_OFFSET) + '%'
+    top: (yPct - (SCORE_HEIGHT / 2)) + '%'
     left: (xPct - 50) + '%'
     width: '100%'
-    height: 'auto'
+    height: SCORE_HEIGHT + '%'
     'font-size': SCORE_FONT_SIZE + 'em'
   )
 
@@ -647,7 +653,6 @@ rotationCss = (angle) ->
     '-o-transform': value
     '-webkit-transform': value
   }
-
 
 
 # INITIALIZATION
