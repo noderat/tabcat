@@ -81,7 +81,7 @@ STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
 COMET_IMG_PATH = 'img/comet.png'
 
 # size of the comet, in star diameters
-COMET_IMG_HEIGHT = 4
+COMET_IMG_HEIGHT = 3
 COMET_IMG_WIDTH = COMET_IMG_HEIGHT * 368 / 118
 
 # minimum y-coordinate for top of screen, in star coordinates
@@ -96,12 +96,12 @@ SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 # but in practice, that part of the image is transparent anyway)
 COMET_START_MAX_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
 # arbitrary min y-coordinate for comet start
-COMET_START_MIN_Y = COMET_START_MAX_Y - SKY_HEIGHT
+COMET_START_MIN_Y = COMET_START_MAX_Y - SKY_HEIGHT / 2
 
 # max y-coordinate for comet centers, so as to be below the screen
 COMET_END_MIN_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 # arbitrary max y-coordinate for comet end
-COMET_END_MAX_Y = COMET_END_MIN_Y + SKY_HEIGHT
+COMET_END_MAX_Y = COMET_END_MIN_Y + SKY_HEIGHT / 2
 
 # aribtrary x coordinate ranges for comets. The start x will be pulled
 # from one, and the end x from the other, so that comets will always cross
@@ -112,11 +112,23 @@ COMET_X_RANGES = [
 ]
 
 COMET_MIN_DURATION = 1000
-COMET_MAX_DURATION = 2000
+COMET_MAX_DURATION = 1500
 
-COMET_SKY_DURATION = 7000
+# how long after displaying the "Catch Comets!" message should we
+# add comets?
+COMET_INITIAL_DELAY = 500
 
+# stop showing new comets after this time limit is up
+COMET_TIME_LIMIT = 5000
 
+# how tall the score font is, as percentage of sky height
+SCORE_FONT_SIZE = 15
+
+# how much to shift the score div up, as percentage of sky height
+SCORE_Y_PERCENT_OFFSET = -10
+
+# how long to show the score after tapping a comet
+SCORE_DURATION = 1000
 
 # how long a fade in should take, in msec
 FADE_DURATION = 400
@@ -369,24 +381,20 @@ makeCometImg = ([x, y], angle) ->
   return $img
 
 
-# Add a comet to the current div. Once the comet reaches the bottom
-# of the screen, it'll return to the top and make another sweep,
-# and so on.
-#
-# Duration sets a time limit in milliseconds. Comets won't respawn if
-# they can't make their next sweep before the time limit is up.
-addComet = ($div, duration) ->
-  addCometHelper($div, tabcat.clock.now() + duration)
-
-
-addCometHelper = ($div, stopAt) ->
+# Add a comet to #cometSky. Once the comet reaches the bottom
+# of the screen, it'll call *complete*.
+addComet = (doneCallback, caughtCallback) ->
   [start, end, angle, duration] = pickCometStartEndAngleAndDuration()
-  now = tabcat.clock.now()
-  if now + duration > stopAt
-    return
 
   $cometImg = makeCometImg(start, angle)
-  $div.append($cometImg)
+  $('#cometSky').append($cometImg)
+
+  $cometImg.one('mousedown touchstart', (event) ->
+    event.preventDefault()
+
+    $cometImg.remove()
+    caughtCallback(event)
+  )
 
   $cometImg.animate({
     left: starXToSky(end[0] - COMET_IMG_WIDTH / 2),
@@ -395,8 +403,10 @@ addCometHelper = ($div, stopAt) ->
     duration: duration
     easing: 'linear'
     complete: ->
-      $cometImg.remove()
-      addCometHelper($div, stopAt)
+      # don't fire on comets that have been caught
+      if $cometImg.is(':visible')
+        $cometImg.remove()
+        doneCallback()
   })
 
 
@@ -409,10 +419,12 @@ addCometHelper = ($div, stopAt) ->
 # trial.
 showTargetStars = ->
   $targetSky = $('#targetSky')
+  $cometSky = $('#cometSky')
   $testSky = $('#testSky')
 
-  $testSky.hide()
   $targetSky.hide()
+  $cometSky.hide()
+  $testSky.hide()
 
   # pick stars and set them up while message is being shown
   numTargetStars = -staircase.intensity
@@ -423,7 +435,85 @@ showTargetStars = ->
 
   $targetSky.fadeIn(duration: FADE_DURATION)
   tabcat.task.logEvent(getTaskState())
-  tabcat.ui.wait(getTargetStarDuration()).then(showTestStars)
+  tabcat.ui.wait(getTargetStarDuration()).then(showComets)
+
+
+# show comets to catch
+showComets = ->
+  $targetSky = $('#targetSky')
+  $cometSky = $('#cometSky')
+
+  $cometSky.empty()
+  $msg = $('<div></div>', class: 'msg')
+  if inPracticeMode()
+    $msg.text('Tap to catch comets!')
+  else
+    $msg.text('Catch comets!')
+  $cometSky.append($msg)
+
+  stopAt = tabcat.clock.now() + COMET_TIME_LIMIT
+
+  # add a comet if there's time, otherwise show test stars
+  doneCallback = ->
+    if tabcat.clock.now() <= stopAt
+      addComet(doneCallback, caughtCallback)
+    else
+      showTestStars()
+
+  # add feedback for comet being caught
+  caughtCallback = (event) ->
+    cometsCaught += 1
+
+    showScore(event.pageX, event.pageY, cometsCaught)
+
+    if tabcat.clock.now() <= stopAt
+      addComet(doneCallback, caughtCallback)
+    else
+      tabcat.ui.wait(SCORE_DURATION).then(showTestStars)
+
+  $targetSky.hide()
+  $cometSky.fadeIn(duration: FADE_DURATION)
+  tabcat.ui.wait(COMET_INITIAL_DELAY).then(doneCallback)
+
+
+# add a score centered on the given coordinates on the screen
+showScore = (pageX, pageY, amount) ->
+  $cometSky = $('#cometSky')
+  {left: skyLeft, top: skyTop} = $cometSky.offset()
+  skyWidth = $cometSky.width()
+  skyHeight = $cometSky.height()
+
+  # express location of click in terms of percentage inside sky
+  xPct = (pageX - skyLeft) / skyWidth * 100
+  yPct = (pageY - skyTop) / skyHeight * 100
+
+  $scoreDiv = $('<div></div>', class: 'score')
+  $scoreDiv.text(amount)
+
+  $scoreDiv.css(
+    top: (yPct + SCORE_Y_PERCENT_OFFSET) + '%'
+    left: (xPct - 50) + '%'
+    width: '100%'
+    height: 'auto'
+    'font-size': SCORE_FONT_SIZE + 'em'
+  )
+
+  # don't show two scores at once
+  $cometSky.find('div.score').remove()
+
+  $cometSky.append($scoreDiv)
+
+  tabcat.ui.wait(SCORE_DURATION).then(-> $scoreDiv.remove())
+
+
+# show star(s) to match against the target stars
+showTestStars = ->
+  $cometSky = $('#cometSky')
+  $testSky = $('#testSky')
+
+  $cometSky.hide()
+  $testSky.fadeIn(duration: FADE_DURATION)
+
 
 
 # set up the #targetSky div. Not responsible for hiding/showing it
@@ -475,14 +565,6 @@ setUpTestSky = (testStars) ->
     $msg.text('Which star did you just see?')
     $testSky.append($msg)
 
-
-# show star(s) to match against the target stars
-showTestStars = ->
-  $targetSky = $('#targetSky')
-  $testSky = $('#testSky')
-
-  $targetSky.hide()
-  $testSky.fadeIn(duration: FADE_DURATION)
 
 # summary of the current state of the task
 getTaskState = ->

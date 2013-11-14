@@ -53,10 +53,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
-#targetSky {
+#rectangle #cometSky div.msg {
+    color: #ffcc99;
     z-index: 1000;
 }
 
-#testSky {
+#cometSky img.comet {
+    z-index: 1001;
+}
+
+#rectangle #cometSky div.score {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    text-align: center;
+    color: #ffffff;
+    background-color: transparent;
     z-index: 1000;
 }
