@@ -122,10 +122,10 @@ COMET_INITIAL_DELAY = 500
 COMET_TIME_LIMIT = 5000
 
 # how tall the score font is, as percentage of sky height
-SCORE_FONT_SIZE = 15
+SCORE_FONT_SIZE = 12
 
 # how much to shift the score div up, as percentage of sky height
-SCORE_Y_PERCENT_OFFSET = -10
+SCORE_Y_PERCENT_OFFSET = -8
 
 # how long to show the score after tapping a comet
 SCORE_DURATION = 1000

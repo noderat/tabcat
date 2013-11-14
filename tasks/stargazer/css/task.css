@@ -62,6 +62,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     z-index: 1001;
 }
 
+@keyframes scoreAnimation {
+    from {
+	transform: scale(1,1);
+	-moz-transform: scale(1,1);
+	-ms-transform: scale(1,1);
+	-o-transform: scale(1,1);
+	-webkit-transform: scale(1,1);
+	opacity: 1;
+    }
+    to {
+	transform: scale(1.5,1.5);
+	-moz-transform: scale(1.5,1.5);
+	-ms-transform: scale(1.5,1.5);
+	-o-transform: scale(1.5,1.5);
+	-webkit-transform: scale(1.5,1.5);
+	opacity: 0;
+    }
+}
+
+
+@-webkit-keyframes scoreAnimation {
+    from {
+	transform: scale(1,1);
+	-moz-transform: scale(1,1);
+	-ms-transform: scale(1,1);
+	-o-transform: scale(1,1);
+	-webkit-transform: scale(1,1);
+	opacity: 1;
+    }
+    to {
+	transform: scale(1.5,1.5);
+	-moz-transform: scale(1.5,1.5);
+	-ms-transform: scale(1.5,1.5);
+	-o-transform: scale(1.5,1.5);
+	-webkit-transform: scale(1.5,1.5);
+	opacity: 0;
+    }
+}
+
+
 #rectangle #cometSky div.score {
     position: absolute;
     display: block;
@@ -72,4 +112,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: #ffffff;
     background-color: transparent;
     z-index: 1000;
+    animation: scoreAnimation 1s;
+    -webkit-animation: scoreAnimation 1s;
 }
