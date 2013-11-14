@@ -381,18 +381,29 @@ makeCometImg = ([x, y], angle) ->
   return $img
 
 
-# Add a comet to #cometSky. Once the comet reaches the bottom
-# of the screen, it'll call *complete*.
-addComet = (doneCallback, caughtCallback) ->
+# Add a random comet to #cometSky that will appear above the screen, sweep
+# across it, and remove it.
+#
+# Takes the following callbacks:
+#
+# startCallback: called after comet is visible, but before animation
+# caughtCallback: called once when comet is tapped on
+# doneCallback: called when comet reaches end of its path
+#
+# startCallback and doneCallback take the (jquery-wrapped) comet img as a
+# single argument. caughtCallback takes the event as a callback
+# (use event.target to get at the comet img).
+addCometToSky = (startCallback, caughtCallback, doneCallback) ->
   [start, end, angle, duration] = pickCometStartEndAngleAndDuration()
 
   $cometImg = makeCometImg(start, angle)
   $('#cometSky').append($cometImg)
 
+  startCallback($cometImg)
+
   $cometImg.one('mousedown touchstart', (event) ->
     event.preventDefault()
 
-    $cometImg.remove()
     caughtCallback(event)
   )
 
@@ -405,9 +416,11 @@ addComet = (doneCallback, caughtCallback) ->
     complete: ->
       # don't fire on comets that have been caught
       if $cometImg.is(':visible')
+        doneCallback($cometImg)
         $cometImg.remove()
-        doneCallback()
   })
+
+  return
 
 
 
@@ -453,21 +466,34 @@ showComets = ->
 
   stopAt = tabcat.clock.now() + COMET_TIME_LIMIT
 
+  addComet = ->
+    addCometToSky(
+      -> tabcat.task.logEvent(getTaskState()),
+      caughtCallback,
+      doneCallback,
+    )
+
   # add a comet if there's time, otherwise show test stars
   doneCallback = ->
+    tabcat.task.logEvent(getTaskState())
+
     if tabcat.clock.now() <= stopAt
-      addComet(doneCallback, caughtCallback)
+      addComet()
     else
       showTestStars()
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
-    cometsCaught += 1
+    tabcat.task.logEvent(getTaskState(), event, {caughtComet: true})
 
+    # cometsCaught will be incremented in the *next* event, for consistency
+    # with intensity
+    cometsCaught += 1
+    $(event.target).remove()
     showScore(event.pageX, event.pageY, cometsCaught)
 
     if tabcat.clock.now() <= stopAt
-      addComet(doneCallback, caughtCallback)
+      addComet()
     else
       tabcat.ui.wait(SCORE_DURATION).then(showTestStars)
 
@@ -569,6 +595,7 @@ setUpTestSky = (testStars) ->
 # summary of the current state of the task
 getTaskState = ->
   state =
+    cometsCaught: cometsCaught
     intensity: staircase.intensity
     stimuli: getStimuli()
     trialNum: staircase.trialNum
@@ -592,6 +619,12 @@ getStimuli = ->
     if $sky.is(':visible')
       stimuli[key] = (
         tabcat.task.getElementBounds(img) for img in $sky.find('img'))
+
+  $comets = $('div.comet:visible')
+  if $comets.length
+    stimuli['comets'] = (
+      _.pick($(comet).css(), 'top', 'left', 'width', 'height', 'transform') \
+      for comet in $comets)
 
   return stimuli
 
