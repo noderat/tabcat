@@ -499,7 +499,7 @@ showComets = ->
 
   $targetSky.hide()
   $cometSky.fadeIn(duration: FADE_DURATION)
-  tabcat.ui.wait(COMET_INITIAL_DELAY).then(doneCallback)
+  tabcat.ui.wait(COMET_INITIAL_DELAY).then(addComet)
 
 
 # add a score centered on the given coordinates on the screen
@@ -620,10 +620,10 @@ getStimuli = ->
       stimuli[key] = (
         tabcat.task.getElementBounds(img) for img in $sky.find('img'))
 
-  $comets = $('div.comet:visible')
+  $comets = $('img.comet:visible')
   if $comets.length
     stimuli['comets'] = (
-      _.pick($(comet).css(), 'top', 'left', 'width', 'height', 'transform') \
+      $(comet).css(['top', 'left', 'width', 'height', 'transform']) \
       for comet in $comets)
 
   return stimuli
