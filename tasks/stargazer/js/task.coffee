@@ -82,7 +82,7 @@ COMET_IMG_PATH = 'img/comet.png'
 
 # size of the comet, in star diameters
 COMET_IMG_HEIGHT = 4
-COMET_IMG_WIDTH = COMET_IMG_HEIGHT / 368 * 118
+COMET_IMG_WIDTH = COMET_IMG_HEIGHT * 368 / 118
 
 # minimum y-coordinate for top of screen, in star coordinates
 # (it can't be any less than this because we don't allow portrait mode)
@@ -111,10 +111,10 @@ COMET_X_RANGES = [
   [SKY_WIDTH * 0.7, SKY_WIDTH * 2]
 ]
 
-COMET_MIN_DURATION = 500
-COMET_MAX_DURATION = 1000
+COMET_MIN_DURATION = 1000
+COMET_MAX_DURATION = 2000
 
-COMET_SKY_DURATION = 5000
+COMET_SKY_DURATION = 7000
 
 
 
@@ -354,7 +354,7 @@ pickCometStartEndAngleAndDuration = ->
   startY = tabcat.math.randomUniform(COMET_START_MIN_Y, COMET_START_MAX_Y)
   endY = tabcat.math.randomUniform(COMET_END_MIN_Y, COMET_END_MAX_Y)
 
-  angle = -Math.atan2(endY - startY, endX - startX) / Math.PI * 180
+  angle = -Math.atan2(endX - startX, endY - startY) / Math.PI * 180 + 90
 
   duration = tabcat.math.randomUniform(COMET_MIN_DURATION, COMET_MAX_DURATION)
 
@@ -369,9 +369,17 @@ makeCometImg = ([x, y], angle) ->
   return $img
 
 
-# add a comet to the given div. stopAt is a timestamp to stop at
-# (using tabcat.clock())
-addComet = ($div, stopAt) ->
+# Add a comet to the current div. Once the comet reaches the bottom
+# of the screen, it'll return to the top and make another sweep,
+# and so on.
+#
+# Duration sets a time limit in milliseconds. Comets won't respawn if
+# they can't make their next sweep before the time limit is up.
+addComet = ($div, duration) ->
+  addCometHelper($div, tabcat.clock.now() + duration)
+
+
+addCometHelper = ($div, stopAt) ->
   [start, end, angle, duration] = pickCometStartEndAngleAndDuration()
   now = tabcat.clock.now()
   if now + duration > stopAt
@@ -387,8 +395,8 @@ addComet = ($div, stopAt) ->
     duration: duration
     easing: 'linear'
     complete: ->
-      $.remove($cometImg)
-      addComet()
+      $cometImg.remove()
+      addCometHelper($div, stopAt)
   })
 
 

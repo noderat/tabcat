@@ -5,6 +5,7 @@
     "description": "Stargazer",
     "attachments": [
         "css/task.css",
+        "img/comet.png",
         "img/icon.png",
         "img/star.png",
         "js/task.js",
