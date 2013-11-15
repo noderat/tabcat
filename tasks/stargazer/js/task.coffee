@@ -42,7 +42,7 @@ MAX_FAILURES = 30
 MIN_STAR_DISTANCE = 2
 
 # target stars' centers can never be more than this many star diameters apart
-MAX_TARGET_STAR_DISTANCE = 6
+MAX_TARGET_STAR_DISTANCE = 8
 
 # Distances distractor stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
@@ -96,12 +96,12 @@ SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 # but in practice, that part of the image is transparent anyway)
 COMET_START_MAX_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
 # arbitrary min y-coordinate for comet start
-COMET_START_MIN_Y = COMET_START_MAX_Y - SKY_HEIGHT / 2
+COMET_START_MIN_Y = COMET_START_MAX_Y
 
 # max y-coordinate for comet centers, so as to be below the screen
 COMET_END_MIN_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 # arbitrary max y-coordinate for comet end
-COMET_END_MAX_Y = COMET_END_MIN_Y + SKY_HEIGHT / 2
+COMET_END_MAX_Y = COMET_END_MIN_Y
 
 # aribtrary x coordinate ranges for comets. The start x will be pulled
 # from one, and the end x from the other, so that comets will always cross
@@ -111,15 +111,15 @@ COMET_X_RANGES = [
   [SKY_WIDTH * 0.7, SKY_WIDTH * 2]
 ]
 
-COMET_MIN_DURATION = 1000
-COMET_MAX_DURATION = 1500
+COMET_MIN_DURATION = 1500
+COMET_MAX_DURATION = 2000
 
 # how long after displaying the "Catch Comets!" message should we
 # add comets?
-COMET_INITIAL_DELAY = 500
+COMET_INITIAL_DELAY = 0
 
 # stop showing new comets after this time limit is up
-COMET_TIME_LIMIT = 5000
+COMET_TIME_LIMIT = 3000
 
 # where the top of the comet message should start and stop,
 # as % of sky height
@@ -139,10 +139,10 @@ SCORE_DURATION = 1000
 FADE_DURATION = 400
 
 # how long to display target stars (not including fades)
-TARGET_STAR_DURATION = 2000
+TARGET_STAR_DURATION = 3000
 
 # how long to display target stars in practice mode
-TARGET_STAR_PRACTICE_DURATION = 4000
+TARGET_STAR_PRACTICE_DURATION = 5000
 
 # how many reversals before we stop
 MAX_REVERSALS = 18
