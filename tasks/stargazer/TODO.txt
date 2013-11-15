@@ -1,4 +1,3 @@
-- shorter comet duration (3s or less)
-- 2 comets at once (and no more)
 - practice mode: must get right twice
 - (scores can show on test screen)
+- audio feedback

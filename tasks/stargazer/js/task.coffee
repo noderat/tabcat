@@ -99,22 +99,20 @@ COMET_START_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
 # end y-coordinate for comet centers, just below the screen
 COMET_END_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 
-# aribtrary x coordinate ranges for comets. The start x will be pulled
-# from one, and the end x from the other, so that comets will always cross
-# the screen.
-COMET_X_RANGES = [
-  [-SKY_WIDTH, SKY_WIDTH * 0.3],
-  [SKY_WIDTH * 0.7, SKY_WIDTH * 2]
+# number of comets
+NUM_COMETS = 2
+
+# start time and duration for the two comets, in milliseconds
+COMET_TIMINGS = [[0, 2500], [500, 2000]]
+
+# start and end x-coordinate ranges for the two comets. Which one is used
+# for which comet is random
+COMET_X_RANGES_LIST = [
+  [[-SKY_WIDTH, SKY_WIDTH * 0.3], [SKY_WIDTH * 0.7, SKY_WIDTH * 2]],
+  [[SKY_WIDTH * 0.7, SKY_WIDTH * 2], [-SKY_WIDTH, SKY_WIDTH * 0.3]]
 ]
 
-COMET_MIN_DURATION = 1500
-COMET_MAX_DURATION = 2000
-
-# how long after displaying the "Catch Comets!" message should we
-# add comets?
-COMET_INITIAL_DELAY = 0
-
-# stop showing new comets after this time limit is up
+# how long to show comets
 COMET_TIME_LIMIT = 3000
 
 # where the top of the comet message should start and stop,
@@ -361,17 +359,27 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 
 
 # pick start and end coordinates for comets
-pickCometStartEndAngleAndDuration = ->
-  [startX, endX] = (
-    tabcat.math.randomUniform(range...) for range in _.shuffle(COMET_X_RANGES))
-  startY = COMET_START_Y
-  endY = COMET_END_Y
+pickComets = ->
+  comets = []
 
-  angle = -Math.atan2(endX - startX, endY - startY) / Math.PI * 180 + 90
+  xRangesList = _.shuffle(COMET_X_RANGES_LIST)
 
-  duration = tabcat.math.randomUniform(COMET_MIN_DURATION, COMET_MAX_DURATION)
+  for i in [0...NUM_COMETS]
+    comet =
+      startX: tabcat.math.randomUniform(xRangesList[i][0]...)
+      endX: tabcat.math.randomUniform(xRangesList[i][1]...)
+      startY: COMET_START_Y
+      endY: COMET_END_Y
+      startTime: COMET_TIMINGS[i][0]
+      duration: COMET_TIMINGS[i][1]
 
-  return [[startX, startY], [endX, endY], angle, duration]
+    comet.angle = (
+      -Math.atan2(comet.endX - comet.startX, comet.endY - comet.startY) /
+       Math.PI * 180 + 90)
+
+    comets.push(comet)
+
+  return comets
 
 
 # convert comet center and angle to an image
@@ -382,8 +390,7 @@ makeCometImg = ([x, y], angle) ->
   return $img
 
 
-# Add a random comet to #cometSky that will appear above the screen, sweep
-# across it, and remove it.
+# Add a comet to #cometSky
 #
 # Takes the following callbacks:
 #
@@ -394,30 +401,32 @@ makeCometImg = ([x, y], angle) ->
 # startCallback and doneCallback take the (jquery-wrapped) comet img as a
 # single argument. caughtCallback takes the event as a callback
 # (use event.target to get at the comet img).
-addCometToSky = (startCallback, caughtCallback, doneCallback) ->
-  [start, end, angle, duration] = pickCometStartEndAngleAndDuration()
-
-  $cometImg = makeCometImg(start, angle)
+addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
+  console.log(comet)
+  $cometImg = makeCometImg([comet.startX, comet.startY], comet.angle)
   $('#cometSky').append($cometImg)
 
-  startCallback($cometImg)
+  if startCallback?
+    startCallback($cometImg)
 
   $cometImg.one('mousedown touchstart', (event) ->
     event.preventDefault()
 
-    caughtCallback(event)
+    if caughtCallback?
+      caughtCallback(event)
   )
 
   $cometImg.animate({
-    left: starXToSky(end[0] - COMET_IMG_WIDTH / 2),
-    top: starYToSky(end[1] - COMET_IMG_WIDTH / 2),
+    left: starXToSky(comet.endX - COMET_IMG_WIDTH / 2),
+    top: starYToSky(comet.endY - COMET_IMG_WIDTH / 2),
   }, {
-    duration: duration
+    duration: comet.duration
     easing: 'linear'
     complete: ->
       # don't fire on comets that have been caught
       if $cometImg.is(':visible')
-        doneCallback($cometImg)
+        if doneCallback?
+          doneCallback($cometImg)
         $cometImg.remove()
   })
 
@@ -481,26 +490,16 @@ showCometSky = ->
 
   showComets()
 
+  tabcat.ui.wait(COMET_TIME_LIMIT).then(showTestStars)
+
+
 # helper for showCometSky()
 showComets = (duration) ->
 
-  stopAt = tabcat.clock.now() + COMET_TIME_LIMIT
+  comets = pickComets()
+  console.log(pickComets())
 
-  addComet = ->
-    addCometToSky(
-      -> tabcat.task.logEvent(getTaskState()),
-      caughtCallback,
-      doneCallback,
-    )
-
-  # add a comet if there's time, otherwise show test stars
-  doneCallback = ->
-    tabcat.task.logEvent(getTaskState())
-
-    if tabcat.clock.now() <= stopAt
-      addComet()
-    else
-      showTestStars()
+  startCallback = -> tabcat.task.logEvent(getTaskState())
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
@@ -518,12 +517,10 @@ showComets = (duration) ->
 
     showScore(touch.pageX, touch.pageY, cometsCaught)
 
-    if tabcat.clock.now() <= stopAt
-      addComet()
-    else
-      tabcat.ui.wait(SCORE_DURATION).then(showTestStars)
-
-  tabcat.ui.wait(COMET_INITIAL_DELAY).then(addComet)
+  for comet in comets
+    do (comet) ->
+      tabcat.ui.wait(comet.startTime).then(->
+        addCometToSky(comet, startCallback, caughtCallback))
 
 
 # add a score centered on the given coordinates on the screen
