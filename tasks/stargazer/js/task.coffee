@@ -138,7 +138,7 @@ TARGET_STAR_PRACTICE_DURATION = 5000
 MAX_REVERSALS = 18
 
 # how many correct to leave practice mode?
-MAX_CORRECT_IN_PRACTICE = 2
+NUM_CORRECT_TO_LEAVE_PRACTICE = 2
 
 # initial static "staircase" for practice mode.
 practiceStaircase = new tabcat.task.Staircase(
@@ -589,7 +589,7 @@ setUpTestSky = (testStars) ->
 
       if inPracticeMode() and correct
         correctInPractice += 1
-        if correctInPractice >= MAX_CORRECT_IN_PRACTICE
+        if correctInPractice >= NUM_CORRECT_TO_LEAVE_PRACTICE
           staircase = new tabcat.task.Staircase(staircase, STAIRCASE_PARAMS)
 
       if not inPracticeMode() and staircase.numReversals >= MAX_REVERSALS
