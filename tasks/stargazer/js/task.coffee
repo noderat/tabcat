@@ -137,7 +137,8 @@ TARGET_STAR_PRACTICE_DURATION = 5000
 # how many reversals before we stop
 MAX_REVERSALS = 18
 
-
+# how many correct to leave practice mode?
+MAX_CORRECT_IN_PRACTICE = 2
 
 # initial static "staircase" for practice mode.
 practiceStaircase = new tabcat.task.Staircase(
@@ -145,7 +146,6 @@ practiceStaircase = new tabcat.task.Staircase(
   stepsUp: 0
   stepsDown: 0
 )
-
 
 # staircase: keeps track of intensity, number of trials, etc
 staircase = practiceStaircase
@@ -157,6 +157,9 @@ STAIRCASE_PARAMS =
   maxIntensity: -1
   stepsUp: 2
   stepsDown: 1
+
+# how many has the patient gotten correct in practice mode?
+correctInPractice = 0
 
 # how many comets has the patient caught so far?
 cometsCaught = 0
@@ -585,7 +588,9 @@ setUpTestSky = (testStars) ->
       tabcat.task.logEvent(state, event, interpretation)
 
       if inPracticeMode() and correct
-        staircase = new tabcat.task.Staircase(staircase, STAIRCASE_PARAMS)
+        correctInPractice += 1
+        if correctInPractice >= MAX_CORRECT_IN_PRACTICE
+          staircase = new tabcat.task.Staircase(staircase, STAIRCASE_PARAMS)
 
       if not inPracticeMode() and staircase.numReversals >= MAX_REVERSALS
         tabcat.task.finish()

@@ -1,2 +1,1 @@
-- practice mode: must get right twice
 - audio feedback
