@@ -103,7 +103,7 @@ COMET_END_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 NUM_COMETS = 2
 
 # start time and duration for the two comets, in milliseconds
-COMET_TIMINGS = [[0, 2500], [500, 2000]]
+COMET_TIMINGS = [[0, 2500], [1000, 2000]]
 
 # start and end x-coordinate ranges for the two comets. Which one is used
 # for which comet is random
@@ -113,7 +113,7 @@ COMET_X_RANGES_LIST = [
 ]
 
 # how long to show comets
-COMET_TIME_LIMIT = 3000
+COMET_TIME_LIMIT = 3500
 
 # where the top of the comet message should start and stop,
 # as % of sky height
@@ -402,7 +402,6 @@ makeCometImg = ([x, y], angle) ->
 # single argument. caughtCallback takes the event as a callback
 # (use event.target to get at the comet img).
 addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
-  console.log(comet)
   $cometImg = makeCometImg([comet.startX, comet.startY], comet.angle)
   $('#cometSky').append($cometImg)
 
@@ -497,7 +496,6 @@ showCometSky = ->
 showComets = (duration) ->
 
   comets = pickComets()
-  console.log(pickComets())
 
   startCallback = -> tabcat.task.logEvent(getTaskState())
 
