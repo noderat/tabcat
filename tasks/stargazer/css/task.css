@@ -53,11 +53,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
-#rectangle #cometSky div.msg {
-    color: #ffcc99;
-    z-index: 1000;
-}
-
 #cometSky img.comet {
     z-index: 1001;
 }
@@ -102,7 +97,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-#rectangle #cometSky div.score {
+#rectangle div.score {
     position: absolute;
     display: block;
     margin: 0;
@@ -113,4 +108,47 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     z-index: 1000;
     animation: scoreAnimation 1s;
     -webkit-animation: scoreAnimation 1s;
+}
+
+
+@keyframes cometMsgAnimation {
+    from {
+	top: 3%;
+	opacity: 1;
+    }
+    to {
+	top: 85%;
+	opacity: 0;
+    }
+}
+
+@-webkit-keyframes cometMsgAnimation {
+    0% {
+	top: 3%;
+	opacity: 1;
+    }
+    80% {
+	top: 68.6%;
+	opacity: 1;
+    }
+    100% {
+	top: 85%;
+	opacity: 0;
+    }
+}
+
+#rectangle #cometSky div.msg {
+    position: absolute;
+    display: block;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 10em;
+    color: #ffcc99;
+    background-color: transparent;
+    z-index: 1000;
+    animation: cometMsgAnimation 3.3s linear;
+    -webkit-animation: cometMsgAnimation 3.3s linear;
 }

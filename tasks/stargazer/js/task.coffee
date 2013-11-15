@@ -112,13 +112,9 @@ COMET_X_RANGES_LIST = [
   [[SKY_WIDTH * 0.7, SKY_WIDTH * 2], [-SKY_WIDTH, SKY_WIDTH * 0.3]]
 ]
 
-# how long to show comets
+# how long to show comets. This matches the CSS for #cometSky div.msg
+# in css/task.css
 COMET_TIME_LIMIT = 3500
-
-# where the top of the comet message should start and stop,
-# as % of sky height
-COMET_MSG_INITIAL_TOP = 3
-COMET_MSG_FINAL_TOP = 85
 
 # how tall the score font is, as percentage of sky height
 SCORE_FONT_SIZE = 12
@@ -466,30 +462,20 @@ showCometSky = ->
   $cometSky = $('#cometSky')
 
   $cometSky.empty()
+  tabcat.ui.wait(COMET_TIME_LIMIT).then(showTestStars)
+
   $msg = $('<div></div>', class: 'msg')
+  $msg.one('animationend webkitAnimationEnd', -> $msg.remove())
   if inPracticeMode()
     $msg.text('Tap to catch comets!')
   else
     $msg.text('Catch comets!')
   $cometSky.append($msg)
 
-  # make message move down the screen, so it can't be used as
-  # an anchor
-
-  $msg.css('top', COMET_MSG_INITIAL_TOP + '%')
-  $msg.animate(top: COMET_MSG_FINAL_TOP + '%', {
-    duration: COMET_TIME_LIMIT - FADE_DURATION,
-    easing: 'linear',
-    complete: ->
-      $msg.fadeOut(duration: FADE_DURATION)
-  })
-
   $targetSky.hide()
   $cometSky.fadeIn(duration: FADE_DURATION)
 
   showComets()
-
-  tabcat.ui.wait(COMET_TIME_LIMIT).then(showTestStars)
 
 
 # helper for showCometSky()
@@ -523,10 +509,10 @@ showComets = (duration) ->
 
 # add a score centered on the given coordinates on the screen
 showScore = (pageX, pageY, amount) ->
-  $cometSky = $('#cometSky')
-  {left: skyLeft, top: skyTop} = $cometSky.offset()
-  skyWidth = $cometSky.width()
-  skyHeight = $cometSky.height()
+  $rectangle = $('#rectangle')
+  {left: skyLeft, top: skyTop} = $rectangle.offset()
+  skyWidth = $rectangle.width()
+  skyHeight = $rectangle.height()
 
   # express location of click in terms of percentage inside sky
   xPct = (pageX - skyLeft) / skyWidth * 100
@@ -534,6 +520,7 @@ showScore = (pageX, pageY, amount) ->
 
   $scoreDiv = $('<div></div>', class: 'score')
   $scoreDiv.text(amount)
+  $scoreDiv.one('animationend webkitAnimationEnd', -> $scoreDiv.remove())
 
   $scoreDiv.css(
     top: (yPct - (SCORE_HEIGHT / 2)) + '%'
@@ -544,10 +531,11 @@ showScore = (pageX, pageY, amount) ->
   )
 
   # don't show two scores at once
-  $cometSky.find('div.score').remove()
+  $rectangle.find('div.score').remove()
 
-  $cometSky.append($scoreDiv)
+  $rectangle.append($scoreDiv)
 
+  # just in case animations are broken
   tabcat.ui.wait(SCORE_DURATION).then(-> $scoreDiv.remove())
 
 
