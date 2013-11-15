@@ -91,17 +91,13 @@ SCREEN_MIN_Y = Math.min(0, (SKY_HEIGHT - SKY_WIDTH) / 2)
 # max y-coordinate for bottom of screen, in star coordinates
 SCREEN_MAX_Y = Math.max(SKY_HEIGHT, SCREEN_MIN_Y + SKY_WIDTH)
 
-# max y-coordinate for comet centers, so as to be above the screen
+# start y-coordinate for comet centers, just above the screen
 # (in theory, we should use the length of the diagonal of the comet,
 # but in practice, that part of the image is transparent anyway)
-COMET_START_MAX_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
-# arbitrary min y-coordinate for comet start
-COMET_START_MIN_Y = COMET_START_MAX_Y
+COMET_START_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
 
-# max y-coordinate for comet centers, so as to be below the screen
-COMET_END_MIN_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
-# arbitrary max y-coordinate for comet end
-COMET_END_MAX_Y = COMET_END_MIN_Y
+# end y-coordinate for comet centers, just below the screen
+COMET_END_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 
 # aribtrary x coordinate ranges for comets. The start x will be pulled
 # from one, and the end x from the other, so that comets will always cross
@@ -368,8 +364,8 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 pickCometStartEndAngleAndDuration = ->
   [startX, endX] = (
     tabcat.math.randomUniform(range...) for range in _.shuffle(COMET_X_RANGES))
-  startY = tabcat.math.randomUniform(COMET_START_MIN_Y, COMET_START_MAX_Y)
-  endY = tabcat.math.randomUniform(COMET_END_MIN_Y, COMET_END_MAX_Y)
+  startY = COMET_START_Y
+  endY = COMET_END_Y
 
   angle = -Math.atan2(endX - startX, endY - startY) / Math.PI * 180 + 90
 
