@@ -342,12 +342,16 @@ tabcat.task.getViewportInfo = ->
   }
 
 
-# get the bounding box for the given (non-jQuery-select-wrapped) DOM element,
-# with fields "top", "bottom", "left", and "right"
+# get the bounding box for the given DOM element (not jQuery selector),
+# with fields "top", "bottom", "left", and "right".
 #
 # we use getBoundingClientRect() rather than the jQuery alternative to get
 # floating-point values
 tabcat.task.getElementBounds = (element) ->
+  # unwrap jQuery elements
+  if not element.getBoundingClientRect?
+    element = element[0]
+
   # some browsers include height and width, but it's redundant
   _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
 
@@ -387,6 +391,14 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
     eventLogItem.event = {type: event}
   else if event?
     eventLogItem.event = _.pick(event, 'pageX', 'pageY', 'type')
+
+    # include touch events too
+    originalEvent = event.originalEvent ? event
+    for key in ['changedTouches', 'targetTouches', 'touches']
+      touches = originalEvent[key]
+      if touches?
+        eventLogItem.event[key] = (
+          _.pick(touch, 'identifier', 'pageX', 'pageY') for touch in touches)
 
   if interpretation?
     eventLogItem.interpretation = interpretation
