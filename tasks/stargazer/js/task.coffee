@@ -107,7 +107,7 @@ NUM_COMETS = 3
 COMET_LENGTHS = [17, 9, 6]
 
 # aspect ratio of comet image. Divide image width by this to get height.
-COMET_IMG_ASPECT_RATIO = 368 / 118
+COMET_IMG_ASPECT_RATIO = 736 / 236
 
 # start and end time for each of the three comets
 COMET_TIMINGS = [[0, 4000], [1500, 3500], [2500, 4000]]
@@ -146,7 +146,7 @@ TARGET_STAR_PRACTICE_DURATION = 5000
 MAX_REVERSALS = 18
 
 # how many comets do you have to catch before we show stars?
-MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 1
+MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 3
 
 # how many correct to leave practice mode?
 NUM_CORRECT_TO_LEAVE_PRACTICE = 2
