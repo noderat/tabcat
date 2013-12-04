@@ -145,6 +145,9 @@ TARGET_STAR_PRACTICE_DURATION = 5000
 # how many reversals before we stop
 MAX_REVERSALS = 18
 
+# how many comets do you have to catch before we show stars?
+MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 1
+
 # how many correct to leave practice mode?
 NUM_CORRECT_TO_LEAVE_PRACTICE = 2
 
@@ -171,8 +174,6 @@ correctInPractice = 0
 
 # how many comets has the patient caught so far?
 cometsCaught = 0
-
-
 
 # are we in practice mode?
 inPracticeMode = ->
@@ -480,18 +481,31 @@ showTargetStars = ->
 
   $targetSky.fadeIn(duration: FADE_DURATION)
   tabcat.task.logEvent(getTaskState())
-  tabcat.ui.wait(getTargetStarDuration()).then(showCometSky)
+  tabcat.ui.wait(getTargetStarDuration()).then(showComets)
 
   return
 
 
 # show comets to catch
-showCometSky = ->
+showComets = ->
   $targetSky = $('#targetSky')
   $cometSky = $('#cometSky')
 
+  $cometSky.hide()
   $cometSky.empty()
-  tabcat.ui.wait(COMET_TIME_LIMIT).then(showTestStars)
+
+  tabcat.ui.wait(COMET_TIME_LIMIT).then(->
+    # first trial is comets only, and you must catch a certain number
+    # of comets before continuing
+    if staircase.trialNum is 0
+      if cometsCaught >= MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN
+        staircase.trialNum += 1
+        showTargetStars()
+      else
+        showComets()
+    else
+      showTestStars()
+  )
 
   $msg = $('<div></div>', class: 'msg')
   $msg.one('animationend webkitAnimationEnd', -> $msg.remove())
@@ -504,11 +518,11 @@ showCometSky = ->
   $targetSky.hide()
   $cometSky.fadeIn(duration: FADE_DURATION)
 
-  showComets()
+  startComets()
 
 
-# helper for showCometSky()
-showComets = (duration) ->
+# helper for showComets()
+startComets = (duration) ->
 
   comets = pickComets()
 
@@ -711,5 +725,5 @@ rotationCss = (angle) ->
     tabcat.ui.fixAspectRatio($rectangle, ASPECT_RATIO)
     tabcat.ui.linkEmToPercentOfHeight($rectangle)
 
-    showTargetStars()
+    showComets()
   )
