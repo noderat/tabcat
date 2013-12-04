@@ -55,7 +55,7 @@ Then, sign out, and sign up a user named `tabcat` (again, lower-right corner).
 
 Then sign back in as your admin user and create a database named `tabcat`. Click on that database, go to "Security" (upper part of the screen) and under the Admins section set the Names of admins to `["tabcat"]`.
 
-Do the same thing with a database named `tabcat-data`. Then, while you're still in the "Security" popup, add your email to the Names section of members.
+Do the same thing with a database named `tabcat-data`. Then, while you're still in the "Security" popup, add your email (in quotes) to the Names section of members: `["your.email@somewhere.com"]`.
 
 (If you're on Iris Couch, you're done; go on to the next section.)
 
@@ -65,7 +65,7 @@ Oh, and to allow access to your server from other hosts, you'll want to go to th
 
 ### Adding additional users
 
-New users will have to click the "Sign Up" link in Futon, using their (lowercase) email address as their username. Once they've signed up, enable their account by going to the `tabcat-data` database, clicking on Security, and adding their email to the Names section of members, just like you did with your own email.
+New users will have to click the "Sign Up" link in Futon, using their (lowercase) email address as their username. Once they've signed up, enable their account by going to the `tabcat-data` database, clicking on Security, and adding their email to the Names section of members, just like you did with your own email: `["new.user@somewhere.com", "youremail@somewhere.com"]`.
 
 ### Installing TabCAT
 
