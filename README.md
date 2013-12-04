@@ -65,7 +65,7 @@ Oh, and to allow access to your server from other hosts, you'll want to go to th
 
 ### Adding additional users
 
-New users will have to click the "Sign Up" link in Futon, using their (lowercase) email address as their username. Once they've signed up, enable their account by going to the `tabcat-data` database, clicking on Security, and adding their email to the Names section of members, just like you did with your own email: `["new.user@somewhere.com", "youremail@somewhere.com"]`.
+New users will have to click the "Sign Up" link in Futon, using their (lowercase) email address as their username. Once they've signed up, enable their account by going to the `tabcat-data` database, clicking on Security, and adding their email to the Names section of members, just like you did with your own email: `["new.user@somewhere.com", "your.email@somewhere.com"]`.
 
 ### Installing TabCAT
 
