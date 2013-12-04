@@ -149,6 +149,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: #ffcc99;
     background-color: transparent;
     z-index: 1000;
-    animation: cometMsgAnimation 3.3s linear;
-    -webkit-animation: cometMsgAnimation 3.3s linear;
+    animation: cometMsgAnimation 4.8s linear;
+    -webkit-animation: cometMsgAnimation 4.8s linear;
 }
