@@ -104,13 +104,13 @@ NUM_COMETS = 3
 
 # length of comets, in star diameters. This corresponds to the comet
 # image's width.
-COMET_LENGTHS = [17, 9, 6]
+COMET_LENGTHS = [11, 5, 7]
 
 # aspect ratio of comet image. Divide image width by this to get height.
 COMET_IMG_ASPECT_RATIO = 736 / 236
 
 # start and end time for each of the three comets
-COMET_TIMINGS = [[0, 4000], [1500, 3500], [2500, 4000]]
+COMET_TIMINGS = [[0, 4000], [1000, 2000], [2000, 4000]]
 
 # start and end x ranges for comets. Multiply these by SKY_WIDTH to get
 # star coordinates.
