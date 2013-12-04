@@ -377,6 +377,7 @@ pickComets = ->
 
   for i in [0...NUM_COMETS]
     comet = {}
+    comet.num = i
     comet.startX = maybeFlip(tabcat.math.randomUniform(
       COMET_X_RANGES[i][0]...)) * SKY_WIDTH
     comet.endX = maybeFlip(tabcat.math.randomUniform(
@@ -415,17 +416,22 @@ makeCometImg = (comet) ->
 # caughtCallback: called once when comet is tapped on
 # doneCallback: called when comet reaches end of its path
 #
-# startCallback and doneCallback take the (jquery-wrapped) comet img as a
-# single argument. caughtCallback takes the event as a callback
-# (use event.target to get at the comet img).
+# caughtCallback takes the event as a single argument;
+# use event.target to get at the comet img, and event.data to get *comet*
+#
+# startCallback and doneCallback take fake event objects that have
+# target and data set similarly to the argument to caughtCallback
+#
 addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
   $cometImg = makeCometImg(comet)
   $('#cometSky').append($cometImg)
 
-  if startCallback?
-    startCallback($cometImg)
+  fakeEvent = {target: $cometImg[0], data: comet}
 
-  $cometImg.one('mousedown touchstart', (event) ->
+  if startCallback?
+    startCallback(fakeEvent)
+
+  $cometImg.one('mousedown touchstart', comet, (event) ->
     event.preventDefault()
 
     if caughtCallback?
@@ -442,7 +448,7 @@ addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
       # don't fire on comets that have been caught
       if $cometImg.is(':visible')
         if doneCallback?
-          doneCallback($cometImg)
+          doneCallback(fakeEvent)
         $cometImg.remove()
   })
 
@@ -476,6 +482,8 @@ showTargetStars = ->
   tabcat.task.logEvent(getTaskState())
   tabcat.ui.wait(getTargetStarDuration()).then(showCometSky)
 
+  return
+
 
 # show comets to catch
 showCometSky = ->
@@ -508,7 +516,13 @@ showComets = (duration) ->
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
-    tabcat.task.logEvent(getTaskState(), event, {caughtComet: true})
+    comet = event.data
+    interpretation =
+      caughtComet:
+        num: comet.num
+        length: comet.length
+
+    tabcat.task.logEvent(getTaskState(), event, interpretation)
 
     # cometsCaught will be incremented in the *next* event, for consistency
     # with intensity
@@ -558,6 +572,8 @@ showScore = (pageX, pageY, amount) ->
 
   # just in case animations are broken
   tabcat.ui.wait(SCORE_DURATION).then(-> $scoreDiv.remove())
+
+  return
 
 
 # show star(s) to match against the target stars

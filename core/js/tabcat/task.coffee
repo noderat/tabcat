@@ -408,6 +408,8 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
 
   eventLog.push(eventLogItem)
 
+  return
+
 
 # Get a (shallow) copy of the event log
 tabcat.task.getEventLog = ->
