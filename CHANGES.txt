@@ -1,3 +1,9 @@
+v0.4.5, 2013-12-04 -- finish up Stargazer
+- documentation
+  - roles are no longer part of the security model (#53)
+- tasks:
+  - stargazer: tweaked the way we use comets (#54)
+
 v0.4.4, 2013-11-21 -- Stargazer
 - core library:
   - started logging position and identifier of touch events
