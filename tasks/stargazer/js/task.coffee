@@ -100,21 +100,29 @@ COMET_START_Y = SCREEN_MIN_Y - COMET_IMG_WIDTH / 2
 COMET_END_Y = SCREEN_MAX_Y + COMET_IMG_WIDTH / 2
 
 # number of comets
-NUM_COMETS = 2
+NUM_COMETS = 3
 
-# start time and duration for the two comets, in milliseconds
-COMET_TIMINGS = [[0, 2500], [1000, 2000]]
+# length of comets, in star diameters. This corresponds to the comet
+# image's width.
+COMET_LENGTHS = [17, 9, 6]
 
-# start and end x-coordinate ranges for the two comets. Which one is used
-# for which comet is random
-COMET_X_RANGES_LIST = [
-  [[-SKY_WIDTH, SKY_WIDTH * 0.3], [SKY_WIDTH * 0.7, SKY_WIDTH * 2]],
-  [[SKY_WIDTH * 0.7, SKY_WIDTH * 2], [-SKY_WIDTH, SKY_WIDTH * 0.3]]
+# aspect ratio of comet image. Divide image width by this to get height.
+COMET_IMG_ASPECT_RATIO = 368 / 118
+
+# start and end time for each of the three comets
+COMET_TIMINGS = [[0, 4000], [1500, 3500], [2500, 4000]]
+
+# start and end x ranges for comets. Multiply these by SKY_WIDTH to get
+# star coordinates.
+COMET_X_RANGES = [
+  [[-0.5, 0.3], [0.7, 1.5]],
+  [[0.7, 1.2], [-0.2, 0.3]],
+  [[-0.2, 0.3], [0.7, 1.2]],
 ]
 
 # how long to show comets. This matches the CSS for #cometSky div.msg
 # in css/task.css
-COMET_TIME_LIMIT = 3500
+COMET_TIME_LIMIT = 5000
 
 # how tall the score font is, as percentage of sky height
 SCORE_FONT_SIZE = 12
@@ -361,17 +369,25 @@ pickStarAtDistanceFrom = (distance, [x, y]) ->
 pickComets = ->
   comets = []
 
-  xRangesList = _.shuffle(COMET_X_RANGES_LIST)
+  # randomly choose whether to flip x coordinates of comets
+  if tabcat.math.coinFlip()
+    maybeFlip = (x) -> 1 - x
+  else
+    maybeFlip = (x) -> x
 
   for i in [0...NUM_COMETS]
-    comet =
-      startX: tabcat.math.randomUniform(xRangesList[i][0]...)
-      endX: tabcat.math.randomUniform(xRangesList[i][1]...)
-      startY: COMET_START_Y
-      endY: COMET_END_Y
-      startTime: COMET_TIMINGS[i][0]
-      duration: COMET_TIMINGS[i][1]
-
+    comet = {}
+    comet.startX = maybeFlip(tabcat.math.randomUniform(
+      COMET_X_RANGES[i][0]...)) * SKY_WIDTH
+    comet.endX = maybeFlip(tabcat.math.randomUniform(
+      COMET_X_RANGES[i][1]...)) * SKY_WIDTH
+    comet.length = COMET_LENGTHS[i]
+    # just using the width of the comet image here;
+    # don't need to worry about the diagonal of the comet image
+    # because its corners are transparent anyway
+    comet.startY = SCREEN_MIN_Y - comet.length / 2
+    comet.endY = SCREEN_MAX_Y + comet.length / 2
+    [comet.startTime, comet.endTime] = COMET_TIMINGS[i]
     comet.angle = (
       -Math.atan2(comet.endX - comet.startX, comet.endY - comet.startY) /
        Math.PI * 180 + 90)
@@ -382,10 +398,12 @@ pickComets = ->
 
 
 # convert comet center and angle to an image
-makeCometImg = ([x, y], angle) ->
-  $img = makeImg([x, y], [COMET_IMG_WIDTH, COMET_IMG_HEIGHT],
+makeCometImg = (comet) ->
+  $img = makeImg(
+    [comet.startX, comet.startY],
+    [comet.length, comet.length / COMET_IMG_ASPECT_RATIO],
     class: 'comet', src: COMET_IMG_PATH)
-  $img.css(rotationCss(angle))
+  $img.css(rotationCss(comet.angle))
   return $img
 
 
@@ -401,7 +419,7 @@ makeCometImg = ([x, y], angle) ->
 # single argument. caughtCallback takes the event as a callback
 # (use event.target to get at the comet img).
 addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
-  $cometImg = makeCometImg([comet.startX, comet.startY], comet.angle)
+  $cometImg = makeCometImg(comet)
   $('#cometSky').append($cometImg)
 
   if startCallback?
@@ -418,7 +436,7 @@ addCometToSky = (comet, startCallback, caughtCallback, doneCallback) ->
     left: starXToSky(comet.endX - COMET_IMG_WIDTH / 2),
     top: starYToSky(comet.endY - COMET_IMG_WIDTH / 2),
   }, {
-    duration: comet.duration
+    duration: comet.endTime - comet.startTime
     easing: 'linear'
     complete: ->
       # don't fire on comets that have been caught
