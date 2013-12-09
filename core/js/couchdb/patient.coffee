@@ -75,7 +75,7 @@ exports.map = (doc) ->
 # for each patient record we compile, we call handler with the patient
 # as the sole argument
 exports.iterate = (getRow, handler) ->
-  _ = require('views/lib/underscore')._
+  _ = require('js/vendor/underscore')._
 
   currentPatient = null
   currentEncounter = null

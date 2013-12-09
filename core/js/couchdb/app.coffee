@@ -26,12 +26,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 patient = require('./patient')
+adhocLineTasksReport = require('./adhoc/line-tasks-report')
 
 # stitch together data from the patient view
 dumpList = (head, req) ->
-  _ = require('views/lib/underscore')._
-
-  keyType = _.last(req.path)
+  keyType = req.path[req.path.length - 1]
 
   if not (req.path.length is 6 and keyType is 'patient')
     throw new Error('You may only dump the patient view')
@@ -66,6 +65,7 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
 
 exports.lists =
   dump: dumpList
+  'adhoc-line-tasks-report': adhocLineTasksReport.list
 
 exports.validate_doc_update = validateDocUpdate
 
