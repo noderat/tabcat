@@ -23,8 +23,7 @@
                     "return-to-examiner.html",
                     "tasks.html"],
     "modules": ["js/couchdb/app.js",
-                "js/couchdb/patient.js",
-                "views/lib/underscore.js"],
+                "js/couchdb/patient.js"],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
