@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.4.4",
+    "version": "0.4.5-dev",
     "description": "TabCAT core libraries",
     "attachments": ["create-encounter.html",
                     "css/tabcat.css",
@@ -22,7 +22,9 @@
                     "login.html",
                     "return-to-examiner.html",
                     "tasks.html"],
-    "modules": ["js/couchdb/app.js", "views/lib/underscore.js"],
+    "modules": ["js/couchdb/app.js",
+                "js/couchdb/patient.js",
+                "views/lib/underscore.js"],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
