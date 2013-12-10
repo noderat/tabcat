@@ -44,7 +44,7 @@ patientHandler = (patientRecord) ->
   taskToInfo = {}
   for encounter in patientRecord.encounters
     for task in encounter.tasks
-      if task.finishedAt and task.name in LINE_TASKS
+      if task.finishedAt and task.eventLog? and task.name in LINE_TASKS
         # only keep the first task per patient
         if taskToInfo[task.name]
           continue
