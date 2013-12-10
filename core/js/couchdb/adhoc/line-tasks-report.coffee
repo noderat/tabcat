@@ -105,7 +105,11 @@ exports.list = (head, req) ->
   if not (req.path.length is 6 and keyType is 'patient')
     throw new Error('You may only dump the patient view')
 
+  isoDate = (new Date()).toISOString().substring(0, 10)
+
   start(headers:
+    'Content-Disposition': (
+      "attachment; filename=\"line-tasks-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
   csvHeader = ['patientCode'].concat(
