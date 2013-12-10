@@ -88,7 +88,15 @@ patientHandler = (patientRecord) ->
       for intensity, j in info.intensitiesAtReversal
         data[offset + 3 + j] = intensity
 
+  # replace undefined with null, so arrayToCsv() works
+  data = (x ? null for x in data)
+
   send(csv.arrayToCsv([data]))
+
+
+taskHeader = (prefix) ->
+  [prefix + 'Time', prefix + 'Trials', prefix + 'TimePerTrial'].concat(
+    (prefix + i for i in [1..MAX_REVERSALS]))
 
 
 exports.list = (head, req) ->
@@ -99,5 +107,12 @@ exports.list = (head, req) ->
 
   start(headers:
     'Content-Type': 'text/csv')
+
+  csvHeader = ['patientCode'].concat(
+    taskHeader('Par')).concat(
+    taskHeader('Prp')).concat(
+    taskHeader('LO'))
+
+  send(csv.arrayToCsv([csvHeader]))
 
   patient.iterate(getRow, patientHandler)
