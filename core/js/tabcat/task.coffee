@@ -427,15 +427,6 @@ tabcat.task.getEventLog = ->
   eventLog.slice(0)
 
 
-# Get the ID of the current task, or null if start() hasn't been called
-tabcat.task.getTaskId = ->
-  taskDoc?._id
-
-# Get the internal name of the current task, or null if start() hasn't
-# been called
-tabcat.task.getTaskName = ->
-  taskDoc?.name
-
 # Get the task name from the URL. We use the filename plus the hash, if any
 inferTaskName = ->
   (_.last(window.location.pathname.split('/')).split('.')[0] +
