@@ -20,23 +20,6 @@
         "attachments": null
     },
     "tabcat": {
-        "tasks": {
-            "line-orientation": {
-                "description": "Line Orientation",
-                "start": "line-orientation.html",
-                "icon": "img/icon/line-orientation.png"
-            },
-            "parallel-line-length": {
-                "description": "Parallel Line Length",
-                "start": "parallel-line-length.html",
-                "icon": "img/icon/parallel-line-length.png"
-            },
-            "perpendicular-line-length": {
-                "description": "Perpendicular Line Length",
-                "start": "perpendicular-line-length.html",
-                "icon": "img/icon/perpendicular-line-length.png"
-            }
-        },
         "batteries": {
             "line-perception": {
                 "description": "Line Perception",
@@ -45,6 +28,23 @@
                     "perpendicular-line-length",
                     "line-orientation"
                 ]
+            }
+        },
+        "tasks": {
+            "line-orientation": {
+                "description": "Line Orientation",
+                "icon": "img/icon/line-orientation.png",
+                "start": "line-orientation.html"
+            },
+            "parallel-line-length": {
+                "description": "Parallel Line Length",
+                "icon": "img/icon/parallel-line-length.png",
+                "start": "parallel-line-length.html"
+            },
+            "perpendicular-line-length": {
+                "description": "Perpendicular Line Length",
+                "icon": "img/icon/perpendicular-line-length.png",
+                "start": "perpendicular-line-length.html"
             }
         }
     }
