@@ -1,3 +1,9 @@
+v0.4.6, 2013-12-11 -- reports in CouchDB
+- core library
+  - tabcat.user.login auto-converts user email to lowercase (#29)
+- analysis:
+  - adhoc line report is now integrated into CouchDB (#26)
+
 v0.4.5, 2013-12-04 -- finish up Stargazer
 - documentation
   - roles are no longer part of the security model (#53)
