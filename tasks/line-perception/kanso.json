@@ -1,0 +1,31 @@
+{
+    "name": "line-perception",
+    "version": "0.5.0",
+    "description": "Line Perception",
+    "attachments": [
+        "css/line-orientation.css",
+        "img/icon/line-orientation.png",
+        "js/line-orientation.js",
+        "line-orientation.html"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "tasks": {
+            "line-orientation": {
+                "description": "Line Orientation",
+                "start": "line-orientation.html",
+                "icon": "img/line-orientation-icon.png"
+            }
+        },
+        "batteries": {
+            "line-perception": {
+                "description": "Line Perception",
+                "tasks": [
+                    "line-orientation"
+                ]
+            }
+        }
+    }
+}
