@@ -433,19 +433,6 @@ inferTaskName = ->
    window.location.hash)
 
 
-NON_TASK_DESIGN_DOCS = ['core']
-
-# Get the name of all tabcat tasks. This assumes our current URL points
-# to a doc in the tabcat DB
-tabcat.task.getAllTaskNames = ->
-  tabcat.couch.getDoc(TABCAT_DB, '_all_docs').then(
-    (response) ->
-      (row.key[8..] for row in response.rows \
-        when row.key[0..7] is '_design/' and \
-          row.key[8..] not in NON_TASK_DESIGN_DOCS)
-  )
-
-
 # implements adaptive difficulty. Keeps track of an "intensity"
 # (higher intensity means easier) and raises or lowers intensity
 # depending on how the patient does.

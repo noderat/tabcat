@@ -26,54 +26,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # TASK INFO
 
-# Promise: get a list of info about each task, with the keys index, icon,
-# and description (index and icon are URLs), sorted by description.
-getTaskInfo = ->
-  tabcat.task.getAllTaskNames().then(
-    (taskNames) ->
-      taskDesignDocPromises = (
-        tabcat.couch.getDoc(null, '../' + name) for name in taskNames)
-
-      $.when(taskDesignDocPromises...).then(
-        (taskDesignDocs...) ->
-          taskInfo = _.sortBy(
-            _.compact(designDocToTaskInfo(ddoc) for ddoc in taskDesignDocs),
-              # temporary hack: put Line Orientation and DART task last
-              #(item) -> item.description))
-              (item) -> [item.description[0] is "D",
-                         item.description[0] is "L",
-                         item.description])
-
-          # add info about which tasks were finished
-          finished = tabcat.encounter.getTasksFinished()
-          for task in taskInfo
-            task.finished = !!finished[task.name]
-
-          return taskInfo
-      )
-  )
+# DB where design docs and task content is stored
+TABCAT_DB = 'tabcat'
 
 
-# convert a design doc to task info, or return undefined if it's not a
-# valid task
-designDocToTaskInfo = (doc) ->
-  urlRoot = '../../' + doc._id
-  c = doc.kanso?.config
+# Promise: get an object containing "batteries" and "tasks"; these each
+# map battery/task name to the corresponding info from the design docs.
+#
+# This also adds a "urlRoot" and "finished" field to each task
+#
+# options is the same as for tabcat.couch.getAllDesignDocs
+@getTaskInfo = (options) ->
+  tabcat.couch.getAllDesignDocs(TABCAT_DB).then(
+    (designDocs) ->
+      batteries = {}
+      tasks = {}
 
-  if not (c? and c.index? and c.name? and c.description?)
-    return
+      finished = tabcat.encounter.getTasksFinished()
 
-  if c.tabcat?.icon?
-    icon = urlRoot + '/' + c.tabcat.icon
-  else
-    icon = 'img/icon.png'
+      for designDoc in designDocs
+        kct = designDoc.kanso?.config?.tabcat
+        if kct?
+          _.extend(batteries, kct.batteries)
 
-  return {
-    url: urlRoot + c.index
-    icon: icon
-    description: c.description
-    name: c.name
-  }
+          # add urlRoot and finished to each task
+          if kct.tasks?
+            urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
+            for own name, task of kct.tasks
+              tasks[name] = _.extend(task,
+                finished: !!finished[name]
+                urlRoot: urlRoot
+              )
+
+      return {batteries: batteries, tasks: tasks}
+    )
 
 
 # get task info from the server, and then display an icon and a description
@@ -81,17 +67,30 @@ designDocToTaskInfo = (doc) ->
 showTasks = ->
   getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
-    for task in taskInfo
+
+    # alphabetize tasks
+    tasks = _.sortBy(_.values(taskInfo.tasks), (t) -> t.description)
+
+    for task in tasks
       do (task) ->  # create a new scope to create separate bind() functions
+        if not (task.start? and task.description?)
+          return
+
         $div = $('<div></div>', class: 'task')
+
+        if task.icon?
+          iconUrl = task.urlRoot + task.icon
+        else
+          # default to TabCAT icon
+          iconUrl = 'img/icon.png'
 
         if task.finished
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')
-          $icon.css('background-image', 'url(' + task.icon + ')')
+          $icon.css('background-image', "url(#{iconUrl})")
         else
-          $icon = $('<img>', class: 'icon', src: task.icon)
+          $icon = $('<img>', class: 'icon', src: iconUrl)
         $div.append($icon)
 
         $description = $('<span></span>', class: 'description')
@@ -99,7 +98,9 @@ showTasks = ->
         $div.append($description)
 
         $('#taskList').append($div)
-        $div.on('click', (event) -> window.location = task.url)
+
+        startUrl = task.urlRoot + task.start
+        $div.on('click', (event) -> window.location = startUrl)
   )
 
 

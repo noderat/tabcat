@@ -155,6 +155,9 @@ tabcat.couch.putDoc = (db, doc, options) ->
 # - now: timeout is relative to this time (set this to $.now())
 # - timeout: timeout in milliseconds
 tabcat.couch.getAllDesignDocs = (db, options) ->
+  if not db?
+    throw Error("must specify a db")
+
   # force timeout to be relative to now
   if options?.timeout? and not options.now?
     options = _.extend(options, now: $.now())
