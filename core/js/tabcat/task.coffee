@@ -81,6 +81,12 @@ eventSyncXHR = null
 eventSyncIntervalId = null
 
 
+# Get a copy of the CouchDB doc for this task
+tabcat.task.get = ->
+  # this is clunky, but eventually task docs will be stored in localStorage
+  # anyway (issue #16)
+  JSON.parse(JSON.stringify(taskDoc))
+
 
 # Does the patient have the device? Call with an argument (true or false) to
 # set whether the patient has device.
@@ -111,12 +117,15 @@ tabcat.task.patientHasDevice = (value) ->
 #   uploads.
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
+# - name: internal name of task (e.g. line-orientation). By default we
+#   infer this from the filename in the URL (e.g. line-orientation.html)
 # - timeout: network timeout, in milliseconds (default 3000)
 # - trackViewport: should we log changes to the viewport in the event log?
 #   (see tabcat.task.trackViewportInEventLog())
 tabcat.task.start = _.once((options) ->
   now = $.now()
   timeout = options?.timeout ? DEFAULT_TIMEOUT
+  taskName = options?.name ? inferTaskName()
 
   # TODO: redirect to the return-to-examiner page if the patient has the device
   # and this is examiner-administered
@@ -136,10 +145,11 @@ tabcat.task.start = _.once((options) ->
       browser: tabcat.task.getBrowserInfo()
       clockLastStarted: tabcat.clock.lastStarted()
       encounterId: tabcat.encounter.getId()
+      name: taskName
       patientCode: tabcat.encounter.getPatientCode()
+      start: window.location.pathname
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
-      name: tabcat.task.getTaskName()
       user: tabcat.user.get()
 
   if options?.trackViewport
@@ -298,7 +308,7 @@ tabcat.task.finish = (options) ->
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 
-  tabcat.encounter.markTaskFinished(tabcat.task.getTaskName())
+  tabcat.encounter.markTaskFinished(taskDoc.name)
 
   # make sure start() has completed!
   tabcat.task.start().then(->
@@ -420,10 +430,14 @@ tabcat.task.getEventLog = ->
 tabcat.task.getTaskId = ->
   taskDoc?._id
 
+# Get the internal name of the current task, or null if start() hasn't
+# been called
+tabcat.task.getTaskName = ->
+  taskDoc?.name
 
 # Get the task name from the URL
-tabcat.task.getTaskName = ->
-  _.last(window.location.pathname.split('/'), 2)[0]
+inferTaskName = ->
+  _.last(window.location.pathname.split('/')).split('.')[0]
 
 
 NON_TASK_DESIGN_DOCS = ['core']
