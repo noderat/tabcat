@@ -4,9 +4,17 @@
     "description": "Line Perception",
     "attachments": [
         "css/line-orientation.css",
+        "css/parallel-line-length.css",
+        "css/perpendicular-line-length.css",
         "img/icon/line-orientation.png",
+        "img/icon/parallel-line-length.png",
+        "img/icon/perpendicular-line-length.png",
         "js/line-orientation.js",
-        "line-orientation.html"
+        "js/parallel-line-length.js",
+        "js/perpendicular-line-length.js",
+        "line-orientation.html",
+        "parallel-line-length.html",
+        "perpendicular-line-length.html"
     ],
     "dependencies": {
         "attachments": null
@@ -16,13 +24,25 @@
             "line-orientation": {
                 "description": "Line Orientation",
                 "start": "line-orientation.html",
-                "icon": "img/line-orientation-icon.png"
+                "icon": "img/icon/line-orientation.png"
+            },
+            "parallel-line-length": {
+                "description": "Parallel Line Length",
+                "start": "parallel-line-length.html",
+                "icon": "img/icon/parallel-line-length.png"
+            },
+            "perpendicular-line-length": {
+                "description": "Perpendicular Line Length",
+                "start": "perpendicular-line-length.html",
+                "icon": "img/icon/perpendicular-line-length.png"
             }
         },
         "batteries": {
             "line-perception": {
                 "description": "Line Perception",
                 "tasks": [
+                    "parallel-line-length",
+                    "perpendicular-line-length",
                     "line-orientation"
                 ]
             }
