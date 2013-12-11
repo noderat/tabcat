@@ -347,6 +347,9 @@ tabcat.ui.updateStatusBar = ->
 # On success, note that the patient does not have the device, and
 # redirect to the appropriate page.
 #
+# If set, user will automatically be converted to all-lowercase,
+# to give case-insensitive behavior.
+#
 # Set user to null to re-enter current user's password
 tabcat.ui.login = (user, password) ->
   previousUser = tabcat.user.get()

@@ -60,11 +60,14 @@ tabcat.user.isAuthenticated = ->
 #
 # Usually you'll want to use tabcat.ui.login()
 #
+# If set, user will automatically be converted to all-lowercase,
+# to give case-insensitive behavior.
+#
 # This also sets localStorage.user on success. If there's a network error,
 # just treat user as logged in until we're back online (the only real
 # security is on the DB server).
 #
-# Set user to null to re-enter current user's password
+# Set user to null to re-enter current user's password.
 tabcat.user.login = (user, password) ->
   # clear out old session if user isn't just re-entering their password
   if user?
@@ -72,6 +75,11 @@ tabcat.user.login = (user, password) ->
     tabcat.user.clearDocsSpilled()
 
   user ?= tabcat.user.get()
+
+  # user emails in the DB should always be all-lowercase (issue #29);
+  # this makes things case-insensitive.
+  if user?
+    user = user.toLowerCase()
 
   tabcat.couch.login(user, password).then(
     (->
