@@ -33,6 +33,19 @@ tabcat.couch = {}
 localStorage = @localStorage
 
 
+# convert options.now (timestamp, from $.now()) and options.timeout to a
+# timeout for use with couchDB methods. This allows a multi-step
+# process to timeout after a fixed time (rather than having a certain
+# timeout per step).
+#
+# if it's supposed to time out sometime in the past, return 1 (one ms)
+timeoutFrom = (options) ->
+  if options?.now? and options.timeout?
+    Math.max(options.now + options.timeout - $.now(), 1)
+  else
+    options?.timeout
+
+
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
 # we don't put timestamps in UUIDs, and works offline.
 tabcat.couch.randomUUID = () ->
@@ -51,10 +64,15 @@ tabcat.couch.logout = ->
 
 # Promise: get the username of the current user, or null
 #
-# You can specify a timeout in milliseconds with options.timeout
+# options:
+# - now: timeout is relative to this time (set this to $.now())
+# - timeout: timeout in milliseconds
 tabcat.couch.getUser = (options) ->
-  tabcat.couch.getDoc(null, '/_session', timeout: options?.timeout).then(
-    (sessionDoc) -> sessionDoc.userCtx.name)
+  tabcat.couch.getDoc(
+    null, '/_session', _.pick(options ? {}, 'now', 'timeout')).then(
+
+    (sessionDoc) -> sessionDoc.userCtx.name
+  )
 
 
 # keys that always have to be JSON
@@ -76,8 +94,10 @@ dbUrl = (db, docId) ->
 #
 # You can optionally specify query params (for querying views, etc.)
 #
-# You can specify query parameters with options.query
-# You can specify a timeout in milliseconds with options.timeout
+# options:
+# - now: timeout is relative to this time (set this to $.now())
+# - query: query parameters
+# - timeout: timeout in milliseconds
 tabcat.couch.getDoc = (db, docId, options) ->
   query = ''
   if options?.query?
@@ -95,7 +115,7 @@ tabcat.couch.getDoc = (db, docId, options) ->
   # don't use $.getJSON() because it doesn't allow for timeout
   $.ajax(
     dataType: 'json'
-    timeout: options?.timeout
+    timeout: timeoutFrom(options)
     url: url
   ).then(
     ((doc) -> doc),  # just return a single argument
@@ -120,7 +140,7 @@ tabcat.couch.putDoc = (db, doc, options) ->
   ajaxParams =
     contentType: 'application/json'
     data: JSON.stringify(doc)
-    timeout: options?.timeout
+    timeout: timeoutFrom(options)
     type: 'PUT'
     url: dbUrl(db, doc._id)
 
@@ -128,4 +148,30 @@ tabcat.couch.putDoc = (db, doc, options) ->
     (data, textStatus, xhr) ->
       doc._rev = JSON.parse(xhr.getResponseHeader('ETag'))
       return
+  )
+
+
+# Promise: return a list of all design docs for a DB, sorted by ID.
+# - now: timeout is relative to this time (set this to $.now())
+# - timeout: timeout in milliseconds
+tabcat.couch.getAllDesignDocs = (db, options) ->
+  # force timeout to be relative to now
+  if options?.timeout? and not options.now?
+    options = _.extend(options, now: $.now())
+
+  # don't pass parameters to _all_docs (e.g. startkey="_design/")
+  # because we want to be able to use the _all_docs stored in the
+  # application cache.
+  tabcat.couch.getDoc(db, '_all_docs', timeout: timeoutFrom(options)).then(
+    (response) ->
+      designDocIds = (row.key for row in response.rows \
+                      when row.key[0..7] is '_design/')
+
+      designDocPromises = (
+        tabcat.couch.getDoc(db, docId, timeout: timeoutFrom(options)) \
+        for docId in designDocIds)
+
+      $.when(designDocPromises...).then(
+        (designDocs...) -> designDocs
+      )
   )
