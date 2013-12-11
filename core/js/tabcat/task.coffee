@@ -118,7 +118,8 @@ tabcat.task.patientHasDevice = (value) ->
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
 # - name: internal name of task (e.g. line-orientation). By default we
-#   infer this from the filename in the URL (e.g. line-orientation.html)
+#   infer this from the filename in the URL plus the hash, if any
+#   (e.g. /tabcat/_design/foo/bar.html#baz becomes "bar#baz")
 # - timeout: network timeout, in milliseconds (default 3000)
 # - trackViewport: should we log changes to the viewport in the event log?
 #   (see tabcat.task.trackViewportInEventLog())
@@ -147,7 +148,7 @@ tabcat.task.start = _.once((options) ->
       encounterId: tabcat.encounter.getId()
       name: taskName
       patientCode: tabcat.encounter.getPatientCode()
-      start: window.location.pathname
+      start: window.location.pathname + window.location.hash
       startedAt: tabcat.clock.now()
       startViewport: tabcat.task.getViewportInfo()
       user: tabcat.user.get()
@@ -435,9 +436,10 @@ tabcat.task.getTaskId = ->
 tabcat.task.getTaskName = ->
   taskDoc?.name
 
-# Get the task name from the URL
+# Get the task name from the URL. We use the filename plus the hash, if any
 inferTaskName = ->
-  _.last(window.location.pathname.split('/')).split('.')[0]
+  (_.last(window.location.pathname.split('/')).split('.')[0] +
+   window.location.hash)
 
 
 NON_TASK_DESIGN_DOCS = ['core']
