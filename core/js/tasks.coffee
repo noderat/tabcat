@@ -84,9 +84,9 @@ showTasks = ->
         continue
 
       $batteryDiv = $('<div></div>', class: 'battery')
-      $batteryDescription = $('<span></span>', class: 'description')
-      $batteryDescription.text(battery.description)
-      $batteryDiv.append($batteryDescription)
+      $batteryHeader = $('<div></div>', class: 'header')
+      $batteryHeader.text(battery.description)
+      $batteryDiv.append($batteryHeader)
 
       $tasksDiv = $('<div></div>', class: 'tasks collapsed')
 
@@ -125,7 +125,7 @@ showTasks = ->
 
       $batteryDiv.append($tasksDiv)
       do ($tasksDiv) ->
-        $batteryDiv.on('click', (event) ->
+        $batteryHeader.on('click', (event) ->
           event.preventDefault()
           shouldOpen = ($tasksDiv).is('.collapsed')
           $('#taskList').find('div.tasks').addClass('collapsed')
