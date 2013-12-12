@@ -323,6 +323,10 @@ form.big button[type=submit] {
     color: #000000;
 }
 
+#tasks div.battery .collapsed {
+    display: none;
+}
+
 #tasks button {
     font-size: 24px;
     border-radius: 10px;

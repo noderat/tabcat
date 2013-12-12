@@ -80,7 +80,7 @@ showTasks = ->
     )
 
     for battery in batteries
-      if not battery.description?
+      if not battery.description? or battery.tasks.length is 0
         continue
 
       $batteryDiv = $('<div></div>', class: 'battery')
@@ -88,7 +88,7 @@ showTasks = ->
       $batteryDescription.text(battery.description)
       $batteryDiv.append($batteryDescription)
 
-      $tasksDiv = $('<div></div>', class: 'tasks')
+      $tasksDiv = $('<div></div>', class: 'tasks collapsed')
 
       for taskName in battery.tasks
         task = tasksByName[taskName]
@@ -124,6 +124,15 @@ showTasks = ->
           $taskDiv.on('click', (event) -> window.location = startUrl)
 
       $batteryDiv.append($tasksDiv)
+      do ($tasksDiv) ->
+        $batteryDiv.on('click', (event) ->
+          event.preventDefault()
+          shouldOpen = ($tasksDiv).is('.collapsed')
+          $('#taskList').find('div.tasks').addClass('collapsed')
+          if shouldOpen
+            $tasksDiv.removeClass('collapsed')
+        )
+
       $('#taskList').append($batteryDiv)
   )
 
