@@ -88,6 +88,8 @@ showTasks = ->
       $batteryDescription.text(battery.description)
       $batteryDiv.append($batteryDescription)
 
+      $tasksDiv = $('<div></div>', class: 'tasks')
+
       for taskName in battery.tasks
         task = tasksByName[taskName]
 
@@ -115,12 +117,13 @@ showTasks = ->
         $taskDescription.text(task.description)
         $taskDiv.append($taskDescription)
 
-        $batteryDiv.append($taskDiv)
+        $tasksDiv.append($taskDiv)
 
         do -> # create a separate scope for each click handler
           startUrl = task.urlRoot + task.start
           $taskDiv.on('click', (event) -> window.location = startUrl)
 
+      $batteryDiv.append($tasksDiv)
       $('#taskList').append($batteryDiv)
   )
 
