@@ -265,14 +265,15 @@ offlineStatusStoragePercentFullHtml = ->
   return percentFullHtml
 
 
-
-
-
 # update the statusBar div, populating it if necessary
+#
+# this also implicitly unsets patientHasDevice
 #
 # this is also responsible for swapping in updated versions of the
 # application cache (Android browser seems to need this)
 tabcat.ui.updateStatusBar = ->
+  tabcat.task.patientHasDevice(false)
+
   $statusBar = $('#statusBar')
 
   # populate with new HTML if we didn't already

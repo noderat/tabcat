@@ -26,54 +26,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # TASK INFO
 
-# Promise: get a list of info about each task, with the keys index, icon,
-# and description (index and icon are URLs), sorted by description.
-getTaskInfo = ->
-  tabcat.task.getAllTaskNames().then(
-    (taskNames) ->
-      taskDesignDocPromises = (
-        tabcat.couch.getDoc(null, '../' + name) for name in taskNames)
-
-      $.when(taskDesignDocPromises...).then(
-        (taskDesignDocs...) ->
-          taskInfo = _.sortBy(
-            _.compact(designDocToTaskInfo(ddoc) for ddoc in taskDesignDocs),
-              # temporary hack: put Line Orientation and DART task last
-              #(item) -> item.description))
-              (item) -> [item.description[0] is "D",
-                         item.description[0] is "L",
-                         item.description])
-
-          # add info about which tasks were finished
-          finished = tabcat.encounter.getTasksFinished()
-          for task in taskInfo
-            task.finished = !!finished[task.name]
-
-          return taskInfo
-      )
-  )
+# DB where design docs and task content is stored
+TABCAT_DB = 'tabcat'
 
 
-# convert a design doc to task info, or return undefined if it's not a
-# valid task
-designDocToTaskInfo = (doc) ->
-  urlRoot = '../../' + doc._id
-  c = doc.kanso?.config
+# Promise: get an object containing "batteries" and "tasks"; these each
+# map battery/task name to the corresponding info from the design docs.
+#
+# This also adds a "urlRoot" and "finished" field to each task
+#
+# options is the same as for tabcat.couch.getAllDesignDocs
+getTaskInfo = (options) ->
+  tabcat.couch.getAllDesignDocs(TABCAT_DB).then(
+    (designDocs) ->
+      batteries = {}
+      tasks = {}
 
-  if not (c? and c.index? and c.name? and c.description?)
-    return
+      finished = tabcat.encounter.getTasksFinished()
 
-  if c.tabcat?.icon?
-    icon = urlRoot + '/' + c.tabcat.icon
-  else
-    icon = 'img/icon.png'
+      for designDoc in designDocs
+        kct = designDoc.kanso?.config?.tabcat
+        if kct?
+          _.extend(batteries, kct.batteries)
 
-  return {
-    url: urlRoot + c.index
-    icon: icon
-    description: c.description
-    name: c.name
-  }
+          # add urlRoot and finished to each task
+          if kct.tasks?
+            urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
+            for own name, task of kct.tasks
+              tasks[name] = _.extend(task,
+                finished: !!finished[name]
+                urlRoot: urlRoot
+              )
+
+      return {batteries: batteries, tasks: tasks}
+    )
 
 
 # get task info from the server, and then display an icon and a description
@@ -81,25 +67,73 @@ designDocToTaskInfo = (doc) ->
 showTasks = ->
   getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
-    for task in taskInfo
-      do (task) ->  # create a new scope to create separate bind() functions
-        $div = $('<div></div>', class: 'task')
+
+    batteries = _.sortBy(_.values(taskInfo.batteries), (b) -> b.description)
+    tasksByName = taskInfo.tasks
+
+    # add a fake battery for all tasks
+    allTaskNames = _.sortBy(
+      _.keys(tasksByName), (name) -> tasksByName[name].description)
+    batteries.push(
+      description: 'All Tasks',
+      tasks: allTaskNames
+    )
+
+    for battery in batteries
+      if not battery.description? or battery.tasks.length is 0
+        continue
+
+      $batteryDiv = $('<div></div>', class: 'battery')
+      $batteryHeader = $('<div></div>', class: 'header')
+      $batteryHeader.text(battery.description)
+      $batteryDiv.append($batteryHeader)
+
+      $tasksDiv = $('<div></div>', class: 'tasks collapsed')
+
+      for taskName in battery.tasks
+        task = tasksByName[taskName]
+
+        if not (task? and task.start? and task.description?)
+          continue
+
+        $taskDiv = $('<div></div>', class: 'task')
+
+        if task.icon?
+          iconUrl = task.urlRoot + task.icon
+        else
+          # default to TabCAT icon
+          iconUrl = 'img/icon.png'
 
         if task.finished
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')
-          $icon.css('background-image', 'url(' + task.icon + ')')
+          $icon.css('background-image', "url(#{iconUrl})")
         else
-          $icon = $('<img>', class: 'icon', src: task.icon)
-        $div.append($icon)
+          $icon = $('<img>', class: 'icon', src: iconUrl)
+        $taskDiv.append($icon)
 
-        $description = $('<span></span>', class: 'description')
-        $description.text(task.description)
-        $div.append($description)
+        $taskDescription = $('<span></span>', class: 'description')
+        $taskDescription.text(task.description)
+        $taskDiv.append($taskDescription)
 
-        $('#taskList').append($div)
-        $div.on('click', (event) -> window.location = task.url)
+        $tasksDiv.append($taskDiv)
+
+        do -> # create a separate scope for each click handler
+          startUrl = task.urlRoot + task.start
+          $taskDiv.on('click', (event) -> window.location = startUrl)
+
+      $batteryDiv.append($tasksDiv)
+      do ($tasksDiv) ->
+        $batteryHeader.on('click', (event) ->
+          event.preventDefault()
+          shouldOpen = ($tasksDiv).is('.collapsed')
+          $('#taskList').find('div.tasks').addClass('collapsed')
+          if shouldOpen
+            $tasksDiv.removeClass('collapsed')
+        )
+
+      $('#taskList').append($batteryDiv)
   )
 
 

@@ -43,8 +43,9 @@ localStorage = @localStorage
 # If options.expectConflict is true, we always try to GET the old version of
 # the doc before we PUT the new one. This is just an optimization.
 #
-# You can set options.timeout to a timeout in milliseconds
-# You can also pass in options.now to make timeout relative to then
+# options:
+# - now: timeout is relative to this time (set this to $.now())
+# - timeout: timeout in milliseconds
 tabcat.db.putDoc = (db, doc, options) ->
   # force timeout to be relative to now
   if options?.timeout? and not options.now?
@@ -64,23 +65,12 @@ tabcat.db.putDoc = (db, doc, options) ->
     )
 
 
-# convert options.now and options.timeout to a timeout for use with
-# couchDB methods
-#
-# if it's supposed to time out sometime in the past, return 1 (one ms)
-timeoutFrom = (options) ->
-  if options?.now? and options.timeout?
-    Math.max(options.now + options.timeout - $.now(), 1)
-  else
-    options?.timeout
-
-
 # Promise: putDoc() minus handling of offline/network errors. This can fail.
 putDocIntoCouchDB = (db, doc, options) ->
   if options?.expectConflict
     resolvePutConflict(db, doc, options)
   else
-    tabcat.couch.putDoc(db, doc, timeout: timeoutFrom(options)).then(
+    tabcat.couch.putDoc(db, doc, _.pick(options ? {}, 'now', 'timeout')).then(
       null,
       (xhr) -> switch xhr.status
         when 409
@@ -96,7 +86,9 @@ resolvePutConflict = (db, doc, options) ->
   if options?
     options = _.omit(options, 'expectConflict')
 
-  tabcat.couch.getDoc(db, doc._id, timeout: timeoutFrom(options)).then(
+  tabcat.couch.getDoc(
+    db, doc._id, _.pick(options ? {}, 'now', 'timeout')).then(
+
     ((oldDoc) ->
       # resolve conflict
       tabcat.db.merge(doc, oldDoc)

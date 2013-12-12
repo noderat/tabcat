@@ -32,7 +32,8 @@ COFFEE_JS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 TABCAT_COFFEE_SRC = $(wildcard js/tabcat/*.coffee)
 TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 
-VENDOR_JS = $(wildcard js/vendor/*.js)
+# put jquery before other libs that might depend on it
+VENDOR_JS = js/vendor/jquery.js $(filter-out jquery.js, $(wildcard js/vendor/*.js))
 
 # files kanso expects to push
 KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)

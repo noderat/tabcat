@@ -1,0 +1,51 @@
+{
+    "name": "line-perception",
+    "version": "0.5.0",
+    "description": "Line Perception",
+    "attachments": [
+        "css/line-orientation.css",
+        "css/parallel-line-length.css",
+        "css/perpendicular-line-length.css",
+        "img/icon/line-orientation.png",
+        "img/icon/parallel-line-length.png",
+        "img/icon/perpendicular-line-length.png",
+        "js/line-orientation.js",
+        "js/parallel-line-length.js",
+        "js/perpendicular-line-length.js",
+        "line-orientation.html",
+        "parallel-line-length.html",
+        "perpendicular-line-length.html"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "batteries": {
+            "line-perception": {
+                "description": "Line Perception Tasks",
+                "tasks": [
+                    "parallel-line-length",
+                    "perpendicular-line-length",
+                    "line-orientation"
+                ]
+            }
+        },
+        "tasks": {
+            "line-orientation": {
+                "description": "Line Orientation",
+                "icon": "img/icon/line-orientation.png",
+                "start": "line-orientation.html"
+            },
+            "parallel-line-length": {
+                "description": "Parallel Line Length",
+                "icon": "img/icon/parallel-line-length.png",
+                "start": "parallel-line-length.html"
+            },
+            "perpendicular-line-length": {
+                "description": "Perpendicular Line Length",
+                "icon": "img/icon/perpendicular-line-length.png",
+                "start": "perpendicular-line-length.html"
+            }
+        }
+    }
+}
