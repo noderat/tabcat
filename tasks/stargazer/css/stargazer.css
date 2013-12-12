@@ -161,7 +161,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #startScreen p {
     margin: 1em;
-    font-size: 8em;
+    font-size: 10em;
 }
 
 #startScreen button {
