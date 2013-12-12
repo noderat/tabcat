@@ -96,9 +96,9 @@ showInstructions = ->
   tabcat.ui.fixAspectRatio($squareDiv, 1)
   tabcat.ui.linkEmToPercentOfHeight($squareDiv)
 
-  $('#instructionsScreen').show()
-
   $('#instructionsScreen').find('button').on('click', showVideo)
+
+  $('#instructionsScreen').show()
 
 
 # VIDEO

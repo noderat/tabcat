@@ -708,6 +708,17 @@ rotationCss = (angle) ->
     '-webkit-transform': value
   }
 
+showStartScreen = ->
+  $startScreen = $('#startScreen')
+
+  $startScreen.find('button').on('click', ->
+    $startScreen.hide()
+    $('body').removeClass('blueBackground')
+    showComets()
+  )
+
+  $startScreen.show()
+
 
 # INITIALIZATION
 @initTask = ->
@@ -725,5 +736,5 @@ rotationCss = (angle) ->
     tabcat.ui.fixAspectRatio($rectangle, ASPECT_RATIO)
     tabcat.ui.linkEmToPercentOfHeight($rectangle)
 
-    showComets()
+    showStartScreen()
   )
