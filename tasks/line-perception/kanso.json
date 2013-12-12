@@ -22,7 +22,7 @@
     "tabcat": {
         "batteries": {
             "line-perception": {
-                "description": "Line Perception",
+                "description": "Line Perception Tasks",
                 "tasks": [
                     "parallel-line-length",
                     "perpendicular-line-length",
