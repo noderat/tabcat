@@ -71,8 +71,6 @@ showTasks = ->
     batteries = _.sortBy(_.values(taskInfo.batteries), (b) -> b.description)
     tasksByName = taskInfo.tasks
 
-    console.log(tasksByName)
-
     # add a fake battery for all tasks
     allTaskNames = _.sortBy(
       _.keys(tasksByName), (name) -> tasksByName[name].description)
@@ -82,8 +80,6 @@ showTasks = ->
     )
 
     for battery in batteries
-      console.log(battery)
-
       if not battery.description?
         continue
 
@@ -94,8 +90,6 @@ showTasks = ->
 
       for taskName in battery.tasks
         task = tasksByName[taskName]
-
-        console.log(task)
 
         if not (task? and task.start? and task.description?)
           continue
