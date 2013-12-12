@@ -419,7 +419,7 @@ tabcat.ui.requireUser = (options) ->
   timeout = options?.timeout ? DEFAULT_REQUIRE_USER_TIMEOUT
   tabcat.couch.getUser(timeout: timeout).then(
     ((user) ->
-      if not (user? and tabcat.user.isAuthenticated())
+      if not (user is tabcat.user.get() and tabcat.user.isAuthenticated())
         tabcat.ui.requestPassword()
     ),
     (xhr) ->

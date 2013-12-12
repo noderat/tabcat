@@ -47,7 +47,6 @@ clean:
 $(PUSHED): kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso push $(TABCAT_HOST)/tabcat
-	kanso push $(TABCAT_HOST)/tabcat-data
 	touch $@
 
 $(COFFEE_JS): %.js: %.coffee

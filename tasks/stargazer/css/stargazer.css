@@ -152,3 +152,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     animation: cometMsgAnimation 4.8s linear;
     -webkit-animation: cometMsgAnimation 4.8s linear;
 }
+
+/* start screen */
+
+#startScreen {
+    text-align: center;
+}
+
+#startScreen p {
+    margin: 1em;
+    font-size: 10em;
+}
+
+#startScreen button {
+    clear: both;
+    font-size: 8em;
+    border-radius: 0.5em;
+    margin: 0;
+    padding: 0.4em;
+}
