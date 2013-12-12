@@ -284,6 +284,7 @@ form.big button[type=submit] {
     width: 650px;
     margin-left: 8px;
     margin-bottom: 8px;
+    border-radius: 12px;
 }
 
 #tasks div.task {
@@ -324,7 +325,9 @@ form.big button[type=submit] {
 #tasks div.battery div.header {
     font-size: 32px;
     width: 634px;
-    padding: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 16px;
 }
 
 #tasks div.battery .collapsed {
