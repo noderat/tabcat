@@ -68,15 +68,39 @@ showTasks = ->
   getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
 
-    # alphabetize tasks
-    tasks = _.sortBy(_.values(taskInfo.tasks), (t) -> t.description)
+    batteries = _.sortBy(_.values(taskInfo.batteries), (b) -> b.description)
+    tasksByName = taskInfo.tasks
 
-    for task in tasks
-      do (task) ->  # create a new scope to create separate bind() functions
-        if not (task.start? and task.description?)
-          return
+    console.log(tasksByName)
 
-        $div = $('<div></div>', class: 'task')
+    # add a fake battery for all tasks
+    allTaskNames = _.sortBy(
+      _.keys(tasksByName), (name) -> tasksByName[name].description)
+    batteries.push(
+      description: 'All Tasks',
+      tasks: allTaskNames
+    )
+
+    for battery in batteries
+      console.log(battery)
+
+      if not battery.description?
+        continue
+
+      $batteryDiv = $('<div></div>', class: 'battery')
+      $batteryDescription = $('<span></span>', class: 'description')
+      $batteryDescription.text(battery.description)
+      $batteryDiv.append($batteryDescription)
+
+      for taskName in battery.tasks
+        task = tasksByName[taskName]
+
+        console.log(task)
+
+        if not (task? and task.start? and task.description?)
+          continue
+
+        $taskDiv = $('<div></div>', class: 'task')
 
         if task.icon?
           iconUrl = task.urlRoot + task.icon
@@ -91,16 +115,19 @@ showTasks = ->
           $icon.css('background-image', "url(#{iconUrl})")
         else
           $icon = $('<img>', class: 'icon', src: iconUrl)
-        $div.append($icon)
+        $taskDiv.append($icon)
 
-        $description = $('<span></span>', class: 'description')
-        $description.text(task.description)
-        $div.append($description)
+        $taskDescription = $('<span></span>', class: 'description')
+        $taskDescription.text(task.description)
+        $taskDiv.append($taskDescription)
 
-        $('#taskList').append($div)
+        $batteryDiv.append($taskDiv)
 
-        startUrl = task.urlRoot + task.start
-        $div.on('click', (event) -> window.location = startUrl)
+        do -> # create a separate scope for each click handler
+          startUrl = task.urlRoot + task.start
+          $taskDiv.on('click', (event) -> window.location = startUrl)
+
+      $('#taskList').append($batteryDiv)
   )
 
 
