@@ -36,7 +36,7 @@ TABCAT_DB = 'tabcat'
 # This also adds a "urlRoot" and "finished" field to each task
 #
 # options is the same as for tabcat.couch.getAllDesignDocs
-@getTaskInfo = (options) ->
+getTaskInfo = (options) ->
   tabcat.couch.getAllDesignDocs(TABCAT_DB).then(
     (designDocs) ->
       batteries = {}
