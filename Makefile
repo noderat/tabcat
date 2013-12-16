@@ -41,9 +41,9 @@ MANIFEST = cache.manifest
 MANIFEST_DEPS = $(shell scripts/json-ls /attachments $(KANSO_FILES))
 MANIFEST_URL = $(TABCAT_HOST)/tabcat/offline/$(MANIFEST)
 
-.PHONY: all core tasks clean $(TASK_TARGETS)
+.PHONY: all core tasks clean delete-old-docs $(TASK_TARGETS)
 
-all: core $(TASK_TARGETS) $(PUSHED)
+all: core $(TASK_TARGETS) $(PUSHED) delete-old-docs
 
 core:
 	$(MAKE) -C core
@@ -67,6 +67,9 @@ $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
 	scripts/put-default $(DEFAULT_CONFIG) $(CONFIG_URL)
 	scripts/force-put $(MANIFEST) $(MANIFEST_URL) text/cache-manifest
 	touch $@
+
+delete-old-docs: old-docs.txt
+	for path in $$(grep -v '^ *#' old-docs.txt); do scripts/force-delete $(TABCAT_HOST)/$$path; done
 
 clean:
 	$(MAKE) -C core clean
