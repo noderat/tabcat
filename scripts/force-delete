@@ -25,13 +25,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Forcibly update a CouchDB doc
+# Forcibly delete a CouchDB doc
 
-# Usage: ./force-put filename URL [ mime-type ]
-FILENAME=$1
-URL=$2
-MIME_TYPE=$3
-if [ -z "$MIME_TYPE" ]; then MIME_TYPE=application-json; fi
+# Usage: ./force-delete URL
+URL=$1
 
 # figure out CouchDB doc revision.
 LAST_FIELD=5
@@ -41,8 +38,7 @@ fi
 REV_URL=$(echo $URL | cut -d / -f 1-$LAST_FIELD)  # get parent doc's URL
 
 REV=$(curl -X HEAD $REV_URL -I -s | grep ETag | cut -d '"' -f 2)
-
-if [ -n "$REV" ]; then REV_QUERY="?rev=$REV"; fi
-
-curl -X PUT "$URL$REV_QUERY" \
-    -f -ss -H "Content-Type: $MIME_TYPE" --data-binary "@$FILENAME" > /dev/null
+if [ -n "$REV" ]; then
+    REV_QUERY="?rev=$REV"
+    curl -X DELETE "$URL$REV_QUERY" -f -ss > /dev/null
+fi
