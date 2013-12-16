@@ -23,6 +23,7 @@
                     "return-to-examiner.html",
                     "tasks.html"],
     "modules": ["js/couchdb/adhoc/line-tasks-report.js",
+                "js/couchdb/adhoc/stargazer-report.js",
                 "js/couchdb/app.js",
                 "js/couchdb/patient.js",
                 "js/vendor/ucsv.js",

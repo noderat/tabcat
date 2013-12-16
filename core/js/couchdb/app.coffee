@@ -27,6 +27,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 patient = require('./patient')
 adhocLineTasksReport = require('./adhoc/line-tasks-report')
+adhocStargazerReport = require('./adhoc/stargazer-report')
+
 
 # stitch together data from the patient view
 dumpList = (head, req) ->
@@ -66,6 +68,7 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
 exports.lists =
   dump: dumpList
   'adhoc-line-tasks-report': adhocLineTasksReport.list
+  'adhoc-stargazer-report': adhocStargazerReport.list
 
 exports.validate_doc_update = validateDocUpdate
 
