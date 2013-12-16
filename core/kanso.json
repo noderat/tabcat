@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.4.6",
+    "version": "0.4.7",
     "description": "TabCAT core libraries",
     "attachments": ["create-encounter.html",
                     "css/tabcat.css",

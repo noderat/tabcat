@@ -1,3 +1,7 @@
+v0.4.7, 2013-12-16 -- Stargazer report
+- analysis:
+  - added adhoc stargazer report
+
 v0.4.6, 2013-12-11 -- reports in CouchDB
 - core library
   - tabcat.user.login auto-converts user email to lowercase (#29)
