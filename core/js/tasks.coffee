@@ -146,7 +146,10 @@ showTasks = ->
   $(->
     tabcat.ui.updateStatusBar()
     showTasks()
-    $('#closeEncounter').on('click', tabcat.ui.closeEncounter)
+    $('#closeEncounter').on('click', ->
+      window.location = 'close-encounter.html'
+      return
+    )
     $('#closeEncounter').removeAttr('disabled')
   )
 

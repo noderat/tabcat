@@ -34,7 +34,7 @@ submitAdministrationNotesForm = (event) ->
 
   goodForResearch = form.find('input[name=goodForResearch]:checked').val()
   if goodForResearch?
-    notes.goodForResearch = !!goodForResearch
+    notes.goodForResearch = goodForResearch is 'yes'
   else
     errorP.text(
       'Please specify whether this encounter was useful for research')
@@ -54,8 +54,18 @@ submitAdministrationNotesForm = (event) ->
       errorP.text('Please describe the other data quality issue(s)')
       return
 
-  console.log(notes)
+  # success! close encounter and redirect
   errorP.text('')
+
+  hash = {}
+  patientCode = tabcat.encounter.getPatientCode()
+  if patientCode?
+    hash.closedEncounterWith = patientCode
+
+  tabcat.encounter.close(administrationNotes: notes).always(->
+    window.location = (
+      'create-encounter.html' + tabcat.ui.encodeHashJSON(hash))
+  )
 
   return
 
