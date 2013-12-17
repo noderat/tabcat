@@ -84,27 +84,6 @@ tabcat.encounter.markTaskFinished = (taskName) ->
   return
 
 
-# Promise: add notes (text) to the current encounter. If there are already
-# notes, this overwrites them. If notes is null/undefined, removes them.
-tabcat.encounter.setNotes = (notes) ->
-  encounterDoc = tabcat.encounter.get()
-  if not encounterDoc?
-    throw Error('no current encounter!')
-
-  if notes?
-    encounterDoc.notes = notes
-  else
-    delete encounterDoc.notes
-
-  localStorage.encounter = JSON.stringify(encounterDoc)
-  tabcat.db.putDoc(DATA_DB, encounterDoc)
-
-
-# get the notes for the current encounter, if any
-tabcat.encounter.getNotes = (notes) ->
-  tabcat.encounter.get()?.notes
-
-
 # return a new encounter doc (don't upload it)
 #
 # Call tabcat.clock.reset() before this so that time fields are properly set.
@@ -184,13 +163,36 @@ tabcat.encounter.create = (options) ->
 #
 # you will usually use tabcat.ui.closeEncounter(), which also redirects
 # to the encounter page
-tabcat.encounter.close = ->
+#
+# options:
+# - administrationNotes: notes used to determine the quality of the data
+#   collected in the encounter. These fields are recommended:
+#   - goodForResearch (boolean): is this data useful for research?
+#   - qualityIssues (sorted list of strings): specific patient issues
+#     affecting data quality:
+#     - behavior: behavioral disturbances
+#     - education: minimal education
+#     - effort: lack of effort
+#     - hearing: hearing impairment
+#     - motor: motor difficulties
+#     - secondLanguage: e.g. ESL, different from "speech"
+#     - speech: speech difficulties
+#     - unreliable: unreliable informant
+#     - visual: visual impairment
+#     - other: (should explain in "comments")
+#   - comments (text): free-form comments on the encounter
+#
+# goodForResearch should be required by the UI, but neither administrationNotes
+# nor goodForResearch are required by this method.
+tabcat.encounter.close = (options) ->
   now = tabcat.clock.now()
   encounterDoc = tabcat.encounter.get()
   tabcat.encounter.clear()
 
   if encounterDoc?
     encounterDoc.finishedAt = now
+    if options?.administrationNotes?
+      encounterDoc.administrationNotes = options.administrationNotes
     tabcat.db.putDoc(DATA_DB, encounterDoc)
   else
     $.Deferred().resolve()
