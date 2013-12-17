@@ -408,6 +408,7 @@ form.big button[type=submit] {
     max-width: 750px;
     height: 150px;
     max-height: 150px;
+    font-size: 18px;
 }
 
 #administrationNotesForm p {
