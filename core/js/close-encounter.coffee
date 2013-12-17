@@ -83,18 +83,22 @@ onOtherQualityIssuesClicked = (event) ->
   return
 
 
+setUpForm = ->
+  $form = $('#administrationNotesForm')
+  $form.on('submit', submitAdministrationNotesForm)
+  $form.find('button').removeAttr('disabled')
+
+  $form.find('input[name=qualityIssues][value=other]')
+    .on('click', onOtherQualityIssuesClicked)
+  # workaround to make labels clickable on iOS Safari 5
+  $form.find('label').on('click', ->)
+
+
 @initCloseEncounterPage = ->
   tabcat.ui.requireUserAndEncounter()
 
   $(tabcat.ui.updateStatusBar)
 
-  $(->
-    $form = $('#administrationNotesForm')
-    $form.on('submit', submitAdministrationNotesForm)
-    $form.find('button').removeAttr('disabled')
-
-    $form.find('input[name=qualityIssues][value=other]')
-      .on('click', onOtherQualityIssuesClicked)
-  )
+  $(setUpForm)
 
   tabcat.db.startSpilledDocSync()
