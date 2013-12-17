@@ -11,7 +11,7 @@
     <div id="closeEncounter">
       <form id="administrationNotesForm" action="#" method="post">
         <fieldset>
-          <legend>Was this encounter useful for research? (required)</legend>
+          <legend><strong>Was this encounter useful for research?</strong> (required)</legend>
           <label>
             <input type="radio" name="goodForResearch" value="1">
             Yes
@@ -22,8 +22,28 @@
           </label>
         </fieldset>
         <fieldset>
-          <legend>Check any quality issues:</legend>
-          <div class="column">
+          <legend><strong>Check data quality issues, if any:</strong></legend>
+          <div class="threeColumns">
+            <label>
+              <input type="checkbox" name="qualityIssues" value="behavior">
+              Behavioral Disturbances
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="secondLanguage">
+              ESL
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="hearing">
+              Hearing Impairment
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="effort">
+              Lack of Effort
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="education">
+              Minimal Education
+            </label>
             <label>
               <input type="checkbox" name="qualityIssues" value="motor">
               Motor Difficulties
@@ -33,36 +53,12 @@
               Speech Difficulties
             </label>
             <label>
-              <input type="checkbox" name="qualityIssues" value="hearing">
-              Hearing Impairment
-            </label>
-          </div>
-          <div class="column">
-            <label>
-              <input type="checkbox" name="qualityIssues" value="visual">
-              Visual Impairment
-            </label>
-            <label>
-              <input type="checkbox" name="qualityIssues" value="secondLanguage">
-              ESL
-            </label>
-            <label>
-              <input type="checkbox" name="qualityIssues" value="education">
-              Minimal Education
-            </label>
-          </div>
-          <div class="column">
-            <label>
-              <input type="checkbox" name="qualityIssues" value="effort">
-              Lack of Effort
-            </label>
-            <label>
               <input type="checkbox" name="qualityIssues" value="unreliable">
               Unreliable Informant
             </label>
             <label>
-              <input type="checkbox" name="qualityIssues" value="behavior">
-              Behavioral Disturbances
+              <input type="checkbox" name="qualityIssues" value="visual">
+              Visual Impairment
             </label>
             <label>
               <input type="checkbox" name="qualityIssues" value="other">
@@ -71,7 +67,7 @@
           </div>
         </fieldset>
         <fieldset>
-          <legend>Other Comments</legend>
+          <legend><strong>Other Comments</strong></legend>
           <textarea name="comments"></textarea>
         </fieldset>
         <p>

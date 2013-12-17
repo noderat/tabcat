@@ -374,19 +374,24 @@ form.big button[type=submit] {
     border: none;
 }
 
+#administrationNotesForm fieldset div.threeColumns {
+    column-count: 3;
+    column-width: 150px;
+    column-gap: 50px;
+    -moz-column-count: 3;
+    -moz-column-width: 150px;
+    -moz-column-gap: 50px;
+    -webkit-column-count: 3;
+    -webkit-column-width: 150px;
+    -webkit-column-gap: 50px;
+}
+
 #administrationNotesForm legend {
     font-size: 24px;
     color: #eeeecc;
-    font-weight: bold;
 }
 
-#administrationNotesForm div.column {
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 50px;
-}
-
-#administrationNotesForm div.column label {
+#administrationNotesForm div.threeColumns label {
     display: block;
 }
 
