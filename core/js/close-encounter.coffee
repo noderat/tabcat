@@ -60,7 +60,14 @@ submitAdministrationNotesForm = (event) ->
   return
 
 
-
+# fanciness to make comments required when "other" is checked
+onOtherQualityIssuesClicked = (event) ->
+  $comments = $('#administrationNotesForm').find('textarea[name=comments]')
+  if $(event.target).is(':checked')
+    $comments.attr('required', 'required')
+  else
+    $comments.removeAttr('required')
+  return
 
 
 @initCloseEncounterPage = ->
@@ -72,6 +79,9 @@ submitAdministrationNotesForm = (event) ->
     $form = $('#administrationNotesForm')
     $form.on('submit', submitAdministrationNotesForm)
     $form.find('button').removeAttr('disabled')
+
+    $form.find('input[name=qualityIssues][value=other]')
+      .on('click', onOtherQualityIssuesClicked)
   )
 
   tabcat.db.startSpilledDocSync()
