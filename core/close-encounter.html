@@ -8,19 +8,80 @@
   </head>
   <body>
     <div id="statusBar"></div>
-    <div id="encounterNotes">
-      <form id="notesForm" action="#" method="post">
-	<p class="message">Edit notes for this encounter</p>
-	<textarea id="notesText">
-	</textarea>
-	<p>
-	  <button type="submit" disabled>Done</button>
-	</p>
-	<p id="error" class="error"></p>
+    <div id="closeEncounter">
+      <form id="administrationNotesForm" action="#" method="post">
+        <fieldset>
+          <legend>Was this encounter useful for research? (required)</legend>
+          <label>
+            <input type="radio" name="goodForResearch" value="1">
+            Yes
+          </label>
+          <label>
+            <input  type="radio" name="goodForResearch" value="0">
+            No
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Check any quality issues:</legend>
+          <div class="column">
+            <label>
+              <input type="checkbox" name="qualityIssues" value="motor">
+              Motor Difficulties
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="speech">
+              Speech Difficulties
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="hearing">
+              Hearing Impairment
+            </label>
+          </div>
+          <div class="column">
+            <label>
+              <input type="checkbox" name="qualityIssues" value="visual">
+              Visual Impairment
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="secondLanguage">
+              ESL
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="education">
+              Minimal Education
+            </label>
+          </div>
+          <div class="column">
+            <label>
+              <input type="checkbox" name="qualityIssues" value="effort">
+              Lack of Effort
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="unreliable">
+              Unreliable Informant
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="behavior">
+              Behavioral Disturbances
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="other">
+              Other (describe below)
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Other Comments</legend>
+          <textarea name="comments"></textarea>
+        </fieldset>
+        <p>
+          <button type="submit" disabled>Close Encounter</button>
+        </p>
+        <p id="error" class="error"></p>
       </form>
     </div>
     <script src="../core/js/tabcat.js"></script>
-    <script src="../core/js/encounter-notes.js"></script>
-    <script>initEncounterNotes();</script>
+    <script src="../core/js/close-encounter.js"></script>
+    <script>initCloseEncounterPage();</script>
   </body>
 </html>

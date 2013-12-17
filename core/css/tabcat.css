@@ -367,3 +367,44 @@ form.big button[type=submit] {
     color: #eeeeee;
     border-color: #666699;
 }
+
+#administrationNotesForm fieldset {
+    margin-top: 20px;
+    padding: 5px;
+    border: none;
+}
+
+#administrationNotesForm legend {
+    font-size: 24px;
+    color: #eeeecc;
+    font-weight: bold;
+}
+
+#administrationNotesForm div.column {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 50px;
+}
+
+#administrationNotesForm div.column label {
+    display: block;
+}
+
+#administrationNotesForm textarea {
+    width: 750px;
+    max-width: 750px;
+    height: 150px;
+    max-height: 150px;
+}
+
+#administrationNotesForm p {
+    text-align: center;
+}
+
+#administrationNotesForm button {
+    font-size: 24px;
+    height: 50px;
+    border-radius: 10px;
+    border-width: 5px;
+    margin: 0px;
+}
