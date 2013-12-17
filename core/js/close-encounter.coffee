@@ -24,9 +24,54 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+submitAdministrationNotesForm = (event) ->
+  event.preventDefault()
+
+  form = $(event.target)
+  errorP = form.find('#error')
+
+  notes = {}
+
+  goodForResearch = form.find('input[name=goodForResearch]:checked').val()
+  if goodForResearch?
+    notes.goodForResearch = !!goodForResearch
+  else
+    errorP.text(
+      'Please specify whether this encounter was useful for research')
+    return
+
+  qualityIssues = (
+    $(cb).val() for cb in form.find('input[name=qualityIssues]:checked'))
+  if qualityIssues.length > 0
+    qualityIssues.sort()
+    notes.qualityIssues = qualityIssues
+
+  comments = form.find('textarea[name=comments]').val().trim()
+  if comments
+    notes.comments = comments
+  else
+    if 'other' in qualityIssues
+      errorP.text('Please describe the other data quality issue(s)')
+      return
+
+  console.log(notes)
+  errorP.text('')
+
+  return
+
+
+
+
+
 @initCloseEncounterPage = ->
   tabcat.ui.requireUserAndEncounter()
 
   $(tabcat.ui.updateStatusBar)
+
+  $(->
+    $form = $('#administrationNotesForm')
+    $form.on('submit', submitAdministrationNotesForm)
+    $form.find('button').removeAttr('disabled')
+  )
 
   tabcat.db.startSpilledDocSync()
