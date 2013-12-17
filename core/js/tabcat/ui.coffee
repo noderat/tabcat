@@ -49,19 +49,6 @@ DEFAULT_REQUIRE_USER_TIMEOUT = 2000
 #
 # To turn off text selection, add the "unselectable" CSS class to body
 
-# close encounter, and redirect to the encounter page
-tabcat.ui.closeEncounter = () ->
-  options = {}
-  patientCode = tabcat.encounter.getPatientCode()
-  if patientCode?
-    options.closedEncounterWith = patientCode
-
-  tabcat.encounter.close().always(->
-    window.location = (
-      '../core/create-encounter.html' + tabcat.ui.encodeHashJSON(options))
-  )
-
-
 # Register a click immediately on tap/mouseup, rather than waiting for
 # a double-click (requires fastclick.js)
 tabcat.ui.enableFastClick = ->
