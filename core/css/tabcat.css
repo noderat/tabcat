@@ -391,6 +391,10 @@ form.big button[type=submit] {
     color: #eeeecc;
 }
 
+#administrationNotesForm fieldset.required legend:after {
+    content: '*';
+}
+
 #administrationNotesForm div.threeColumns label {
     display: block;
 }

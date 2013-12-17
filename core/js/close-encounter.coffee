@@ -73,10 +73,13 @@ submitAdministrationNotesForm = (event) ->
 # fanciness to make comments required when "other" is checked
 onOtherQualityIssuesClicked = (event) ->
   $comments = $('#administrationNotesForm').find('textarea[name=comments]')
+  $commentsFieldset = $comments.parents('fieldset')
   if $(event.target).is(':checked')
     $comments.attr('required', 'required')
+    $commentsFieldset.addClass('required')
   else
     $comments.removeAttr('required')
+    $commentsFieldset.removeClass('required')
   return
 
 
