@@ -69,7 +69,7 @@ tabcat.encounter.getNum = ->
     return encounterNum
 
 
-# keep track of tasks finished during the encounter, in localStorate
+# keep track of tasks finished during the encounter, in localStorage
 tabcat.encounter.getTasksFinished = ->
   (try JSON.parse(localStorage.encounterTasksFinished)) ? {}
 
@@ -82,6 +82,27 @@ tabcat.encounter.markTaskFinished = (taskName) ->
   finished[taskName] = true
   localStorage.encounterTasksFinished = JSON.stringify(finished)
   return
+
+
+# Promise: add notes (text) to the current encounter. If there are already
+# notes, this overwrites them. If notes is null/undefined, removes them.
+tabcat.encounter.setNotes = (notes) ->
+  encounterDoc = tabcat.encounter.get()
+  if not encounterDoc?
+    throw Error('no current encounter!')
+
+  if notes?
+    encounterDoc.notes = notes
+  else
+    delete encounterDoc.notes
+
+  localStorage.encounter = JSON.stringify(encounterDoc)
+  tabcat.db.putDoc(DATA_DB, encounterDoc)
+
+
+# get the notes for the current encounter, if any
+tabcat.encounter.getNotes = (notes) ->
+  tabcat.encounter.get()?.notes
 
 
 # return a new encounter doc (don't upload it)
