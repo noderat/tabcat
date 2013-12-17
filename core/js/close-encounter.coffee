@@ -90,8 +90,8 @@ setUpForm = ->
 
   $form.find('input[name=qualityIssues][value=other]')
     .on('click', onOtherQualityIssuesClicked)
-  # workaround to make labels clickable on iOS Safari 5
-  $form.find('label').on('click', ->)
+  # workaround to make labels clickable in iOS Safari 5
+  $form.find('label').attr('onclick', '')
 
 
 @initCloseEncounterPage = ->
