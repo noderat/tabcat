@@ -59,7 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     height: 13%;
 }
 
-#task div.layout-0 div.practice-caption {
+#task div.layout-0 div.practiceCaption {
     top: 15%;
     height: 15%;
 }
@@ -84,12 +84,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     height: 13%;
 }
 
-#task div.layout-1 div.practice-caption {
+#task div.layout-1 div.practiceCaption {
     top: 60%;
     height: 15%;
 }
 
-#task div.practice-caption {
+#task div.practiceCaption {
     position: absolute;
     margin: 0;
     padding: 0;

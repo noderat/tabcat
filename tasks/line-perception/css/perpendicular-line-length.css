@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
-#task div.practice-caption {
+#task div.practiceCaption {
     position: absolute;
     padding: 0;
     margin-left: 0;

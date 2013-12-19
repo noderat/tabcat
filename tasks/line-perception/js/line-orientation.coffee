@@ -232,7 +232,7 @@ getNextTrialDiv = ->
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
-    $practiceCaptionDiv = $('<div></div>', class: 'practice-caption')
+    $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
     $practiceCaptionDiv.html(
       'Which is parallel to the <span class="target">blue</span> line?')
     $trialDiv.append($practiceCaptionDiv)
@@ -272,7 +272,7 @@ getTaskState = ->
 getStimuli = ->
   stimuli = currentStimuli
 
-  $practiceCaption = $('div.practice-caption:visible')
+  $practiceCaption = $('div.practiceCaption:visible')
   if $practiceCaption.length > 0
     stimuli = $.extend(
       {}, stimuli,

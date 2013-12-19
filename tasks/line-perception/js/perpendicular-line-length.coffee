@@ -274,7 +274,7 @@ getNextTrialDiv = ->
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
-    $practiceCaptionDiv = $('<div></div>', class: 'practice-caption')
+    $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
     $practiceCaptionDiv.html('Tap the longer line<br>' +
       ' quickly and accurately.')
     $containerDiv.append($practiceCaptionDiv)
@@ -339,7 +339,7 @@ getStimuli = ->
   stimuli =
     lines: (tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
 
-  $practiceCaption = $('div.practice-caption:visible')
+  $practiceCaption = $('div.practiceCaption:visible')
   if $practiceCaption.length > 0
     stimuli.practiceCaption = tabcat.task.getElementBounds($practiceCaption[0])
 
