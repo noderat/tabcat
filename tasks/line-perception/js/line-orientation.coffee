@@ -64,12 +64,6 @@ MAX_REVERSALS = 14
 
 # VARIABLES
 
-# time of first user action (not when the page loads). Thus, time to
-# complete the initial (practice) trial isn't included.
-startTimestamp = null
-# time user completed final trial
-endTimestamp = null
-
 intensity = PRACTICE_START_INTENSITY
 # number of practice trials correct in a row
 practiceStreakLength = 0
