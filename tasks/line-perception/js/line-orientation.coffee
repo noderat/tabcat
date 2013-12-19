@@ -234,7 +234,7 @@ getNextTrialDiv = ->
   if shouldShowPracticeCaption()
     $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
     $practiceCaptionDiv.html(
-      'Which is parallel to the <span class="target">blue</span> line?')
+      'Which is parallel to the <span class="blue">blue</span> line?')
     $trialDiv.append($practiceCaptionDiv)
 
   $trialDiv.append($stimuliDiv)

@@ -3,7 +3,7 @@
     "version": "0.5.0",
     "description": "Line Perception",
     "attachments": [
-        "css/line-orientation.css",
+        "css/line-perception.css",
         "css/parallel-line-length.css",
         "css/perpendicular-line-length.css",
         "img/icon/line-orientation.png",

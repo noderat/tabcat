@@ -25,6 +25,27 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* COMMON CSS */
+
+#task div.practiceCaption {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    color: #cc9933;
+    font-size: 8em;
+    text-align: center;
+    left: 0%;
+    width: 100%;
+    top: 3%;
+}
+
+#task div.practiceCaption span.blue {
+    color: #7799bb;
+}
+
+
+/* LINE ORIENTATION */
+
 #task div.lineOrientationStimuli {
     position: absolute;
     /* this is square because the container is always 4/3 */
@@ -89,20 +110,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     right: 94%;
     width: 15%;
     background-color: transparent;
-}
-
-#task div.practiceCaption {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    color: #cc9933;
-    font-size: 8em;
-    text-align: center;
-    left: 0%;
-    width: 100%;
-    top: 3%;
-}
-
-#task div.practiceCaption span.target {
-    color: #7799bb;
 }
