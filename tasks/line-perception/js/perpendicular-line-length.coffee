@@ -39,11 +39,6 @@ LINE_WIDTH = 7
 TARGET_BORDER_WIDTH = 3
 # height of practice caption, as a % of container height
 CAPTION_HEIGHT = 30
-# offest between line centers, as a % of the shorter line's length
-LINE_OFFSET_AT_CENTER = 50
-# number of positions for lines (currently, top and bottom of screen).
-# these work with the layout-0 and layout-1 CSS classes
-NUM_LAYOUTS = 2
 # how long a fade should take, in msec
 FADE_DURATION = 400
 

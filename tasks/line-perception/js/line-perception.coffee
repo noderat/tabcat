@@ -25,6 +25,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+#############
+# ALL TASKS #
+#############
+
 # LOOK AND FEEL
 
 # pretend div containing the test is on an iPad
@@ -33,13 +37,8 @@ ASPECT_RATIO = 4/3
 # range on line length, as a % of container width
 SHORT_LINE_MIN_LENGTH = 40
 SHORT_LINE_MAX_LENGTH = 50
-# offset between line centers, as a % of the shorter line's length
-LINE_OFFSET_AT_CENTER = 50
 # how much wider to make invisible target around lines, as % of width
 TARGET_BORDER_WIDTH = 3 / ASPECT_RATIO
-# number of positions for lines (currently, top and bottom of screen).
-# these work with the parallelLineLayout0 and parallelLineLayout1 CSS classes
-NUM_LAYOUTS = 2
 # how long a fade should take, in msec
 FADE_DURATION = 400
 
@@ -73,6 +72,17 @@ practiceStreakLength = 0
 
 # FUNCTIONS
 
+
+# common task initialization code
+initTask = ->
+  tabcat.task.start(trackViewport: true)
+  tabcat.ui.turnOffBounce()
+  $(->
+    tabcat.ui.requireLandscapeMode($('#task'))
+    $('#task').on('mousedown touchstart', catchStrayTouchStart)
+  )
+
+
 inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 
 shouldShowPracticeCaption = ->
@@ -101,8 +111,69 @@ registerResult = (event) ->
   tabcat.task.logEvent(state, event, interpretation)
 
 
+# summary of the current state of the task
+getTaskState = ->
+  state =
+    intensity: staircase.intensity
+    stimuli: getStimuli()
+    trialNum: staircase.trialNum
+
+  if inPracticeMode()
+    state.practiceMode = true
+
+  return state
+
+
+# describe what's on the screen. helper for getTaskState()
+getStimuli = ->
+  stimuli =
+    lines: (tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
+
+  $practiceCaption = $('div.practiceCaption:visible')
+  if $practiceCaption.length > 0
+    stimuli.practiceCaption = tabcat.task.getElementBounds($practiceCaption[0])
+
+  return stimuli
+
+
+catchStrayTouchStart = (event) ->
+  event.preventDefault()
+  tabcat.task.logEvent(getTaskState(), event)
+  return
+
+
+########################
+# PARALLEL LINE LENGTH #
+########################
+
+# number of positions for lines (currently, top and bottom of screen).
+# these work with the parallelLineLayout0 and parallelLineLayout1 CSS classes
+NUM_PARALLEL_LINE_LAYOUTS = 2
+
+# offset between line centers, as a % of the shorter line's length
+PARALLEL_LINE_OFFSET_AT_CENTER = 50
+
+
+# INITIALIZATION
+@initParallelLineTask = ->
+  initTask()
+
+  $(showNextParallelLineTrial)
+
+
+# event handler for taps on lines. either fade in the next trial or
+# call tabcat.task.finish()
+showNextParallelLineTrial = ->
+  $nextTrialDiv = getNextParallelLineTrialDiv()
+  $('#task').empty()
+  $('#task').append($nextTrialDiv)
+  tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+  tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+  $nextTrialDiv.fadeIn(duration: FADE_DURATION)
+
+
 # generate data, including CSS, for the next trial
-getNextTrial = ->
+getNextParallelLineTrial = ->
   shortLineLength = tabcat.math.randomUniform(SHORT_LINE_MIN_LENGTH,
                                               SHORT_LINE_MAX_LENGTH)
 
@@ -113,7 +184,7 @@ getNextTrial = ->
   else
     [bottomLineLength, topLineLength] = [shortLineLength, longLineLength]
 
-  centerOffset = shortLineLength * LINE_OFFSET_AT_CENTER / 100
+  centerOffset = shortLineLength * PARALLEL_LINE_OFFSET_AT_CENTER / 100
 
   # make sure both lines are the same distance from the edge of the screen
   totalWidth = topLineLength / 2 + bottomLineLength / 2 + centerOffset
@@ -151,34 +222,25 @@ getNextTrial = ->
 
 # event handler for taps on lines. Either fade in the next trial or
 # call tabcat.task.finish()
-handleTapOnLine = (event) ->
+handleTapOnParallelLine = (event) ->
   event.preventDefault()
+  event.stopPropagation()
+
   registerResult(event)
 
   if staircase.numReversals >= MAX_REVERSALS
     tabcat.task.finish()
   else
-    showNextTrial()
+    showNextParallelLineTrial()
 
   return
 
 
-# event handler for taps on lines. either fade in the next trial or
-# call tabcat.task.finish()
-showNextTrial = ->
-  $nextTrialDiv = getNextTrialDiv()
-  $('#task').empty()
-  $('#task').append($nextTrialDiv)
-  tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
-  tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
-  $nextTrialDiv.fadeIn(duration: FADE_DURATION)
-
-
 # create the next trial, and return the (jQuery-wrapped) div containing it, but
-# don't show it or add it to the page (showNextTrial() does this)
-getNextTrialDiv = ->
+# don't show it or add it to the page (showNextParallelLineTrial() does this)
+getNextParallelLineTrialDiv = ->
   # get line offsets and widths for next trial
-  trial = getNextTrial()
+  trial = getNextParallelLineTrial()
 
   # construct divs for these lines
   $topLineDiv = $('<div></div>', class: 'line topLine')
@@ -186,7 +248,7 @@ getNextTrialDiv = ->
   $topLineTargetDiv = $('<div></div>', class: 'lineTarget topLineTarget')
   $topLineTargetDiv.css(trial.topLine.targetCss)
   $topLineTargetDiv.on(
-    'mousedown touchstart', trial.topLine, handleTapOnLine)
+    'mousedown touchstart', trial.topLine, handleTapOnParallelLine)
 
   $bottomLineDiv = $('<div></div>', class: 'line bottomLine')
   $bottomLineDiv.css(trial.bottomLine.css)
@@ -194,15 +256,14 @@ getNextTrialDiv = ->
     '<div></div>', class: 'lineTarget bottomLineTarget')
   $bottomLineTargetDiv.css(trial.bottomLine.targetCss)
   $bottomLineTargetDiv.on(
-    'mousedown touchstart', trial.bottomLine, handleTapOnLine)
+    'mousedown touchstart', trial.bottomLine, handleTapOnParallelLine)
 
   # put them in an offscreen div
-  $containerDiv = $('<div></div>',
-    class: 'parallelLineLayout' + staircase.trialNum % NUM_LAYOUTS)
+  layoutNum = staircase.trialNum % NUM_PARALLEL_LINE_LAYOUTS
+  $containerDiv = $('<div></div>', class: 'parallelLineLayout' + layoutNum)
   $containerDiv.hide()
   $containerDiv.append(
     $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
-  $containerDiv.on('mousedown touchstart', catchStrayTouchStart)
 
   # show practice caption, if required
   if shouldShowPracticeCaption()
@@ -212,43 +273,3 @@ getNextTrialDiv = ->
     $containerDiv.append($practiceCaptionDiv)
 
   return $containerDiv
-
-
-# summary of the current state of the task
-getTaskState = ->
-  state =
-    intensity: staircase.intensity
-    stimuli: getStimuli()
-    trialNum: staircase.trialNum
-
-  if inPracticeMode()
-    state.practiceMode = true
-
-  return state
-
-
-# describe what's on the screen. helper for getTaskState()
-getStimuli = ->
-  stimuli =
-    lines: (tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
-
-  $practiceCaption = $('div.practiceCaption:visible')
-  if $practiceCaption.length > 0
-    stimuli.practiceCaption = tabcat.task.getElementBounds($practiceCaption[0])
-
-  return stimuli
-
-catchStrayTouchStart = (event) ->
-  event.preventDefault()
-  tabcat.task.logEvent(getTaskState(), event)
-
-
-# INITIALIZATION
-@initTask = ->
-  tabcat.task.start(trackViewport: true)
-
-  tabcat.ui.turnOffBounce()
-
-  tabcat.ui.requireLandscapeMode($('#task'))
-
-  $(showNextTrial)
