@@ -203,28 +203,28 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  $referenceLineDiv = $('<div></div>', class: 'line reference-line')
+  $referenceLineDiv = $('<div></div>', class: 'referenceLine')
 
-  $line1Div = $('<div></div>', class: 'line line-1')
+  $line1Div = $('<div></div>', class: 'line1')
   $line1Div.css(rotationCss(trial.line1.skew))
-  $line1TargetAreaDiv = $('<div></div>', class: 'line line-1-target')
+  $line1TargetAreaDiv = $('<div></div>', class: 'line1Target')
   $line1TargetAreaDiv.css(rotationCss(trial.line1.skew))
   $line1TargetAreaDiv.bind('mousedown touchstart', trial.line1, showNextTrial)
 
-  $line2Div = $('<div></div>', class: 'line line-2')
+  $line2Div = $('<div></div>', class: 'line2')
   $line2Div.css(rotationCss(trial.line2.skew))
-  $line2TargetAreaDiv = $('<div></div>', class: 'line line-2-target')
+  $line2TargetAreaDiv = $('<div></div>', class: 'line2Target')
   $line2TargetAreaDiv.css(rotationCss(trial.line2.skew))
   $line2TargetAreaDiv.bind('mousedown touchstart', trial.line2, showNextTrial)
 
   # put them in a container, and rotate it
-  $containerDiv = $('<div></div>', class: 'line-container')
-  $containerDiv.css(rotationCss(trial.referenceLine.orientation))
-  $containerDiv.append(
+  $stimuliDiv = $('<div></div>', class: 'lineOrientationStimuli')
+  $stimuliDiv.css(rotationCss(trial.referenceLine.orientation))
+  $stimuliDiv.append(
     $referenceLineDiv,
     $line1Div, $line1TargetAreaDiv,
     $line2Div, $line2TargetAreaDiv)
-  $containerDiv.bind('mousedown touchstart', catchStrayTouchStart)
+  $stimuliDiv.bind('mousedown touchstart', catchStrayTouchStart)
 
   # put them in an offscreen div
   $trialDiv = $('<div></div>')
@@ -237,7 +237,7 @@ getNextTrialDiv = ->
       'Which is parallel to the <span class="target">blue</span> line?')
     $trialDiv.append($practiceCaptionDiv)
 
-  $trialDiv.append($containerDiv)
+  $trialDiv.append($stimuliDiv)
 
   return $trialDiv
 
