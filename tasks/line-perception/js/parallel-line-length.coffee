@@ -38,7 +38,7 @@ LINE_OFFSET_AT_CENTER = 50
 # how much wider to make invisible target around lines, as % of width
 TARGET_BORDER_WIDTH = 3 / ASPECT_RATIO
 # number of positions for lines (currently, top and bottom of screen).
-# these work with the layout-0 and layout-1 CSS classes
+# these work with the parallelLineLayout0 and parallelLineLayout1 CSS classes
 NUM_LAYOUTS = 2
 # how long a fade should take, in msec
 FADE_DURATION = 400
@@ -213,23 +213,24 @@ getNextTrialDiv = ->
   trial = getNextTrial()
 
   # construct divs for these lines
-  $topLineDiv = $('<div></div>', class: 'line top-line')
+  $topLineDiv = $('<div></div>', class: 'line topLine')
   $topLineDiv.css(trial.topLine.css)
-  $topLineTargetDiv = $('<div></div>', class: 'line-target top-line-target')
+  $topLineTargetDiv = $('<div></div>', class: 'lineTarget topLineTarget')
   $topLineTargetDiv.css(trial.topLine.targetCss)
   $topLineTargetDiv.on(
     'mousedown touchstart', trial.topLine, showNextTrial)
 
-  $bottomLineDiv = $('<div></div>', class: 'line bottom-line')
+  $bottomLineDiv = $('<div></div>', class: 'line bottomLine')
   $bottomLineDiv.css(trial.bottomLine.css)
   $bottomLineTargetDiv = $(
-    '<div></div>', class: 'line-target bottom-line-target')
+    '<div></div>', class: 'lineTarget bottomLineTarget')
   $bottomLineTargetDiv.css(trial.bottomLine.targetCss)
   $bottomLineTargetDiv.on(
     'mousedown touchstart', trial.bottomLine, showNextTrial)
 
   # put them in an offscreen div
-  $containerDiv = $('<div></div>', class: 'layout-' + trialNum % NUM_LAYOUTS)
+  $containerDiv = $('<div></div>',
+    class: 'parallelLineLayout' + trialNum % NUM_LAYOUTS)
   $containerDiv.hide()
   $containerDiv.append(
     $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)

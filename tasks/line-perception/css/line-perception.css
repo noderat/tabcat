@@ -27,6 +27,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* COMMON CSS */
 
+#task div.line {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: #ffcc66;
+}
+
+#task div.lineTarget {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
 #task div.practiceCaption {
     position: absolute;
     margin: 0;
@@ -110,4 +124,64 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     right: 94%;
     width: 15%;
     background-color: transparent;
+}
+
+
+/* PARALLEL LINE LENGTH */
+
+/* layout 0 (caption on top, lines on bottom) */
+
+#task div.parallelLineLayout0 div.practiceCaption {
+    top: 15%;
+    height: 15%;
+    font-size: 10em;
+}
+
+#task div.parallelLineLayout0 div.topLine {
+    top: 53%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout0 div.topLineTarget {
+    top: 50%;
+    height: 13%;
+}
+
+#task div.parallelLineLayout0 div.bottomLine {
+    top: 71%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout0 div.bottomLineTarget {
+    top: 68%;
+    height: 13%;
+}
+
+/* layout 1 (lines on top, caption on bottom) */
+
+#task div.parallelLineLayout1 div.practiceCaption {
+    top: 60%;
+    height: 15%;
+    font-size: 10em;
+}
+
+#task div.parallelLineLayout1 div.topLine {
+    top: 19%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout1 div.topLineTarget {
+    top: 16%;
+    height: 13%;
+}
+
+#task div.parallelLineLayout1 div.bottomLine {
+    top: 37%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout1 div.bottomLineTarget {
+    top: 34%;
+    height: 13%;
+    font-size: 10em;
 }
