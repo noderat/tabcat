@@ -44,17 +44,8 @@ NUM_LAYOUTS = 2
 FADE_DURATION = 400
 
 
-# STAIRCASING PARAMETERS
+# TASK PARAMETERS
 
-# intensity is the % the longer line is longer than the shorter one
-MIN_INTENSITY = 1
-MAX_INTENSITY = 50
-# decrease intensity by this much after each correct response
-STEPS_DOWN = 1
-# increase increase by this much after each incorrect response
-STEPS_UP = 3
-# start practice mode here
-PRACTICE_START_INTENSITY = 40
 # jump to this intensity after exiting practice mode
 START_INTENSITY = 15
 # get this many correct in a row to leave practice mode
@@ -69,16 +60,15 @@ MAX_REVERSALS = 14
 
 # VARIABLES
 
-intensity = PRACTICE_START_INTENSITY
-# number of practice trials correct in a row
-practiceStreakLength = 0
-# used to track reversals. not maintained in practice mode
-lastIntensityChange = 0
+staircase = new tabcat.task.Staircase(
+  intensity: 40
+  minIntensity: 1
+  maxIntensity: 50
+  stepsUp: 3
+  stepsDown: 1
+)
 
-# number of reversals so far
-numReversals = 0
-# which trial we're on (0-indexed)
-trialNum = 0
+practiceStreakLength = 0
 
 
 # FUNCTIONS
@@ -89,48 +79,26 @@ shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
 
 
-# call this when the user taps on a line.
-#
-# this will update practiceStreakLength, intensity, lastIntensityChange,
-# and numReversals
+# call this when the user taps on a line. Updates staircase
 registerResult = (event) ->
   state = getTaskState()
 
   correct = event.data.isLonger
 
-  change = if correct then -STEPS_DOWN else STEPS_UP
-
-  lastIntensity = intensity
-  intensity = tabcat.math.clamp(
-    MIN_INTENSITY, lastIntensity + change, MAX_INTENSITY)
-  intensityChange = intensity - lastIntensity
-
-  interpretation =
-    correct: correct
-    intensityChange: change
+  interpretation = staircase.addResult(
+    correct, ignoreReversals: inPracticeMode())
 
   if inPracticeMode()
     if correct
       practiceStreakLength += 1
       if not inPracticeMode()  # i.e. we just left practice mode
-        intensity = START_INTENSITY
-        lastIntensityChange = 0
+        # initialize the real trial
+        staircase.intensity = START_INTENSITY
+        staircase.lastIntensityChange = 0
     else
       practiceStreakLength = 0
-  else
-    wasReversal = (
-      intensityChange * lastIntensityChange < 0 or
-      intensityChange is 0)  # i.e. we hit the floor/ceiling
-
-    if wasReversal
-      numReversals += 1
-      interpretation.reversal = true
-
-    lastIntensityChange = intensityChange
 
   tabcat.task.logEvent(state, event, interpretation)
-
-  trialNum += 1
 
 
 # generate data, including CSS, for the next trial
@@ -138,7 +106,7 @@ getNextTrial = ->
   shortLineLength = tabcat.math.randomUniform(SHORT_LINE_MIN_LENGTH,
                                               SHORT_LINE_MAX_LENGTH)
 
-  longLineLength = shortLineLength * (1 + intensity / 100)
+  longLineLength = shortLineLength * (1 + staircase.intensity / 100)
 
   if tabcat.math.coinFlip()
     [topLineLength, bottomLineLength] = [shortLineLength, longLineLength]
@@ -177,33 +145,33 @@ getNextTrial = ->
         left: bottomLineLeft - TARGET_BORDER_WIDTH + '%'
         width: bottomLineLength + TARGET_BORDER_WIDTH * 2 + '%'
     shortLineLength: shortLineLength
-    intensity: intensity
+    intensity: staircase.intensity
   }
+
+
+# event handler for taps on lines. Either fade in the next trial or
+# call tabcat.task.finish()
+handleTapOnLine = (event) ->
+  event.preventDefault()
+  registerResult(event)
+
+  if staircase.numReversals >= MAX_REVERSALS
+    tabcat.task.finish()
+  else
+    showNextTrial()
+
+  return
 
 
 # event handler for taps on lines. either fade in the next trial or
 # call tabcat.task.finish()
-showNextTrial = (event) ->
-  # don't emulate mousedown event if we get a touch event
-  if event?.preventDefault?
-    event.preventDefault()
-
-  if event?.data?
-    registerResult(event)
-
-  if numReversals >= MAX_REVERSALS
-    interpretation =
-      intensitiesAtReversal: e.state.intensity \
-        for e in tabcat.task.getEventLog() \
-        when e.interpretation?.reversal
-    tabcat.task.finish(interpretation: interpretation)
-  else
-    $nextTrialDiv = getNextTrialDiv()
-    $('#task').empty()
-    $('#task').append($nextTrialDiv)
-    tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
-    $nextTrialDiv.fadeIn(duration: FADE_DURATION)
+showNextTrial = ->
+  $nextTrialDiv = getNextTrialDiv()
+  $('#task').empty()
+  $('#task').append($nextTrialDiv)
+  tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+  tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+  $nextTrialDiv.fadeIn(duration: FADE_DURATION)
 
 
 # create the next trial, and return the (jQuery-wrapped) div containing it, but
@@ -218,7 +186,7 @@ getNextTrialDiv = ->
   $topLineTargetDiv = $('<div></div>', class: 'lineTarget topLineTarget')
   $topLineTargetDiv.css(trial.topLine.targetCss)
   $topLineTargetDiv.on(
-    'mousedown touchstart', trial.topLine, showNextTrial)
+    'mousedown touchstart', trial.topLine, handleTapOnLine)
 
   $bottomLineDiv = $('<div></div>', class: 'line bottomLine')
   $bottomLineDiv.css(trial.bottomLine.css)
@@ -226,11 +194,11 @@ getNextTrialDiv = ->
     '<div></div>', class: 'lineTarget bottomLineTarget')
   $bottomLineTargetDiv.css(trial.bottomLine.targetCss)
   $bottomLineTargetDiv.on(
-    'mousedown touchstart', trial.bottomLine, showNextTrial)
+    'mousedown touchstart', trial.bottomLine, handleTapOnLine)
 
   # put them in an offscreen div
   $containerDiv = $('<div></div>',
-    class: 'parallelLineLayout' + trialNum % NUM_LAYOUTS)
+    class: 'parallelLineLayout' + staircase.trialNum % NUM_LAYOUTS)
   $containerDiv.hide()
   $containerDiv.append(
     $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
@@ -249,9 +217,9 @@ getNextTrialDiv = ->
 # summary of the current state of the task
 getTaskState = ->
   state =
-    intensity: intensity
+    intensity: staircase.intensity
     stimuli: getStimuli()
-    trialNum: trialNum
+    trialNum: staircase.trialNum
 
   if inPracticeMode()
     state.practiceMode = true
@@ -270,21 +238,9 @@ getStimuli = ->
 
   return stimuli
 
-
-# get the bounding box for the given (non-jQuery-select-wrapped) DOM element,
-# with fields "top", "bottom", "left", and "right"
-#
-# we use getBoundingClientRect() rather than the jQuery alternative to get
-# floating-point values
-getElementBounds = (element) ->
-  # some browsers include height and width, but it's redundant
-  _.pick(element.getBoundingClientRect(), 'top', 'bottom', 'left', 'right')
-
-
 catchStrayTouchStart = (event) ->
   event.preventDefault()
   tabcat.task.logEvent(getTaskState(), event)
-
 
 
 # INITIALIZATION

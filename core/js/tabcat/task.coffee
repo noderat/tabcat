@@ -494,7 +494,11 @@ tabcat.task.Staircase = class
   #
   # if correct is null, @trialNum will be incremented, but nothing else
   # will change.
-  addResult: (correct) ->
+  #
+  # options:
+  # - ignoreReversals: if true, don't count reversals or include them
+  #   in the interpretation we return. Useful for practice mode
+  addResult: (correct, options) ->
     @trialNum += 1
 
     # normalize to true, false, or null
@@ -518,13 +522,14 @@ tabcat.task.Staircase = class
       interpretation.intensityChange = intensityChange
 
     reversal = (
-      intensityChange * @lastIntensityChange < 0 or
-      @intensity != rawIntensity)  # i.e. we hit the floor/ceiling
-
-    @lastIntensityChange = intensityChange
+      not options?.ignoreReversals and
+      (intensityChange * @lastIntensityChange < 0 or
+        @intensity != rawIntensity))  # i.e. we hit the floor/ceiling
 
     if reversal
       @numReversals += 1
       interpretation.reversal = true
+
+    @lastIntensityChange = intensityChange
 
     return interpretation
