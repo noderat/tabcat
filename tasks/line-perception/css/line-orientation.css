@@ -25,10 +25,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#task div.task-description {
-    text-align: center;
-}
-
 #task div.line-container {
     position: absolute;
     /* this is square because the container is always 4/3 */
