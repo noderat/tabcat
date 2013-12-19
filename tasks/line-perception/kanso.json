@@ -4,7 +4,6 @@
     "description": "Line Perception",
     "attachments": [
         "css/line-perception.css",
-        "css/perpendicular-line-length.css",
         "img/icon/line-orientation.png",
         "img/icon/parallel-line-length.png",
         "img/icon/perpendicular-line-length.png",

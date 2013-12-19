@@ -29,22 +29,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #task div.line {
     position: absolute;
-    margin: 0;
-    padding: 0;
     background-color: #ffcc66;
 }
 
 #task div.lineTarget {
     position: absolute;
-    margin: 0;
-    padding: 0;
     background-color: transparent;
 }
 
 #task div.practiceCaption {
     position: absolute;
-    margin: 0;
-    padding: 0;
     color: #cc9933;
     font-size: 8em;
     text-align: center;
