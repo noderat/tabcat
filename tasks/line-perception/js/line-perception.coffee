@@ -32,25 +32,54 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # LOOK AND FEEL
 
 # pretend div containing the test is on an iPad
-ASPECT_RATIO = 4/3
+ASPECT_RATIO_BY_TASK =
+  'line-orientation': 4/3  # match iPad
+  'parallel-line-length': 4/3
+  'perpendicular-line-length': 1/1  # makes rotation easier
 
 # range on line length, as a % of container width
-SHORT_LINE_MIN_LENGTH = 40
-SHORT_LINE_MAX_LENGTH = 50
-# how much wider to make invisible target around lines, as % of width
-TARGET_BORDER_WIDTH = 3 / ASPECT_RATIO
+SHORT_LINE_RANGE = [40, 50]
+# how much wider to make invisible target around lines, as a % of height
+# should match CSS for extra target height for parallel line task
+TARGET_BORDER_WIDTH = 3
 # how long a fade should take, in msec
 FADE_DURATION = 400
 
 
 # TASK PARAMETERS
 
-# jump to this intensity after exiting practice mode
-START_INTENSITY = 15
+# initial staircasing parameters for each task (e.g. in practice mode)
+STAIRCASE_PARAMS_BY_TASK =
+  'line-orientation':
+    intensity: 45
+    minIntensity: 1
+    maxIntensity: 89
+    stepsUp: 3
+    stepsDown: 1
+  'parallel-line-length':
+    intensity: 40
+    minIntensity: 1
+    maxIntensity: 50
+    stepsUp: 3
+    stepsDown: 1
+  'perpendicular-line-length':
+    intensity: 40
+    minIntensity: 1
+    maxIntensity: 50
+    stepsUp: 3
+    stepsDown: 1
+
+# intensity once we exit practice mode (happens to be the same, by coincidence)
+START_INTENSITY_BY_TASK =
+  'line-orientation': 15
+  'parallel-line-length': 15
+  'perpendicular-line-length': 15
+
 # get this many correct in a row to leave practice mode
 PRACTICE_MAX_STREAK = 4
 # get this many correct in a row to turn off the practice mode instructions
 PRACTICE_CAPTION_MAX_STREAK = 2
+
 # task is done after this many reversals (change in direction of
 # intensity change). Bumping against the floor/ceiling also counts
 # as a reversal
@@ -59,16 +88,10 @@ MAX_REVERSALS = 14
 
 # VARIABLES
 
-staircase = new tabcat.task.Staircase(
-  intensity: 40
-  minIntensity: 1
-  maxIntensity: 50
-  stepsUp: 3
-  stepsDown: 1
-)
+# set in initTask()
+staircase = null
 
 practiceStreakLength = 0
-
 
 # FUNCTIONS
 
@@ -77,17 +100,25 @@ practiceStreakLength = 0
 initTask = ->
   tabcat.task.start(trackViewport: true)
   tabcat.ui.turnOffBounce()
+
+  staircase = new tabcat.task.Staircase(
+    STAIRCASE_PARAMS_BY_TASK[taskName()])
+
   $(->
     tabcat.ui.requireLandscapeMode($('#task'))
     $('#task').on('mousedown touchstart', catchStrayTouchStart)
   )
 
+# get the task name. this is automatically set by tabcat.task.start()
+# based on the path in the URL
+taskName = _.once(-> tabcat.task.get().name)
 
+# are we in practice mode?
 inPracticeMode = -> practiceStreakLength < PRACTICE_MAX_STREAK
 
+# and if so, should we show the caption?
 shouldShowPracticeCaption = ->
   practiceStreakLength < PRACTICE_CAPTION_MAX_STREAK
-
 
 # call this when the user taps on a line. Updates staircase
 registerResult = (event) ->
@@ -103,7 +134,7 @@ registerResult = (event) ->
       practiceStreakLength += 1
       if not inPracticeMode()  # i.e. we just left practice mode
         # initialize the real trial
-        staircase.intensity = START_INTENSITY
+        staircase.intensity = START_INTENSITY_BY_TASK[taskName()]
         staircase.lastIntensityChange = 0
     else
       practiceStreakLength = 0
@@ -167,15 +198,14 @@ showNextParallelLineTrial = ->
   $nextTrialDiv = getNextParallelLineTrialDiv()
   $('#task').empty()
   $('#task').append($nextTrialDiv)
-  tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO)
+  tabcat.ui.fixAspectRatio($nextTrialDiv, ASPECT_RATIO_BY_TASK[taskName()])
   tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
   $nextTrialDiv.fadeIn(duration: FADE_DURATION)
 
 
 # generate data, including CSS, for the next trial
 getNextParallelLineTrial = ->
-  shortLineLength = tabcat.math.randomUniform(SHORT_LINE_MIN_LENGTH,
-                                              SHORT_LINE_MAX_LENGTH)
+  shortLineLength = tabcat.math.randomUniform(SHORT_LINE_RANGE...)
 
   longLineLength = shortLineLength * (1 + staircase.intensity / 100)
 
@@ -198,6 +228,8 @@ getNextParallelLineTrial = ->
     topLineLeft = 100 - margin - topLineLength
     bottomLineLeft = margin
 
+  targetBorderWidth = TARGET_BORDER_WIDTH / ASPECT_RATIO_BY_TASK[taskName()]
+
   return {
     topLine:
       css:
@@ -205,16 +237,16 @@ getNextParallelLineTrial = ->
         width: topLineLength + '%'
       isLonger: topLineLength >= bottomLineLength
       targetCss:
-        left: topLineLeft - TARGET_BORDER_WIDTH + '%'
-        width: topLineLength + TARGET_BORDER_WIDTH * 2 + '%'
+        left: topLineLeft - targetBorderWidth + '%'
+        width: topLineLength + targetBorderWidth * 2 + '%'
     bottomLine:
       css:
         left: bottomLineLeft + '%'
         width: bottomLineLength + '%'
       isLonger: bottomLineLength >= topLineLength
       targetCss:
-        left: bottomLineLeft - TARGET_BORDER_WIDTH + '%'
-        width: bottomLineLength + TARGET_BORDER_WIDTH * 2 + '%'
+        left: bottomLineLeft - targetBorderWidth + '%'
+        width: bottomLineLength + targetBorderWidth * 2 + '%'
     shortLineLength: shortLineLength
     intensity: staircase.intensity
   }
