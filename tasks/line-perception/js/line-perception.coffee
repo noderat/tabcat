@@ -278,7 +278,8 @@ LineLengthTask = class extends LinePerceptionTask
   getNextTrial: ->
     orientation = @getNextOrientation()
 
-    skew = @staircase.intensity * tabcat.math.randomSign()
+    # pick direction randomly
+    skew = @staircase.intensity * _.sample([-1, 1])
 
     [line1Skew, line2Skew] = _.shuffle([skew, 0])
 
@@ -395,7 +396,7 @@ LineLengthTask = class extends LinePerceptionTask
     margin = (100 - totalWidth) / 2
 
     # push one line to the right, and one to the left
-    if tabcat.math.coinFlip()
+    if _.sample([true, false])
       topLineLeft = margin
       bottomLineLeft = 100 - margin - bottomLineLength
     else
@@ -485,15 +486,14 @@ LineLengthTask = class extends LinePerceptionTask
     # Alternate between sideways and upright, but pick orientation
     # randomly within that.
     angle = 90 * (@staircase.trialNum % 2)
-    if tabcat.math.coinFlip()
-      angle += 180
+    angle += _.sample([0, 180])
 
     if @shouldShowPracticeCaption()
       # when showing the practice caption, always make the vertical
       # line short
       armIsShort = (tabcat.math.mod(angle, 180) == 90)
     else
-      armIsShort = tabcat.math.coinFlip()
+      armIsShort = _.sample([true, false])
 
     if armIsShort
       [armLength, stemLength] = [shortLineLength, longLineLength]
@@ -519,7 +519,7 @@ LineLengthTask = class extends LinePerceptionTask
 
     # offset stem to the left or right to avoid perseverative tapping
     # in the center of the screen
-    if tabcat.math.coinFlip()
+    if _.sample([true, false])
       stem.left = arm.left + @LINE_WIDTH
     else
       stem.left = arm.right - @LINE_WIDTH * 2
