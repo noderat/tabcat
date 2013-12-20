@@ -168,8 +168,6 @@ LinePerceptionTask = class
     @practiceStreakLength < @PRACTICE_CAPTION_MAX_STREAK
 
 
-
-
 # abstract base class for line length tasks
 LineLengthTask = class extends LinePerceptionTask
 
@@ -294,3 +292,163 @@ LineLengthTask = class extends LinePerceptionTask
 
   # fit in a square, so all orientations work the same
   ASPECT_RATIO: 1 / 1
+
+  # height of practice caption, as a % of container height, so
+  # lines can avoid it
+  CAPTION_HEIGHT: 30
+
+  # create the next trial, and return the div containing it, but don't
+  # show it or add it to the page (showNextTrial() does this)
+  getNextTrialDiv: ->
+    # get line offsets and widths for next trial
+    trial = @getNextTrial()
+
+    # construct divs for these lines
+    $line1Div = $('<div></div>', class: 'line')
+    $line1Div.css(trial.line1.css)
+    $line1TargetDiv = $('<div></div>', class: 'lineTarget')
+    $line1TargetDiv.css(trial.line1.targetCss)
+    $line1TargetDiv.on(
+      'mousedown touchstart', trial.line1, @handleLineTouchStart)
+
+    $line2Div = $('<div></div>', class: 'line')
+    $line2Div.css(trial.line2.css)
+    $line2TargetDiv = $('<div></div>', class: 'lineTarget')
+    $line2TargetDiv.css(trial.line2.targetCss)
+    $line2TargetDiv.on(
+      'mousedown touchstart', trial.line2, @handleLineTouchStart)
+
+    # put them in an offscreen div
+    $containerDiv = $('<div></div>')
+    $containerDiv.hide()
+    $containerDiv.append(
+      $line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv)
+
+    # show practice caption, if required
+    if @shouldShowPracticeCaption()
+      $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
+      $practiceCaptionDiv.html('Tap the longer line<br>' +
+        ' quickly and accurately.')
+      $containerDiv.append($practiceCaptionDiv)
+
+    return $containerDiv
+
+  # generate data, including CSS, for the next trial
+  getNextTrial: ->
+    shortLineLength = tabcat.math.randomUniform(@SHORT_LINE_RANGE...)
+
+    longLineLength = shortLineLength * (1 + @staircase.intensity / 100)
+
+    # Going to make a sort of T-shaped layout, and rotate it later.
+    # The top of the T is the "arm" and the vertical part is the "stem"
+
+    # Alternate between sideways and upright, but pick orientation
+    # randomly within that.
+    angle = 90 * (@staircase.trialNum % 2)
+    if tabcat.math.coinFlip()
+      angle += 180
+
+    if @shouldShowPracticeCaption()
+      # when showing the practice caption, always make the vertical
+      # line short
+      armIsShort = (tabcat.math.mod(angle, 180) == 90)
+    else
+      armIsShort = tabcat.math.coinFlip()
+
+    if armIsShort
+      [armLength, stemLength] = [shortLineLength, longLineLength]
+    else
+      [armLength, stemLength] = [longLineLength, shortLineLength]
+
+    totalHeight = stemLength + @LINE_WIDTH * 2
+    verticalMargin = (100 - totalHeight) / 2
+
+    arm =
+      top: verticalMargin
+      bottom: verticalMargin + @LINE_WIDTH
+      height: @LINE_WIDTH
+      left: (100 - armLength) / 2
+      right: (100 + armLength) / 2
+      width: armLength
+
+    stem =
+      top: verticalMargin + 2 * @LINE_WIDTH
+      bottom: 100 - verticalMargin
+      height: stemLength
+      width: @LINE_WIDTH
+
+    # offset stem to the left or right to avoid perseverative tapping
+    # in the center of the screen
+    if tabcat.math.coinFlip()
+      stem.left = arm.left + @LINE_WIDTH
+    else
+      stem.left = arm.right - @LINE_WIDTH * 2
+    stem.right = stem.left + @LINE_WIDTH
+
+    # rotate the "T" shape
+    line1Box = @rotatePercentBox(arm, angle)
+    line2Box = @rotatePercentBox(stem, angle)
+
+    # if we want to show a practice caption, shift the whole thing down
+    if @shouldShowPracticeCaption()
+      offset = @CAPTION_HEIGHT - Math.min(line1Box.top, line2Box.top)
+      line1Box.top += offset
+      line1Box.bottom += offset
+      line2Box.top += offset
+      line2Box.bottom += offset
+
+    line1TargetBox = @makeTargetBox(line1Box)
+    line2TargetBox = @makeTargetBox(line2Box)
+
+    line1Css = @percentBoxToCss(line1Box)
+    line1TargetCss = @percentBoxToCss(line1TargetBox)
+    line2Css = @percentBoxToCss(line2Box)
+    line2TargetCss = @percentBoxToCss(line2TargetBox)
+
+    return {
+      line1:
+        correct: (armLength >= stemLength)
+        css: line1Css
+        targetCss: line1TargetCss
+      line2:
+        correct: (stemLength >= armLength)
+        css: line2Css
+        targetCss: line2TargetCss
+      angle: angle
+    }
+
+  rotatePercentBox: (box, angle) ->
+    if (angle % 90 != 0)
+      throw Error("angle must be a multiple of 90")
+
+    angle = tabcat.math.mod(angle, 360)
+    if (angle == 0)
+      return box
+
+    return @rotatePercentBox({
+      top: 100 - box.right
+      bottom: 100 - box.left
+      height: box.width
+      left: box.top
+      right: box.bottom
+      width: box.height
+    }, angle - 90)
+
+  percentBoxToCss: (box) ->
+    css = {}
+    for own key, value of box
+      css[key] = value + '%'
+
+    return css
+
+  makeTargetBox: (box, borderWidth) ->
+    borderWidth ?= @TARGET_BORDER
+
+    return {
+      top: box.top - borderWidth
+      bottom: box.top + borderWidth
+      height: box.height + borderWidth * 2
+      left: box.left - borderWidth
+      right: box.right + borderWidth
+      width: box.width + borderWidth * 2
+    }

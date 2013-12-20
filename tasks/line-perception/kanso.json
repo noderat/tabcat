@@ -9,7 +9,6 @@
         "img/icon/perpendicular-line-length.png",
         "js/line-orientation.js",
         "js/line-perception.js",
-        "js/perpendicular-line-length.js",
         "line-orientation.html",
         "parallel-line-length.html",
         "perpendicular-line-length.html"
