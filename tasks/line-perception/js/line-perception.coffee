@@ -38,7 +38,7 @@ LinePerceptionTask = class
   MIN_INTENSITY: 1
 
   # max intensity for task (set in subclasses)
-  #MAX_INTENSITY: null
+  MAX_INTENSITY: null
 
   # task is done after this many reversals (change in direction of
   # intensity change). Bumping against the floor/ceiling also counts
@@ -52,10 +52,10 @@ LinePerceptionTask = class
   PRACTICE_MAX_STREAK: 4
 
   # start practice mode here (set in subclasses)
-  #PRACTICE_START_INTENSITY: null
+  PRACTICE_START_INTENSITY: null
 
   # start intensity of the real task here
-  #START_INTENSITY: null
+  START_INTENSITY: null
 
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
@@ -174,6 +174,9 @@ LineLengthTask = class extends LinePerceptionTask
   # width of lines, as % of height
   LINE_WIDTH: 7
 
+  # max % difference between line lengths
+  MAX_INTENSITY: 50
+
   # start practice mode here
   PRACTICE_START_INTENSITY: 40
 
@@ -192,6 +195,141 @@ LineLengthTask = class extends LinePerceptionTask
       lines: (
         tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
     )
+
+
+# LINE ORIENTATION
+
+@LineOrientationTask = class extends LinePerceptionTask
+
+  # max angle difference between lines
+  MAX_INTENSITY: 89
+
+  # max rotation of the reference line
+  MAX_ROTATION: 60
+
+  # minimum difference in orientation between trials
+  MIN_ORIENTATION_DIFFERENCE: 20
+
+  # min orientation in practice mode (to avoid the caption)
+  MIN_PRACTICE_MODE_ORIENTATION: 25
+
+  # start practice mode here
+  PRACTICE_START_INTENSITY: 45
+
+  # range on line length, as a % of container width
+  SHORT_LINE_RANGE: [40, 50]
+
+  # start real task here
+  START_INTENSITY: 15
+
+  # set up currentStimuli and lastOrientation
+  constructor: ->
+    super()
+    @currentStimuli = {}
+    @lastOrientation = 0
+
+  # create the next trial, and return the div containing it, but don't
+  # show it or add it to the page (showNextTrial() does this)
+  getNextTrialDiv: ->
+    # get line offsets and widths for next trial
+    trial = @getNextTrial()
+
+    # construct divs for these lines
+    $referenceLineDiv = $('<div></div>', class: 'referenceLine')
+
+    $line1Div = $('<div></div>', class: 'line1')
+    $line1Div.css(@rotationCss(trial.line1.skew))
+    $line1TargetAreaDiv = $('<div></div>', class: 'line1Target')
+    $line1TargetAreaDiv.css(@rotationCss(trial.line1.skew))
+    $line1TargetAreaDiv.on(
+      'mousedown touchstart', trial.line1, @handleLineTouchStart)
+
+    $line2Div = $('<div></div>', class: 'line2')
+    $line2Div.css(@rotationCss(trial.line2.skew))
+    $line2TargetAreaDiv = $('<div></div>', class: 'line2Target')
+    $line2TargetAreaDiv.css(@rotationCss(trial.line2.skew))
+    $line2TargetAreaDiv.on(
+      'mousedown touchstart', trial.line2, @handleLineTouchStart)
+
+    # put them in a container, and rotate it
+    $stimuliDiv = $('<div></div>', class: 'lineOrientationStimuli')
+    $stimuliDiv.css(@rotationCss(trial.referenceLine.orientation))
+    $stimuliDiv.append(
+      $referenceLineDiv,
+      $line1Div, $line1TargetAreaDiv,
+      $line2Div, $line2TargetAreaDiv)
+
+    # put them in an offscreen div
+    $trialDiv = $('<div></div>')
+    $trialDiv.hide()
+
+    # show practice caption, if required
+    if @shouldShowPracticeCaption()
+      $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
+      $practiceCaptionDiv.html(
+        'Which is parallel to the <span class="blue">blue</span> line?')
+      $trialDiv.append($practiceCaptionDiv)
+
+    $trialDiv.append($stimuliDiv)
+
+    return $trialDiv
+
+  # generate data, including CSS, for the next trial
+  getNextTrial: ->
+    orientation = @getNextOrientation()
+
+    skew = @staircase.intensity * tabcat.math.randomSign()
+
+    [line1Skew, line2Skew] = _.shuffle([skew, 0])
+
+    # return this and store in currentStimuli (it's hard to query the browser
+    # about rotations)
+    @currentStimuli =
+      referenceLine:
+        orientation: orientation
+      line1:
+        correct: line1Skew is 0
+        skew: line1Skew
+      line2:
+        correct: line2Skew is 0
+        skew: line2Skew
+
+  # pick a new orientation that's not too close to the last one
+  getNextOrientation: ->
+    while true
+      orientation = tabcat.math.randomUniform(-@MAX_ROTATION, @MAX_ROTATION)
+      if Math.abs(orientation - @lastOrientation) < @MIN_ORIENTATION_DIFFERENCE
+        continue
+
+      if @shouldShowPracticeCaption() and (
+        Math.abs(orientation) < @MIN_PRACTICE_MODE_ORIENTATION)
+        continue
+
+      @lastOrientation = orientation
+      return orientation
+
+  rotationCss: (angle) ->
+    if angle == 0
+      return {}
+
+    value = 'rotate(' + angle + 'deg)'
+    return {
+      transform: value
+      '-moz-transform': value
+      '-ms-transform': value
+      '-o-transform': value
+      '-webkit-transform': value
+    }
+
+  # now, with line orientation information!
+  getStimuli = ->
+    stimuli = _.extend(super(), currentStimuli)
+
+    for key in ['line1', 'line2']
+      if stimuli[key]?
+        stimuli[key] = _.omit(stimuli[key], 'correct')
+
+    return stimuli
 
 
 # PARALLEL LINE LENGTH
@@ -287,6 +425,8 @@ LineLengthTask = class extends LinePerceptionTask
       intensity: @staircase.intensity
     }
 
+
+# PERPENDICULAR LINE LENGTH
 
 @PerpendicularLineLengthTask = class extends LineLengthTask
 
