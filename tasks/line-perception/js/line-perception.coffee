@@ -323,8 +323,8 @@ LineLengthTask = class extends LinePerceptionTask
     }
 
   # now, with line orientation information!
-  getStimuli = ->
-    stimuli = _.extend(super(), currentStimuli)
+  getStimuli: ->
+    stimuli = _.extend(super(), @currentStimuli)
 
     for key in ['line1', 'line2']
       if stimuli[key]?
