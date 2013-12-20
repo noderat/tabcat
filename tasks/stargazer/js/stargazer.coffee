@@ -32,7 +32,7 @@ ASPECT_RATIO = 4/3
 MIN_TARGET_STARS = 1
 
 # the maximum number of target stars to show
-MAX_TARGET_STARS = 6
+MAX_TARGET_STARS = 8
 
 # the maximum number of times we can randomly fail to place a star
 # before restarting the process
