@@ -3,15 +3,11 @@
     "version": "0.5.0",
     "description": "Line Perception",
     "attachments": [
-        "css/line-orientation.css",
-        "css/parallel-line-length.css",
-        "css/perpendicular-line-length.css",
+        "css/line-perception.css",
         "img/icon/line-orientation.png",
         "img/icon/parallel-line-length.png",
         "img/icon/perpendicular-line-length.png",
-        "js/line-orientation.js",
-        "js/parallel-line-length.js",
-        "js/perpendicular-line-length.js",
+        "js/line-perception.js",
         "line-orientation.html",
         "parallel-line-length.html",
         "perpendicular-line-length.html"

@@ -25,11 +25,36 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#task div.task-description {
-    text-align: center;
+/* COMMON CSS */
+
+#task div.line {
+    position: absolute;
+    background-color: #ffcc66;
 }
 
-#task div.line-container {
+#task div.lineTarget {
+    position: absolute;
+    background-color: transparent;
+}
+
+#task div.practiceCaption {
+    position: absolute;
+    color: #cc9933;
+    font-size: 8em;
+    text-align: center;
+    left: 0%;
+    width: 100%;
+    top: 3%;
+}
+
+#task div.practiceCaption span.blue {
+    color: #7799bb;
+}
+
+
+/* LINE ORIENTATION */
+
+#task div.lineOrientationStimuli {
     position: absolute;
     /* this is square because the container is always 4/3 */
     height: 72%;
@@ -39,14 +64,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     top: 10%;
 }
 
-
-#task div.line {
+#task div.lineOrientationStimuli div {
     position: absolute;
-    margin: 0;
-    padding: 0;
 }
 
-#task div.reference-line {
+#task div.lineOrientationStimuli div.referenceLine {
     top: 0%;
     bottom: 50%;
     height: 50%;
@@ -56,7 +78,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: #7799bb;
 }
 
-#task div.line-1 {
+#task div.lineOrientationStimuli div.line1 {
     top: 75%;
     bottom: 100%;
     height: 25%;
@@ -66,8 +88,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: #cc9933;
 }
 
-/* target area is 6% larger. Width and height have same scale here. */
-#task div.line-1-target {
+/* target area is 6% larger. Width and height have same scale here
+   since div.lineOrientationStimuli is square. */
+#task div.lineOrientationStimuli div.line1Target {
     top: 69%;
     bottom: 106%;
     height: 37%;
@@ -77,7 +100,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
-#task div.line-2 {
+#task div.lineOrientationStimuli div.line2 {
     top: 75%;
     bottom: 100%;
     height: 25%;
@@ -87,7 +110,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: #cc9933;
 }
 
-#task div.line-2-target {
+#task div.lineOrientationStimuli div.line2Target {
     top: 69%;
     bottom: 106%;
     height: 37%;
@@ -97,18 +120,62 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
-#task div.practice-caption {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    color: #cc9933;
-    font-size: 8em;
-    text-align: center;
-    left: 0%;
-    width: 100%;
-    top: 3%;
+
+/* PARALLEL LINE LENGTH */
+
+/* layout 0 (caption on top, lines on bottom) */
+
+#task div.parallelLineLayout0 div.practiceCaption {
+    top: 15%;
+    height: 15%;
+    font-size: 10em;
 }
 
-#task div.practice-caption span.target {
-    color: #7799bb;
+#task div.parallelLineLayout0 div.topLine {
+    top: 53%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout0 div.topLineTarget {
+    top: 50%;
+    height: 13%;
+}
+
+#task div.parallelLineLayout0 div.bottomLine {
+    top: 71%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout0 div.bottomLineTarget {
+    top: 68%;
+    height: 13%;
+}
+
+/* layout 1 (lines on top, caption on bottom) */
+
+#task div.parallelLineLayout1 div.practiceCaption {
+    top: 60%;
+    height: 15%;
+    font-size: 10em;
+}
+
+#task div.parallelLineLayout1 div.topLine {
+    top: 19%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout1 div.topLineTarget {
+    top: 16%;
+    height: 13%;
+}
+
+#task div.parallelLineLayout1 div.bottomLine {
+    top: 37%;
+    height: 7%;
+}
+
+#task div.parallelLineLayout1 div.bottomLineTarget {
+    top: 34%;
+    height: 13%;
+    font-size: 10em;
 }

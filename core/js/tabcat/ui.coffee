@@ -460,8 +460,7 @@ tabcat.ui.encodeHashJSON = (json) ->
 # Don't allow the document to scroll past its boundaries. This only works
 # if your document isn't larger than the viewport.
 tabcat.ui.turnOffBounce = ->
-  $(document).bind('touchmove', (event) ->
-    event.preventDefault())
+  $(document).on('touchmove', (event) -> event.preventDefault())
 
 
 # Wrap the given element in a way that requires landscape mode

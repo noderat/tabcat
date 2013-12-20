@@ -26,13 +26,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* default look and feel. All things being equal, try to follow the UCSF
-Web Identity Standards (right sidebar on http://www.ucsf.edu/about/identity). */
+Web Identity Standards (right sidebar on http://www.ucsf.edu/about/identity).
+*/
 body {
     background-color: #000000;
     color: #eeeeee;
     /* Helvetica is the "everything is okay" font */
     font-family: Helvetica, Arial, sans-serif;
     margin: 0;
+}
+
+/* no margins or padding by default */
+div {
+    margin: 0;
+    padding: 0;
 }
 
 /* fullscreen mode. set this class on html and body to simulate an app */

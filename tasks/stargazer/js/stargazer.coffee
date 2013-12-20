@@ -371,10 +371,10 @@ pickComets = ->
   comets = []
 
   # randomly choose whether to flip x coordinates of comets
-  if tabcat.math.coinFlip()
-    maybeFlip = (x) -> 1 - x
-  else
-    maybeFlip = (x) -> x
+  maybeFlip = _.sample([
+    (x) -> x,
+    (x) -> 1 - x
+  ])
 
   for i in [0...NUM_COMETS]
     comet = {}
