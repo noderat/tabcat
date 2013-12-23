@@ -113,11 +113,15 @@ COMET_IMG_ASPECT_RATIO = 736 / 236
 COMET_TIMINGS = [[0, 4000], [1000, 2000], [2000, 4000]]
 
 # start and end x ranges for comets. Multiply these by SKY_WIDTH to get
-# star coordinates.
+# star coordinates. These are chosen so that the first and second comet
+# don't overlap.
+#
+# Half the time (randomly), the coordinates of all comets will be flipped
+# around the middle of the screen.
 COMET_X_RANGES = [
-  [[-0.5, 0.3], [0.7, 1.5]],
-  [[0.7, 1.2], [-0.2, 0.3]],
-  [[-0.2, 0.3], [0.7, 1.2]],
+  [[-0.1, 0.3], [0.2, 1.5]],
+  [[0.4, 1.2], [-0.2, 0.7]],
+  [[0.2, 0.8], [-0.1, 1.1]],
 ]
 
 # how long to show comets. This matches the CSS for #cometSky div.msg
