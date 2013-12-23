@@ -496,8 +496,11 @@ tabcat.task.Staircase = class
   # will change.
   #
   # options:
+  # - noChange: if true, just increment numTrials; don't change the intensity
+  #   or count reversals. Useful for practice mode.
   # - ignoreReversals: if true, don't count reversals or include them
-  #   in the interpretation we return. Useful for practice mode
+  #   in the interpretation we return. Useful for when we want practice mode
+  #   to do some staircasing.
   addResult: (correct, options) ->
     @trialNum += 1
 
@@ -508,7 +511,7 @@ tabcat.task.Staircase = class
       correct: correct
 
     # bail out if result is not scored
-    if not correct?
+    if not correct? or options?.noChange
       return interpretation
 
     change = if correct then -@stepsDown else @stepsUp

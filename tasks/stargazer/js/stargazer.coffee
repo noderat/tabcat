@@ -152,36 +152,40 @@ MAX_REVERSALS = 18
 # how many comets do you have to catch before we show stars?
 MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 3
 
-# how many correct to leave practice mode?
-NUM_CORRECT_TO_LEAVE_PRACTICE = 2
+# intensities in practice mode, based on how many the patient got correct
+# so far. We want them to get one star right twice, and two stars right
+# twice, before going on to the real trial.
+PRACTICE_MODE_INTENSITIES = [-1, -1, -2, -2]
 
-# initial static "staircase" for practice mode.
-practiceStaircase = new tabcat.task.Staircase(
-  intensity: -1
-  stepsUp: 0
-  stepsDown: 0
-)
-
-# staircase: keeps track of intensity, number of trials, etc
-staircase = practiceStaircase
-
-# use these to make the real staircase once we leave practice mode
-STAIRCASE_PARAMS =
+# initial static "staircase" for the real trial
+staircase = new tabcat.task.Staircase(
   intensity: -2
   minIntensity: -MAX_TARGET_STARS
   maxIntensity: -1
   stepsUp: 2
   stepsDown: 1
+)
 
 # how many has the patient gotten correct in practice mode?
-correctInPractice = 0
+numCorrectInPractice = 0
 
 # how many comets has the patient caught so far?
 cometsCaught = 0
 
+
+
 # are we in practice mode?
 inPracticeMode = ->
-  staircase is practiceStaircase
+  numCorrectInPractice < PRACTICE_MODE_INTENSITIES.length
+
+
+# the current intensity. Use this instead of staircase.instensity;
+# it accounts for practice mode.
+getIntensity = ->
+  if inPracticeMode()
+    PRACTICE_MODE_INTENSITIES[numCorrectInPractice]
+  else
+    staircase.intensity
 
 
 # how long to show target stars?
@@ -477,7 +481,7 @@ showTargetStars = ->
   $testSky.hide()
 
   # pick stars and set them up while message is being shown
-  numTargetStars = -staircase.intensity
+  numTargetStars = -getIntensity()
   [targetStars, testStars] = pickTargetAndTestStars(numTargetStars)
 
   setUpTargetSky(targetStars)
@@ -614,7 +618,10 @@ setUpTargetSky = (targetStars) ->
 
   $msg = $('<div></div>', class: 'msg')
   if inPracticeMode()
-    $msg.text('Remember where this star is')
+    if -getIntensity() is 1
+      $msg.text('Remember where this star is')
+    else
+      $msg.html('Remember <em>both</em> stars')
   else
     $msg.text('Remember')
   $targetSky.append($msg)
@@ -635,14 +642,12 @@ setUpTestSky = (testStars) ->
       correct = event.data
 
       state = getTaskState()  # do this before addResult()!
-      interpretation = staircase.addResult(correct)
+      interpretation = staircase.addResult(correct, noChange: inPracticeMode())
 
       tabcat.task.logEvent(state, event, interpretation)
 
       if inPracticeMode() and correct
-        correctInPractice += 1
-        if correctInPractice >= NUM_CORRECT_TO_LEAVE_PRACTICE
-          staircase = new tabcat.task.Staircase(staircase, STAIRCASE_PARAMS)
+        numCorrectInPractice += 1
 
       if not inPracticeMode() and staircase.numReversals >= MAX_REVERSALS
         tabcat.task.finish()
@@ -652,7 +657,13 @@ setUpTestSky = (testStars) ->
     $testSky.append($testStarImg)
 
     $msg = $('<div></div>', class: 'msg')
-    $msg.text('Which star did you just see?')
+    if inPracticeMode()
+      if -getIntensity() is 1
+        $msg.text('Which star did you just see?')
+      else
+        $msg.html('Which <em>one</em> did you just see?')
+    else
+      $msg.text('Which did you just see?')
     $testSky.append($msg)
 
 
@@ -660,7 +671,7 @@ setUpTestSky = (testStars) ->
 getTaskState = ->
   state =
     cometsCaught: cometsCaught
-    intensity: staircase.intensity
+    intensity: getIntensity()
     stimuli: getStimuli()
     trialNum: staircase.trialNum
 
