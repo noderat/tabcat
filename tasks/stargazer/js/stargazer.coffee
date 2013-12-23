@@ -740,6 +740,7 @@ showStartScreen = ->
   tabcat.task.start(trackViewport: true)
 
   tabcat.ui.turnOffBounce()
+  tabcat.ui.enableFastClick()
 
   $(->
     $task = $('#task')
