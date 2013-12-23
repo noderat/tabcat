@@ -59,40 +59,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @keyframes scoreAnimation {
     from {
-	transform: scale(1,1);
-	-moz-transform: scale(1,1);
-	-ms-transform: scale(1,1);
-	-o-transform: scale(1,1);
-	-webkit-transform: scale(1,1);
-	opacity: 1;
+        transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -ms-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        -webkit-transform: scale(1,1);
+        opacity: 1;
     }
     to {
-	transform: scale(1.5,1.5);
-	-moz-transform: scale(1.5,1.5);
-	-ms-transform: scale(1.5,1.5);
-	-o-transform: scale(1.5,1.5);
-	-webkit-transform: scale(1.5,1.5);
-	opacity: 0;
+        transform: scale(1.5,1.5);
+        -moz-transform: scale(1.5,1.5);
+        -ms-transform: scale(1.5,1.5);
+        -o-transform: scale(1.5,1.5);
+        -webkit-transform: scale(1.5,1.5);
+        opacity: 0;
     }
 }
 
 
 @-webkit-keyframes scoreAnimation {
     from {
-	transform: scale(1,1);
-	-moz-transform: scale(1,1);
-	-ms-transform: scale(1,1);
-	-o-transform: scale(1,1);
-	-webkit-transform: scale(1,1);
-	opacity: 1;
+        transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -ms-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        -webkit-transform: scale(1,1);
+        opacity: 1;
     }
     to {
-	transform: scale(1.5,1.5);
-	-moz-transform: scale(1.5,1.5);
-	-ms-transform: scale(1.5,1.5);
-	-o-transform: scale(1.5,1.5);
-	-webkit-transform: scale(1.5,1.5);
-	opacity: 0;
+        transform: scale(1.5,1.5);
+        -moz-transform: scale(1.5,1.5);
+        -ms-transform: scale(1.5,1.5);
+        -o-transform: scale(1.5,1.5);
+        -webkit-transform: scale(1.5,1.5);
+        opacity: 0;
     }
 }
 
@@ -113,27 +113,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @keyframes cometMsgAnimation {
     from {
-	top: 3%;
-	opacity: 1;
+        top: 3%;
+        opacity: 1;
     }
     to {
-	top: 85%;
-	opacity: 0;
+        top: 85%;
+        opacity: 0;
     }
 }
 
 @-webkit-keyframes cometMsgAnimation {
     0% {
-	top: 3%;
-	opacity: 1;
+        top: 3%;
+        opacity: 1;
     }
     80% {
-	top: 68.6%;
-	opacity: 1;
+        top: 68.6%;
+        opacity: 1;
     }
     100% {
-	top: 85%;
-	opacity: 0;
+        top: 85%;
+        opacity: 0;
     }
 }
 
