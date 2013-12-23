@@ -55,6 +55,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #cometSky img.comet {
     z-index: 1001;
+    /* attempt to make animations not stutter on iOS Safari */
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
 }
 
 @keyframes scoreAnimation {
@@ -151,6 +155,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     z-index: 1000;
     animation: cometMsgAnimation 4.8s linear;
     -webkit-animation: cometMsgAnimation 4.8s linear;
+    /* attempt to make animations not stutter on iOS Safari */
+    -webkit-transform: translate3d(0,0,0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
 }
 
 /* start screen */
