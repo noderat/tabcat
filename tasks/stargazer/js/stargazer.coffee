@@ -32,7 +32,7 @@ ASPECT_RATIO = 4/3
 MIN_TARGET_STARS = 1
 
 # the maximum number of target stars to show
-MAX_TARGET_STARS = 8
+MAX_TARGET_STARS = 7
 
 # the maximum number of times we can randomly fail to place a star
 # before restarting the process
@@ -41,13 +41,13 @@ MAX_FAILURES = 30
 # stars' centers can never be less than this many star diameters apart
 MIN_STAR_DISTANCE = 2
 
-# target stars' centers can never be more than this many star diameters apart
-MAX_TARGET_STAR_DISTANCE = 8
-
 # Distances distractor stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
 # currently displayed
-DISTRACTOR_STAR_DISTANCES = [4, 3]
+#
+# TODO: don't allow two test stars to be less than MIN_STAR_DISTANCE
+# from each other!
+DISTRACTOR_STAR_DISTANCES = [3, 1.5]
 
 # how many star diameters high the sky div is
 SKY_HEIGHT = 12
@@ -315,14 +315,10 @@ nextTargetStar = (stars) ->
     throw new Failure
 
 
-# is candidateStar not too close or too far from the other target stars?
+# is candidateStar not too close to other target stars?
 canAddTargetStar = (candidateStar, stars) ->
-  if stars.length is 0
-    true
-  else if isCloserThanToAny(candidateStar, MIN_STAR_DISTANCE, stars)
-    false
-  else
-    isCloserThanToAny(candidateStar, MAX_TARGET_STAR_DISTANCE, stars)
+  stars.length is 0 or not isCloserThanToAny(
+    candidateStar, MIN_STAR_DISTANCE, stars)
 
 
 # return true if *candidateStar* is closer than *distance* to any of *stars*
