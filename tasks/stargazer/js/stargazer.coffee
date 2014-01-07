@@ -32,22 +32,19 @@ ASPECT_RATIO = 4/3
 MIN_TARGET_STARS = 1
 
 # the maximum number of target stars to show
-MAX_TARGET_STARS = 7
+MAX_TARGET_STARS = 8
 
 # the maximum number of times we can randomly fail to place a star
 # before restarting the process
 MAX_FAILURES = 30
 
-# stars' centers can never be less than this many star diameters apart
-MIN_STAR_DISTANCE = 2.5
+# target stars' centers can never be less than this many star diameters apart
+MIN_TARGET_STAR_DISTANCE = 2.5
 
-# Distances distractor stars should be from target stars. They should
+# Distances test stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
 # currently displayed
-#
-# TODO: don't allow two test stars to be less than MIN_STAR_DISTANCE
-# from each other!
-DISTRACTOR_STAR_DISTANCES = [3, 1.5]
+DISTRACTOR_STAR_DISTANCES = [1.5, 3]
 
 # how many star diameters high the sky div is
 SKY_HEIGHT = 12
@@ -72,10 +69,11 @@ STAR_IMG_PATH = 'img/star.png'
 # how many star diameters the star image file is
 # (the star fades smoothly, so this is kind of a judgment call).
 # the star's <img> element also serves as its target area for touch events
-#
-# Make sure this isn't bigger than MIN_STAR_DISTANCE / sqrt(2), so that
-# target areas can't touch.
 STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
+
+# make sure test stars' target areas can't touch
+MIN_TEST_STAR_DISTANCE = Math.sqrt(
+  STAR_IMG_WIDTH * STAR_IMG_WIDTH + STAR_IMG_HEIGHT * STAR_IMG_HEIGHT)
 
 # path for the comet image
 COMET_IMG_PATH = 'img/comet.png'
@@ -161,10 +159,16 @@ PRACTICE_MODE_INTENSITIES = [-1, -1, -2, -2]
 staircase = new tabcat.task.Staircase(
   intensity: -2
   minIntensity: -MAX_TARGET_STARS
-  maxIntensity: -1
+  maxIntensity: -MIN_TARGET_STARS
   stepsUp: 2
   stepsDown: 1
 )
+
+# use this to turn off comets, for faster debugging
+DEBUG_NO_COMETS = false
+
+# set this to always show the same number of stars
+DEBUG_NUM_STARS = null
 
 # how many has the patient gotten correct in practice mode?
 numCorrectInPractice = 0
@@ -182,7 +186,9 @@ inPracticeMode = ->
 # the current intensity. Use this instead of staircase.instensity;
 # it accounts for practice mode.
 getIntensity = ->
-  if inPracticeMode()
+  if DEBUG_NUM_STARS? and DEBUG_NUM_STARS > 0
+    -DEBUG_NUM_STARS
+  else if inPracticeMode()
     PRACTICE_MODE_INTENSITIES[numCorrectInPractice]
   else
     staircase.intensity
@@ -289,17 +295,19 @@ isInSky = ([x, y]) ->
 pickTargetAndTestStars = (n) ->
   untilSucceeds(->
     targetStars = []
+    testStars = []
 
     while targetStars.length < n
       targetStars.push(
         untilSucceeds((-> nextTargetStar(targetStars)), MAX_FAILURES))
 
-    # start with the correct choice
-    testStars = [_.sample(targetStars)]
+    testStarDistances = [0].concat(DISTRACTOR_STAR_DISTANCES)
 
-    for distance in DISTRACTOR_STAR_DISTANCES
+    anchors = _.sample(targetStars, testStarDistances.length)
+
+    for distance, i in testStarDistances
       testStars.push(untilSucceeds(
-        (-> nextDistractorStar(distance, testStars, targetStars)),
+        (-> nextTestStar(distance, anchors[i], targetStars, testStars)),
         MAX_FAILURES))
 
     return [targetStars, testStars]
@@ -310,7 +318,7 @@ pickTargetAndTestStars = (n) ->
 nextTargetStar = (stars) ->
   candidateStar = pickStarInSky()
   if canAddTargetStar(candidateStar, stars)
-    candidateStar
+    return candidateStar
   else
     throw new Failure
 
@@ -318,7 +326,7 @@ nextTargetStar = (stars) ->
 # is candidateStar not too close to other target stars?
 canAddTargetStar = (candidateStar, stars) ->
   stars.length is 0 or not isCloserThanToAny(
-    candidateStar, MIN_STAR_DISTANCE, stars)
+    candidateStar, MIN_TARGET_STAR_DISTANCE, stars)
 
 
 # return true if *candidateStar* is closer than *distance* to any of *stars*
@@ -329,33 +337,20 @@ isCloserThanToAny = (candidateStar, distance, stars) ->
   return false
 
 
-# pick one of the target stars and add distractors.
-#
-# returns a list of points; the first one is the correct answer
-pickTestStars = (targetStars) ->
-  untilSucceeds(->
-    # start with the correct choice
-    stars = [_.sample(targetStars)]
+# pick a test star at the given distance from the given anchor,
+# or throw Failure
+nextTestStar = (distance, anchorStar, targetStars, testStars) ->
+  otherStars = _.without(targetStars, anchorStar).concat(testStars)
 
-    for distance in DISTRACTOR_STAR_DISTANCES
-      stars.push(untilSucceeds(
-        (-> nextDistractorStar(distance, stars, targetStars)),
-        MAX_FAILURES))
-
-    return stars
-  )
-
-
-# pick a distractor star at the given distance, at random, or throw Failure
-nextDistractorStar = (distance, stars, targetStars) ->
-  targetStar = _.sample(targetStars)
-  otherStars = _.without(stars.concat(targetStars), targetStar)
-
-  candidateStar = pickStarAtDistanceFrom(distance, targetStar)
+  if anchorStar
+    candidateStar = pickStarAtDistanceFrom(distance, anchorStar)
+  else
+    candidateStar = pickStarInSky()
 
   if (isInSky(candidateStar) and \
-      not isCloserThanToAny( \
-        candidateStar, Math.max(distance, MIN_STAR_DISTANCE), otherStars))
+      not isCloserThanToAny(candidateStar, distance, otherStars) and \
+      not isCloserThanToAny(candidateStar, MIN_TEST_STAR_DISTANCE, testStars)
+      )
     return candidateStar
   else
     throw new Failure
@@ -492,6 +487,14 @@ showTargetStars = ->
 
 # show comets to catch
 showComets = ->
+  if DEBUG_NO_COMETS
+    if staircase.trialNum is 0
+      staircase.trialNum += 1
+      showTargetStars()
+    else
+      showTestStars()
+    return
+
   $targetSky = $('#targetSky')
   $cometSky = $('#cometSky')
 
@@ -596,9 +599,11 @@ showScore = (pageX, pageY, amount) ->
 
 # show star(s) to match against the target stars
 showTestStars = ->
+  $targetSky = $('#targetSky')
   $cometSky = $('#cometSky')
   $testSky = $('#testSky')
 
+  $targetSky.hide()
   $cometSky.hide()
   $testSky.fadeIn(duration: FADE_DURATION)
 
@@ -616,8 +621,11 @@ setUpTargetSky = (targetStars) ->
   if inPracticeMode()
     if -getIntensity() is 1
       $msg.text('Remember where this star is')
-    else
+    else if -getIntensity() is 2
       $msg.html('Remember <em>both</em> stars')
+    else
+      # we currently don't use this except for debugging
+      $msg.html('Remember <em>all</em> these stars')
   else
     $msg.text('Remember')
   $targetSky.append($msg)
