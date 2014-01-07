@@ -39,7 +39,7 @@ MAX_TARGET_STARS = 7
 MAX_FAILURES = 30
 
 # stars' centers can never be less than this many star diameters apart
-MIN_STAR_DISTANCE = 2
+MIN_STAR_DISTANCE = 2.5
 
 # Distances distractor stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
@@ -61,7 +61,7 @@ SKY_WIDTH = SKY_HEIGHT * ASPECT_RATIO
 # leaving a larger margin at the top leaves space for the
 # "which star did you just see?" message, and keeps us away from the
 # status bar
-SKY_TOP = 4.5
+SKY_TOP = 4
 SKY_BOTTOM = SKY_HEIGHT - 2.5
 SKY_LEFT = 2.5
 SKY_RIGHT = SKY_WIDTH - 2.5
