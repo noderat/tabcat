@@ -1,9 +1,16 @@
+v0.5.1, 2014-01-07 -- Stargazer post-piloting changes
+- core library:
+  - tabcat.task.Staircase.addResult() takes noChange option
+- tasks:
+  - stargazer:
+    - subtle changes to star placement rules
+
 v0.5.0, 2013-12-26 -- Major refactors
 - core library:
   - design docs now provide 0 or more tasks (#52)
   - tasks are organized into batteries (#32)
     - currently there is just one "line-perception" battery
-  - tabcat.task.Staircase.addResult() takes noReversals and noChange options
+  - tabcat.task.Staircase.addResult() takes noReversals option
   - Makefile only pushes "core" design doc to tabcat-data (#65)
 - console UI:
   - collect administration notes when closing encounter (#59)
