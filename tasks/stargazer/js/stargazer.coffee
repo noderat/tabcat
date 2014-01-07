@@ -288,10 +288,17 @@ isInSky = ([x, y]) ->
   SKY_LEFT <= x <= SKY_RIGHT and SKY_TOP <= y <= SKY_BOTTOM
 
 
-# pick *n* target stars at random, and then pick 3 test stars
+# Pick *n* target stars at random, and then pick 3 test stars
 #
-# we do these together because there are some target star configurations
+# We do these together because there are some target star configurations
 # for which there are no valid test stars
+#
+# Each test star anchors on a different target star (chosen at random).
+# The correct star *is* the same as its anchor, and the others are distractor
+# stars, placed randomly a certain fixed distance from the anchor (see
+# DISTRACTOR_STAR_DISTANCES). When there is no target star to anchor on
+# (1 or 2 target stars), distractor stars are placed randomly anywhere
+# in the sky.
 pickTargetAndTestStars = (n) ->
   untilSucceeds(->
     targetStars = []
