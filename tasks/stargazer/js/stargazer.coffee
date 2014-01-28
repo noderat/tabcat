@@ -540,7 +540,7 @@ startComets = (duration) ->
 
   comets = pickComets()
 
-  startCallback = -> tabcat.task.logEvent(getTaskState())
+  startCallback = -> tabcat.task.logEvent(getTaskState(), 'addComet')
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
