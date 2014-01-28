@@ -668,13 +668,10 @@ setUpTestSky = (testStars) ->
     $testSky.append($testStarImg)
 
     $msg = $('<div></div>', class: 'msg')
-    if inPracticeMode()
-      if -getIntensity() is 1
-        $msg.text('Which star did you just see?')
-      else
-        $msg.html('Which <em>one</em> did you just see?')
+    if -getIntensity() is 1
+      $msg.text('Which star did you just see?')
     else
-      $msg.text('Which did you just see?')
+      $msg.html('Which <em>one</em> did you just see?')
     $testSky.append($msg)
 
 
