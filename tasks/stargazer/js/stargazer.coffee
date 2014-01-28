@@ -702,9 +702,10 @@ getStimuli = ->
 
   for own id, key of skyIdToKey
     $sky = $('#' + id)
-    if $sky.is(':visible')
-      stimuli[key] = (
-        tabcat.task.getElementBounds(img) for img in $sky.find('img'))
+    stars = (
+      tabcat.task.getElementBounds(img) for img in $sky.find('img:visible'))
+    if stars.length
+      stimuli[key] = stars
 
   $comets = $('img.comet:visible')
   if $comets.length
