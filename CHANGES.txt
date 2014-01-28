@@ -1,3 +1,13 @@
+v0.5.2, 2014-01-28 -- More Stargazer fixes
+- core library:
+  - tabcat.task.start() saves task version again (#86 -- broken since v0.4.0!)
+- tasks:
+  - stargazer:
+    - ad-hoc report includes version, date, comet hit rate (#83)
+    - log correct info about practice mode (#85)
+    - when comets are added, use 'addComet' event in log
+    - always use long-form prompts for test stars (#84)
+
 v0.5.1, 2014-01-07 -- Stargazer post-piloting changes
 - core library:
   - tabcat.task.Staircase.addResult() takes noChange option
