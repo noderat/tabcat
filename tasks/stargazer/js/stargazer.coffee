@@ -686,7 +686,7 @@ getTaskState = ->
     stimuli: getStimuli()
     trialNum: staircase.trialNum
 
-  if inPracticeMode
+  if inPracticeMode()
     state.practiceMode = true
 
   return state
