@@ -36,10 +36,40 @@ patientHandler = (patientRecord) ->
   for encounter in patientRecord.encounters
     for task in encounter.tasks
       if task.name is 'stargazer' and task.eventLog? and task.finishedAt?
-        numTrials = _.max(
-          item?.state?.trialNum ? null for item in task.eventLog)
-        if numTrials?
-          numTrials += 1
+        numTrials = 0
+        cometsShownAfterTrial0 = 0
+        cometsCaughtByTrial1 = null
+        cometsCaught = 0
+
+        for item in task.eventLog
+          if item.state?.trialNum > 0
+            numTrials = item.state?.trialNum + 1
+            if item.event?.type is 'addComet'
+              cometsShownAfterTrial0 += 1
+            if item.state.cometsCaught?
+              cometsCaught = item.state.cometsCaught
+              if not cometsCaughtByTrial1?
+                cometsCaughtByTrial1 = cometsCaught
+
+        cometsCaughtAfterTrial0 = cometsCaught - cometsCaughtByTrial1
+
+        # prior to v0.5.2, there was no "addComet" event type. This is
+        # why we exclude trial 0; it's tricky to know how many
+        # comets were shown
+        if not cometsShownAfterTrial0
+          cometsShownAfterTrial0 = 3 * numTrials - 1
+
+        cometHitRate = null
+        if cometsShownAfterTrial0
+          cometHitRate = cometsCaughtAfterTrial0 / cometsShownAfterTrial0
+
+        version = task.version ? null
+
+        isoDate = null
+        timestamp = task.limitedPHI?.clockOffset
+        if timestamp?
+          # note that this the server's local time
+          isoDate = (new Date(timestamp)).toISOString()[..9]
 
         end = task.finishedAt ? _.last(task.eventLog)?.now
         if task.startedAt? and end?
@@ -52,8 +82,14 @@ patientHandler = (patientRecord) ->
           -item.state.intensity for item in task.eventLog \
           when item?.interpretation?.reversal)
 
-        data = [patientCode, totalTime, numTrials].concat(
-          starsAtReversal)
+        data = [
+          patientCode,
+          version,
+          isoDate,
+          totalTime,
+          numTrials,
+          cometHitRate
+        ].concat(starsAtReversal)
 
         send(csv.arrayToCsv([data]))
 
@@ -67,15 +103,23 @@ exports.list = (head, req) ->
   if not (req.path.length is 6 and keyType is 'patient')
     throw new Error('You may only dump the patient view')
 
-  isoDate = (new Date()).toISOString().substring(0, 10)
+  isoDate = (new Date()).toISOString()[..9]
 
   start(headers:
     'Content-Disposition': (
       "attachment; filename=\"stargazer-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
-  csvHeader = ['patientCode', 'time', 'trials'].concat(
+  csvHeader = [
+    'patientCode',
+    'version',
+    'date',
+    'time',
+    'trials',
+    'cometHitRate'
+  ].concat(
     ('starsAtRev' + i for i in [1..MAX_REVERSALS]))
+
   send(csv.arrayToCsv([csvHeader]))
 
   patient.iterate(getRow, patientHandler)

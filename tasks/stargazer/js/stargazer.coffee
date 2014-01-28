@@ -540,7 +540,7 @@ startComets = (duration) ->
 
   comets = pickComets()
 
-  startCallback = -> tabcat.task.logEvent(getTaskState())
+  startCallback = -> tabcat.task.logEvent(getTaskState(), 'addComet')
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
@@ -668,13 +668,10 @@ setUpTestSky = (testStars) ->
     $testSky.append($testStarImg)
 
     $msg = $('<div></div>', class: 'msg')
-    if inPracticeMode()
-      if -getIntensity() is 1
-        $msg.text('Which star did you just see?')
-      else
-        $msg.html('Which <em>one</em> did you just see?')
+    if -getIntensity() is 1
+      $msg.text('Which star did you just see?')
     else
-      $msg.text('Which did you just see?')
+      $msg.html('Which <em>one</em> did you just see?')
     $testSky.append($msg)
 
 
@@ -686,7 +683,7 @@ getTaskState = ->
     stimuli: getStimuli()
     trialNum: staircase.trialNum
 
-  if inPracticeMode
+  if inPracticeMode()
     state.practiceMode = true
 
   return state
@@ -702,9 +699,10 @@ getStimuli = ->
 
   for own id, key of skyIdToKey
     $sky = $('#' + id)
-    if $sky.is(':visible')
-      stimuli[key] = (
-        tabcat.task.getElementBounds(img) for img in $sky.find('img'))
+    stars = (
+      tabcat.task.getElementBounds(img) for img in $sky.find('img:visible'))
+    if stars.length
+      stimuli[key] = stars
 
   $comets = $('img.comet:visible')
   if $comets.length

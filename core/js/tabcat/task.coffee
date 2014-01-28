@@ -177,7 +177,7 @@ tabcat.task.start = _.once((options) ->
   # the task document, with some additional fields filled in
   $.when(tabcat.couch.getDoc(null, '.', timeout: timeout),
          tabcat.config.get(timeout: timeout)).then(
-    ([designDoc], config) ->
+    (designDoc, config) ->
       taskDoc.version = designDoc?.kanso?.config?.version
 
       if config.limitedPHI
