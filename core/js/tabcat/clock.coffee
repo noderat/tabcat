@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # If you need to re-open an encounter, call reset() with the last known
 # timestamp for that session.
 
-@TabCAT = {}
+@TabCAT ?= {}
 TabCAT.Clock = {}
 
 # so we don't have to type window.localStorage in functions
