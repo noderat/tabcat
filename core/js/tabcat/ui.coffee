@@ -269,6 +269,7 @@ TabCAT.UI.updateStatusBar = ->
       """
       <div class="left">
         <img class="banner" src="img/banner-white.png">
+        <span class="version"></p>
         <p class="offline"></p>
       </div>
       <div class="right">
@@ -281,6 +282,8 @@ TabCAT.UI.updateStatusBar = ->
       </div>
       """
     )
+
+    $statusBar.find('span.version').text(TabCAT.version)
 
     $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
