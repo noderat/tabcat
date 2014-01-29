@@ -31,6 +31,7 @@ COFFEE_JS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 
 TABCAT_COFFEE_SRC = $(wildcard js/tabcat/*.coffee)
 TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
+TABCAT_GENERATED_JS = js/tabcat/generated.js
 
 # put jquery before other libs that might depend on it
 VENDOR_JS = js/vendor/jquery.js $(filter-out jquery.js, $(wildcard js/vendor/*.js))
@@ -61,13 +62,16 @@ $(PUSHED): kanso.json $(KANSO_DEPS) $(MANIFEST)
 ifeq ($(TABCAT_DEBUG), 1)
 # force rebuild of js/tabcat.js
 .PHONY: js/tabcat.js
-js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
+js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS) $(TABCAT_GENERATED_JS)
 	cat $^ > $@
 else
-js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS)
+js/tabcat.js: $(VENDOR_JS) $(TABCAT_COFFEE_JS) $(TABCAT_GENERATED_JS)
 	uglifyjs $^ -c warnings=false -o $@
 endif
 
 $(COFFEE_JS): %.js: %.coffee
 	coffee -c $<
 	if which coffeelint; then coffeelint -q $<; fi
+
+$(TABCAT_GENERATED_JS): kanso.json ../scripts/json-ls
+	echo "TabCAT.version = '$(shell ../scripts/json-ls version $<)';" > $@
