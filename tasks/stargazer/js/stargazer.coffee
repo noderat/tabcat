@@ -32,19 +32,19 @@ ASPECT_RATIO = 4/3
 MIN_TARGET_STARS = 1
 
 # the maximum number of target stars to show
-MAX_TARGET_STARS = 8
+MAX_TARGET_STARS = 7
 
 # the maximum number of times we can randomly fail to place a star
 # before restarting the process
 MAX_FAILURES = 30
 
 # target stars' centers can never be less than this many star diameters apart
-MIN_TARGET_STAR_DISTANCE = 2.5
+MIN_TARGET_STAR_DISTANCE = 3.5
 
 # Distances test stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
 # currently displayed
-DISTRACTOR_STAR_DISTANCES = [1.5, 3]
+DISTRACTOR_STAR_DISTANCES = [2.5, 2.5]
 
 # how many star diameters high the sky div is
 SKY_HEIGHT = 12
@@ -494,16 +494,17 @@ showTargetStars = ->
 
 # show comets to catch
 showComets = ->
+  $targetSky = $('#targetSky')
+  $cometSky = $('#cometSky')
+
   if DEBUG_NO_COMETS
     if staircase.trialNum is 0
       staircase.trialNum += 1
       showTargetStars()
     else
-      showTestStars()
+      $targetSky.hide()
+      TabCAT.UI.wait(1000).then(-> showTestStars())
     return
-
-  $targetSky = $('#targetSky')
-  $cometSky = $('#cometSky')
 
   $cometSky.hide()
   $cometSky.empty()
