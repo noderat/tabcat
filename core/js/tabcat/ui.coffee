@@ -283,7 +283,7 @@ TabCAT.UI.updateStatusBar = ->
       """
     )
 
-    $statusBar.find('span.version').text(TabCAT.version)
+    $statusBar.find('.version').text(TabCAT.version)
 
     $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
