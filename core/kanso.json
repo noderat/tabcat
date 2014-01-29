@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.5.2",
+    "version": "0.6.0-dev",
     "description": "TabCAT core libraries",
     "attachments": ["close-encounter.html",
                     "create-encounter.html",
