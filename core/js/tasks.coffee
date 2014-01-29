@@ -35,14 +35,14 @@ TABCAT_DB = 'tabcat'
 #
 # This also adds a "urlRoot" and "finished" field to each task
 #
-# options is the same as for tabcat.couch.getAllDesignDocs
+# options is the same as for TabCAT.Couch.getAllDesignDocs
 getTaskInfo = (options) ->
-  tabcat.couch.getAllDesignDocs(TABCAT_DB).then(
+  TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
     (designDocs) ->
       batteries = {}
       tasks = {}
 
-      finished = tabcat.encounter.getTasksFinished()
+      finished = TabCAT.Encounter.getTasksFinished()
 
       for designDoc in designDocs
         kct = designDoc.kanso?.config?.tabcat
@@ -139,12 +139,12 @@ showTasks = ->
 
 # initialization
 @initPage = ->
-  tabcat.ui.requireUserAndEncounter()
+  TabCAT.UI.requireUserAndEncounter()
 
-  tabcat.ui.enableFastClick()
+  TabCAT.UI.enableFastClick()
 
   $(->
-    tabcat.ui.updateStatusBar()
+    TabCAT.UI.updateStatusBar()
     showTasks()
     $('#closeEncounter').on('click', ->
       window.location = 'close-encounter.html'
@@ -153,4 +153,4 @@ showTasks = ->
     $('#closeEncounter').removeAttr('disabled')
   )
 
-  tabcat.db.startSpilledDocSync()
+  TabCAT.DB.startSpilledDocSync()

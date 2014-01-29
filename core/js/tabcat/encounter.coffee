@@ -25,8 +25,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # logic for opening encounters with patients.
-@tabcat ?= {}
-tabcat.encounter = {}
+@TabCAT ?= {}
+TabCAT.Encounter = {}
 
 # DB where we store patient and encounter docs
 DATA_DB = 'tabcat-data'
@@ -36,29 +36,29 @@ localStorage = @localStorage
 
 
 # Get a copy of the CouchDB doc for this encounter
-tabcat.encounter.get = ->
+TabCAT.Encounter.get = ->
   if localStorage.encounter?
     try JSON.parse(localStorage.encounter)
 
 
 # get the patient code
-tabcat.encounter.getPatientCode = ->
-  tabcat.encounter.get()?.patientCode
+TabCAT.Encounter.getPatientCode = ->
+  TabCAT.Encounter.get()?.patientCode
 
 
 # get the (random) ID of this encounter.
-tabcat.encounter.getId = ->
-  tabcat.encounter.get()?._id
+TabCAT.Encounter.getId = ->
+  TabCAT.Encounter.get()?._id
 
 
 # is there an open encounter?
-tabcat.encounter.isOpen = ->
-  tabcat.encounter.get()?
+TabCAT.Encounter.isOpen = ->
+  TabCAT.Encounter.get()?
 
 
 # get the encounter number. This should only be used in the UI, not
 # stored in the database. null if unknown.
-tabcat.encounter.getNum = ->
+TabCAT.Encounter.getNum = ->
   encounterNum = undefined
   try
     encounterNum = parseInt(localStorage.encounterNum)
@@ -70,15 +70,15 @@ tabcat.encounter.getNum = ->
 
 
 # keep track of tasks finished during the encounter, in localStorage
-tabcat.encounter.getTasksFinished = ->
+TabCAT.Encounter.getTasksFinished = ->
   (try JSON.parse(localStorage.encounterTasksFinished)) ? {}
 
 
 # mark a task as finished in localStorage.
 #
-# tabcat.task.finish() does this automatically
-tabcat.encounter.markTaskFinished = (taskName) ->
-  finished = tabcat.encounter.getTasksFinished()
+# TabCAT.Task.finish() does this automatically
+TabCAT.Encounter.markTaskFinished = (taskName) ->
+  finished = TabCAT.Encounter.getTasksFinished()
   finished[taskName] = true
   localStorage.encounterTasksFinished = JSON.stringify(finished)
   return
@@ -86,18 +86,18 @@ tabcat.encounter.markTaskFinished = (taskName) ->
 
 # return a new encounter doc (don't upload it)
 #
-# Call tabcat.clock.reset() before this so that time fields are properly set.
-tabcat.encounter.newDoc = (patientCode, configDoc) ->
-  clockOffset = tabcat.clock.offset()
+# Call TabCAT.Clock.reset() before this so that time fields are properly set.
+TabCAT.Encounter.newDoc = (patientCode, configDoc) ->
+  clockOffset = TabCAT.Clock.offset()
   date = new Date(clockOffset)
 
   doc =
-    _id: tabcat.couch.randomUUID()
+    _id: TabCAT.Couch.randomUUID()
     type: 'encounter'
     patientCode: patientCode
     year: date.getFullYear()
 
-  user = tabcat.user.get()
+  user = TabCAT.User.get()
   if user?
     doc.user = user
 
@@ -116,32 +116,32 @@ tabcat.encounter.newDoc = (patientCode, configDoc) ->
 #
 # Sample usage:
 #
-# tabcat.encounter.create(patientCode: "AAAAA").then(
+# TabCAT.Encounter.create(patientCode: "AAAAA").then(
 #   (-> ... # proceed),
 #   (xhr) -> ... # show error message on failure
 # )
 #
 # You can set a timeout in milliseconds with options.timeout
-tabcat.encounter.create = (options) ->
+TabCAT.Encounter.create = (options) ->
   now = $.now()
-  tabcat.encounter.clear()
-  tabcat.clock.reset()
+  TabCAT.Encounter.clear()
+  TabCAT.Clock.reset()
 
-  patientDoc = tabcat.patient.newDoc(options?.patientCode)
+  patientDoc = TabCAT.Patient.newDoc(options?.patientCode)
 
-  $.when(tabcat.config.get(timeout: options?.timeout)).then(
+  $.when(TabCAT.Config.get(timeout: options?.timeout)).then(
     (config) ->
-      encounterDoc = tabcat.encounter.newDoc(patientDoc.patientCode, config)
+      encounterDoc = TabCAT.Encounter.newDoc(patientDoc.patientCode, config)
 
       patientDoc.encounterIds = [encounterDoc._id]
 
       # if there's already a doc for the patient, our new encounter ID will
       # be appended to the existing patient.encounterIds
-      tabcat.db.putDoc(
+      TabCAT.DB.putDoc(
         DATA_DB, patientDoc,
         expectConflict: true, now: now, timeout: options?.timeout).then(->
 
-        tabcat.db.putDoc(
+        TabCAT.DB.putDoc(
           DATA_DB, encounterDoc, now: now, timeout: options?.timeout).then(->
 
           # update localStorage
@@ -181,26 +181,26 @@ tabcat.encounter.create = (options) ->
 #
 # goodForResearch should be required by the UI, but neither administrationNotes
 # nor goodForResearch are required by this method.
-tabcat.encounter.close = (options) ->
-  now = tabcat.clock.now()
-  encounterDoc = tabcat.encounter.get()
-  tabcat.encounter.clear()
+TabCAT.Encounter.close = (options) ->
+  now = TabCAT.Clock.now()
+  encounterDoc = TabCAT.Encounter.get()
+  TabCAT.Encounter.clear()
 
   if encounterDoc?
     encounterDoc.finishedAt = now
     if options?.administrationNotes?
       encounterDoc.administrationNotes = options.administrationNotes
-    tabcat.db.putDoc(DATA_DB, encounterDoc)
+    TabCAT.DB.putDoc(DATA_DB, encounterDoc)
   else
     $.Deferred().resolve()
 
 
 # clear local storage relating to the current encounter
-tabcat.encounter.clear = ->
+TabCAT.Encounter.clear = ->
   localStorage.removeItem('encounter')
   localStorage.removeItem('encounterNum')
   localStorage.removeItem('encounterTasksFinished')
-  tabcat.clock.clear()
+  TabCAT.Clock.clear()
 
 
 # Promise: fetch info about an encounter.
@@ -220,10 +220,10 @@ tabcat.encounter.clear = ->
 # By default (no args), we return info about the current encounter.
 #
 # You may provide patientCode if you know it; otherwise we'll look it up.
-tabcat.encounter.getInfo = (encounterId, patientCode) ->
+TabCAT.Encounter.getInfo = (encounterId, patientCode) ->
   if not encounterId?
-    encounterId = tabcat.encounter.getId()
-    patientCode = tabcat.encounter.getPatientCode()
+    encounterId = TabCAT.Encounter.getId()
+    patientCode = TabCAT.Encounter.getPatientCode()
 
     if not (encounterId? and patientCode?)
       return $.Deferred().resolve(null)
@@ -231,12 +231,12 @@ tabcat.encounter.getInfo = (encounterId, patientCode) ->
   if patientCode?
     patientCodePromise = $.Deferred().resolve(patientCode)
   else
-    patientCodePromise = tabcat.couch.getDoc(DATA_DB, encounterId).then(
+    patientCodePromise = TabCAT.Couch.getDoc(DATA_DB, encounterId).then(
       (encounterDoc) -> encounterDoc.patientCode)
 
   patientCodePromise.then((patientCode) ->
 
-    tabcat.couch.getDoc(DATA_DB, '_design/core/_view/patient', query:
+    TabCAT.Couch.getDoc(DATA_DB, '_design/core/_view/patient', query:
       startkey: [patientCode, encounterId]
       endkey: [patientCode, encounterId, []]).then((results) ->
 

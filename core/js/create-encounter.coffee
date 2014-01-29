@@ -37,19 +37,19 @@ submitCreateEncounterForm = (event) ->
     form.find('#error').text('Please enter a patient code')
     return
 
-  tabcat.encounter.create(patientCode: patientCode, timeout: TIMEOUT).then(->
-    window.location = tabcat.ui.srcPath() ? 'tasks.html')
+  TabCAT.Encounter.create(patientCode: patientCode, timeout: TIMEOUT).then(->
+    window.location = TabCAT.UI.srcPath() ? 'tasks.html')
 
 
 @initPage = ->
-  tabcat.ui.requireUser()
+  TabCAT.UI.requireUser()
 
-  if tabcat.encounter.isOpen()
+  if TabCAT.Encounter.isOpen()
     window.location = 'tasks.html'
     return
 
-  tabcat.ui.enableFastClick()
-  tabcat.ui.turnOffBounce()
+  TabCAT.UI.enableFastClick()
+  TabCAT.UI.turnOffBounce()
 
   $(->
     $form = $('#createEncounter').find('form')
@@ -57,14 +57,14 @@ submitCreateEncounterForm = (event) ->
     $form.find('button[type=submit]').removeAttr('disabled')
   )
   $(->
-    if tabcat.ui.srcPath()
+    if TabCAT.UI.srcPath()
       $('p.message').text('You need to create an encounter to view that page')
     else
-      closedEncounterWith = tabcat.ui.readHashJSON().closedEncounterWith
+      closedEncounterWith = TabCAT.UI.readHashJSON().closedEncounterWith
       if closedEncounterWith?
         $('p.message').text(
           'Closed encounter with Patient ' + closedEncounterWith)
   )
-  $(tabcat.ui.updateStatusBar)
+  $(TabCAT.UI.updateStatusBar)
 
-  tabcat.db.startSpilledDocSync()
+  TabCAT.DB.startSpilledDocSync()

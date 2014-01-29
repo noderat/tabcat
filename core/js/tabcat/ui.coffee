@@ -27,10 +27,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # Utilities for the TabCAT UI (both the console and tasks)
 
 # Functions which merely read from the UI to support tasks (especially event
-# logging) go in tabcat.task, not tabcat.ui
+# logging) go in TabCAT.Task, not TabCAT.UI
 
-@tabcat ?= {}
-tabcat.ui = {}
+@TabCAT ?= {}
+TabCAT.UI = {}
 
 
 # doesn't make sense to prompt the user for a password more than 2 seconds
@@ -39,7 +39,7 @@ DEFAULT_REQUIRE_USER_TIMEOUT = 2000
 
 # Several things need to be done to make a web page look like an app.
 #
-# To turn off bounce/scrolling, call tabcat.ui.turnOffBounce() and
+# To turn off bounce/scrolling, call TabCAT.UI.turnOffBounce() and
 # add the "fullscreen" CSS class to html and body (in ../css/tabcat.css)
 #
 # To turn off zooming, add this tag to head:
@@ -51,11 +51,11 @@ DEFAULT_REQUIRE_USER_TIMEOUT = 2000
 
 # Register a click immediately on tap/mouseup, rather than waiting for
 # a double-click (requires fastclick.js)
-tabcat.ui.enableFastClick = ->
+TabCAT.UI.enableFastClick = ->
   $(-> FastClick.attach(document.body))
 
 
-tabcat.ui.fixAspectRatio = ($element, ratio) ->
+TabCAT.UI.fixAspectRatio = ($element, ratio) ->
   # Ensure that $element has the given aspect ratio (width / height),
   # and make it as large as possible within the bounds of its parent
   # element. This property will be preserved on window resize.
@@ -77,7 +77,7 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
   # handle multiple elements correctly
   if $element.length > 1
     for e in $element
-      tabcat.ui.fixAspectRatio(e, ratio)
+      TabCAT.UI.fixAspectRatio(e, ratio)
 
   fixElement = ->
     $parent = $($element.parent())
@@ -131,7 +131,7 @@ tabcat.ui.fixAspectRatio = ($element, ratio) ->
 #
 # Also, it is a good not to show text in elements sized this way until after
 # this method is called.
-tabcat.ui.linkEmToPercentOfHeight = ($element) ->
+TabCAT.UI.linkEmToPercentOfHeight = ($element) ->
   if not $element?
     $element = $('body')
   else
@@ -140,7 +140,7 @@ tabcat.ui.linkEmToPercentOfHeight = ($element) ->
   # handle multiple elements correctly
   if $element.length > 1
     for e in $element
-      tabcat.ui.linkEmToPercentOfHeight(e)
+      TabCAT.UI.linkEmToPercentOfHeight(e)
 
   fixElement = ->
     # for font-size, "%" means % of default font size, not % of height.
@@ -153,10 +153,10 @@ tabcat.ui.linkEmToPercentOfHeight = ($element) ->
 
 
 # update the encounter clock on the statusBar
-tabcat.ui.updateEncounterClock = ->
+TabCAT.UI.updateEncounterClock = ->
   # handle end of encounter gracefully
-  if tabcat.encounter.isOpen()
-    now = tabcat.clock.now()
+  if TabCAT.Encounter.isOpen()
+    now = TabCAT.Clock.now()
 
     seconds = Math.floor(now / 1000) % 60
     if seconds < 10
@@ -185,7 +185,7 @@ lastOfflineStatusType = 0
 
 # update the offline status on the statusBar, while attempting not
 # to flicker status messages so quickly that we can't read them
-tabcat.ui.updateOfflineStatus = ->
+TabCAT.UI.updateOfflineStatus = ->
   now = $.now()
   [statusType, statusHtml] = offlineStatusTypeAndHtml()
 
@@ -241,10 +241,10 @@ offlineStatusTypeAndHtml = ->
 
 # helper for offlineStatusHtml(). returns "#.#% full" plus markup
 offlineStatusStoragePercentFullHtml = ->
-  if not tabcat.db.spilledDocsRemain()
+  if not TabCAT.DB.spilledDocsRemain()
     return ''
 
-  percentFull = tabcat.db.percentOfLocalStorageUsed()
+  percentFull = TabCAT.DB.percentOfLocalStorageUsed()
   percentFullHtml = Math.min(percentFull, 100).toFixed(1) + '% full'
   if percentFull >= LOCAL_STORAGE_WARNING_THRESHOLD
     percentFullHtml = '<span class="warning">' + percentFullHtml + '</span>'
@@ -258,8 +258,8 @@ offlineStatusStoragePercentFullHtml = ->
 #
 # this is also responsible for swapping in updated versions of the
 # application cache (Android browser seems to need this)
-tabcat.ui.updateStatusBar = ->
-  tabcat.task.patientHasDevice(false)
+TabCAT.UI.updateStatusBar = ->
+  TabCAT.Task.patientHasDevice(false)
 
   $statusBar = $('#statusBar')
 
@@ -285,16 +285,16 @@ tabcat.ui.updateStatusBar = ->
     $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
-        tabcat.ui.logout()
+        TabCAT.UI.logout()
       else
-        tabcat.ui.requestLogin()
+        TabCAT.UI.requestLogin()
     )
 
   emailP = $statusBar.find('p.email')
   button =  $statusBar.find('button.login')
   encounterP = $statusBar.find('p.encounter')
 
-  user = tabcat.user.get()
+  user = TabCAT.User.get()
 
   if user?
     emailP.text(user)
@@ -306,26 +306,26 @@ tabcat.ui.updateStatusBar = ->
   button.show()
 
   # only check offline status occasionally
-  tabcat.ui.updateOfflineStatus()
-  tabcat.ui.updateStatusBar.offlineInterval = window.setInterval(
-    tabcat.ui.updateOfflineStatus, 500)
+  TabCAT.UI.updateOfflineStatus()
+  TabCAT.UI.updateStatusBar.offlineInterval = window.setInterval(
+    TabCAT.UI.updateOfflineStatus, 500)
 
   # don't show encounter info unless patient is logged in
-  patientCode = tabcat.encounter.getPatientCode()
+  patientCode = TabCAT.Encounter.getPatientCode()
   if patientCode? and user?
-    encounterNum = tabcat.encounter.getNum()
+    encounterNum = TabCAT.Encounter.getNum()
     encounterNumText = if encounterNum? then ' #' + encounterNum else ''
 
     encounterP.text(
       'Encounter' + encounterNumText + ' with Patient ' + patientCode)
 
-    if not tabcat.ui.updateStatusBar.clockInterval?
-      tabcat.ui.updateStatusBar.clockInterval = window.setInterval(
-        tabcat.ui.updateEncounterClock, 50)
+    if not TabCAT.UI.updateStatusBar.clockInterval?
+      TabCAT.UI.updateStatusBar.clockInterval = window.setInterval(
+        TabCAT.UI.updateEncounterClock, 50)
   else
     encounterP.empty()
-    if tabcat.ui.updateStatusBar.clockInterval?
-      window.clearInterval(tabcat.ui.updateStatusBar.clockInterval)
+    if TabCAT.UI.updateStatusBar.clockInterval?
+      window.clearInterval(TabCAT.UI.updateStatusBar.clockInterval)
     $statusBar.find('p.clock').empty()
 
 
@@ -339,14 +339,14 @@ tabcat.ui.updateStatusBar = ->
 # to give case-insensitive behavior.
 #
 # Set user to null to re-enter current user's password
-tabcat.ui.login = (user, password) ->
-  previousUser = tabcat.user.get()
-  tabcat.user.login(user, password).then(->
-    tabcat.task.patientHasDevice(false)
+TabCAT.UI.login = (user, password) ->
+  previousUser = TabCAT.User.get()
+  TabCAT.User.login(user, password).then(->
+    TabCAT.Task.patientHasDevice(false)
 
     destPath = 'create-encounter.html'
     # respect srcPath unless we switched user accounts
-    srcPath = tabcat.ui.srcPath()
+    srcPath = TabCAT.UI.srcPath()
     if srcPath? and not (previousUser? and previousUser isnt user)
       destPath = srcPath
 
@@ -357,26 +357,26 @@ tabcat.ui.login = (user, password) ->
 # Promise: log out, warning that this will close the current encounter.
 #
 # On success, redirect to the login page
-tabcat.ui.logout = ->
-  if tabcat.encounter.isOpen()
+TabCAT.UI.logout = ->
+  if TabCAT.Encounter.isOpen()
     if not window.confirm(
       'Logging out will close the current encounter. Proceed?')
       return
 
-  tabcat.user.logout().always(->
+  TabCAT.User.logout().always(->
     window.location = (
-      '../core/login.html' + tabcat.ui.encodeHashJSON(loggedOut: true))
+      '../core/login.html' + TabCAT.UI.encodeHashJSON(loggedOut: true))
   )
 
 
 # redirect to the login page
-tabcat.ui.requestLogin = ->
-  tabcat.ui.detour('../core/login.html')
+TabCAT.UI.requestLogin = ->
+  TabCAT.UI.detour('../core/login.html')
 
 
 # redirect to the enter-password page
-tabcat.ui.requestPassword = ->
-  tabcat.ui.detour('../core/enter-password.html')
+TabCAT.UI.requestPassword = ->
+  TabCAT.UI.detour('../core/enter-password.html')
 
 
 # Promise: force the user to log in to view this page.
@@ -389,25 +389,25 @@ tabcat.ui.requestPassword = ->
 #
 # You can specify a timeout on checking against the DB in milliseconds with
 # options.timeout (default is 2000)
-tabcat.ui.requireUser = (options) ->
+TabCAT.UI.requireUser = (options) ->
   resolved = $.Deferred().resolve()  # for consistency
 
   # if there's no user whatsoever, we need them to log in before
   # we can start storing data
-  if not tabcat.user.get()
-    tabcat.ui.requestLogin()
+  if not TabCAT.User.get()
+    TabCAT.UI.requestLogin()
     return resolved
 
   # don't confuse patients by asking for the password
-  if tabcat.task.patientHasDevice()
+  if TabCAT.Task.patientHasDevice()
     return resolved
 
   # localStorage says user is logged in. Let's check if the DB agrees
   timeout = options?.timeout ? DEFAULT_REQUIRE_USER_TIMEOUT
-  tabcat.couch.getUser(timeout: timeout).then(
+  TabCAT.Couch.getUser(timeout: timeout).then(
     ((user) ->
-      if not (user is tabcat.user.get() and tabcat.user.isAuthenticated())
-        tabcat.ui.requestPassword()
+      if not (user is TabCAT.User.get() and TabCAT.User.isAuthenticated())
+        TabCAT.UI.requestPassword()
     ),
     (xhr) ->
       # if there's no network, doesn't matter if user is authenticated
@@ -421,25 +421,25 @@ tabcat.ui.requireUser = (options) ->
 # force the user to log in to view this page, and to create an encounter
 #
 # You can specify a timeout in milliseconds with options.timeout
-tabcat.ui.requireUserAndEncounter = (options) ->
-  tabcat.ui.requireUser(options)
+TabCAT.UI.requireUserAndEncounter = (options) ->
+  TabCAT.UI.requireUser(options)
 
-  if not tabcat.encounter.isOpen()
-    tabcat.ui.detour('../core/create-encounter.html')
+  if not TabCAT.Encounter.isOpen()
+    TabCAT.UI.detour('../core/create-encounter.html')
 
 
 # redirect to the given page, with the intent of being redirected back
-tabcat.ui.detour = (path) ->
+TabCAT.UI.detour = (path) ->
   srcPath = window.location.pathname + window.location.hash
-  window.location = path + tabcat.ui.encodeHashJSON(srcPath: srcPath)
+  window.location = path + TabCAT.UI.encodeHashJSON(srcPath: srcPath)
   return
 
 
 # return srcPath from the hash, if it's set and is actually a path
 #
-# common usage: window.location = tabcat.ui.srcPath() ? 'default.html'
-tabcat.ui.srcPath = ->
-  srcPath = tabcat.ui.readHashJSON().srcPath
+# common usage: window.location = TabCAT.UI.srcPath() ? 'default.html'
+TabCAT.UI.srcPath = ->
+  srcPath = TabCAT.UI.readHashJSON().srcPath
   # only allow redirects to a different path, not to other sites
   if srcPath? and srcPath.substring(0, 1) is '/'
     return srcPath
@@ -448,25 +448,25 @@ tabcat.ui.srcPath = ->
 
 
 # read a json from the HTML fragment
-tabcat.ui.readHashJSON = ->
+TabCAT.UI.readHashJSON = ->
   (try JSON.parse(decodeURIComponent(window.location.hash.substring(1)))) ? {}
 
 
 # encode json into HTML fragment. This includes the leading "#"
-tabcat.ui.encodeHashJSON = (json) ->
+TabCAT.UI.encodeHashJSON = (json) ->
   return '#' + encodeURIComponent(JSON.stringify(json))
 
 
 # Don't allow the document to scroll past its boundaries. This only works
 # if your document isn't larger than the viewport.
-tabcat.ui.turnOffBounce = ->
+TabCAT.UI.turnOffBounce = ->
   $(document).on('touchmove', (event) -> event.preventDefault())
 
 
 # Wrap the given element in a way that requires landscape mode
 #
 # Don't use this on the <body> element!
-tabcat.ui.requireLandscapeMode = ($element) ->
+TabCAT.UI.requireLandscapeMode = ($element) ->
   $element = $($element)
 
   $pleaseReturnDiv = $(
@@ -476,11 +476,11 @@ tabcat.ui.requireLandscapeMode = ($element) ->
   $element.wrap('<div class="fullscreen requireLandscapeMode"></div>')
   $element.addClass('portrait-hide')
   $element.parent().append($pleaseReturnDiv)
-  tabcat.ui.linkEmToPercentOfHeight($pleaseReturnDiv)
+  TabCAT.UI.linkEmToPercentOfHeight($pleaseReturnDiv)
 
 
 # Make a Deferred that resolves after the given number of milliseconds
-tabcat.ui.wait = (milliseconds) ->
+TabCAT.UI.wait = (milliseconds) ->
   deferred = $.Deferred()
   window.setTimeout((-> deferred.resolve()), milliseconds)
   return deferred

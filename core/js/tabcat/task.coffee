@@ -29,14 +29,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # Most of this code assumes that it will only be used by one task ever,
 # since each new task is a separate HTML document with a separate page load.
 
-@tabcat ?= {}
-tabcat.task = {}
+@TabCAT ?= {}
+TabCAT.Task = {}
 
 
 # by default, we attempt to upload a chunk of events every 5 seconds
 DEFAULT_EVENT_LOG_SYNC_INTERVAL = 5000
 
-# default timeout for tabcat.task.start() and tabcat.task.finish()
+# default timeout for TabCAT.Task.start() and TabCAT.Task.finish()
 DEFAULT_TIMEOUT = 3000
 
 # default time to wait after finishing task
@@ -61,7 +61,7 @@ taskDoc = null
 
 # An array of events recorded during the task (e.g. user clicked). These are
 # are stored to CouchDB in chunks periodically. This is independent from
-# tabcat.task.start()
+# TabCAT.Task.start()
 eventLog = []
 
 # This tracks where we are in the event log in terms of items that we've
@@ -82,7 +82,7 @@ eventSyncIntervalId = null
 
 
 # Get a copy of the CouchDB doc for this task
-tabcat.task.get = ->
+TabCAT.Task.get = ->
   # this is clunky, but eventually task docs will be stored in localStorage
   # anyway (issue #16)
   JSON.parse(JSON.stringify(taskDoc))
@@ -91,11 +91,11 @@ tabcat.task.get = ->
 # Does the patient have the device? Call with an argument (true or false) to
 # set whether the patient has device.
 #
-# tabcat.task.start() sets this to true unless you call it with the
+# TabCAT.Task.start() sets this to true unless you call it with the
 # examinerAdministered option.
 #
 # The return-to-examiner.html page sets this back to false
-tabcat.task.patientHasDevice = (value) ->
+TabCAT.Task.patientHasDevice = (value) ->
   if value?
     if value
       localStorage.patientHasDevice = 'true'
@@ -121,8 +121,8 @@ tabcat.task.patientHasDevice = (value) ->
 #   infer this from the filename in the URL, minus extension
 # - timeout: network timeout, in milliseconds (default 3000)
 # - trackViewport: should we log changes to the viewport in the event log?
-#   (see tabcat.task.trackViewportInEventLog())
-tabcat.task.start = _.once((options) ->
+#   (see TabCAT.Task.trackViewportInEventLog())
+TabCAT.Task.start = _.once((options) ->
   now = $.now()
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()
@@ -130,32 +130,32 @@ tabcat.task.start = _.once((options) ->
   # TODO: redirect to the return-to-examiner page if the patient has the device
   # and this is examiner-administered
   if not options?.examinerAdministered
-    tabcat.task.patientHasDevice(true)
+    TabCAT.Task.patientHasDevice(true)
 
   # important to do this AFTER patientHasDevice(true), to keep from prompting
   # the patient for the password
   #
   # timeout won't actually come into play here unless the examiner has
   # the device
-  tabcat.ui.requireUserAndEncounter(timeout: options?.timeout)
+  TabCAT.UI.requireUserAndEncounter(timeout: options?.timeout)
 
   taskDoc =
-      _id: tabcat.couch.randomUUID()
+      _id: TabCAT.Couch.randomUUID()
       type: 'task'
-      browser: tabcat.task.getBrowserInfo()
-      clockLastStarted: tabcat.clock.lastStarted()
-      encounterId: tabcat.encounter.getId()
+      browser: TabCAT.Task.getBrowserInfo()
+      clockLastStarted: TabCAT.Clock.lastStarted()
+      encounterId: TabCAT.Encounter.getId()
       name: taskName
-      patientCode: tabcat.encounter.getPatientCode()
+      patientCode: TabCAT.Encounter.getPatientCode()
       start: (
         window.location.pathname + window.location.search +
         window.location.hash)
-      startedAt: tabcat.clock.now()
-      startViewport: tabcat.task.getViewportInfo()
-      user: tabcat.user.get()
+      startedAt: TabCAT.Clock.now()
+      startViewport: TabCAT.Task.getViewportInfo()
+      user: TabCAT.User.get()
 
   if options?.trackViewport
-    tabcat.task.trackViewportInEventLog()
+    TabCAT.Task.trackViewportInEventLog()
 
   # periodically upload chunks of the event log
   eventLogSyncInterval = (
@@ -163,35 +163,35 @@ tabcat.task.start = _.once((options) ->
 
   if eventLogSyncInterval > 0
     eventSyncIntervalId = window.setInterval(
-      tabcat.task.syncEventLog, eventLogSyncInterval)
+      TabCAT.Task.syncEventLog, eventLogSyncInterval)
 
   # create the task document on the server; we'll update it when
-  # tabcat.task.finish() is called. This allows us to fail fast if there's
+  # TabCAT.Task.finish() is called. This allows us to fail fast if there's
   # a problem with the server, and also to detect tasks that were started
   # but not finished.
   createTaskDoc = (additionalFields) ->
     $.extend(taskDoc, additionalFields)
-    tabcat.db.putDoc(DATA_DB, taskDoc)
+    TabCAT.DB.putDoc(DATA_DB, taskDoc)
 
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
-  $.when(tabcat.couch.getDoc(null, '.', timeout: timeout),
-         tabcat.config.get(timeout: timeout)).then(
+  $.when(TabCAT.Couch.getDoc(null, '.', timeout: timeout),
+         TabCAT.Config.get(timeout: timeout)).then(
     (designDoc, config) ->
       taskDoc.version = designDoc?.kanso?.config?.version
 
       if config.limitedPHI
         taskDoc.limitedPHI =
-          clockOffset: tabcat.clock.offset()
+          clockOffset: TabCAT.Clock.offset()
 
-      tabcat.db.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout)
+      TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout)
   )
 )
 
 
 # Promise (can't fail): upload the portion of the event log that has not
 # already been stored in the DB. You usually don't need to call this directly;
-# by default, tabcat.task.start() will cause it to be called periodically.
+# by default, TabCAT.Task.start() will cause it to be called periodically.
 #
 # If options.force is true, this will abort pending syncs unless
 # they were already uploading all the event log items we wanted to.
@@ -199,12 +199,12 @@ tabcat.task.start = _.once((options) ->
 # You can set a timeout in milliseconds with options.timeout.
 # You can make this relative to a time in the past with options.now
 #
-# You must call tabcat.task.start() before calling this (you don't have to
+# You must call TabCAT.Task.start() before calling this (you don't have to
 # wait for the promise it returns to resolve).
-tabcat.task.syncEventLog = (options) ->
+TabCAT.Task.syncEventLog = (options) ->
   # require taskDoc
   if not taskDoc?
-    throw new Error('no taskDoc; call tabcat.task.start() first')
+    throw new Error('no taskDoc; call TabCAT.Task.start() first')
 
   # don't upload events if there's already one pending
   if eventSyncXHR?
@@ -227,20 +227,20 @@ tabcat.task.syncEventLog = (options) ->
   # weird happens with multiple overlapping callbacks
   endIndex = eventSyncEndIndex = eventLog.length
 
-  # This is only called by tabcat.task.start(), so we can safely assume
+  # This is only called by TabCAT.Task.start(), so we can safely assume
   # taskDoc exists and has the fields we want.
   eventLogDoc = {
-    _id: tabcat.couch.randomUUID()
+    _id: TabCAT.Couch.randomUUID()
     type: 'eventLog'
     taskId: taskDoc._id
     encounterId: taskDoc.encounterId
     patientCode: taskDoc.patientCode
-    user: tabcat.user.get()
+    user: TabCAT.User.get()
     startIndex: eventSyncStartIndex
     items: eventLog.slice(eventSyncStartIndex, endIndex)
   }
 
-  eventSyncXHR = tabcat.db.putDoc(
+  eventSyncXHR = TabCAT.DB.putDoc(
     DATA_DB, eventLogDoc, _.pick(options ? {}, 'now', 'timeout'))
 
   # track that events were successfully uploaded
@@ -252,13 +252,13 @@ tabcat.task.syncEventLog = (options) ->
 
 
 # Log an event whenever the viewport changes (scroll/resize). You can also
-# access this with the trackViewport option to tabcat.task.start()
+# access this with the trackViewport option to TabCAT.Task.start()
 #
 # If there is a series of viewport changes without other events logged between
 # them, we try to only keep the most recent one.
 #
 # TODO: give a way to turn this on/off in the middle of a task
-tabcat.task.trackViewportInEventLog = _.once(->
+TabCAT.Task.trackViewportInEventLog = _.once(->
   isViewportLogItem = (item) ->
     item? and not item.interpretation? and _.isEqual(
       _.keys(item.state), ['viewport'])
@@ -270,7 +270,7 @@ tabcat.task.trackViewportInEventLog = _.once(->
         isViewportLogItem(_.last(eventLog)))
       eventLog.pop()
 
-    tabcat.task.logEvent(viewport: tabcat.task.getViewportInfo(), event)
+    TabCAT.Task.logEvent(viewport: TabCAT.Task.getViewportInfo(), event)
 
   $(window).resize(handler)
   $(window).scroll(handler)
@@ -288,42 +288,42 @@ tabcat.task.trackViewportInEventLog = _.once(->
 # - minWait: minimum number of milliseconds to wait before redirecting to
 #   another page (default 1000)
 # - timeout: maximum amount of time for db operations to take (default 3000)
-tabcat.task.finish = (options) ->
+TabCAT.Task.finish = (options) ->
   now = $.now()
   timeout = options?.timeout ? DEFAULT_TIMEOUT
 
-  clockNow = tabcat.clock.now()
+  clockNow = TabCAT.Clock.now()
 
   minWait = options?.minWait ? DEFAULT_MIN_WAIT
   fadeDuration = options?.fadeDuration ? DEFAULT_FADE_DURATION
 
   # start the timer
-  waitedForMinWait = tabcat.ui.wait(minWait)
+  waitedForMinWait = TabCAT.UI.wait(minWait)
 
   # splash up Task complete! screen
   $body = $('body')
   $body.empty()
   $body.hide()
-  tabcat.ui.linkEmToPercentOfHeight($body)
+  TabCAT.UI.linkEmToPercentOfHeight($body)
   $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
   $messageP = $('<p class="message">Task complete!</p>')
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 
-  tabcat.encounter.markTaskFinished(taskDoc.name)
+  TabCAT.Encounter.markTaskFinished(taskDoc.name)
 
   # make sure start() has completed!
-  tabcat.task.start().then(->
+  TabCAT.Task.start().then(->
     taskDoc.finishedAt = clockNow
     if options?.interpretation?
       taskDoc.interpretation = options?.interpretation
 
     $.when(
-      tabcat.db.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
-      tabcat.task.syncEventLog(force: true, now: now, timeout: timeout),
+      TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
+      TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
-        if tabcat.task.patientHasDevice()
+        if TabCAT.Task.patientHasDevice()
           window.location = '../core/return-to-examiner.html'
         else
           window.location = '../core/tasks.html'
@@ -334,7 +334,7 @@ tabcat.task.finish = (options) ->
 # get basic information about the browser. This should not change
 # over the course of the task
 # TODO: add screen DPI/physical size, if available
-tabcat.task.getBrowserInfo = ->
+TabCAT.Task.getBrowserInfo = ->
   screenHeight: screen.height
   screenWidth: screen.width
   userAgent: navigator.userAgent
@@ -342,9 +342,9 @@ tabcat.task.getBrowserInfo = ->
 
 # Get information about the viewport. If you want to track changes to the
 # viewport (scroll/resize) in eventLog, it's recommended you
-# use tabcat.task.trackViewportInEventLog() rather than including viewport
+# use TabCAT.Task.trackViewportInEventLog() rather than including viewport
 # info in other events you log.
-tabcat.task.getViewportInfo = ->
+TabCAT.Task.getViewportInfo = ->
   $window = $(window)
   return {
     left: $window.scrollLeft()
@@ -359,7 +359,7 @@ tabcat.task.getViewportInfo = ->
 #
 # we use getBoundingClientRect() rather than the jQuery alternative to get
 # floating-point values
-tabcat.task.getElementBounds = (element) ->
+TabCAT.Task.getElementBounds = (element) ->
   # unwrap jQuery elements
   if not element.getBoundingClientRect?
     element = element[0]
@@ -384,18 +384,18 @@ tabcat.task.getElementBounds = (element) ->
 #   - intensityChange: change in intensity (easiness) due to patient's choice
 #   - reversal (boolean): was this a reversal?
 # - now: if not set, the time of the event relative to start of encounter, or
-#   tabcat.clock.now() if "event" is undefined
+#   TabCAT.Clock.now() if "event" is undefined
 #
 # state, event, and interpretation are not included if null/undefined.
 #
 # You should aim for readable, compact formats for state and interpretation.
 # For most true/false values, only include the field if it's true.
-tabcat.task.logEvent = (state, event, interpretation, now) ->
+TabCAT.Task.logEvent = (state, event, interpretation, now) ->
   if not now?  # ...when?
     if event?.timeStamp?
-      now = event.timeStamp - tabcat.clock.offset()
+      now = event.timeStamp - TabCAT.Clock.offset()
     else
-      now = tabcat.clock.now()
+      now = TabCAT.Clock.now()
 
   eventLogItem = now: now
 
@@ -424,7 +424,7 @@ tabcat.task.logEvent = (state, event, interpretation, now) ->
 
 
 # Get a (shallow) copy of the event log
-tabcat.task.getEventLog = ->
+TabCAT.Task.getEventLog = ->
   eventLog.slice(0)
 
 
@@ -439,7 +439,7 @@ inferTaskName = ->
 #
 # Sample usage:
 #
-# s = tabcat.task.Staircase(stepsUp: 2, maxIntensity: 50)
+# s = TabCAT.Task.Staircase(stepsUp: 2, maxIntensity: 50)
 # s.addResult(true)   # got it correct
 # s.addResult(false)  # got it wrong
 #
@@ -460,11 +460,11 @@ inferTaskName = ->
 # to continue where another staircase left off, with some changes, do
 # something like:
 #
-# s = tabcat.task.Staircase(oldStaircase, intensity: 15, stepsUp: 3)
+# s = TabCAT.Task.Staircase(oldStaircase, intensity: 15, stepsUp: 3)
 #
 # We recommend using negative intensity values for tasks that get harder
 # as a number of things increases (e.g. more stars to remember)
-tabcat.task.Staircase = class
+TabCAT.Task.Staircase = class
   constructor: (options...) ->
     options = _.extend({}, options...)
 
@@ -477,7 +477,7 @@ tabcat.task.Staircase = class
     @stepsUp = options.stepsUp ? 1
     @trialNum = options.trialNum ? 0
 
-    @intensity = tabcat.math.clamp(@minIntensity, @intensity, @maxIntensity)
+    @intensity = TabCAT.Math.clamp(@minIntensity, @intensity, @maxIntensity)
 
   # add a result (true for correct, false for incorrect) and return an
   # interpretation of the result, with these fields:
@@ -518,7 +518,7 @@ tabcat.task.Staircase = class
     lastIntensity = @intensity
 
     rawIntensity = lastIntensity + change
-    @intensity = tabcat.math.clamp(@minIntensity, rawIntensity, @maxIntensity)
+    @intensity = TabCAT.Math.clamp(@minIntensity, rawIntensity, @maxIntensity)
 
     intensityChange = @intensity - lastIntensity
     if intensityChange

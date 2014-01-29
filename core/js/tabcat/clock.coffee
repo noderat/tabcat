@@ -36,44 +36,44 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # If you need to re-open an encounter, call reset() with the last known
 # timestamp for that session.
 
-@tabcat = {}
-tabcat.clock = {}
+@TabCAT = {}
+TabCAT.Clock = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
 # remove encounter clock from local storage
-tabcat.clock.clear = ->
+TabCAT.Clock.clear = ->
   delete localStorage.clockLastStarted
   delete localStorage.clockOffset
   return
 
 # get nominal time since start of encounter when clock was restarted (msec)
-tabcat.clock.lastStarted = ->
-  tabcat.clock.start()
+TabCAT.Clock.lastStarted = ->
+  TabCAT.Clock.start()
   return parseInt(localStorage.clockLastStarted)
 
 # milliseconds since start of encounter
-tabcat.clock.now = ->
+TabCAT.Clock.now = ->
   # evaluate offset before $.now() to avoid negative timestamps when
   # clock is start()ed implicitly
-  offset = tabcat.clock.offset()
+  offset = TabCAT.Clock.offset()
   return $.now() - offset
 
-# add this to tabcat.clock.now() to get the real timestamp (in msec)
-tabcat.clock.offset = ->
-  tabcat.clock.start()
+# add this to TabCAT.Clock.now() to get the real timestamp (in msec)
+TabCAT.Clock.offset = ->
+  TabCAT.Clock.start()
   return parseInt(localStorage.clockOffset)
 
 # Reset the clock. Optionally, specify the current time relative to
 # start of encounter (in msec)
-tabcat.clock.reset = (startAt) ->
+TabCAT.Clock.reset = (startAt) ->
   startAt ?= 0
   localStorage.clockLastStarted = startAt
   localStorage.clockOffset = $.now() - startAt
   return  # don't let people depend on return value
 
 # Start the clock, if it's not already started
-tabcat.clock.start = (startAt) ->
+TabCAT.Clock.start = (startAt) ->
   if not (localStorage.clockLastStarted and localStorage.clockOffset)
-    tabcat.clock.reset(startAt)
+    TabCAT.Clock.reset(startAt)

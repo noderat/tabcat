@@ -156,7 +156,7 @@ MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 3
 PRACTICE_MODE_INTENSITIES = [-1, -1, -2, -2]
 
 # initial static "staircase" for the real trial
-staircase = new tabcat.task.Staircase(
+staircase = new TabCAT.Task.Staircase(
   intensity: -2
   minIntensity: -MAX_TARGET_STARS
   maxIntensity: -MIN_TARGET_STARS
@@ -278,8 +278,8 @@ pickStarInSky = ->
   # we're positioning centers of the stars and the padding specifies
   # edges, so make the range smaller by the stars' radius (0.5)
   [
-    tabcat.math.randomUniform(SKY_LEFT, SKY_RIGHT)
-    tabcat.math.randomUniform(SKY_TOP, SKY_BOTTOM)
+    TabCAT.Math.randomUniform(SKY_LEFT, SKY_RIGHT)
+    TabCAT.Math.randomUniform(SKY_TOP, SKY_BOTTOM)
   ]
 
 
@@ -368,7 +368,7 @@ nextTestStar = (distance, anchorStar, targetStars, testStars) ->
 #
 # may return stars outside the sky! use isInSky()
 pickStarAtDistanceFrom = (distance, [x, y]) ->
-  angle = tabcat.math.randomUniform(0, 2 * Math.PI)
+  angle = TabCAT.Math.randomUniform(0, 2 * Math.PI)
   return [x + Math.cos(angle) * distance, y + Math.sin(angle) * distance]
 
 
@@ -385,9 +385,9 @@ pickComets = ->
   for i in [0...NUM_COMETS]
     comet = {}
     comet.num = i
-    comet.startX = maybeFlip(tabcat.math.randomUniform(
+    comet.startX = maybeFlip(TabCAT.Math.randomUniform(
       COMET_X_RANGES[i][0]...)) * SKY_WIDTH
-    comet.endX = maybeFlip(tabcat.math.randomUniform(
+    comet.endX = maybeFlip(TabCAT.Math.randomUniform(
       COMET_X_RANGES[i][1]...)) * SKY_WIDTH
     comet.length = COMET_LENGTHS[i]
     # just using the width of the comet image here;
@@ -486,8 +486,8 @@ showTargetStars = ->
   setUpTestSky(testStars)
 
   $targetSky.fadeIn(duration: FADE_DURATION)
-  tabcat.task.logEvent(getTaskState())
-  tabcat.ui.wait(getTargetStarDuration()).then(showComets)
+  TabCAT.Task.logEvent(getTaskState())
+  TabCAT.UI.wait(getTargetStarDuration()).then(showComets)
 
   return
 
@@ -508,7 +508,7 @@ showComets = ->
   $cometSky.hide()
   $cometSky.empty()
 
-  tabcat.ui.wait(COMET_TIME_LIMIT).then(->
+  TabCAT.UI.wait(COMET_TIME_LIMIT).then(->
     # first trial is comets only, and you must catch a certain number
     # of comets before continuing
     if staircase.trialNum is 0
@@ -540,7 +540,7 @@ startComets = (duration) ->
 
   comets = pickComets()
 
-  startCallback = -> tabcat.task.logEvent(getTaskState(), 'addComet')
+  startCallback = -> TabCAT.Task.logEvent(getTaskState(), 'addComet')
 
   # add feedback for comet being caught
   caughtCallback = (event) ->
@@ -550,7 +550,7 @@ startComets = (duration) ->
         num: comet.num
         length: comet.length
 
-    tabcat.task.logEvent(getTaskState(), event, interpretation)
+    TabCAT.Task.logEvent(getTaskState(), event, interpretation)
 
     # cometsCaught will be incremented in the *next* event, for consistency
     # with intensity
@@ -566,7 +566,7 @@ startComets = (duration) ->
 
   for comet in comets
     do (comet) ->
-      tabcat.ui.wait(comet.startTime).then(->
+      TabCAT.UI.wait(comet.startTime).then(->
         addCometToSky(comet, startCallback, caughtCallback))
 
 
@@ -599,7 +599,7 @@ showScore = (pageX, pageY, amount) ->
   $rectangle.append($scoreDiv)
 
   # just in case animations are broken
-  tabcat.ui.wait(SCORE_DURATION).then(-> $scoreDiv.remove())
+  TabCAT.UI.wait(SCORE_DURATION).then(-> $scoreDiv.remove())
 
   return
 
@@ -655,13 +655,13 @@ setUpTestSky = (testStars) ->
       state = getTaskState()  # do this before addResult()!
       interpretation = staircase.addResult(correct, noChange: inPracticeMode())
 
-      tabcat.task.logEvent(state, event, interpretation)
+      TabCAT.Task.logEvent(state, event, interpretation)
 
       if inPracticeMode() and correct
         numCorrectInPractice += 1
 
       if not inPracticeMode() and staircase.numReversals >= MAX_REVERSALS
-        tabcat.task.finish()
+        TabCAT.Task.finish()
       else
         showTargetStars()
     )
@@ -700,7 +700,7 @@ getStimuli = ->
   for own id, key of skyIdToKey
     $sky = $('#' + id)
     stars = (
-      tabcat.task.getElementBounds(img) for img in $sky.find('img:visible'))
+      TabCAT.Task.getElementBounds(img) for img in $sky.find('img:visible'))
     if stars.length
       stimuli[key] = stars
 
@@ -715,7 +715,7 @@ getStimuli = ->
 
 catchStrayTouchStart = (event) ->
   event.preventDefault()
-  tabcat.task.logEvent(getTaskState(), event)
+  TabCAT.Task.logEvent(getTaskState(), event)
 
 
 # TODO: use $.cssHooks instead
@@ -746,20 +746,20 @@ showStartScreen = ->
 
 # INITIALIZATION
 @initTask = ->
-  tabcat.task.start(trackViewport: true)
+  TabCAT.Task.start(trackViewport: true)
 
-  tabcat.ui.turnOffBounce()
-  tabcat.ui.enableFastClick()
+  TabCAT.UI.turnOffBounce()
+  TabCAT.UI.enableFastClick()
 
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
 
-    tabcat.ui.requireLandscapeMode($task)
+    TabCAT.UI.requireLandscapeMode($task)
     $task.on('mousedown touchstart', catchStrayTouchStart)
 
-    tabcat.ui.fixAspectRatio($rectangle, ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight($rectangle)
+    TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
+    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     showStartScreen()
   )

@@ -58,13 +58,13 @@ submitAdministrationNotesForm = (event) ->
   errorP.text('')
 
   hash = {}
-  patientCode = tabcat.encounter.getPatientCode()
+  patientCode = TabCAT.Encounter.getPatientCode()
   if patientCode?
     hash.closedEncounterWith = patientCode
 
-  tabcat.encounter.close(administrationNotes: notes).always(->
+  TabCAT.Encounter.close(administrationNotes: notes).always(->
     window.location = (
-      'create-encounter.html' + tabcat.ui.encodeHashJSON(hash))
+      'create-encounter.html' + TabCAT.UI.encodeHashJSON(hash))
   )
 
   return
@@ -95,10 +95,10 @@ setUpForm = ->
 
 
 @initCloseEncounterPage = ->
-  tabcat.ui.requireUserAndEncounter()
+  TabCAT.UI.requireUserAndEncounter()
 
-  $(tabcat.ui.updateStatusBar)
+  $(TabCAT.UI.updateStatusBar)
 
   $(setUpForm)
 
-  tabcat.db.startSpilledDocSync()
+  TabCAT.DB.startSpilledDocSync()

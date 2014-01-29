@@ -32,8 +32,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # for more info about PHI see:
 # http://www.research.ucsf.edu/chr/HIPAA/chrHIPAAfaq.asp
 
-@tabcat ?= {}
-tabcat.config = {}
+@TabCAT ?= {}
+TabCAT.Config = {}
 
 # DB where config doc is stored
 DATA_DB = 'tabcat-data'
@@ -41,7 +41,7 @@ DATA_DB = 'tabcat-data'
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
-# Helper for tabcat.config.get()
+# Helper for TabCAT.Config.get()
 fixAndRememberConfig = (configDoc) ->
   # strip document fields; we just want the configs
   config = _.omit(configDoc, '_id', '_rev', 'type')
@@ -68,8 +68,8 @@ fixAndRememberConfig = (configDoc) ->
 # - type: should always be "config"
 #
 # You can set a timeout in milliseconds with options.timeout
-tabcat.config.get = _.once((options) ->
-  tabcat.couch.getDoc(DATA_DB, 'config', timeout: options?.timeout).then(
+TabCAT.Config.get = _.once((options) ->
+  TabCAT.Couch.getDoc(DATA_DB, 'config', timeout: options?.timeout).then(
     (configDoc) -> fixAndRememberConfig(configDoc),
     (xhr) ->
       if xhr.status is 404

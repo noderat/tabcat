@@ -31,34 +31,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # If we're offline, users can still log in, but we don't check their
 # password. You can tell this has happened because
-# tabcat.user.isAuthenticated() returns false.
+# TabCAT.User.isAuthenticated() returns false.
 #
 # Generally, if we come back online, we ask the user to log in for real
 # once the patient no longer has the device, so we can start uploading
 # spilled data.
 
-@tabcat ?= {}
-tabcat.user = {}
+@TabCAT ?= {}
+TabCAT.User = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
 
 
 # Get the current user, or null. This may be a lie because we just
-# look at localStorage; to ask the DB, use tabcat.couch.getUser()
-tabcat.user.get = ->
+# look at localStorage; to ask the DB, use TabCAT.Couch.getUser()
+TabCAT.User.get = ->
   localStorage.user ? null
 
 
 # Return true if the user "logged in" while we were offline. If this
 # is true, there's no point in trying to store stuff in the DB.
-tabcat.user.isAuthenticated = ->
-  !!(tabcat.user.get() and localStorage.userIsAuthenticated)
+TabCAT.User.isAuthenticated = ->
+  !!(TabCAT.User.get() and localStorage.userIsAuthenticated)
 
 
 # Promise: log the given user in with the given password.
 #
-# Usually you'll want to use tabcat.ui.login()
+# Usually you'll want to use TabCAT.UI.login()
 #
 # If set, user will automatically be converted to all-lowercase,
 # to give case-insensitive behavior.
@@ -68,20 +68,20 @@ tabcat.user.isAuthenticated = ->
 # security is on the DB server).
 #
 # Set user to null to re-enter current user's password.
-tabcat.user.login = (user, password) ->
+TabCAT.User.login = (user, password) ->
   # clear out old session if user isn't just re-entering their password
   if user?
-    tabcat.encounter.clear()
-    tabcat.user.clearDocsSpilled()
+    TabCAT.Encounter.clear()
+    TabCAT.User.clearDocsSpilled()
 
-  user ?= tabcat.user.get()
+  user ?= TabCAT.User.get()
 
   # user emails in the DB should always be all-lowercase (issue #29);
   # this makes things case-insensitive.
   if user?
     user = user.toLowerCase()
 
-  tabcat.couch.login(user, password).then(
+  TabCAT.Couch.login(user, password).then(
     (->
       localStorage.userIsAuthenticated = 'true'
       $.Deferred().resolve()
@@ -100,25 +100,25 @@ tabcat.user.login = (user, password) ->
 
 # Promise: log out user, clean up the current encounter
 #
-# Usually you'll want to use tabcat.ui.logout()
-tabcat.user.logout = ->
-  tabcat.encounter.close().then(->
+# Usually you'll want to use TabCAT.UI.logout()
+TabCAT.User.logout = ->
+  TabCAT.Encounter.close().then(->
     localStorage.removeItem('user')
     localStorage.removeItem('userIsAuthenticated')
-    tabcat.user.clearDocsSpilled()
+    TabCAT.User.clearDocsSpilled()
 
-    tabcat.couch.logout()
+    TabCAT.Couch.logout()
   )
 
 
 # localStorage.userDocsSpilled keeps a space-separated list of spilled
 # docs that the current user can vouch for
-tabcat.user.clearDocsSpilled = ->
+TabCAT.User.clearDocsSpilled = ->
   localStorage.removeItem('userDocsSpilled')
 
 
 # get the first doc in the list of spilled docs, or null if there are none
-tabcat.user.getNextDocSpilled = ->
+TabCAT.User.getNextDocSpilled = ->
   spilled = localStorage.userDocsSpilled
   if not spilled
     return null
@@ -129,7 +129,7 @@ tabcat.user.getNextDocSpilled = ->
 
 
 # get all docs spilled by the current user
-tabcat.user.getDocsSpilled = ->
+TabCAT.User.getDocsSpilled = ->
   if localStorage.userDocsSpilled
     localStorage.userDocsSpilled.split(' ')
   else
@@ -137,11 +137,11 @@ tabcat.user.getDocsSpilled = ->
 
 
 # add the given path to userDocsSpilled,
-tabcat.user.addDocSpilled = (path) ->
+TabCAT.User.addDocSpilled = (path) ->
   spilled = localStorage.userDocsSpilled or ''
 
   # don't bother with paths that are already there
-  if (path is tabcat.user.getNextDocSpilled() or \
+  if (path is TabCAT.User.getNextDocSpilled() or \
       spilled.indexOf(' ' + path) != -1)
     return
 
@@ -154,14 +154,14 @@ tabcat.user.addDocSpilled = (path) ->
 
 # remove the given path from userDocsSpilled, optimizing for it
 # removing the first path or userDocsSpilled being empty
-tabcat.user.removeDocSpilled = (path) ->
+TabCAT.User.removeDocSpilled = (path) ->
   if localStorage.userDocsSpilled
-    if path is tabcat.user.getNextDocSpilled()
+    if path is TabCAT.User.getNextDocSpilled()
       localStorage.userDocsSpilled = (
         localStorage.userDocsSpilled[(path.length + 1)..])
     else
       localStorage.userDocsSpilled = (
-        _.without(tabcat.user.getDocsSpilled(), path)).join(' ')
+        _.without(TabCAT.User.getDocsSpilled(), path)).join(' ')
 
   if localStorage.userDocsSpilled is ''
     localStorage.removeItem('userDocsSpilled')

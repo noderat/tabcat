@@ -26,8 +26,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # Utilities for couchDB
 
-@tabcat ?= {}
-tabcat.couch = {}
+@TabCAT ?= {}
+TabCAT.Couch = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
@@ -48,17 +48,17 @@ timeoutFrom = (options) ->
 
 # create a random UUID. Do this instead of $.couch.newUUID(); it makes sure
 # we don't put timestamps in UUIDs, and works offline.
-tabcat.couch.randomUUID = () ->
+TabCAT.Couch.randomUUID = () ->
   (Math.floor(Math.random() * 16).toString(16) for _ in [0..31]).join('')
 
 
-# Promise: log the user in. Usually you'll use tabcat.ui.login()
-tabcat.couch.login = (user, password) ->
+# Promise: log the user in. Usually you'll use TabCAT.UI.login()
+TabCAT.Couch.login = (user, password) ->
   $.post('/_session', name: user, password: password)
 
 
-# log out the user. Usually you'll use tabcat.ui.logout()
-tabcat.couch.logout = ->
+# log out the user. Usually you'll use TabCAT.UI.logout()
+TabCAT.Couch.logout = ->
   $.ajax(type: 'DELETE', url: '/_session')
 
 
@@ -67,8 +67,8 @@ tabcat.couch.logout = ->
 # options:
 # - now: timeout is relative to this time (set this to $.now())
 # - timeout: timeout in milliseconds
-tabcat.couch.getUser = (options) ->
-  tabcat.couch.getDoc(
+TabCAT.Couch.getUser = (options) ->
+  TabCAT.Couch.getDoc(
     null, '/_session', _.pick(options ? {}, 'now', 'timeout')).then(
 
     (sessionDoc) -> sessionDoc.userCtx.name
@@ -98,7 +98,7 @@ dbUrl = (db, docId) ->
 # - now: timeout is relative to this time (set this to $.now())
 # - query: query parameters
 # - timeout: timeout in milliseconds
-tabcat.couch.getDoc = (db, docId, options) ->
+TabCAT.Couch.getDoc = (db, docId, options) ->
   query = ''
   if options?.query?
     for own key, value of options.query
@@ -131,12 +131,12 @@ tabcat.couch.getDoc = (db, docId, options) ->
 
 # Promise: upload a document to couch DB, and update its _rev field.
 #
-# You RARELY want to use this; tabcat.db.putDoc() handles this more robustly.
+# You RARELY want to use this; TabCAT.DB.putDoc() handles this more robustly.
 #
 # If db is null, just use docId as the URL.
 #
 # You can set timeout in milliseconds with options.timeout
-tabcat.couch.putDoc = (db, doc, options) ->
+TabCAT.Couch.putDoc = (db, doc, options) ->
   ajaxParams =
     contentType: 'application/json'
     data: JSON.stringify(doc)
@@ -154,7 +154,7 @@ tabcat.couch.putDoc = (db, doc, options) ->
 # Promise: return a list of all design docs for a DB, sorted by ID.
 # - now: timeout is relative to this time (set this to $.now())
 # - timeout: timeout in milliseconds
-tabcat.couch.getAllDesignDocs = (db, options) ->
+TabCAT.Couch.getAllDesignDocs = (db, options) ->
   if not db?
     throw Error("must specify a db")
 
@@ -165,13 +165,13 @@ tabcat.couch.getAllDesignDocs = (db, options) ->
   # don't pass parameters to _all_docs (e.g. startkey="_design/")
   # because we want to be able to use the _all_docs stored in the
   # application cache.
-  tabcat.couch.getDoc(db, '_all_docs', timeout: timeoutFrom(options)).then(
+  TabCAT.Couch.getDoc(db, '_all_docs', timeout: timeoutFrom(options)).then(
     (response) ->
       designDocIds = (row.key for row in response.rows \
                       when row.key[0..7] is '_design/')
 
       designDocPromises = (
-        tabcat.couch.getDoc(db, docId, timeout: timeoutFrom(options)) \
+        TabCAT.Couch.getDoc(db, docId, timeout: timeoutFrom(options)) \
         for docId in designDocIds)
 
       $.when(designDocPromises...).then(

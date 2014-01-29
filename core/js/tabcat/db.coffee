@@ -27,8 +27,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # a thin layer over CouchDB that handles auto-merging conflicting documents
 # and spilling to localStorage on network errors.
 
-@tabcat ?= {}
-tabcat.db = {}
+@TabCAT ?= {}
+TabCAT.DB = {}
 
 # so we don't have to type window.localStorage in functions
 localStorage = @localStorage
@@ -46,21 +46,21 @@ localStorage = @localStorage
 # options:
 # - now: timeout is relative to this time (set this to $.now())
 # - timeout: timeout in milliseconds
-tabcat.db.putDoc = (db, doc, options) ->
+TabCAT.DB.putDoc = (db, doc, options) ->
   # force timeout to be relative to now
   if options?.timeout? and not options.now?
     options = _.extend(options, now: $.now())
 
   # don't even try if the user isn't authenticated; it'll cause 401s.
   # also don't bother if we're offline (this is an optimization)
-  if not tabcat.user.isAuthenticated() or navigator.onLine is false
-    tabcat.db.spillDocToLocalStorage(db, doc)
+  if not TabCAT.User.isAuthenticated() or navigator.onLine is false
+    TabCAT.DB.spillDocToLocalStorage(db, doc)
     $.Deferred().resolve()
   else
     putDocIntoCouchDB(db, doc, options).then(
       null,
       ->
-        tabcat.db.spillDocToLocalStorage(db, doc)
+        TabCAT.DB.spillDocToLocalStorage(db, doc)
         $.Deferred().resolve()
     )
 
@@ -70,7 +70,7 @@ putDocIntoCouchDB = (db, doc, options) ->
   if options?.expectConflict
     resolvePutConflict(db, doc, options)
   else
-    tabcat.couch.putDoc(db, doc, _.pick(options ? {}, 'now', 'timeout')).then(
+    TabCAT.Couch.putDoc(db, doc, _.pick(options ? {}, 'now', 'timeout')).then(
       null,
       (xhr) -> switch xhr.status
         when 409
@@ -80,30 +80,30 @@ putDocIntoCouchDB = (db, doc, options) ->
     )
 
 
-# helper for tabcat.db.forcePutDoc()
+# helper for TabCAT.DB.forcePutDoc()
 resolvePutConflict = (db, doc, options) ->
   # make sure to putDoc() first when retrying
   if options?
     options = _.omit(options, 'expectConflict')
 
-  tabcat.couch.getDoc(
+  TabCAT.Couch.getDoc(
     db, doc._id, _.pick(options ? {}, 'now', 'timeout')).then(
 
     ((oldDoc) ->
       # resolve conflict
-      tabcat.db.merge(doc, oldDoc)
+      TabCAT.DB.merge(doc, oldDoc)
       doc._rev = oldDoc._rev
 
       # recursively call putDoc(), in the unlikely event
-      # that the old doc was changed since calling tabcat.couch.getDoc()
-      tabcat.db.putDoc(db, doc, options)
+      # that the old doc was changed since calling TabCAT.Couch.getDoc()
+      TabCAT.DB.putDoc(db, doc, options)
     ),
     (xhr) -> switch xhr.status
       # catch new docs with bad _rev field (and very rare race conditions)
       when 404
         if doc._rev?
           delete doc._rev
-        tabcat.db.putDoc(db, doc, options)
+        TabCAT.DB.putDoc(db, doc, options)
       else
         xhr
   )
@@ -113,25 +113,25 @@ resolvePutConflict = (db, doc, options) ->
 # Merge oldDoc into doc, inferring the method to use from doc.
 #
 # Currently, we only handle docs with type 'patient'.
-tabcat.db.merge = (doc, oldDoc) ->
+TabCAT.DB.merge = (doc, oldDoc) ->
   merge = pickMergeFunc(doc)
 
   if merge?
     merge(doc, oldDoc)
 
 
-# helper for tabcat.couch.merge() and tabcat.db.putDocOffline
+# helper for TabCAT.Couch.merge() and TabCAT.DB.putDocOffline
 pickMergeFunc = (doc) ->
   switch doc.type
     when 'patient'
-      tabcat.patient.merge
+      TabCAT.Patient.merge
 
 
 # Put a document into localStorage for safe-keeping, possibly
 # merging with a previously stored version of the document.
 #
 # If doc._rev is set, delete it; we don't track revisions in localStorage.
-tabcat.db.spillDocToLocalStorage = (db, doc) ->
+TabCAT.DB.spillDocToLocalStorage = (db, doc) ->
   key = "/#{db}/#{doc._id}"
 
   # most docs don't have a merge function, so save decoding the JSON
@@ -149,10 +149,10 @@ tabcat.db.spillDocToLocalStorage = (db, doc) ->
   localStorage[key] = JSON.stringify(doc)
 
   # keep track of this as a doc the current user can vouch for
-  tabcat.user.addDocSpilled(key)
+  TabCAT.User.addDocSpilled(key)
 
   # activate sync callback if it's not already running
-  tabcat.db.startSpilledDocSync()
+  TabCAT.DB.startSpilledDocSync()
 
   return
 
@@ -164,18 +164,18 @@ spilledDocsSyncIsActive = false
 syncingSpilledDocs = false
 
 # are we currently syncing spilled docs? (for status bar)
-tabcat.db.syncingSpilledDocs = ->
+TabCAT.DB.syncingSpilledDocs = ->
   syncingSpilledDocs
 
 
 # are there any spilled docs left to sync?
-tabcat.db.spilledDocsRemain = ->
+TabCAT.DB.spilledDocsRemain = ->
   !!getNextDocPathToSync()
 
 
 # Kick off syncing of spilled docs. You can pretty much call this anywhere
 # (e.g. on page load)
-tabcat.db.startSpilledDocSync = ->
+TabCAT.DB.startSpilledDocSync = ->
   if not spilledDocSyncIsActive
     spilledDocSyncIsActive = true
     syncSpilledDocs()
@@ -188,7 +188,7 @@ SYNC_SPILLED_DOCS_WAIT_TIME = 5000
 
 syncSpilledDocs = ->
   # if we're not really logged in, there's nothing to do
-  if not tabcat.user.isAuthenticated()
+  if not TabCAT.User.isAuthenticated()
     spilledDocSyncIsActive = false
     return
 
@@ -203,7 +203,7 @@ syncSpilledDocs = ->
   # pick a document to upload
 
   # start with docs spilled by this user
-  docPath = tabcat.user.getNextDocSpilled()
+  docPath = TabCAT.User.getNextDocSpilled()
   vouchForDoc = !!docPath
 
   # if there aren't any, grab any doc
@@ -225,12 +225,12 @@ syncSpilledDocs = ->
   # whoops, something wrong with this doc, remove it
   if not (doc? and db? and doc._id is docId)
     localStorage.removeItem(docPath)
-    tabcat.user.removeDocSpilled(docPath)
+    TabCAT.User.removeDocSpilled(docPath)
     callSyncSpilledDocsAgainIn(0)
     return
 
   # respect security policy
-  user = tabcat.user.get()
+  user = TabCAT.User.get()
   if doc.user? and not (vouchForDoc and doc.user is user)
     if doc.user.slice(-1) isnt '?'
       doc.user += '?'
@@ -241,14 +241,14 @@ syncSpilledDocs = ->
     (->
       # success!
       localStorage.removeItem(docPath)
-      tabcat.user.removeDocSpilled(docPath)
+      TabCAT.User.removeDocSpilled(docPath)
       syncingSpilledDocs = true
       callSyncSpilledDocsAgainIn(0)
     ),
     (xhr) ->
       # if it's not a network error, demote to a leftover doc
       if xhr.status isnt 0
-        tabcat.user.removeDocSpilled(docPath)
+        TabCAT.User.removeDocSpilled(docPath)
 
       # if there's an auth issue, user will need to log in again
       # befor we can make any progress
@@ -265,7 +265,7 @@ syncSpilledDocs = ->
 
 
 # get the next doc to sync. If you want to prioritize docs spilled by
-# this user, use tabcat.user.getNextDocSpilled() first.
+# this user, use TabCAT.User.getNextDocSpilled() first.
 getNextDocPathToSync = ->
   docPaths = (path for path in _.keys(localStorage) \
     when path[0] is '/').sort()
@@ -286,13 +286,13 @@ getNextDocPathToSync = ->
 
 # hopefully this can keep us from exceeding max recursion depth
 callSyncSpilledDocsAgainIn = (milliseconds) ->
-  tabcat.ui.wait(milliseconds).then(syncSpilledDocs)
+  TabCAT.UI.wait(milliseconds).then(syncSpilledDocs)
   return
 
 
 # Estimate % of local storage used. Probably right for the browsers
 # we care about!
-tabcat.db.percentOfLocalStorageUsed = ->
+TabCAT.DB.percentOfLocalStorageUsed = ->
   return 100 * charsInLocalStorage() / maxCharsInLocalStorage()
 
 

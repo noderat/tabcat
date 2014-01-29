@@ -34,7 +34,7 @@ submitEnterPasswordForm = (event) ->
     errorP.text('Please enter your password')
     return
 
-  tabcat.ui.login(null, password).then(
+  TabCAT.UI.login(null, password).then(
     null,
     (xhr) -> switch xhr.status
       when 401 then errorP.text(
@@ -44,10 +44,10 @@ submitEnterPasswordForm = (event) ->
 
 
 @initPage = ->
-  tabcat.ui.enableFastClick()
-  tabcat.ui.turnOffBounce()
+  TabCAT.UI.enableFastClick()
+  TabCAT.UI.turnOffBounce()
 
-  user = tabcat.user.get()
+  user = TabCAT.User.get()
   if not user?
     window.location = 'login.html'
     return
@@ -62,4 +62,4 @@ submitEnterPasswordForm = (event) ->
     $loginForm.on('submit', submitEnterPasswordForm)
     $loginForm.find('button').removeAttr('disabled')
   )
-  $(tabcat.ui.updateStatusBar)
+  $(TabCAT.UI.updateStatusBar)

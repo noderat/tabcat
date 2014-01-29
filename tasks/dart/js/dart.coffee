@@ -75,10 +75,10 @@ videoStalledTimeoutId = null
 # INITIALIZATION
 
 @initTask = ->
-  tabcat.task.start(trackViewport: true)
+  TabCAT.Task.start(trackViewport: true)
 
-  tabcat.ui.enableFastClick()
-  tabcat.ui.turnOffBounce()
+  TabCAT.UI.enableFastClick()
+  TabCAT.UI.turnOffBounce()
 
   $(onReady)
 
@@ -93,8 +93,8 @@ onReady = ->
 
 showInstructions = ->
   $squareDiv = $('div.square')
-  tabcat.ui.fixAspectRatio($squareDiv, 1)
-  tabcat.ui.linkEmToPercentOfHeight($squareDiv)
+  TabCAT.UI.fixAspectRatio($squareDiv, 1)
+  TabCAT.UI.linkEmToPercentOfHeight($squareDiv)
 
   $('#instructionsScreen').find('button').on('click', showVideo)
 
@@ -110,15 +110,15 @@ initVideoScreen = _.once(->
 
   # when the video starts playing, hide the label overlay
   $video.on('play', (event) ->
-    tabcat.task.logEvent(getState(), event)
-    tabcat.ui.wait(VIDEO_OVERLAY_SHOW_TIME).then(->
+    TabCAT.Task.logEvent(getState(), event)
+    TabCAT.UI.wait(VIDEO_OVERLAY_SHOW_TIME).then(->
       $('#videoLabel').fadeOut(duration: VIDEO_OVERLAY_FADE_OUT_TIME)
     )
   )
 
   # if the video ended, show choices
   $video.on('ended', (event) ->
-    tabcat.task.logEvent(getState(), event)
+    TabCAT.Task.logEvent(getState(), event)
     clearStalledMessage()
     showChoices()
   )
@@ -127,7 +127,7 @@ initVideoScreen = _.once(->
   # to a transparent overlay instead.
   $('#videoResume').on('mousedown touchstart', (event) ->
     event.preventDefault()  # stop mousedown emulation
-    tabcat.task.logEvent(getState(), event)
+    TabCAT.Task.logEvent(getState(), event)
 
     if $('#videoStalled').is(':visible')
       # store this for when the video is ready to be fast-forwarded
@@ -158,7 +158,7 @@ initVideoScreen = _.once(->
 
   # log problems loading the video, but don't do anything about them
   $video.on('abort error stalled', (event) ->
-    tabcat.task.logEvent(getState(), event)
+    TabCAT.Task.logEvent(getState(), event)
   )
 
 )
@@ -229,14 +229,14 @@ clearStalledMessage = ->
   if $('#videoStalled').is(':visible')
     $('#videoStalled').hide()
     # log that we hid the message
-    tabcat.task.logEvent(getState())
+    TabCAT.Task.logEvent(getState())
 
 # show the "video stalled" message (helper for call deferStalledMessage())
 showStalledMessage = ->
   $('#videoLabel').hide()
   $('#videoStalled').fadeIn(duration: FADE_DURATION)
   # log that we showed the message
-  tabcat.task.logEvent(getState())
+  TabCAT.Task.logEvent(getState())
 
 
 # CHOICES
@@ -266,7 +266,7 @@ onPickChoice = (event) ->
   $choices = $('#choices').find('div')
 
   choice = $target.text()
-  tabcat.task.logEvent(getState(), event, interpretChoice(choice))
+  TabCAT.Task.logEvent(getState(), event, interpretChoice(choice))
 
   # make choices act like radio buttons
   if not $target.hasClass('chosen')
@@ -276,18 +276,18 @@ onPickChoice = (event) ->
   # show button if it's not already shown
   $submitButton = $('#choiceSubmitButton')
   if $submitButton.length
-    tabcat.ui.wait(CHOICES_SUBMIT_SHOW_WAIT).then(->
+    TabCAT.UI.wait(CHOICES_SUBMIT_SHOW_WAIT).then(->
       $submitButton.fadeIn(duration: FADE_DURATION)
     )
 
 
 onSubmitChoice = (event) ->
-  tabcat.task.logEvent(getState(), event, interpretSubmission())
+  TabCAT.Task.logEvent(getState(), event, interpretSubmission())
 
   trialNum += 1
 
   if trialNum >= NUM_VIDEOS
-    tabcat.task.finish(interpretation: finalInterpretation())
+    TabCAT.Task.finish(interpretation: finalInterpretation())
   else
     showVideo()
 
@@ -375,7 +375,7 @@ interpretSubmission = ->
 
 finalInterpretation = ->
   numCorrect:
-    (item for item in tabcat.task.getEventLog() when (
+    (item for item in TabCAT.Task.getEventLog() when (
       not item.state?.practiceMode and
       item.interpretation?.submit and
       item.interpretation?.correct)).length
