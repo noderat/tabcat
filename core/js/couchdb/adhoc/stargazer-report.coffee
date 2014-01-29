@@ -42,7 +42,7 @@ patientHandler = (patientRecord) ->
         cometsCaught = 0
 
         for item in task.eventLog
-          if item.state?.trialNum > 0
+          if item?.state?.trialNum > 0
             numTrials = item.state?.trialNum + 1
             if item.event?.type is 'addComet'
               cometsShownAfterTrial0 += 1
