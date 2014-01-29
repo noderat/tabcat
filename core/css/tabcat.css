@@ -153,6 +153,16 @@ button:disabled {
     height: 33px;
 }
 
+#statusBar span.version {
+    position: relative;
+    margin: 0;
+    top: -4px;
+    left: -4px;
+    vertical-align: bottom;
+    color: #ffffff;
+    font-size: 16px;
+}
+
 #statusBar p.offline {
     font-size: 12px;
     margin: -1px 0px 0px 2px;
@@ -213,6 +223,14 @@ button:disabled {
     height: 180px;
     margin-top: 10px;
     margin-bottom: -10px;
+}
+
+#loginMain p.version {
+    position: relative;
+    left: 20px;
+    color: #ffffff;
+    font-size: 16px;
+    margin: 0;
 }
 
 #loginForm label {

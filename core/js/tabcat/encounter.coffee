@@ -95,6 +95,7 @@ TabCAT.Encounter.newDoc = (patientCode, configDoc) ->
     _id: TabCAT.Couch.randomUUID()
     type: 'encounter'
     patientCode: patientCode
+    version: TabCAT.version
     year: date.getFullYear()
 
   user = TabCAT.User.get()
