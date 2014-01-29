@@ -441,7 +441,7 @@ TabCAT.UI.detour = (path) ->
 TabCAT.UI.srcPath = ->
   srcPath = TabCAT.UI.readHashJSON().srcPath
   # only allow redirects to a different path, not to other sites
-  if srcPath? and srcPath.substring(0, 1) is '/'
+  if srcPath? and srcPath[0] is '/'
     return srcPath
   else
     return null
@@ -449,7 +449,7 @@ TabCAT.UI.srcPath = ->
 
 # read a json from the HTML fragment
 TabCAT.UI.readHashJSON = ->
-  (try JSON.parse(decodeURIComponent(window.location.hash.substring(1)))) ? {}
+  (try JSON.parse(decodeURIComponent(window.location.hash[1..]))) ? {}
 
 
 # encode json into HTML fragment. This includes the leading "#"
