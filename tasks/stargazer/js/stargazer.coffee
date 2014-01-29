@@ -167,8 +167,17 @@ staircase = new TabCAT.Task.Staircase(
 # use this to turn off comets, for faster debugging
 DEBUG_NO_COMETS = false
 
+# if comets are turned off, turn screen black for this long instead
+DEBUG_DELAY_INSTEAD_OF_COMETS = 1000
+
 # set this to always show the same number of stars
 DEBUG_NUM_STARS = null
+
+# don't hide the target stars when showing test stars
+DEBUG_KEEP_TARGET_STARS_VISIBLE = false
+
+# skip practice mode
+DEBUG_SKIP_PRACTICE_MODE = false
 
 # how many has the patient gotten correct in practice mode?
 numCorrectInPractice = 0
@@ -180,7 +189,8 @@ cometsCaught = 0
 
 # are we in practice mode?
 inPracticeMode = ->
-  numCorrectInPractice < PRACTICE_MODE_INTENSITIES.length
+  (numCorrectInPractice < PRACTICE_MODE_INTENSITIES.length \
+    and not DEBUG_SKIP_PRACTICE_MODE)
 
 
 # the current intensity. Use this instead of staircase.instensity;
@@ -356,7 +366,8 @@ nextTestStar = (distance, anchorStar, targetStars, testStars) ->
 
   if (isInSky(candidateStar) and \
       not isCloserThanToAny(candidateStar, distance, otherStars) and \
-      not isCloserThanToAny(candidateStar, MIN_TEST_STAR_DISTANCE, testStars)
+      not isCloserThanToAny( \
+        candidateStar, Math.max(MIN_TEST_STAR_DISTANCE, distance), testStars) \
       )
     return candidateStar
   else
@@ -502,8 +513,8 @@ showComets = ->
       staircase.trialNum += 1
       showTargetStars()
     else
-      $targetSky.hide()
-      TabCAT.UI.wait(1000).then(-> showTestStars())
+      hideTargetSky()
+      TabCAT.UI.wait(DEBUG_DELAY_INSTEAD_OF_COMETS).then(-> showTestStars())
     return
 
   $cometSky.hide()
@@ -534,6 +545,16 @@ showComets = ->
   $cometSky.fadeIn(duration: FADE_DURATION)
 
   startComets()
+
+
+# hide the target sky (debugging hook)
+hideTargetSky = ->
+  $targetSky = $('#targetSky')
+  if DEBUG_KEEP_TARGET_STARS_VISIBLE
+    $targetSky.find('.msg').hide()
+    $targetSky.find('img').css(opacity: 0.3)
+  else
+    $targetSky.hide()
 
 
 # helper for showComets()
@@ -607,11 +628,10 @@ showScore = (pageX, pageY, amount) ->
 
 # show star(s) to match against the target stars
 showTestStars = ->
-  $targetSky = $('#targetSky')
   $cometSky = $('#cometSky')
   $testSky = $('#testSky')
 
-  $targetSky.hide()
+  hideTargetSky()
   $cometSky.hide()
   $testSky.fadeIn(duration: FADE_DURATION)
 
@@ -753,6 +773,9 @@ showStartScreen = ->
   TabCAT.UI.enableFastClick()
 
   $(->
+    if DEBUG_NO_COMETS
+      $('.catch-comets').css('text-decoration': 'line-through')
+
     $task = $('#task')
     $rectangle = $('#rectangle')
 
