@@ -25,10 +25,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 clickIAmTheExaminer = (event) ->
-  tabcat.task.patientHasDevice(false)
-  window.location = tabcat.ui.srcPath() ? 'tasks.html'
+  TabCAT.Task.patientHasDevice(false)
+  window.location = TabCAT.UI.srcPath() ? 'tasks.html'
 
-tabcat.ui.linkEmToPercentOfHeight($(document.body))
+TabCAT.UI.linkEmToPercentOfHeight($(document.body))
 $('#returnToExaminer').show()
 $(->
   $('#iAmTheExaminer').on('click', clickIAmTheExaminer)

@@ -66,7 +66,7 @@ LinePerceptionTask = class
   constructor: ->
     @practiceStreakLength = 0
 
-    @staircase = new tabcat.task.Staircase(
+    @staircase = new TabCAT.Task.Staircase(
       intensity: @PRACTICE_START_INTENSITY
       minIntensity: @MIN_INTENSITY
       maxIntensity: @MAX_INTENSITY
@@ -76,11 +76,11 @@ LinePerceptionTask = class
 
   # call this to show the task onscreen
   start: ->
-    tabcat.task.start(trackViewport: true)
-    tabcat.ui.turnOffBounce()
+    TabCAT.Task.start(trackViewport: true)
+    TabCAT.UI.turnOffBounce()
 
     $(=>
-      tabcat.ui.requireLandscapeMode($('#task'))
+      TabCAT.UI.requireLandscapeMode($('#task'))
       $('#task').on('mousedown touchstart', @handleStrayTouchStart)
       @showNextTrial()
     )
@@ -90,8 +90,8 @@ LinePerceptionTask = class
     $nextTrialDiv = @getNextTrialDiv()
     $('#task').empty()
     $('#task').append($nextTrialDiv)
-    tabcat.ui.fixAspectRatio($nextTrialDiv, @ASPECT_RATIO)
-    tabcat.ui.linkEmToPercentOfHeight($nextTrialDiv)
+    TabCAT.UI.fixAspectRatio($nextTrialDiv, @ASPECT_RATIO)
+    TabCAT.UI.linkEmToPercentOfHeight($nextTrialDiv)
     $nextTrialDiv.fadeIn(duration: @FADE_DURATION)
 
   # event handler for taps on lines
@@ -116,10 +116,10 @@ LinePerceptionTask = class
       else
         @practiceStreakLength = 0
 
-    tabcat.task.logEvent(state, event, interpretation)
+    TabCAT.Task.logEvent(state, event, interpretation)
 
     if @staircase.numReversals >= @MAX_REVERSALS
-      tabcat.task.finish()
+      TabCAT.Task.finish()
     else
       @showNextTrial()
 
@@ -128,7 +128,7 @@ LinePerceptionTask = class
   # event handler for taps that miss the lines
   handleStrayTouchStart: (event) =>
     event.preventDefault()
-    tabcat.task.logEvent(@getTaskState(), event)
+    TabCAT.Task.logEvent(@getTaskState(), event)
     return
 
   # redefine this in your subclass, to show the stimuli for the task
@@ -154,7 +154,7 @@ LinePerceptionTask = class
 
     $practiceCaption = $('div.practiceCaption')
     if $practiceCaption.is(':visible')
-      stimuli.practiceCaption = tabcat.task.getElementBounds(
+      stimuli.practiceCaption = TabCAT.Task.getElementBounds(
         $practiceCaption[0])
 
     return stimuli
@@ -193,7 +193,7 @@ LineLengthTask = class extends LinePerceptionTask
   getStimuli: ->
     _.extend(super(),
       lines: (
-        tabcat.task.getElementBounds(div) for div in $('div.line:visible'))
+        TabCAT.Task.getElementBounds(div) for div in $('div.line:visible'))
     )
 
 
@@ -298,7 +298,7 @@ LineLengthTask = class extends LinePerceptionTask
   # pick a new orientation that's not too close to the last one
   getNextOrientation: ->
     while true
-      orientation = tabcat.math.randomUniform(-@MAX_ROTATION, @MAX_ROTATION)
+      orientation = TabCAT.Math.randomUniform(-@MAX_ROTATION, @MAX_ROTATION)
       if Math.abs(orientation - @lastOrientation) < @MIN_ORIENTATION_DIFFERENCE
         continue
 
@@ -382,7 +382,7 @@ LineLengthTask = class extends LinePerceptionTask
 
   # generate data, including CSS, for the next trial
   getNextTrial: ->
-    shortLineLength = tabcat.math.randomUniform(@SHORT_LINE_RANGE...)
+    shortLineLength = TabCAT.Math.randomUniform(@SHORT_LINE_RANGE...)
 
     longLineLength = shortLineLength * (1 + @staircase.intensity / 100)
 
@@ -476,7 +476,7 @@ LineLengthTask = class extends LinePerceptionTask
 
   # generate data, including CSS, for the next trial
   getNextTrial: ->
-    shortLineLength = tabcat.math.randomUniform(@SHORT_LINE_RANGE...)
+    shortLineLength = TabCAT.Math.randomUniform(@SHORT_LINE_RANGE...)
 
     longLineLength = shortLineLength * (1 + @staircase.intensity / 100)
 
@@ -491,7 +491,7 @@ LineLengthTask = class extends LinePerceptionTask
     if @shouldShowPracticeCaption()
       # when showing the practice caption, always make the vertical
       # line short
-      armIsShort = (tabcat.math.mod(angle, 180) == 90)
+      armIsShort = (TabCAT.Math.mod(angle, 180) == 90)
     else
       armIsShort = _.sample([true, false])
 
@@ -561,7 +561,7 @@ LineLengthTask = class extends LinePerceptionTask
     if (angle % 90 != 0)
       throw Error("angle must be a multiple of 90")
 
-    angle = tabcat.math.mod(angle, 360)
+    angle = TabCAT.Math.mod(angle, 360)
     if (angle == 0)
       return box
 

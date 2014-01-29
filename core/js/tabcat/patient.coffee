@@ -28,16 +28,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Patient codes should always be uppercase. We may eventually restrict which
 # characters they can contain.
-@tabcat ?= {}
-tabcat.patient = {}
+@TabCAT ?= {}
+TabCAT.Patient = {}
 
 # merge info from oldDoc into doc. You rarely need to call this directly;
-# tabcat.couch will do this automatically.
+# TabCAT.Couch will do this automatically.
 #
 # Currently this just merges the encounterIds field and
 # copies over fields that don't exist in doc. encounter IDs found in
 # doc but not oldDoc are added to the END of encounterIds.
-tabcat.patient.merge = (doc, oldDoc) ->
+TabCAT.Patient.merge = (doc, oldDoc) ->
 
   if oldDoc.encounterIds?
     # use a set so that merge time isn't quadratic in number of encounters
@@ -60,7 +60,7 @@ tabcat.patient.merge = (doc, oldDoc) ->
 # return a new patient doc (don't upload it)
 #
 # this coerces patientCode to be uppercase
-tabcat.patient.newDoc = (patientCode) ->
+TabCAT.Patient.newDoc = (patientCode) ->
   patientCode = String(patientCode ? 0).toUpperCase()
 
   return {

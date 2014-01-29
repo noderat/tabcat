@@ -39,7 +39,7 @@ submitLoginForm = (event) ->
     errorP.text('Please enter your password')
     return
 
-  tabcat.ui.login(email, password).then(
+  TabCAT.UI.login(email, password).then(
     null,
     (xhr) -> switch xhr.status
       when 401 then errorP.text(
@@ -48,17 +48,17 @@ submitLoginForm = (event) ->
   )
 
 @initPage = ->
-  tabcat.ui.enableFastClick()
-  tabcat.ui.turnOffBounce()
+  TabCAT.UI.enableFastClick()
+  TabCAT.UI.turnOffBounce()
 
   $(->
     # continue session/encounter if user is restarting TabCAT
-    if tabcat.user.get() and not window.location.hash
+    if TabCAT.User.get() and not window.location.hash
 
       # trigger asking user for password if no valid session cookie
-      tabcat.task.patientHasDevice(false)
+      TabCAT.Task.patientHasDevice(false)
 
-      if tabcat.encounter.isOpen()
+      if TabCAT.Encounter.isOpen()
         $('#message').text('Continuing encounter...')
         window.location = 'tasks.html'
       else
@@ -66,9 +66,9 @@ submitLoginForm = (event) ->
         window.location = 'create-encounter.html'
       return
 
-    if tabcat.ui.srcPath()?
+    if TabCAT.UI.srcPath()?
       $('#message').text('You need to log in to view that page')
-    else if tabcat.ui.readHashJSON().loggedOut
+    else if TabCAT.UI.readHashJSON().loggedOut
       $('#message').text('Logged out')
     else
       $('#message').text('Please log in with your email and password')

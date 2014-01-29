@@ -26,12 +26,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # some simple math utilities; not TabCAT-specific
 
-@tabcat ?= {}
-tabcat.math = {}
+@TabCAT ?= {}
+TabCAT.Math = {}
 
 
 # return x, clamped to between min and max (null min/max have no effect).
-tabcat.math.clamp = (min, x, max) ->
+TabCAT.Math.clamp = (min, x, max) ->
   if min? and x < min
     x = min
   if max? and x > max
@@ -40,10 +40,10 @@ tabcat.math.clamp = (min, x, max) ->
 
 
 # return a mod b, but always return a positive value
-tabcat.math.mod = (a, b) -> ((a % b) + b) % b
+TabCAT.Math.mod = (a, b) -> ((a % b) + b) % b
 
 
 # return a number chosen uniformly at random from [a, b)
 #
 # for random integers, use _.random()
-tabcat.math.randomUniform = (a, b) -> a + Math.random() * (b - a)
+TabCAT.Math.randomUniform = (a, b) -> a + Math.random() * (b - a)
