@@ -269,7 +269,7 @@ TabCAT.UI.updateStatusBar = ->
       """
       <div class="left">
         <img class="banner" src="img/banner-white.png">
-        <span class="version"></p>
+        <span class="version"></span>
         <p class="offline"></p>
       </div>
       <div class="right">
