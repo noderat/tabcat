@@ -1,3 +1,18 @@
+v0.6.0, 2014-01-30 -- Stargazer and cleanup
+- core library:
+  - namespaces are now capitalized: TabCAT.UI, not tabcat.ui (#81)
+  - substring() is no longer used (#63)
+  - version is availble as TabCAT.version
+    - encounter docs store version of TabCAT when encounter was created (#49)
+    - version is displayed on login page and status bar
+- tasks:
+  - stargazer:
+    - changes to keep people from having to guess:
+       - distractor stars are 2.5 from "wrong" stars (1.5 was too close)
+       - target stars are farther apart, to leave space for distractors
+    - distractor stars can't be less than 2.5 from each other
+    - max target stars is now 7 instead of 8
+
 v0.5.2, 2014-01-28 -- More Stargazer fixes
 - core library:
   - tabcat.task.start() saves task version again (#86 -- broken since v0.4.0!)
