@@ -487,3 +487,16 @@ TabCAT.UI.wait = (milliseconds) ->
   deferred = $.Deferred()
   window.setTimeout((-> deferred.resolve()), milliseconds)
   return deferred
+
+
+SANDBOX_REGEX = \
+  /(sandbox|^\d+\.\d+\.\d+\.\d+$|^localhost$)/i
+
+
+# Infer from window.location.hostname whether we're in sandbox mode.
+# This happens if the hostname contains "sandbox", is an IP address,
+# or is "localhost".
+#
+# Sandbox mode should only affect the console UI.
+TabCAT.UI.inSandbox = (hostname) ->
+  SANDBOX_REGEX.test(hostname ? window.location.hostname)
