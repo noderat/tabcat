@@ -489,14 +489,21 @@ TabCAT.UI.wait = (milliseconds) ->
   return deferred
 
 
+# used by inSandbox()
 SANDBOX_REGEX = \
-  /(sandbox|^\d+\.\d+\.\d+\.\d+$|^localhost$)/i
+  /(sandbox|^\d+\.\d+\.\d+\.\d+$)/i
 
 
-# Infer from window.location.hostname whether we're in sandbox mode.
-# This happens if the hostname contains "sandbox", is an IP address,
-# or is "localhost".
+# Infer from the hostname whether we're in sandbox mode. This happens if it
+# contains "sandbox" or is an IP address.
 #
-# Sandbox mode should only affect the console UI.
+# Sandbox mode is meant to only affect the UI: different warning messages,
+# pre-filled form inputs, etc.
+#
+# We intentially don't do anything for the hostname "localhost"
+# so that it's easy to test non-sandbox mode (use "127.0.0.1" instead).
+#
+# You can optionally pass in a hostname (by default we use
+# window.location.hostname).
 TabCAT.UI.inSandbox = (hostname) ->
   SANDBOX_REGEX.test(hostname ? window.location.hostname)

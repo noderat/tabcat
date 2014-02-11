@@ -28,6 +28,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # local storage and continue
 TIMEOUT = 5000
 
+# Sandbox-specific stuff
+SANDBOX_PATIENT_CODE = '0'
+SANDBOX_WARNING = \
+  "Sandbox mode is for testing. Don't use this with real patients!"
+
+
 submitCreateEncounterForm = (event) ->
   event.preventDefault()
   form = $(event.target)
@@ -53,6 +59,11 @@ submitCreateEncounterForm = (event) ->
 
   $(->
     $form = $('#createEncounter').find('form')
+
+    if TabCAT.UI.inSandbox()
+      $form.find('input[name=patientCode]').val(SANDBOX_PATIENT_CODE)
+      $form.find('p.warning').text(SANDBOX_WARNING)
+
     $form.on('submit', submitCreateEncounterForm)
     $form.find('button[type=submit]').removeAttr('disabled')
   )
