@@ -94,6 +94,7 @@ submitLoginForm = (event) ->
       # pre-fill form
       $loginForm.find('input[name=email]').val(SANDBOX_USER)
       $loginForm.find('input[name=password]').val(SANDBOX_PASSWORD)
+      $loginForm.find('input').attr('autocomplete', 'off')
 
     $loginForm.on('submit', submitLoginForm)
     $loginForm.find('button').removeAttr('disabled')

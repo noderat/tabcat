@@ -61,7 +61,8 @@ submitCreateEncounterForm = (event) ->
     $form = $('#createEncounter').find('form')
 
     if TabCAT.UI.inSandbox()
-      $form.find('input[name=patientCode]').val(SANDBOX_PATIENT_CODE)
+      $form.find('input[name=patientCode]').val(SANDBOX_PATIENT_CODE).attr(
+        'autocomplete', 'off')
       $form.find('p.warning').text(SANDBOX_WARNING)
 
     $form.on('submit', submitCreateEncounterForm)
