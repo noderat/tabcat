@@ -263,6 +263,9 @@ TabCAT.UI.updateStatusBar = ->
 
   $statusBar = $('#statusBar')
 
+  if TabCAT.UI.inSandbox()
+    $statusBar.addClass('sandbox')
+
   # populate with new HTML if we didn't already
   if $statusBar.find('div.left').length is 0
     $statusBar.html(

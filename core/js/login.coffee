@@ -91,6 +91,7 @@ submitLoginForm = (event) ->
 
     # sandbox mode
     if TabCAT.UI.inSandbox()
+      $('body').addClass('sandbox')
       # pre-fill form
       $loginForm.find('input[name=email]').val(SANDBOX_USER)
       $loginForm.find('input[name=password]').val(SANDBOX_PASSWORD)
