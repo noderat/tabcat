@@ -143,6 +143,11 @@ button:disabled {
     min-width: 800px;
 }
 
+#statusBar.sandbox {
+    background-color: #cc9933;
+    background-image: url('../img/sand.png');
+}
+
 #statusBar div.left {
     float: left;
     width: 250px;
@@ -212,6 +217,12 @@ button:disabled {
 
 .blueBackground {
     background-color: #666699;
+}
+
+/* used by login page */
+.blueBackground.sandbox {
+    background-color: #cc9933;
+    background-image: url('../img/sand.png');
 }
 
 #loginMain {
