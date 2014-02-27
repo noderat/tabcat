@@ -1,4 +1,4 @@
-v0.6.0, 2014-01-30 -- Stargazer and cleanup
+v0.6.0, 2014-02-26 -- Stargazer and cleanup
 - core library:
   - namespaces are now capitalized: TabCAT.UI, not tabcat.ui (#81)
   - substring() is no longer used (#63)
