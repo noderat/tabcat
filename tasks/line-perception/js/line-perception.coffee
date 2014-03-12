@@ -24,6 +24,15 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+translations =
+  en:
+    translation:
+      tap_the_longer_line_html: 'Tap the longer line<br>' +
+        'quickly and accurately.'
+  zh:
+    translation:  # these are all zh-Hant
+      tap_the_longer_line_html: '儘量選出最長的線。<br>越快越好。'
+
 
 # abstract base class for line perception tasks
 LinePerceptionTask = class
@@ -78,6 +87,8 @@ LinePerceptionTask = class
   start: ->
     TabCAT.Task.start(trackViewport: true)
     TabCAT.UI.turnOffBounce()
+
+    $.i18n.init(resStore: translations, fallbackLng: 'en', useCookie: false)
 
     $(=>
       TabCAT.UI.requireLandscapeMode($('#task'))
@@ -374,8 +385,7 @@ LineLengthTask = class extends LinePerceptionTask
     # show practice caption, if required
     if @shouldShowPracticeCaption()
       $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
-      $practiceCaptionDiv.html('Tap the longer line<br>' +
-        ' quickly and accurately.')
+      $practiceCaptionDiv.html($.t('tap_the_longer_line_html'))
       $containerDiv.append($practiceCaptionDiv)
 
     return $containerDiv
@@ -468,8 +478,7 @@ LineLengthTask = class extends LinePerceptionTask
     # show practice caption, if required
     if @shouldShowPracticeCaption()
       $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
-      $practiceCaptionDiv.html('Tap the longer line<br>' +
-        ' quickly and accurately.')
+      $practiceCaptionDiv.html($.t('tap_the_longer_line_html'))
       $containerDiv.append($practiceCaptionDiv)
 
     return $containerDiv
