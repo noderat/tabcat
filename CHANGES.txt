@@ -1,3 +1,15 @@
+v0.6.1, 2014-03-20 -- Sandbox mode
+- build system:
+  - design docs are pushed with curl, not kanso push (#40)
+- core library:
+  - TabCAT.Task.Staircase can now require streaks of right/wrong answers
+- console UI:
+  - sandbox mode if host is an IP address or contains "sandbox" (#72)
+- tasks:
+  - stargazer
+    - easier star layout (distractor stars more distant)
+    - staircasing changes number of stars more gradually
+
 v0.6.0, 2014-02-26 -- Stargazer and cleanup
 - core library:
   - namespaces are now capitalized: TabCAT.UI, not tabcat.ui (#81)
