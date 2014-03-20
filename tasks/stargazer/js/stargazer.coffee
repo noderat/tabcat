@@ -32,22 +32,26 @@ ASPECT_RATIO = 4/3
 MIN_TARGET_STARS = 1
 
 # the maximum number of target stars to show
-MAX_TARGET_STARS = 7
+MAX_TARGET_STARS = 5
 
-# the maximum number of times we can randomly fail to place a star
+# maximum number of times we can randomly fail to place a target star
 # before restarting the process
-MAX_FAILURES = 30
+MAX_TARGET_STAR_FAILURES = 5
+
+# maximum number of times we can randomly fail to place a test star
+# before restarting the process
+MAX_TEST_STAR_FAILURES = 20
 
 # target stars' centers can never be less than this many star diameters apart
-MIN_TARGET_STAR_DISTANCE = 3.5
+MIN_TARGET_STAR_DISTANCE = 6
 
 # Distances test stars should be from target stars. They should
 # also be at least this far from any other target stars and any stars
 # currently displayed
-DISTRACTOR_STAR_DISTANCES = [2.5, 2.5]
+DISTRACTOR_STAR_DISTANCES = [4.5, 4.5]
 
 # how many star diameters high the sky div is
-SKY_HEIGHT = 12
+SKY_HEIGHT = 15
 
 # how many star diameters wide the sky div is
 SKY_WIDTH = SKY_HEIGHT * ASPECT_RATIO
@@ -69,7 +73,7 @@ STAR_IMG_PATH = 'img/star.png'
 # how many star diameters the star image file is
 # (the star fades smoothly, so this is kind of a judgment call).
 # the star's <img> element also serves as its target area for touch events
-STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.4
+STAR_IMG_WIDTH = STAR_IMG_HEIGHT = 1.6
 
 # make sure test stars' target areas can't touch
 MIN_TEST_STAR_DISTANCE = Math.sqrt(
@@ -315,7 +319,8 @@ pickTargetAndTestStars = (n) ->
 
     while targetStars.length < n
       targetStars.push(
-        untilSucceeds((-> nextTargetStar(targetStars)), MAX_FAILURES))
+        untilSucceeds(
+          (-> nextTargetStar(targetStars)), MAX_TARGET_STAR_FAILURES))
 
     testStarDistances = [0].concat(DISTRACTOR_STAR_DISTANCES)
 
@@ -324,7 +329,7 @@ pickTargetAndTestStars = (n) ->
     for distance, i in testStarDistances
       testStars.push(untilSucceeds(
         (-> nextTestStar(distance, anchors[i], targetStars, testStars)),
-        MAX_FAILURES))
+        MAX_TEST_STAR_FAILURES))
 
     return [targetStars, testStars]
   )
