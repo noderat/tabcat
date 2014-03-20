@@ -55,6 +55,8 @@ submitLoginForm = (event) ->
 
 
 @initPage = ->
+  $.i18n.init()  # parse ?setLng=...
+
   # Make sure page gets bookmarked with sandbox icon and title.
   if TabCAT.UI.inSandbox()
     $('title').text(SANDBOX_TITLE)
