@@ -4,12 +4,12 @@
 .pushed-*
 
 /cache.manifest*
-
-/core/packages
-/tasks/*/packages
-/tasks/*/Makefile
-
+/core/design.json
 /core/js/*.js
 /core/js/couchdb/*.js
 /core/js/couchdb/*/*.js
 /core/js/tabcat/*.js
+/core/packages
+/tasks/*/Makefile
+/tasks/*/design.json
+/tasks/*/packages
