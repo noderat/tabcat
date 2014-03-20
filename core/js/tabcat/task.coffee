@@ -445,14 +445,19 @@ inferTaskName = ->
 #
 # You can set the following instance variables from the constructor:
 #
-# intensity: how easy is the task? (default 0)
-# lastIntensityChange: previous intensity change (default 0, also
-#   clamped between min/max intensity)
+# intensity: how easy is the task? (default 0, clamped between min/max)
+# lastIntensityChange: previous intensity change (default 0)
+# lastCorrect: did they get the last trial correct? (default null,
+#              set to null on intensity change)
 # maxIntensity: upper limit for intensity (default is no limit)
+# minCorrect: minimum streak length to lower intensity (default 1)
+# minIncorrect: minimum streak length to raise intensity (default 1)
 # minIntensity: lower limit for intensity (default is no limit)
 # numReversals: how many reversals so far? (default 0)
 # stepsDown: how much to lower intensity on correct response? (default 1)
 # stepsUp: how much to raise intensity on incorrect response? (default 1)
+# streakLength: how many correct/incorrect did they get correct
+#               in a row since the last intensity change (default 0)
 # trialNum: which trial number are we on?
 #
 # If multiple objects are provided, we'll combine them together with
@@ -469,12 +474,16 @@ TabCAT.Task.Staircase = class
     options = _.extend({}, options...)
 
     @intensity = options.intensity ? 0
+    @lastCorrect = if options.lastCorrect then !!options.lastCorrect else null
     @lastIntensityChange = options.lastIntensityChange ? 0
     @maxIntensity = options.maxIntensity ? null
+    @minCorrect = options.minCorrect ? 1
+    @minIncorrect = options.minIncorrect ? 1
     @minIntensity = options.minIntensity ? null
     @numReversals = options.numReversals ? 0
     @stepsDown = options.stepsDown ? 1
     @stepsUp = options.stepsUp ? 1
+    @streakLength = options.streakLength ? 0
     @trialNum = options.trialNum ? 0
 
     @intensity = TabCAT.Math.clamp(@minIntensity, @intensity, @maxIntensity)
@@ -496,8 +505,8 @@ TabCAT.Task.Staircase = class
   # will change.
   #
   # options:
-  # - noChange: if true, just increment numTrials; don't change the intensity
-  #   or count reversals. Useful for practice mode.
+  # - noChange: if true, just increment trialNum; don't change the intensity,
+  #   count reversals, or keep track of streaks. Useful for practice mode.
   # - ignoreReversals: if true, don't count reversals or include them
   #   in the interpretation we return. Useful for when we want practice mode
   #   to do some staircasing.
@@ -514,7 +523,27 @@ TabCAT.Task.Staircase = class
     if not correct? or options?.noChange
       return interpretation
 
-    change = if correct then -@stepsDown else @stepsUp
+    # handle streak
+    if correct == @lastCorrect
+      @streakLength += 1
+    else
+      @streakLength = 1
+      @lastCorrect = correct
+
+    # find out if we're supposed to change intensity
+    if correct and @streakLength >= @minCorrect
+      change = -@stepsDown
+    else if (not correct) and @streakLength >= @minIncorrect
+      change = @stepsUp
+    else
+      # not a long enough streak
+      return interpretation
+
+    # clear the streak
+    @streakLength = 0
+    @lastCorrect = null
+
+    # calculate actual intensity change
     lastIntensity = @intensity
 
     rawIntensity = lastIntensity + change
@@ -524,6 +553,7 @@ TabCAT.Task.Staircase = class
     if intensityChange
       interpretation.intensityChange = intensityChange
 
+    # handle reversals
     reversal = (
       not options?.ignoreReversals and
       (intensityChange * @lastIntensityChange < 0 or
@@ -533,6 +563,8 @@ TabCAT.Task.Staircase = class
       @numReversals += 1
       interpretation.reversal = true
 
+    # store intensity change
     @lastIntensityChange = intensityChange
 
+    # done!
     return interpretation
