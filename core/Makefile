@@ -50,13 +50,16 @@ clean:
 	rm -f .pushed-*
 	find . -name '*~' -delete
 
+design.json: kanso.json $(KANSO_DEPS) $(MANIFEST)
+	kanso install
+	kanso show > $@
+
 # $(KANSO_DEPS) should include js/tabcat.js
 #
 # It's fine if we can't upload the config; we just want to ensure there is one.
-$(PUSHED): kanso.json $(KANSO_DEPS) $(MANIFEST)
-	kanso install
-	kanso push $(TABCAT_HOST)/tabcat
-	kanso push $(TABCAT_HOST)/tabcat-data
+$(PUSHED): design.json
+	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/core
+	../scripts/force-put $< $(TABCAT_HOST)/tabcat-data/_design/core
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
