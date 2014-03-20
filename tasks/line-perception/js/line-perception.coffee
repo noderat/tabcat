@@ -27,11 +27,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 translations =
   en:
     translation:
-      tap_the_longer_line_html: 'Tap the longer line<br>' +
-        'quickly and accurately.'
+      tap_the_longer_line_html:
+        'Tap the longer line<br>quickly and accurately.'
+      which_is_parallel_html:
+        'Which is parallel to the <span class="blue">blue</span> line?'
   zh:
     translation:  # these are all zh-Hant
       tap_the_longer_line_html: '儘量選出最長的線。<br>越快越好。'
+      which_is_parallel_html: '哪一條線跟<span class="blue">藍</span>色的平行?'
 
 
 # abstract base class for line perception tasks
@@ -277,8 +280,7 @@ LineLengthTask = class extends LinePerceptionTask
     # show practice caption, if required
     if @shouldShowPracticeCaption()
       $practiceCaptionDiv = $('<div></div>', class: 'practiceCaption')
-      $practiceCaptionDiv.html(
-        'Which is parallel to the <span class="blue">blue</span> line?')
+      $practiceCaptionDiv.html($.t('which_is_parallel_html'))
       $trialDiv.append($practiceCaptionDiv)
 
     $trialDiv.append($stimuliDiv)
