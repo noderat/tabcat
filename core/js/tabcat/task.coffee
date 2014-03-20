@@ -45,6 +45,9 @@ DEFAULT_MIN_WAIT = 1000
 # default duration of fade at end of task
 DEFAULT_FADE_DURATION = 200
 
+# default fallback language, for i18n
+DEFAULT_FALLBACK_LNG = 'en'
+
 # DB where design docs and task content is stored
 TABCAT_DB = 'tabcat'
 
@@ -117,6 +120,10 @@ TabCAT.Task.patientHasDevice = (value) ->
 #   uploads.
 # - examinerAdministered: should the examiner have the device before the task
 #   starts?
+# - i18n: a dictionary of options to pass to $.i18n.init(). We automatically
+#         set fallbackLng to 'en', and pass in an empty resStore (to keep
+#         i18next from trying to load resource files that may not be
+#         in the application cache).
 # - name: internal name of task (e.g. line-orientation). By default we
 #   infer this from the filename in the URL, minus extension
 # - timeout: network timeout, in milliseconds (default 3000)
@@ -124,6 +131,13 @@ TabCAT.Task.patientHasDevice = (value) ->
 #   (see TabCAT.Task.trackViewportInEventLog())
 TabCAT.Task.start = _.once((options) ->
   now = $.now()
+
+  # set up i18n
+  i18n_options = _.extend(
+    {fallbackLng: DEFAULT_FALLBACK_LNG, resStore: {}},
+    options?.i18n)
+  $.i18n.init(i18n_options)
+
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()
 
@@ -145,6 +159,7 @@ TabCAT.Task.start = _.once((options) ->
       browser: TabCAT.Task.getBrowserInfo()
       clockLastStarted: TabCAT.Clock.lastStarted()
       encounterId: TabCAT.Encounter.getId()
+      language: $.i18n.lng()
       name: taskName
       patientCode: TabCAT.Encounter.getPatientCode()
       start: (

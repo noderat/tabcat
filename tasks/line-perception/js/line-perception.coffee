@@ -88,7 +88,11 @@ LinePerceptionTask = class
 
   # call this to show the task onscreen
   start: ->
-    TabCAT.Task.start(trackViewport: true)
+    TabCAT.Task.start(
+      i18n:
+        resStore: translations
+      trackViewport: true
+    )
     TabCAT.UI.turnOffBounce()
 
     $.i18n.init(resStore: translations, fallbackLng: 'en')
