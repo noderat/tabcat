@@ -91,7 +91,7 @@ LinePerceptionTask = class
     TabCAT.Task.start(trackViewport: true)
     TabCAT.UI.turnOffBounce()
 
-    $.i18n.init(resStore: translations, fallbackLng: 'en', useCookie: false)
+    $.i18n.init(resStore: translations, fallbackLng: 'en')
 
     $(=>
       TabCAT.UI.requireLandscapeMode($('#task'))
