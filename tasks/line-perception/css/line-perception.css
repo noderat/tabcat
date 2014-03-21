@@ -51,6 +51,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     color: #7799bb;
 }
 
+#task div.practiceCaption .smaller {
+    font-size: 80%;
+}
 
 /* LINE ORIENTATION */
 
