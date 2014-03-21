@@ -31,6 +31,14 @@ translations =
         'Tap the longer line<br>quickly and accurately.'
       which_is_parallel_html:
         'Which is parallel to the <span class="blue">blue</span> line?'
+  # translations by David Marin (fluent/careful but not a native speaker)
+  es:
+    translation:
+      tap_the_longer_line_html: (
+        '<span class="smaller">Haga tap sobre la línea más larga<br>' +
+        'con rapidez y precisión.</span>')
+      which_is_parallel_html:
+        '¿Cuál es paralela a la línea <span class="blue">azul</span>?'
   zh:
     translation:  # these are all zh-Hant
       tap_the_longer_line_html: '儘量選出最長的線。<br>越快越好。'
