@@ -1,0 +1,37 @@
+{
+    "name": "examiner",
+    "version": "0.6.3",
+    "description": "Examiner",
+    "attachments": [
+        "css/flanker.css",
+        "img/flanker/fixation.bmp",
+        "img/flanker/icon.bmp",
+        "img/flanker/lllll.bmp",
+        "img/flanker/llrll.bmp",
+        "img/flanker/rrlrr.bmp",
+        "img/flanker/rrrrr.bmp",
+        "js/examiner.js",
+        "js/flanker.js",
+        "flanker.html"        
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "batteries": {
+            "examiner": {
+                "description": "Examiner Tasks",
+                "tasks": [
+                    "flanker"
+                ]
+            }
+        },
+        "tasks": {
+            "flanker": {
+                "description": "Flanker",
+                "icon": "img/flanker/icon.bmp",
+                "start": "flanker.html"
+            }
+        }
+    }
+}
