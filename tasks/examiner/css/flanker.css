@@ -1,11 +1,4 @@
 
-body {
-  background-color: #ffffff;
-  color: #000000;
-  /* Helvetica is the "everything is okay" font */
-  font-family: Helvetica, Arial, sans-serif;
-  margin: 0;
-}
 
 span.blue {
   color: #0000ff;
@@ -43,6 +36,11 @@ span.red {
   padding: 0.4em;
 }
 
+#instructions img.instructionsArrow {
+  height: 7em;
+  width: 7em;
+}
+
 /* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
 #stimuli div.feedback {
   position: absolute;
@@ -55,12 +53,12 @@ span.red {
   height: 300px;
   z-index: 3;
   text-align: center;
-  font-size: 3em;
+  font-size: 5em;
 }
 
 #stimuli img.arrow {
-  height: 3.1cm;
-  width: 3.1cm;
+  height: 30em;
+  width: 30em;
 }
 
 #stimuli img.center {
@@ -71,24 +69,24 @@ span.red {
 
 /* offset by half the image dimensions */
 #stimuli img.fixation {
-  height: 0.4cm;
-  width: 0.4cm;
-  margin-top: -0.2cm;
-  margin-left: -0.2cm;
+  height: 2em;
+  width: 2em;
+  margin-top: -1em;
+  margin-left: -1em;
   z-index: 2;
 }
 
-/* 1cm above fixation = -(3.1/2 + 1) */
+/* 5em above fixation = -(20/2 + 5) */
 #stimuli img.aboveFixation {
-  margin-top: -2.55cm;
-  margin-left: -1.55cm;
+  margin-top: -20em;
+  margin-left: -15em;
   z-index: 1;
 }
 
-/* 1cm below fixation = -(3.1/2 - 1) */
+/* 5em below fixation = -(20/2 - 5) */
 #stimuli img.belowFixation {
-  margin-top: -0.55cm;
-  margin-left: -1.55cm;
+  margin-top: -10em;
+  margin-left: -15em;
   z-index: 1;
 }
 
@@ -99,12 +97,13 @@ span.red {
   /*background-color: #cccccc;  for debug*/
 }
 
-#responseButtons button {
+#responseButtons .responseButton {
   width: 15%;
-  font-size: 5em;
-  border-radius: 0.5em;
-  padding: 0.4em;
   margin-left: 1em;
   margin-right: 1em;
 }
 
+#responseButtons img.responseArrow {
+  height: 0.8em;
+  
+}

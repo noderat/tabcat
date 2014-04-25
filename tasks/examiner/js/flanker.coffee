@@ -2,84 +2,169 @@
 # The flanker block runs a set number of trials
 # (randomly ordered) and each trial has the following structure:
 # 1) Pre Trial Delay: 0.2 seconds in the real testing and 0.4 seconds
-# in the practice blocks
+#    in the practice blocks
 # 2) Fixation Period: displays fixation stimuli (i.e. the "+" image")
-# for at least 1 second and no more than 3 seconds (random)
+#    for at least 1 second and no more than 3 seconds (random)
 # 3) Stimuli Display: displays the trial stimuli (i.e. the arrows)
-# for 4 seconds or until the subject provides a keyboard response
+#    for 4 seconds or until the subject provides a keyboard response
 # 4) Feedback Display: in practice trials, displays feedback to the subject
-# about their response for 2 seconds
-# 5) Records response
+#    about their response for 2 seconds
 
 translations =
   en:
     translation:
+      begin_html:
+        'Begin'
       practice_html:
-        '<p>You will be shown a series of arrows on the screen, ' +
-        'pointing to the left or to the right. For example:</p>' +
-        '<img class="arrow" src="img/flanker/rrrrr.bmp"/>' +
-        '<br/>or<br/>' +
-        '<img class="arrow" src="img/flanker/llrll.bmp"/>' +
-        '<p>Press the RIGHT button if the CENTER arrow ' +
-        'points to the right.</br>' +
-        'Press the LEFT button if the CENTER arrow ' +
-        'points to the left.</p>' +
-        '<p>Try to respond as quickly and accurately as you can.</p>' +
-        '<p>Try to keep your attention focused on the ' +
-        'cross ("+") at the center of the screen.</p>' +
-        '<p>First we\'ll do a practice trial.</p>' +
-        '<p>Tap the "Begin" button when you are ready to begin.</p>'
+        1: 'You will be shown a series of arrows on the screen, ' +
+           'pointing to the left or to the right. For example:'
+        2: 'or'
+        3: 'Press the RIGHT button if the CENTER arrow ' +
+           'points to the right.<br/>' +
+           'Press the LEFT button if the CENTER arrow ' +
+           'points to the left.'
+        4: 'Try to respond as quickly and accurately as you can.'
+        5: 'Try to keep your attention focused on the ' +
+           'cross ("+") at the center of the screen.'
+        6: 'First we\'ll do a practice trial.'
+        7: 'Tap the "Begin" button when you are ready to begin.'
       additional_practice_html:
-        '<p>You have completed the practice trial. ' +
-        'Let\'s do another practice trial.</p>' +
-        '<p>You will be shown a series of arrows on the screen, ' +
-        'pointing to the left or to the right. For example:</p>' +
-        '<img class="arrow" src="img/flanker/rrrrr.bmp"/>' +
-        '</br>or</br>' +
-        '<img class="arrow" src="img/flanker/llrll.bmp"/>' +
-        '<p>Press the RIGHT button if the CENTER arrow ' +
-        'points to the right.</br>' +
-        'Press the LEFT button if the CENTER arrow ' +
-        'points to the left.</p>' +
-        '<p>Try to respond as quickly and accurately as you can.</p>' +
-        '<p>Try to keep your attention focused on the ' +
-        'cross ("+") at the center of the screen.</p>' +
-        '<p>Tap the "Begin" button when you are ready to begin.</p>'
+        1: 'You have completed the practice trial. ' +
+           'Let\'s do another practice trial.'
+        2: 'You will be shown a series of arrows on the screen, ' +
+           'pointing to the left or to the right. For example:'
+        3: 'or'
+        4: 'Press the RIGHT button if the CENTER arrow ' +
+           'points to the right.</br>' +
+           'Press the LEFT button if the CENTER arrow ' +
+           'points to the left.'
+        5: 'Try to respond as quickly and accurately as you can.'
+        6: 'Try to keep your attention focused on the ' +
+           'cross ("+") at the center of the screen.'
+        7: 'Tap the "Begin" button when you are ready to begin.'
       testing_html:
-        '<p>Now we\'ll move on to the task, the instructions are the same ' +
-        'except you will no longer receive feedback after your responses.</p>' +
-        '<br/>' +
-        '<p>Press the LEFT button if the CENTER arrow ' +
-        'points to the left.</p>' +
-        '<p>Press the RIGHT button if the CENTER arrow ' +
-        'points to the right.</p>' +
-        '<br/>' +
-        '<p>Remember to keep your focus on the center cross ("+") and try to ' +
-        'respond as quickly as possible without making mistakes.</p>' +
-        '<p>Tap the "Begin" button when you are ready to begin.</p>'
-      feedback_correct_html:
-        '<span class="blue">Correct!</span>'
-      feedback_incorrect_html:
-        '<span class="red">Incorrect.</span>'
-      feedback_no_response_html:
-        '<span class="red">No response detected.</span>'
+        1: 'Now we\'ll move on to the task, the instructions are ' +
+           'the same except you will no longer receive feedback ' +
+           'after your responses.</br>'
+        2: 'Press the LEFT button if the CENTER arrow ' +
+           'points to the left.'
+        3: 'Press the RIGHT button if the CENTER arrow ' +
+           'points to the right.</br>'
+        4: 'Remember to keep your focus on the center cross ("+") and try to ' +
+           'respond as quickly as possible without making mistakes.'
+        5: 'Tap the "Begin" button when you are ready to begin.'
+      feedback_correct:
+        'Correct!'
+      feedback_incorrect:
+        'Incorrect.'
+      feedback_no_response:
+        'No response detected.'
+  es:
+    translation:
+      begin_html:
+        'Begin'
+      practice_html:
+        1: 'La pantalla mostrará una serie de flechas que señalan ' +
+           'hacia la izquierda o hacia la derecha. Por ejemplo:'
+        2: 'O bien'
+        3: 'Presione el botón IZQUIERDO si la flecha CENTRAL ' +
+           'señala hacia la izquierda.</br>' +
+           'Presione el botón DERECHO si la flecha CENTRAL ' +
+           'señala hacia la derecha.<br/>'
+        4: 'Intente responder tan rápido y preciso como pueda.'
+        5: 'Intente mantener su atención concentrada en la cruz (“+”) ' +
+           'en el centro de la pantalla.'
+        6: 'Primero haremos una prueba de práctica.'
+        7: 'Presione la BARRA ESPACIADORA para comenzar.'
+      additional_practice_html:
+        1: 'Ha completado la prueba de práctica. ' +
+            'Hagamos otra prueba de práctica.'
+        2: 'La pantalla mostrará una serie de flechas que señalan hacia ' +
+           'la izquierda o hacia la derecha. Por ejemplo:'
+        3: 'O bien'
+        4: 'Presione el botón DERECHO si la flecha CENTRAL ' +
+           'señala hacia la derecha.</br>' +
+           'Presione el botón IZQUIERDO si la flecha CENTRAL ' +
+           'señala hacia la izquierda.'
+        5: 'Intente responder tan rápido y preciso como pueda.'
+        6: 'Intente mantener su atención concentrada en la cruz (“+”) ' +
+           'en el centro de la pantalla.'
+        7: 'Presione la BARRA ESPACIADORA para comenzar.'
+      testing_html:
+        1: 'Ahora pasaremos a la tarea. Las instrucciones son las mismas, ' +
+           'sólo que ya no recibirá comentarios o sugerencias ' +
+           'después de sus respuestas.'
+        2: 'Presione el botón IZQUIERDO si la flecha CENTRAL ' +
+           'señala hacia la izquierda.'
+        3: 'Presione el botón DERECHO si la flecha CENTRAL ' +
+           'señala hacia la derecha.'
+        4: 'Recuerde mantener el foco en la cruz central (“+”) e intente ' +
+           'responder lo más rápido posible sin cometer errores.'
+        5: 'Presione la BARRA ESPACIADORA cuando esté listo para empezar.'
+      feedback_correct:
+        'Correcto!'
+      feedback_incorrect:
+        'Incorrecto.'
+      feedback_no_response:
+        'No responda.'
+  zh:
+    translation:
+      begin_html:
+        '開始'
+      practice_html:
+        1: '您將看到一系列指向左邊或右邊的箭頭。列如：'
+        2: '或'
+        3: '如果中間的箭頭指向右邊，請按右箭頭鍵。</br>' +
+           '如果中間的箭頭指向左邊，請按左箭頭鍵。'
+        4: '請您儘快和準確地完成這項目。'
+        5: '儘量把您的注意力保持集中在屏幕中心的十字架 “＋”。'
+        6: '首先，我們會試一次。'
+        7: '請按空格鍵開始。'
+      additional_practice_html:
+        1: '您以經完成練習測試。我們再練習一下。'
+        2: '您將看到一系列指向左邊或右邊的箭頭。列如：'
+        3: '或'
+        4: '如果中間的箭頭指向右邊，請按右箭頭鍵。</br>' +
+           '如果中間的箭頭指向左邊，請按左箭頭鍵。'
+        5: '請您儘快和準確地完成這項目。'
+        6: '儘量把您的注意力保持集中在屏幕中心的十字架 “＋”。'
+        7: '請按空格鍵開始。'
+      testing_html:
+        1: '現在我們開始測試。說明相同，但是您不會再收到電腦的答覆。'
+        2: '如果中間的箭頭指向右邊，請按右箭頭鍵。'
+        3: '如果中間的箭頭指向左邊，請按左箭頭鍵。'
+        4: '請您記住儘量把您的注意力保持集中在屏幕中心的十字架 “＋”，' +
+           '也請您儘快和準確地完成這項目。'
+        5: '當您準備開始時，請按空格鍵。'
+      feedback_correct:
+        '正確!'
+      feedback_incorrect:
+        '錯誤。'
+      feedback_no_response:
+        '沒有收到任何答覆。'
+
+
 
 TEST_TRIALS = [
-  {'congruent':0, 'arrows':'lllll', 'upDown':'up'  , 'corrAns':'left'},
-  {'congruent':1, 'arrows':'rrrrr', 'upDown':'down', 'corrAns':'right' },
-  {'congruent':0, 'arrows':'llrll', 'upDown':'up'  , 'corrAns':'right' },
+  {'arrows':'lllll', 'upDown':'up'  },
+  {'arrows':'lllll', 'upDown':'down'},
+  {'arrows':'rrrrr', 'upDown':'up'  },
 ]
 
 DEFAULT_TRIALS = [
-  {'congruent':0, 'arrows':'llrll', 'upDown':'up'  , 'corrAns':'right'},
-  {'congruent':1, 'arrows':'lllll', 'upDown':'down', 'corrAns':'left' },
-  {'congruent':0, 'arrows':'rrlrr', 'upDown':'up'  , 'corrAns':'left' },
-  {'congruent':1, 'arrows':'rrrrr', 'upDown':'down', 'corrAns':'right'},
-  {'congruent':0, 'arrows':'llrll', 'upDown':'down', 'corrAns':'right'},
-  {'congruent':1, 'arrows':'lllll', 'upDown':'up'  , 'corrAns':'left' },
-  {'congruent':0, 'arrows':'rrlrr', 'upDown':'down', 'corrAns':'left' },
-  {'congruent':1, 'arrows':'rrrrr', 'upDown':'up'  , 'corrAns':'right'},
+  {'arrows':'lllll', 'upDown':'up'  },
+  {'arrows':'lllll', 'upDown':'down'},
+  {'arrows':'rrrrr', 'upDown':'up'  },
+  {'arrows':'rrrrr', 'upDown':'down'},
+  {'arrows':'llrll', 'upDown':'up'  },
+  {'arrows':'llrll', 'upDown':'down'},
+  {'arrows':'rrlrr', 'upDown':'up'  },
+  {'arrows':'rrlrr', 'upDown':'down'},
 ]
+
+# For each trial, the correct response is the middle arrow,
+# or arrow at index 2 (i.e. for 'llrll', correct answer is 'r')
+CORRECT_ARROW_INDEX = 2
 
 # pre trial delay of 0.4 seconds in practice blocks
 # (time between response and next fixation)
@@ -113,6 +198,14 @@ STIMULI_DISPLAY_DURATION = 4000
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+# return a practice block
+createPracticeBlock = ->
+  Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
+
+# return a real testing block
+createTestingBlock = ->
+  Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
+
 # how many has the patient gotten correct in practice block?
 numCorrectInPractice = 0
 
@@ -122,35 +215,33 @@ numPracticeBlocks = 1
 # have we passed the practice yet?
 practicePassed = ->
   (numPracticeBlocks <= PRACTICE_MAX_BLOCKS \
-    and numCorrectInPractice >= PRACTICE_MIN_CORRECT \
-    and PRACTICE_BLOCK.end())
+    and numCorrectInPractice >= PRACTICE_MIN_CORRECT)
 
 # start off in practice mode
 inPracticeMode = true
+
+# current trial block
+# start off with a practice block
+trialBlock = createPracticeBlock()
+
+# current trial in current trial block
+trialIndex = -1
+
+# current fixation duration for current trial
+fixationDuration = null
 
 # for debugging
 pp = (msg) ->
   $('#debug').append(JSON.stringify(msg)).append('</br>')
 
-
-
-
-PRACTICE_BLOCK = new TrialHandler(1)
-TESTING_BLOCK = new TrialHandler(2)
-
-#PRACTICE_BLOCK.pp()
-#TESTING_BLOCK.pp()
-
 showFixation = ->
   $('#fixation').show()
 
-showArrow = (trial) ->
-  $arrow = $('#' + trial.arrows + '_' + trial.upDown)
-  $arrow.show()
+showArrow = (arrows, upDown) ->
+  $('#' + arrows + '_' + upDown).show()
 
-hideArrow = (trial) ->
-  $arrow = $('#' + trial.arrows + '_' + trial.upDown)
-  $arrow.hide()
+hideArrow = (arrows, upDown) ->
+  $('#' + arrows + '_' + upDown).hide()
 
 clearStimuli = ->
   $stimuli = $('#stimuli')
@@ -159,7 +250,7 @@ clearStimuli = ->
 showBeginButton = ->
   hideResponseButtons()
   $beginButton = $('#beginButton')
-  $beginButton.one('click', handleBeginClick)
+  $beginButton.one('mousedown touchstart', handleBeginClick)
   $beginButton.show()
 
 hideBeginButton = ->
@@ -181,154 +272,239 @@ disableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',true)
 
+responseButtonsEnabled = ->
+  !$('#leftResponseButton').prop('disabled')
+
 showInstructions = (translation) ->
   clearStimuli()
+  $translation = $.t(translation, {returnObjectTrees: true})
+
+  $html = switch translation
+    when 'practice_html', 'additional_practice_html' \
+    then _.map($translation, (value, key) ->
+      if (translation is 'practice_html' and key is '2') or
+      (translation is 'additional_practice_html' and key is '3')
+        '<img class="instructionsArrow" src="img/flanker/rrrrr.png"/>' +
+        '<br/>' + value + '<br/>' +
+        '<img class="instructionsArrow" src="img/flanker/llrll.png"/>'
+      else
+        '<p>' + value + '</p>'
+    )
+    when 'testing_html' then _.map($translation, (value, key) ->
+      '<p>' + value + '</p>'
+    )
+    else []
+
   $instructions = $('#instructions')
-  $instructions.html("<p></p><p></p>" + $.t(translation))
+  $instructions.html("<p></p><p></p>" + $html.join(''))
   $instructions.show()
 
 showFeedback = (translation) ->
   clearStimuli()
+  $translation = $.t(translation)
+  
+  $html = switch translation
+    when 'feedback_correct' \
+      then '<span class="blue">' + $translation + '</span>'
+    when 'feedback_incorrect', 'feedback_no_response' \
+      then '<span class="red">' + $translation + '</span>'
+    else translation
+
   $feedback = $('#feedback')
-  $feedback.html($.t(translation))
+  $feedback.html($html)
   $feedback.show()
 
 hideFeedback = ->
-  $feedback = $('#feedback')
-  $feedback.hide()
+  $('#feedback').hide()
 
+# is user response correct
+isCorrect = (arrows, response) ->
+  arrows.charAt(CORRECT_ARROW_INDEX) is response
+  
+# can assume arrows are congruent if the middle
+# two characters are the same
+isCongruent = (arrows) ->
+  return arrows.charAt(CORRECT_ARROW_INDEX) is \
+    arrows.charAt(CORRECT_ARROW_INDEX+1)
 
 # heart of the task
 showTrial = (trial) ->
   deferred = new $.Deferred()
   
   # resolved when user responds
-  deferred.done((event, trial, fixationDuration, responseTime) ->
+  deferred.done((event, responseTime) ->
+    disableResponseButtons()
     clearStimuli()
-    response = event.target.value.toLowerCase()
-    correct = trial.corrAns is response
     
-    state =
-      response: response
-      trial: trial
-      fixationDuration: fixationDuration
-      responseTime: responseTime
+    response = event.delegateTarget.value
+    correct = isCorrect(trial.arrows, response)
       
+    # record meaning of user response event
     interpretation =
+      response: response
+      responseTime: responseTime
       correct: correct
-      
+
+    TabCAT.Task.logEvent(getTaskState(), event, interpretation)
+
     if inPracticeMode
-      state.practiceMode = true
-      state.block = "practiceBlock" + numPracticeBlocks
       if correct
         numCorrectInPractice += 1
-        showFeedback 'feedback_correct_html'
+        showFeedback 'feedback_correct'
       else
-        showFeedback 'feedback_incorrect_html'
+        showFeedback 'feedback_incorrect'
       
       TabCAT.UI.wait(PRACTICE_FEEDBACK_DISPLAY_DURATION).then(->
         hideFeedback()
-        if practicePassed()
-          inPracticeMode = false
-          showInstructions 'testing_html'
-          showBeginButton()
-        else
-          TabCAT.UI.wait(PRACTICE_PRE_TRIAL_DELAY).then(->
-            next()
-          )
+        TabCAT.UI.wait(PRACTICE_PRE_TRIAL_DELAY).then(->
+          next()
+        )
       )
     else
       TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
         next()
       )
-      state.block = "testingBlock"
-    
-    TabCAT.Task.logEvent(state, event, interpretation)
   )
   
   # fails when user does not respond (i.e. trial times out)
-  deferred.fail((trial, fixationDuration) ->
-    hideArrow(trial)
-
-    state =
-      response: "none"
-      trial: trial
-      fixationDuration: fixationDuration
-      responseTime: 0
-
+  deferred.fail(->
+    disableResponseButtons()
+    hideArrow(trial.arrows, trial.upDown)
+      
+    # record meaning of the event
     interpretation =
+      response: null
+      responseTime: 0
       correct: false
 
+    TabCAT.Task.logEvent(getTaskState(), "timeout", interpretation)
+
     if inPracticeMode
-      showFeedback 'feedback_no_response_html'
+      showFeedback 'feedback_no_response'
       TabCAT.UI.wait(PRACTICE_FEEDBACK_DISPLAY_DURATION).then(->
         hideFeedback()
         next()
       )
-      state.block = "practiceBlock" + numPracticeBlocks
     else
-      state.block = "testingBlock"
       next()
-              
-    TabCAT.Task.logEvent(state, "timeout", interpretation)
   )
 
   # start showing the trial
   fixationDuration = _.random(FIXATION_PERIOD_MIN, FIXATION_PERIOD_MAX)
+  pp(fixationDuration)
   showFixation()
+  
   TabCAT.UI.wait(fixationDuration).then(->
     enableResponseButtons()
     trialStartTime = $.now()
-    showArrow(trial)
+    showArrow(trial.arrows, trial.upDown)
     
-    # if user response, then resolve
+    # if user responds, then resolve
     $('#leftResponseButton, #rightResponseButton') \
     .one('mousedown touchstart', (event) ->
       responseTime = $.now() - trialStartTime
       event.preventDefault()
       event.stopPropagation()
-      disableResponseButtons()
-      deferred.resolve(event, trial, fixationDuration, responseTime)
+      deferred.resolve(event, responseTime)
     )
 
     # if trial times out, then reject
     TabCAT.UI.wait(STIMULI_DISPLAY_DURATION).then(->
-      deferred.reject(trial, fixationDuration)
+      deferred.reject()
     )
    
   )
 
-# primary task handler that controls the entire flow
+# primary task handler that controls entire flow of task
 next = ->
-  if inPracticeMode
-    if PRACTICE_BLOCK.hasNext()
-      showTrial(PRACTICE_BLOCK.next())
-    else
-      if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
+  if trialIndex < trialBlock.length-1 # more trials in block
+    trialIndex += 1
+    showTrial(trialBlock[trialIndex])
+  else # end of block
+    if inPracticeMode
+      if practicePassed() # passed practice so go to real testing
+        inPracticeMode = false
+        trialBlock = createTestingBlock()
+        trialIndex = -1
+        showInstructions 'testing_html'
+        showBeginButton()
+      else if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
         TabCAT.Task.finish()
       else # start new practice block
-        PRACTICE_BLOCK.reset()
+        trialBlock = createPracticeBlock()
+        trialIndex = -1
         numCorrectInPractice = 0
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
         showBeginButton()
-  else
-    if TESTING_BLOCK.hasNext()
-      showTrial(TESTING_BLOCK.next())
-    else # end of testing block
+    else
       TabCAT.Task.finish()
 
 handleBeginClick = (event) ->
+  event.preventDefault()
+  event.stopPropagation()
   clearStimuli()
   showResponseButtons()
   disableResponseButtons()
   next()
 
-# INSTRUCTIONS
+# summary of current stimulus
+getStimuli = ->
+  trial = trialBlock[trialIndex]
+  
+  stimuli =
+    arrows: trial.arrows
+    upDown: trial.upDown
+    congruent: isCongruent(trial.arrows)
+    fixationDuration: fixationDuration
+
+  return stimuli
+
+# summary of the current state of the task
+getTaskState = ->
+  state =
+    trialNum: trialIndex
+    stimuli: getStimuli()
+    
+  if inPracticeMode
+    state.practiceMode = true
+    state.trialBlock = "practiceBlock" + numPracticeBlocks
+  else
+    state.trialBlock = "testingBlock"
+
+  return state
+
+# log stray taps only when awaiting a response
+handleStrayTouchStart = (event) ->
+  event.preventDefault()
+  if responseButtonsEnabled()
+    TabCAT.Task.logEvent(getTaskState(), event, "stray")
+
+# load initial screen
 showStartScreen = ->
-  clearStimuli()
   showInstructions 'practice_html'
+  $('#beginButton').html($.t('begin_html'))
   showBeginButton()
+
+# load the stimuli imgs
+loadStimuli = ->
+  # create the arrow imgs
+  $imgs = _.map(DEFAULT_TRIALS, (trial) ->
+    '<img id="' + trial.arrows + '_' + \
+      (if trial.upDown is 'up' then 'up' else 'down') + \
+      '" src="img/flanker/' + trial.arrows + '.png" ' + \
+      'style="display:none" ' + \
+      'class="arrow center ' + \
+      (if trial.upDown is 'up' then 'aboveFixation"' else 'belowFixation"') + \
+      '>')
+  
+  # create fixation img
+  $imgs = $imgs.join('') + '<img id="fixation" ' + \
+    'src="img/flanker/fixation.png" ' + \
+    'class="center fixation" ' +\
+    'style="display:none">'
+
+  $('#stimuli').append($imgs)
 
 # INITIALIZATION
 @initTask = ->
@@ -337,15 +513,20 @@ showStartScreen = ->
       resStore: translations
     trackViewport: true
   )
+  
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
   
   $(->
+    $task = $('#task')
     $rectangle = $('#rectangle')
 
+    $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
     
+    loadStimuli()
+    disableResponseButtons()
     showStartScreen()
   )
 

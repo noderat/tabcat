@@ -4,66 +4,39 @@
     this.Examiner = {};
   }
 
-  Examiner.generateTrials = function(trialList, numReps) {
+  Examiner.generateTrials = function(trialList, numReps, method) {
+    var allIndices, i, trialListIndices;
     if (numReps == null) {
       numReps = 1;
     } else {
       numReps = Math.max(1, numReps);
     }
-    return {
-      constructor: function(numReps, trialList) {
-        this.numReps = numReps != null ? numReps : 1;
-        this.trialList = trialList != null ? trialList : TEST_TRIALS;
-        this.numReps = Math.max(1, this.numReps);
-        this.trialListLength = this.trialList.length;
-        return this.reset();
-      },
-      reset: function() {
-        this.currentRepNum = 0;
-        this.currentTrialNum = -1;
-        this.currentTrial = false;
-        this.finished = false;
-        return this.sequenceIndices = this.createSequence();
-      },
-      createSequence: function() {
-        var i, trialListIndices, _i, _ref, _results;
-        trialListIndices = _.range(this.trialListLength);
+    if (method == null) {
+      method = 'random';
+    }
+    if (method === 'random') {
+      trialListIndices = _.range(trialList.length);
+      allIndices = _.flatten((function() {
+        var _i, _results;
         _results = [];
-        for (i = _i = 0, _ref = this.numReps; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        for (i = _i = 0; 0 <= numReps ? _i < numReps : _i > numReps; i = 0 <= numReps ? ++_i : --_i) {
           _results.push(_.shuffle(trialListIndices));
         }
         return _results;
-      },
-      hasNext: function() {
-        return !this.end();
-      },
-      end: function() {
-        return this.currentRepNum === (this.numReps - 1) && this.currentTrialNum === (this.trialListLength - 1);
-      },
-      next: function() {
-        var index;
-        this.currentTrialNum += 1;
-        if (this.currentTrialNum === this.trialListLength) {
-          this.currentTrialNum = 0;
-          this.currentRepNum += 1;
+      })());
+      return _.map(allIndices, function(index) {
+        return trialList[index];
+      });
+    } else if (method === 'sequential') {
+      return _.flatten((function() {
+        var _i, _results;
+        _results = [];
+        for (i = _i = 0; 0 <= numReps ? _i < numReps : _i > numReps; i = 0 <= numReps ? ++_i : --_i) {
+          _results.push(trialList);
         }
-        if (this.currentRepNum >= this.numReps) {
-          this.finished = true;
-        }
-        if (this.finished) {
-          return this.currentTrial = false;
-        } else {
-          index = this.sequenceIndices[this.currentRepNum][this.currentTrialNum];
-          return this.currentTrial = this.trialList[index];
-        }
-      },
-      getSequence: function() {
-        return this.sequenceIndices;
-      },
-      pp: function() {
-        return pp(this.sequenceIndices);
-      }
-    };
+        return _results;
+      })());
+    }
   };
 
 }).call(this);

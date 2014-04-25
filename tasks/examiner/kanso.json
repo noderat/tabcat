@@ -3,13 +3,16 @@
     "version": "0.6.3",
     "description": "Examiner",
     "attachments": [
+        "css/examiner.css",
         "css/flanker.css",
-        "img/flanker/fixation.bmp",
-        "img/flanker/icon.bmp",
-        "img/flanker/lllll.bmp",
-        "img/flanker/llrll.bmp",
-        "img/flanker/rrlrr.bmp",
-        "img/flanker/rrrrr.bmp",
+        "img/flanker/fixation.png",
+        "img/flanker/icon.png",
+        "img/flanker/left.png",
+        "img/flanker/lllll.png",
+        "img/flanker/llrll.png",
+        "img/flanker/right.png",
+        "img/flanker/rrlrr.png",
+        "img/flanker/rrrrr.png",
         "js/examiner.js",
         "js/flanker.js",
         "flanker.html"        
@@ -29,7 +32,7 @@
         "tasks": {
             "flanker": {
                 "description": "Flanker",
-                "icon": "img/flanker/icon.bmp",
+                "icon": "img/flanker/icon.png",
                 "start": "flanker.html"
             }
         }
