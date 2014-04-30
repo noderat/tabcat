@@ -151,7 +151,7 @@
 
   PRACTICE_FEEDBACK_DISPLAY_DURATION = 2000;
 
-  PRACTICE_MIN_CORRECT = 2;
+  PRACTICE_MIN_CORRECT = 6;
 
   PRACTICE_MAX_BLOCKS = 3;
 
@@ -166,11 +166,11 @@
   ASPECT_RATIO = 4 / 3;
 
   createPracticeBlock = function() {
-    return Examiner.generateTrials(TEST_TRIALS, 1, 'sequential');
+    return Examiner.generateTrials(DEFAULT_TRIALS, 1);
   };
 
   createTestingBlock = function() {
-    return Examiner.generateTrials(TEST_TRIALS, 2, 'sequential');
+    return Examiner.generateTrials(DEFAULT_TRIALS, 2);
   };
 
   numCorrectInPractice = 0;
@@ -367,7 +367,6 @@
       }
     });
     fixationDuration = _.random(FIXATION_PERIOD_MIN, FIXATION_PERIOD_MAX);
-    pp(fixationDuration);
     showFixation();
     return TabCAT.UI.wait(fixationDuration).then(function() {
       var trialStartTime;

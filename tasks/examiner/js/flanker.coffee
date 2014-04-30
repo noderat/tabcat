@@ -177,7 +177,7 @@ PRACTICE_FEEDBACK_DISPLAY_DURATION = 2000
 # If the subject gets 6 out of 8 trials correct in a practice trial then
 # skip ahead to the real testing trial. If the subject fails to get
 # 6 out of 8 in 3 practice blocks then end the task.
-PRACTICE_MIN_CORRECT = 2
+PRACTICE_MIN_CORRECT = 6
 
 # Max number of practice blocks to try before aborting task
 PRACTICE_MAX_BLOCKS = 3
@@ -200,11 +200,13 @@ ASPECT_RATIO = 4/3
 
 # return a practice block
 createPracticeBlock = ->
-  Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
+  Examiner.generateTrials(DEFAULT_TRIALS, 1)
+  #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential') for testing
 
 # return a real testing block
 createTestingBlock = ->
-  Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
+  Examiner.generateTrials(DEFAULT_TRIALS, 2)
+  #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential') for testing
 
 # how many has the patient gotten correct in practice block?
 numCorrectInPractice = 0
@@ -391,7 +393,6 @@ showTrial = (trial) ->
 
   # start showing the trial
   fixationDuration = _.random(FIXATION_PERIOD_MIN, FIXATION_PERIOD_MAX)
-  pp(fixationDuration)
   showFixation()
   
   TabCAT.UI.wait(fixationDuration).then(->
