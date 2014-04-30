@@ -29,7 +29,6 @@ patient = require('./patient')
 adhocLineTasksReport = require('./adhoc/line-tasks-report')
 adhocStargazerReport = require('./adhoc/stargazer-report')
 adhocFlankerDetailReport = require('./adhoc/flanker-detail-report')
-adhocFlankerSummaryReport = require('./adhoc/flanker-summary-report')
 
 # stitch together data from the patient view
 dumpList = (head, req) ->
@@ -71,7 +70,6 @@ exports.lists =
   'adhoc-line-tasks-report': adhocLineTasksReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list
   'adhoc-flanker-detail-report': adhocFlankerDetailReport.list
-  'adhoc-flanker-summary-report': adhocFlankerSummaryReport.list
 
 exports.validate_doc_update = validateDocUpdate
 
