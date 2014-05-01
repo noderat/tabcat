@@ -3,6 +3,23 @@ _ = require('js/vendor/underscore')._
 csv = require('js/vendor/ucsv')
 patient = require('../patient')
 
+CSV_HEADER = [
+  'version',
+  'patientCode',
+  'encounterNum',
+  'triaBlock',
+  'trialNum',
+  'trialCongruent',
+  'trialArrows',
+  'trialUpDown',
+  'trialCorrResp',
+  'trialFixation',
+  'respValue',
+  'respCorr',
+  'respRt',
+  'taskTime'
+]
+
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
 
@@ -47,23 +64,8 @@ exports.list = (head, req) ->
       "attachment; filename=\"flanker-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
-  csvHeader = [
-    'version',
-    'patientCode',
-    'encounterNum',
-    'triaBlock',
-    'trialNum',
-    'trialCongruent',
-    'trialArrows',
-    'trialUpDown',
-    'trialCorrResp',
-    'trialFixation',
-    'respValue',
-    'respCorr',
-    'respRt',
-    'taskTime'
-  ]
 
-  send(csv.arrayToCsv([csvHeader]))
+
+  send(csv.arrayToCsv([CSV_HEADER]))
 
   patient.iterate(getRow, patientHandler)

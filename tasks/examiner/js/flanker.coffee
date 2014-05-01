@@ -201,12 +201,12 @@ ASPECT_RATIO = 4/3
 # return a practice block
 createPracticeBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 1)
-  #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential') for testing
+  #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
 
 # return a real testing block
 createTestingBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 2)
-  #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential') for testing
+  #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
 
 # how many has the patient gotten correct in practice block?
 numCorrectInPractice = 0
@@ -274,6 +274,7 @@ disableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',true)
 
+# method not currently used
 responseButtonsEnabled = ->
   !$('#leftResponseButton').prop('disabled')
 
@@ -473,13 +474,15 @@ getTaskState = ->
   else
     state.trialBlock = "testingBlock"
 
+  if($('#instructions').is(':visible'))
+    state.instructions = true
+
   return state
 
-# log stray taps only when awaiting a response
+# log stray taps
 handleStrayTouchStart = (event) ->
   event.preventDefault()
-  if responseButtonsEnabled()
-    TabCAT.Task.logEvent(getTaskState(), event, "stray")
+  TabCAT.Task.logEvent(getTaskState(), event)
 
 # load initial screen
 showStartScreen = ->
