@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen">
+  <head>
+    <title>Flanker</title>
+    <meta charset="utf-8" />
+    <!-- turn off zooming -->
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="../core/img/favicon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/examiner.css">
+    <link rel="stylesheet" href="css/flanker.css">
+  </head>
+  <body class="fullscreen unselectable">
+    <div id="task" class="fullscreen">
+      <div id="debug" class="debug"></div>
+      <div id="rectangle">  
+        <div id="stimuli">
+          <div id="instructions" style="display:none"></div>
+		  <div id="feedback" class="feedback" style="display:none"></div>
+        </div>
+        <div id="responseButtons">
+          <button id="beginButton" style="display:none"></button>
+          <button id="leftResponseButton" class="responseButton" value="l" style="display:none">
+            <img class="responseArrow" src="img/flanker/left.png">
+          </button>
+          <button id="rightResponseButton" class="responseButton" value="r" style="display:none">
+            <img class="responseArrow" src="img/flanker/right.png">
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/examiner.js"></script>
+    <script src="js/flanker.js"></script>
+    <script>initTask();</script>
+  </body>
+</html>
