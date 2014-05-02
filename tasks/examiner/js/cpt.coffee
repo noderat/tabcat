@@ -30,8 +30,8 @@ translations =
       practice_html:
         1: 'You will be presented with different objects ' +
            'on the screen.<br/>' +
-           'If this 5-POINTED STAR is presented on the screen, ' +
-           'press the left arrow key.<br/>' +
+           'If this 5-POINTED STAR is presented on the screen,</br>' +
+           'tap the button at the bottom of the screen.<br/>' +
            'If any other shape is presented, do not press any key.'
         2: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
@@ -42,8 +42,8 @@ translations =
            'Let\'s do another practice trial.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
-           'If the 5-POINTED STAR is presented on the screen, ' +
-           'press the left arrow key.<br/>' +
+           'If the 5-POINTED STAR is presented on the screen,<br/>' +
+           'tap the button at the bottom of the screen.<br/>' +
            'If any other shape is presented, do not press any key.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
@@ -53,7 +53,7 @@ translations =
            'Let\'s move on to the task.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
-           'If the 5-POINTED STAR is presented on the screen, ' +
+           'If the 5-POINTED STAR is presented on the screen,</br>' +
            'press the left arrow key.<br/>' +
            'If any other shape is presented, do not press any key.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
@@ -87,7 +87,7 @@ PRACTICE_NUM_TARGETS = 15
 # If subjects gets 16/20 trials correct in a practice trial
 # then skip ahead to real testing. If subjects fails get this
 # number correct in 3 practice blocks then end the task
-PRACTICE_MIN_CORRECT = 1
+PRACTICE_MIN_CORRECT = 16
 
 # Max number of practice blocks to try before aborting task
 PRACTICE_MAX_BLOCKS = 3
@@ -113,14 +113,55 @@ REAL_TRIALS = [
   {'stimulus': 'nontarget5'}
 ].concat(({'stimulus': 'target'} for i in [0...REAL_NUM_TARGETS]))
 
+
+# for debugging
+pp = (msg) ->
+  $debug = $('#debug')
+  if Object.prototype.toString.call(msg) is '[object Array]'
+    $debug.append('</br>' + JSON.stringify(val) for val in msg)
+  else
+    $debug.append(JSON.stringify(msg,null,4)).append('</br>')
+
+# create a generic block with sequencing checked by cptSequenceCheck()
+createBlock = (trials, reps) ->
+  cptTrials = null
+  cptSequenceCheckPassed = false
+  
+  until cptSequenceCheckPassed
+    cptTrials = Examiner.generateTrials(trials, reps)
+    cptSequenceCheckPassed = cptSequenceCheck(cptTrials)
+
+  return cptTrials
+
+# utility method to validate sequence ordering of trials
+# trials should have no sequences of targets longer than 10
+# and no sequences of nontargets longer than 2
+cptSequenceCheck = (trials) ->
+  targetSequence = 0
+  nontargetSequence = 0
+  
+  for trial in trials
+    if trial.stimulus is 'target'
+      targetSequence += 1
+      nontargetSequence = 0
+      if targetSequence > 10
+        return false
+    else
+      nontargetSequence += 1
+      targetSequence = 0
+      if nontargetSequence > 2
+        return false
+
+  return true
+
 # return a practice block
 createPracticeBlock = ->
-  Examiner.generateTrials(PRACTICE_TRIALS, 1)
+  createBlock(PRACTICE_TRIALS, 1)
   #Examiner.generateTrials(PRACTICE_TRIALS, 1, 'sequential')
 
 # return a real testing block
 createTestingBlock = ->
-  Examiner.generateTrials(REAL_TRIALS, 1)
+  createBlock(REAL_TRIALS, 4)
   #Examiner.generateTrials(REAL_TRIALS, 1, 'sequential')
 
 # how many has the patient gotten correct in practice block?
@@ -143,10 +184,6 @@ trialBlock = createPracticeBlock()
 
 # current trial in current trial block
 trialIndex = -1
-
-# for debugging
-pp = (msg) ->
-  $('#debug').append(JSON.stringify(msg)).append('</br>')
 
 clearStimuli = ->
   $stimuli = $('#stimuli')
@@ -219,8 +256,14 @@ showTrial = (trial) ->
   enableResponseButton()
   showStimulus(trial)
   
-  # only allow this much time to respond
+ 
+  # All responses are recorded after the display of the stimulus.
+  # The first response after the display of the stimulus is recorded
+  # in terms of the response time. Any additional responses prior to the
+  # next stimulus display are recorded and result in an "incorrect"
+  # response score for the trial.
   registerResponses = (
+    # only allow this much time to respond
     TabCAT.UI.wait(RESPONSE_TIME_LIMIT).then(->
       disableResponseButton()
   
@@ -240,7 +283,7 @@ showTrial = (trial) ->
           correct = false
       else # more than one response for this trial
         correct = false # more than one response means automatically incorrect
-        responseTime = _.last(responses)
+        responseTime = _.first(responses)
         extraResponses = responses.toString()
       
       if inPracticeMode
@@ -299,7 +342,9 @@ handleBeginClick = (event) ->
   clearStimuli()
   showResponseButton()
   disableResponseButton()
-  TabCAT.UI.wait(BEFORE_BLOCK_DELAY).then(->
+  
+  # wait before display of initial trial in the block
+  TabCAT.UI.wait(BEFORE_BLOCK_DELAY + INTER_STIMULUS_DELAY).then(->
     next()
   )
 

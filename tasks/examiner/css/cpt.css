@@ -23,6 +23,10 @@ button:disabled {
   color: #cccccc;
 }
 
+#responseButton {
+  width: 15%;
+}
+
 /* debug mode */
 #task div {
   border: 0px solid;
