@@ -1,0 +1,71 @@
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  /* Helvetica is the "everything is okay" font */
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+button {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: #ffffff;
+  border-radius: 0.7em;
+  background-color: #cccccc;
+  padding: 0.3em;
+  color: #000000;
+  font-size: 5em;
+}
+
+/* debug mode */
+#task div {
+  border: 0px solid;
+}
+
+#debug {
+  position: absolute;
+  left: 0;
+}
+
+#stimuli {
+  position: relative;
+  height: 85%;
+  /*background-color: #eeeeee; for debug */
+}
+
+#instructions {
+  width: 60%;
+  margin: auto;
+  text-align: center;
+  font-size: 2.3em;
+}
+
+#instructions p {
+  margin: 0;
+  padding: 0.4em;
+}
+
+#instructions img.stimuli {
+  height: 7em;
+  width: 7em;
+}
+
+/* offset by half the image dimensions */
+#stimuli img.target, img.nontarget {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 30em;
+  width: 30em;
+  margin-top: -15em;
+  margin-left: -15em;
+  z-index: 2;
+}
+
+#responseButtons {
+  height: 15%;
+  text-align: center;
+  width: 100%;
+  /*background-color: #cccccc;  for debug*/
+}

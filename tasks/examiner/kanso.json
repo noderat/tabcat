@@ -3,8 +3,30 @@
     "version": "0.6.3",
     "description": "Examiner",
     "attachments": [
+        "cpt.html",
+        "css/cpt.css",
         "css/examiner.css",
         "css/flanker.css",
+        "flanker.html",
+        "img/cpt/a/nt1.png",
+        "img/cpt/a/nt2.png",
+        "img/cpt/a/nt3.png",
+        "img/cpt/a/nt4.png",
+        "img/cpt/a/nt5.png",
+        "img/cpt/a/target.png",        
+        "img/cpt/b/nt1.png",
+        "img/cpt/b/nt2.png",
+        "img/cpt/b/nt3.png",
+        "img/cpt/b/nt4.png",
+        "img/cpt/b/nt5.png",
+        "img/cpt/b/target.png",        
+        "img/cpt/c/nt1.png",
+        "img/cpt/c/nt2.png",
+        "img/cpt/c/nt3.png",
+        "img/cpt/c/nt4.png",
+        "img/cpt/c/nt5.png",
+        "img/cpt/c/target.png",        
+        "img/cpt/icon.png",
         "img/flanker/fixation.png",
         "img/flanker/icon.png",
         "img/flanker/left.png",
@@ -13,9 +35,9 @@
         "img/flanker/right.png",
         "img/flanker/rrlrr.png",
         "img/flanker/rrrrr.png",
+        "js/cpt.js",
         "js/examiner.js",
-        "js/flanker.js",
-        "flanker.html"        
+        "js/flanker.js"
     ],
     "dependencies": {
         "attachments": null
@@ -23,13 +45,19 @@
     "tabcat": {
         "batteries": {
             "examiner": {
-                "description": "Examiner Tasks",
+                "description": "EXAMINER",
                 "tasks": [
+                    "cpt",
                     "flanker"
                 ]
             }
         },
         "tasks": {
+            "cpt": {
+                "description": "CPT",
+                "icon": "img/cpt/icon.png",
+                "start": "cpt.html"
+            },
             "flanker": {
                 "description": "Flanker",
                 "icon": "img/flanker/icon.png",

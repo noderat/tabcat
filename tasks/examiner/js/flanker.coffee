@@ -524,7 +524,7 @@ loadStimuli = ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
-
+    
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
