@@ -26,7 +26,7 @@ translations =
   en:
     translation:
       begin_html:
-        'Begin!!'
+        'Begin'
       practice_html:
         1: 'You will be presented with different objects ' +
            'on the screen.<br/>' +
@@ -61,7 +61,7 @@ translations =
         4: 'Tap the "Begin" button to begin.'
 
 # task version (one of a, b, c)
-CPT_VERSION = 'b'
+CPT_VERSION = 'a'
 
 # time to display the stimulus
 STIMULUS_DISPLAY_DURATION = 750
@@ -69,6 +69,7 @@ STIMULUS_DISPLAY_DURATION = 750
 # time between stimulus erasure and next trial display
 INTER_STIMULUS_DELAY = 1500
 
+# duration before trial times out
 TRIAL_TIMEOUT = STIMULUS_DISPLAY_DURATION + INTER_STIMULUS_DELAY
 
 # one second delay before each block
@@ -77,16 +78,16 @@ BEFORE_BLOCK_DELAY = 1000
 # duration of time responses are allowed beginning from stimulus display
 RESPONSE_TIME_LIMIT = 2000
 
-# number of targets during real testing
+# number of targets during real testing (20)
 REAL_NUM_TARGETS = 20
 
-# number of targets during practice
+# number of targets during practice (15)
 PRACTICE_NUM_TARGETS = 15
 
 # If subjects gets 16/20 trials correct in a practice trial
 # then skip ahead to real testing. If subjects fails get this
 # number correct in 3 practice blocks then end the task
-PRACTICE_MIN_CORRECT = 16
+PRACTICE_MIN_CORRECT = 1
 
 # Max number of practice blocks to try before aborting task
 PRACTICE_MAX_BLOCKS = 3
@@ -94,6 +95,7 @@ PRACTICE_MAX_BLOCKS = 3
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+# total of 20 trials (5 non targets, 15 targets)
 PRACTICE_TRIALS = [
   {'stimulus': 'nontarget1'},
   {'stimulus': 'nontarget2'},
@@ -102,6 +104,7 @@ PRACTICE_TRIALS = [
   {'stimulus': 'nontarget5'}
 ].concat(({'stimulus': 'target'} for i in [0...PRACTICE_NUM_TARGETS]))
 
+# total of 25 trials (5 non targets, 20 targets)
 REAL_TRIALS = [
   {'stimulus': 'nontarget1'},
   {'stimulus': 'nontarget2'},
@@ -112,13 +115,13 @@ REAL_TRIALS = [
 
 # return a practice block
 createPracticeBlock = ->
-  #Examiner.generateTrials(PRACTICE_TRIALS, 1)
-  Examiner.generateTrials(PRACTICE_TRIALS, 1, 'sequential')
+  Examiner.generateTrials(PRACTICE_TRIALS, 1)
+  #Examiner.generateTrials(PRACTICE_TRIALS, 1, 'sequential')
 
 # return a real testing block
 createTestingBlock = ->
-  #Examiner.generateTrials(REAL_TRIALS, 1)
-  Examiner.generateTrials(REAL_TRIALS, 1, 'sequential')
+  Examiner.generateTrials(REAL_TRIALS, 1)
+  #Examiner.generateTrials(REAL_TRIALS, 1, 'sequential')
 
 # how many has the patient gotten correct in practice block?
 numCorrectInPractice = 0
@@ -221,7 +224,7 @@ showTrial = (trial) ->
     TabCAT.UI.wait(RESPONSE_TIME_LIMIT).then(->
       disableResponseButton()
   
-      # once disabled can analyze responses and log them
+      # once disabled can analyze and log responses
       extraResponses = 'none'
       if responses.length is 0
         responseTime = 0
@@ -240,6 +243,10 @@ showTrial = (trial) ->
         responseTime = _.last(responses)
         extraResponses = responses.toString()
       
+      if inPracticeMode
+        if correct
+          numCorrectInPractice += 1
+          
       interpretation =
         correct: correct
         responseTime: responseTime
@@ -257,12 +264,7 @@ showTrial = (trial) ->
   )
   
   $.when(registerResponses, trialDone).done((interpretation) ->
-    pp(interpretation)
     TabCAT.Task.logEvent(getTaskState(), 'trialComplete', interpretation)
-  
-    if inPracticeMode
-      if interpretation?correct
-        numCorrectInPractice += 1
     next()
   )
 
@@ -297,7 +299,9 @@ handleBeginClick = (event) ->
   clearStimuli()
   showResponseButton()
   disableResponseButton()
-  next()
+  TabCAT.UI.wait(BEFORE_BLOCK_DELAY).then(->
+    next()
+  )
 
 # summary of current stimulus
 getStimuli = ->
@@ -311,6 +315,7 @@ getStimuli = ->
 # summary of the current state of the task
 getTaskState = ->
   state =
+    version: CPT_VERSION
     trialNum: trialIndex
     stimuli: getStimuli()
     
@@ -328,7 +333,6 @@ getTaskState = ->
 # log stray taps
 handleStrayTouchStart = (event) ->
   event.preventDefault()
-  pp(getTaskState())
   TabCAT.Task.logEvent(getTaskState(), event)
 
 # load initial screen
@@ -339,14 +343,14 @@ showStartScreen = ->
 
 # load the stimuli imgs
 loadStimuli = ->
-  # create the arrow imgs
+  # create the non target imgs
   $imgs = _.map([1,2,3,4,5], (num) ->
     '<img id="nontarget' + num + '" ' + \
       'src="img/cpt/' + CPT_VERSION + '/nt' + num + '.png" ' + \
       'style="display:none" ' + \
       'class="nontarget">')
   
-  # create target img
+  # create the target img
   $imgs = $imgs.join('') + '<img id="target" ' + \
     'src="img/cpt/' + CPT_VERSION + '/target.png" ' + \
     'class="target" ' +\
