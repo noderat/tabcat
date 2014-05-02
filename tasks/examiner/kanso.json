@@ -7,6 +7,7 @@
         "css/cpt.css",
         "css/examiner.css",
         "css/flanker.css",
+        "css/setshifting.css",        
         "flanker.html",
         "img/cpt/a/nt1.png",
         "img/cpt/a/nt2.png",
@@ -35,9 +36,16 @@
         "img/flanker/right.png",
         "img/flanker/rrlrr.png",
         "img/flanker/rrrrr.png",
+        "img/setshifting/icon.png",
+        "img/setshifting/rect_blue.png",
+        "img/setshifting/rect_red.png",
+        "img/setshifting/tri_blue.png",
+        "img/setshifting/tri_red.png",                        
         "js/cpt.js",
         "js/examiner.js",
-        "js/flanker.js"
+        "js/flanker.js",
+        "js/setshifting.js",
+        "setshifting.html"                
     ],
     "dependencies": {
         "attachments": null
@@ -48,7 +56,8 @@
                 "description": "EXAMINER",
                 "tasks": [
                     "cpt",
-                    "flanker"
+                    "flanker",
+                    "setshifting"
                 ]
             }
         },
@@ -62,7 +71,12 @@
                 "description": "Flanker",
                 "icon": "img/flanker/icon.png",
                 "start": "flanker.html"
-            }
+            },
+            "setshifting": {
+                "description": "Set Shifting",
+                "icon": "img/setshifting/icon.png",
+                "start": "setshifting.html"
+            }            
         }
     }
 }

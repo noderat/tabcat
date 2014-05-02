@@ -1,0 +1,151 @@
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  /* Helvetica is the "everything is okay" font */
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+button {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: #ffffff;
+  border-radius: 0.7em;
+  background-color: #666666;
+  padding: 0.3em;
+  color: #ffffff;
+  font-size: 5em;
+}
+
+button:disabled {
+  border-color: #cccccc;
+  color: #cccccc;
+}
+
+.practiceStim {
+  line-height: 7em; 
+  height: 7em;
+}
+
+.practiceStimLeft {
+  height: 7em;
+  float: left;
+}
+
+.practiceStimRight {
+  height: 7em;
+  float: right;
+}
+
+.practiceStimText {
+  font-size: 2em;
+}
+
+span.blue {
+  color: #0000ff;
+}
+
+span.red {
+  color: #ff0000;
+}
+
+/* debug mode */
+#task div {
+  border: 1px solid;
+}
+
+#debug {
+  position: absolute;
+  left: 0;
+}
+
+#stimuli {
+  position: relative;
+  height: 85%;
+  /*background-color: #eeeeee; for debug */
+}
+
+#instructions {
+  width: 60%;
+  margin: auto;
+  text-align: center;
+  font-size: 2.3em;
+}
+
+#instructions p {
+  margin: 0;
+  padding: 0.4em;
+}
+
+#instructions img.instructionsArrow {
+  height: 7em;
+  width: 7em;
+}
+
+/* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
+#stimuli div.feedback {
+  position: absolute;
+  left: 0; 
+  right: 0;
+  top: 0; 
+  bottom: 0;
+  margin: auto;
+  line-height: 300px; 
+  height: 300px;
+  z-index: 3;
+  text-align: center;
+  font-size: 5em;
+}
+
+#stimuli img.arrow {
+  height: 30em;
+  width: 30em;
+}
+
+#stimuli img.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+/* offset by half the image dimensions */
+#stimuli img.fixation {
+  height: 2em;
+  width: 2em;
+  margin-top: -1em;
+  margin-left: -1em;
+  z-index: 2;
+}
+
+/* 5em above fixation = -(20/2 + 5) */
+#stimuli img.aboveFixation {
+  margin-top: -20em;
+  margin-left: -15em;
+  z-index: 1;
+}
+
+/* 5em below fixation = -(20/2 - 5) */
+#stimuli img.belowFixation {
+  margin-top: -10em;
+  margin-left: -15em;
+  z-index: 1;
+}
+
+#responseButtons {
+  height: 15%;
+  text-align: center;
+  width: 100%;
+  /*background-color: #cccccc;  for debug*/
+}
+
+#responseButtons .responseButton {
+  width: 15%;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+#responseButtons img.responseArrow {
+  height: 0.8em;
+  
+}
