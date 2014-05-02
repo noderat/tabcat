@@ -15,7 +15,7 @@
         "img/flanker/rrrrr.png",
         "js/examiner.js",
         "js/flanker.js",
-        "flanker.html"        
+        "flanker.html"
     ],
     "dependencies": {
         "attachments": null
@@ -23,7 +23,7 @@
     "tabcat": {
         "batteries": {
             "examiner": {
-                "description": "Examiner Tasks",
+                "description": "EXAMINER",
                 "tasks": [
                     "flanker"
                 ]
