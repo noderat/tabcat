@@ -7,7 +7,7 @@ body {
   margin: 0;
 }
 
-button {
+.progressButton {
   border-width: 0.2em;
   border-style: solid;
   border-color: #ffffff;
@@ -18,28 +18,66 @@ button {
   font-size: 5em;
 }
 
-button:disabled {
-  border-color: #cccccc;
-  color: #cccccc;
+.progressButtonDiv {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 5%;
 }
 
-.practiceStim {
-  line-height: 7em; 
-  height: 7em;
+.fixationDiv {
+  width: 100%;
+  height: 4em;
+  line-height: 4em;
+  font-size: 5em;
+  text-align: center;
+  position: absolute;
+  top: 30%;
 }
 
-.practiceStimLeft {
-  height: 7em;
+.targetDiv {
+  width: 100%;
+  position: absolute;
+  top: 30%;
+  text-align: center;
+}
+
+.targetImg {
+  height: 20em;
+  width: 20em;
+}
+
+.responseDiv {
+  width: 100%;
+  position: absolute;
+  bottom: 20%;
+  z-index: 1;  
+}
+
+.responseImg {
+  height: 20em;
+  width: 20em;
+}
+
+.responseLeftImg {
   float: left;
+  margin-left: 20%;
 }
 
-.practiceStimRight {
-  height: 7em;
+.responseRightImg {
   float: right;
+  margin-right: 15%;
+  z-index: 1;
 }
 
-.practiceStimText {
-  font-size: 2em;
+.cueDiv {
+  width: 100%;
+  height: 4em;
+  line-height: 4em;
+  font-size: 5em;
+  text-align: center;
+  position: absolute;
+  bottom: 20%;
 }
 
 span.blue {
@@ -66,86 +104,19 @@ span.red {
   /*background-color: #eeeeee; for debug */
 }
 
-#instructions {
+.instructions {
   width: 60%;
   margin: auto;
   text-align: center;
   font-size: 2.3em;
 }
 
-#instructions p {
+.instructions p {
   margin: 0;
   padding: 0.4em;
 }
 
-#instructions img.instructionsArrow {
+.instructions img.instructionsImg {
   height: 7em;
   width: 7em;
-}
-
-/* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
-#stimuli div.feedback {
-  position: absolute;
-  left: 0; 
-  right: 0;
-  top: 0; 
-  bottom: 0;
-  margin: auto;
-  line-height: 300px; 
-  height: 300px;
-  z-index: 3;
-  text-align: center;
-  font-size: 5em;
-}
-
-#stimuli img.arrow {
-  height: 30em;
-  width: 30em;
-}
-
-#stimuli img.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-}
-
-/* offset by half the image dimensions */
-#stimuli img.fixation {
-  height: 2em;
-  width: 2em;
-  margin-top: -1em;
-  margin-left: -1em;
-  z-index: 2;
-}
-
-/* 5em above fixation = -(20/2 + 5) */
-#stimuli img.aboveFixation {
-  margin-top: -20em;
-  margin-left: -15em;
-  z-index: 1;
-}
-
-/* 5em below fixation = -(20/2 - 5) */
-#stimuli img.belowFixation {
-  margin-top: -10em;
-  margin-left: -15em;
-  z-index: 1;
-}
-
-#responseButtons {
-  height: 15%;
-  text-align: center;
-  width: 100%;
-  /*background-color: #cccccc;  for debug*/
-}
-
-#responseButtons .responseButton {
-  width: 15%;
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
-#responseButtons img.responseArrow {
-  height: 0.8em;
-  
 }

@@ -1,12 +1,22 @@
 
+# The Set Shifting block runs a set number of trials (randomly ordered)
+# and each trial has the following structure:
+#   1) Initial Delay: 800 ms (delay at beginning of trial)
+#   2) Cue Duration: 800 ms (time condition cue is displayed before fixation)
+#   3) Fixation Delay: 200 ms (time to display the fixation cue)
+#   4) target image: 5 seconds (or until response)
+#   5) Feedback During Practice: 2 seconds
+
 translations =
   en:
     translation:
       begin_html:
         'Begin'
+      next_html:
+        'Next'
       practice_html:
         1: 'This is a matching task.</br>' +
-           'You will see an object in the center of the screen, and a word' +
+           'You will see an object in the center of the screen, and a word ' +
            'at the bottom of the screen.  The word will be SHAPE or COLOR.' +
            'The word at the bottom of the screen will tell you how to match' +
            'the object in the center to one of the objects in the corners.'
@@ -17,32 +27,29 @@ translations =
       practice2_html:
         1: 'Try to respond quickly and accurately, but if you make ' +
            'a mistake just keep going. We\'ll try some practice trials first.'
-        2: 'Tap the "Begin" button to begin'
+        2: 'Tap the "Begin" button to begin.'
       additional_practice_html:
         1: 'You have completed the practice trial. ' +
-           'Let\'s do another practice trial.'
-        2: 'You will be shown a series of arrows on the screen, ' +
-           'pointing to the left or to the right. For example:'
-        3: 'or'
-        4: 'Press the RIGHT button if the CENTER arrow ' +
-           'points to the right.</br>' +
-           'Press the LEFT button if the CENTER arrow ' +
-           'points to the left.'
-        5: 'Try to respond as quickly and accurately as you can.'
-        6: 'Try to keep your attention focused on the ' +
-           'cross ("+") at the center of the screen.'
-        7: 'Tap the "Begin" button when you are ready to begin.'
+           'Let\'s do another practice trial. The instrucctions are the same.'
+        2: 'When you have to match by COLOR, you should push the ' +
+           'left button for red and the right button for blue.'
+        3: 'LEFT = RED'
+        4: 'RIGHT = BLUE'
+        5: 'When you have to match by SHAPE, you should push the left ' +
+           'button for triangle and the right button for rectangle. '
+        6: 'LEFT = TRIANGLE'
+        7: 'RIGHT = RECTANGLE'
+        8: 'Tap the "Begin" button to begin.'
       testing_html:
-        1: 'Now we\'ll move on to the task, the instructions are ' +
-           'the same except you will no longer receive feedback ' +
-           'after your responses.</br>'
-        2: 'Press the LEFT button if the CENTER arrow ' +
-           'points to the left.'
-        3: 'Press the RIGHT button if the CENTER arrow ' +
-           'points to the right.</br>'
-        4: 'Remember to keep your focus on the center cross ("+") and try to ' +
-           'respond as quickly as possible without making mistakes.'
-        5: 'Tap the "Begin" button when you are ready to begin.'
+        1: 'Now let\'s move on to the task, the instructions are the same ' +
+           'but you will no longer receive feedback after your responses.'
+        2: 'When you have to match by COLOR, you should push the LEFT ' +
+           'button for RED and the RIGHT button for BLUE.'
+        3: 'When you have to match by SHAPE, you should push the LEFT ' +
+           'button for TRIANGLE and the RIGHT button for RECTANGLE.'
+        4: 'Try to respond quickly and accurately, but if you make ' +
+           'a mistake just keep going.'
+        5: 'Tap the "Begin" button to begin.'
       color_cue:
         'COLOR'
       feedback_correct:
@@ -55,67 +62,175 @@ translations =
         'SHAPE'
 
 
-TEST_TRIALS = [
-  {'arrows':'lllll', 'upDown':'up'  },
-  {'arrows':'lllll', 'upDown':'down'},
-  {'arrows':'rrrrr', 'upDown':'up'  },
-]
+# for debugging
+pp = (msg) ->
+  $debug = $('#debug')
+  if Object.prototype.toString.call(msg) is '[object Array]'
+    $debug.append('</br>' + JSON.stringify(val) for val in msg)
+  else
+    $debug.append(JSON.stringify(msg,null,4)).append('</br>')
 
-DEFAULT_TRIALS = [
-  {'arrows':'lllll', 'upDown':'up'  },
-  {'arrows':'lllll', 'upDown':'down'},
-  {'arrows':'rrrrr', 'upDown':'up'  },
-  {'arrows':'rrrrr', 'upDown':'down'},
-  {'arrows':'llrll', 'upDown':'up'  },
-  {'arrows':'llrll', 'upDown':'down'},
-  {'arrows':'rrlrr', 'upDown':'up'  },
-  {'arrows':'rrlrr', 'upDown':'down'},
-]
+# one second delay before each block
+BEFORE_BLOCK_DELAY = 1000
 
-# For each trial, the correct response is the middle arrow,
-# or arrow at index 2 (i.e. for 'llrll', correct answer is 'r')
-CORRECT_ARROW_INDEX = 2
+# duration of delay at beginning of trial
+PRE_TRIAL_DELAY = 800
 
-# pre trial delay of 0.4 seconds in practice blocks
-# (time between response and next fixation)
-PRACTICE_PRE_TRIAL_DELAY = 400
+# condition cue is the word 'color' or 'shape'
+# length of time the condition cue is displayed before fixation
+CUE_DURATION = 800
 
-# In practice trials, feedback is displayed to subject
-# about their responses for 2 seconds
-PRACTICE_FEEDBACK_DISPLAY_DURATION = 2000
+# length of time to display the fixation cue
+FIXATION_DURATION = 200
 
-# If the subject gets 6 out of 8 trials correct in a practice trial then
-# skip ahead to the real testing trial. If the subject fails to get
-# 6 out of 8 in 3 practice blocks then end the task.
-PRACTICE_MIN_CORRECT = 6
+# length of time to display the target
+TARGET_DURATION = 800
+
+# time the target is displayed from start of trial
+TARGET_DISPLAY_TIME = PRE_TRIAL_DELAY + CUE_DURATION + FIXATION_DURATION
+
+# trial times out 5 seconds after target display
+TRIAL_TIMEOUT = TARGET_DISPLAY_TIME + 5000
+
+FEEDBACK_DURATION = 2000
+
+# If subjects gets 12/16 trials correct in a practice trial
+# then skip ahead to real testing. If subjects fails get this
+# number correct in 3 practice blocks then end the task
+PRACTICE_MIN_CORRECT = 12
 
 # Max number of practice blocks to try before aborting task
 PRACTICE_MAX_BLOCKS = 3
 
-# Displays fixation stimuli for at least 1 second and
-# no more than 3 seconds (random)
-FIXATION_PERIOD_MIN = 1000
-FIXATION_PERIOD_MAX = 3000
-
-# pre trial delay of 0.2 seconds in real testing
-# (time between response and next fixation)
-PRE_TRIAL_DELAY = 200
-
-# trial stimuli is displayed for 4 seconds or until subject
-# provides a keyboard response
-STIMULI_DISPLAY_DURATION = 4000
-
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+FIXATION = 'x'
+
+# possible responses
+RED_TRIANGLE   = {'color': 'red' , 'shape': 'triangle'}
+BLUE_RECTANGLE = {'color': 'blue', 'shape': 'rectangle'}
+
+# possible targets
+RED_RECTANGLE = {'color': 'red' , 'shape': 'rectangle'}
+BLUE_TRIANGLE = {'color': 'blue', 'shape': 'triangle'}
+
+# possible cues
+COLOR_CUE = 'color'
+SHAPE_CUE = 'shape'
+
+COLOR_DATA_TEMPLATE = [
+  {'condition': 'color', 'cue': COLOR_CUE, 'target': RED_RECTANGLE},
+  {'condition': 'color', 'cue': COLOR_CUE, 'target': BLUE_TRIANGLE},
+]
+
+SHAPE_DATA_TEMPLATE = [
+  {'condition': 'shape', 'cue': SHAPE_CUE, 'target': RED_RECTANGLE},
+  {'condition': 'shape', 'cue': SHAPE_CUE, 'target': BLUE_TRIANGLE},
+]
+
+SHIFT_DATA_TEMPLATE = [
+  {'condition': 'shift', 'cue': COLOR_CUE, 'target': RED_RECTANGLE},
+  {'condition': 'shift', 'cue': SHAPE_CUE, 'target': BLUE_TRIANGLE},
+  {'condition': 'shift', 'cue': SHAPE_CUE, 'target': RED_RECTANGLE},
+  {'condition': 'shift', 'cue': SHAPE_CUE, 'target': BLUE_TRIANGLE},
+]
+
+# helper
+objectsEqual = (obj1, obj2) ->
+  return (obj1.color is obj2.color and obj1.shape is obj2.shape)
+
+# create a generic trial block
+#   colorFirst - whether to start with color trials (1=true; 0=false)
+#   colorReps - number of times to repeat COLOR_DATA_TEMPLATE
+#   shapeReps - number of times to repeat SHAPE_DATA_TEMPLATE
+#   shiftReps - number of times to repeat SHIFT_DATA_TEMPLATE
+createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
+  colorTrials = []
+  colorCheckPassed = false
+  shapeTrials = []
+  shapeCheckPassed = false
+  shiftTrials = []
+  shiftCheckPassed = false
+  
+  if not colorFirst?
+    colorFirst = _.random(0,1)
+  
+  if colorReps?
+    colorTrialsInitial = _.flatten(COLOR_DATA_TEMPLATE for i in [0...colorReps])
+    until colorCheckPassed
+      colorTrials = Examiner.generateTrials(colorTrialsInitial, 1)
+      colorCheckPassed = colorAndShapeCheck(colorTrials)
+
+  if shapeReps?
+    shapeTrialsInitial = _.flatten(SHAPE_DATA_TEMPLATE for i in [0...shapeReps])
+    until shapeCheckPassed
+      shapeTrials = Examiner.generateTrials(shapeTrialsInitial, 1)
+      shapeCheckPassed = colorAndShapeCheck(shapeTrials)
+
+  if shiftReps?
+    shiftTrialsInitial = _.flatten(SHIFT_DATA_TEMPLATE for i in [0...shiftReps])
+    until shiftCheckPassed
+      shiftTrials = Examiner.generateTrials(shiftTrialsInitial, 1)
+      shiftCheckPassed = shiftCheck(shiftTrials)
+
+  finalTrials = []
+  if colorFirst
+    finalTrials = colorTrials.concat(shapeTrials)
+  else
+    finalTrials = shapeTrials.concat(colorTrials)
+
+  if shiftReps?
+    finalTrials = finalTrials.concat(shiftTrials)
+    
+  return finalTrials
+
+# check to make sure the correct response is not the same response
+# more than 4 times in a row for color and shape conditions
+colorAndShapeCheck = (trials) ->
+  respCount = 1
+  lastTrial = _.first(trials)
+
+  for trial in _.rest(trials)
+    if lastTrial.target.color is trial.target.color
+      respCount += 1
+    else
+      respCount = 1
+    if respCount > 4
+      return false
+    lastTrial = trial
+
+  return true
+
+# check that the number of cue shifted trials is between 40% and 60%
+# and there are no runs of cues > 4
+shiftCheck = (trials) ->
+  shiftCount = 0
+  lastTrial = _.first(trials)
+  cueCount = 1
+  
+  for trial in _.rest(trials)
+    if lastTrial.cue is trial.cue
+      cueCount += 1
+    else
+      shiftCount += 1
+      cueCount = 1
+    if cueCount > 4
+      return false
+    lastTrial = trial
+  
+  shiftPercentage = shiftCount / trials.length
+  return (shiftPercentage >= 0.45 and shiftPercentage <= 0.55)
+
+
 # return a practice block
 createPracticeBlock = ->
-  Examiner.generateTrials(DEFAULT_TRIALS, 1)
+  createBlock(1, 4, 4)
   #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
 
 # return a real testing block
 createTestingBlock = ->
-  Examiner.generateTrials(DEFAULT_TRIALS, 2)
+  createBlock(1, 10, 10, 16)
   #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
 
 # how many has the patient gotten correct in practice block?
@@ -134,121 +249,21 @@ inPracticeMode = true
 
 # current trial block
 # start off with a practice block
-trialBlock = createPracticeBlock()
+trialBlock = createTestingBlock()
 
 # current trial in current trial block
 trialIndex = -1
 
-# current fixation duration for current trial
-fixationDuration = null
-
-# for debugging
-pp = (msg) ->
-  $('#debug').append(JSON.stringify(msg)).append('</br>')
-
-showFixation = ->
-  $('#fixation').show()
-
-showArrow = (arrows, upDown) ->
-  $('#' + arrows + '_' + upDown).show()
-
-hideArrow = (arrows, upDown) ->
-  $('#' + arrows + '_' + upDown).hide()
-
-clearStimuli = ->
-  $stimuli = $('#stimuli')
-  $stimuli.children().hide()
-
-showBeginButton = ->
-  hideResponseButtons()
-  $beginButton = $('#beginButton')
-  $beginButton.one('mousedown touchstart', handleBeginClick)
-  $beginButton.show()
-
-hideBeginButton = ->
-  $('#beginButton').hide()
-    
-showResponseButtons = ->
-  hideBeginButton()
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.show()
-
-hideResponseButtons = ->
-  $('#leftResponseButton, #rightResponseButton').hide()
-
-enableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',false)
-  
-disableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',true)
-
-# method not currently used
-responseButtonsEnabled = ->
-  !$('#leftResponseButton').prop('disabled')
-
-showInstructions = (translation) ->
-  clearStimuli()
-  $translation = $.t(translation, {returnObjectTrees: true})
-
-  $html = switch translation
-    when 'practice_html', 'practice2_html'
-    then _.map($translation, (value, key) ->
-      if (translation is 'practice_html' and key is '1') or
-      (translation is 'practice2_html' and key is '2')
-        value + '<br/>' +
-        '<img class="instructionsArrow" src="img/setshifting/rect_red.png"/>'
-      else
-        '<p>' + value + '</p>'
-    )
-    when 'testing_html' then _.map($translation, (value, key) ->
-      '<p>' + value + '</p>'
-    )
-    else []
-
-  $html = $html.join('')
-    
-  switch translation
-    when 'practice_html', 'practice2_html'
-    then $html = $html +
-      '<div class="practiceStim">' +
-      '<img class="practiceStimLeft" src="img/setshifting/tri_red.png"/>' +
-      '<img class="practiceStimRight" src="img/setshifting/rect_blue.png"/>' +
-      '<span class="practiceStimText">' + $.t('shape_cue') + '</span>' +
-      '</div>'
-
-  $instructions = $('#instructions')
-  $instructions.html("<p></p><p></p>" + $html)
-  $instructions.show()
+#pp(createTestingBlock())
 
 showFeedback = (translation) ->
-  clearStimuli()
   $translation = $.t(translation)
-  
-  $html = switch translation
-    when 'feedback_correct' \
-      then '<span class="blue">' + $translation + '</span>'
-    when 'feedback_incorrect', 'feedback_no_response' \
-      then '<span class="red">' + $translation + '</span>'
-    else translation
-
-  $feedback = $('#feedback')
-  $feedback.html($html)
-  $feedback.show()
+  $fixationDiv = $('.fixationDiv')
+  $fixationDiv.empty()
+  $fixationDiv.html($translation)
 
 hideFeedback = ->
-  $('#feedback').hide()
-
-# is user response correct
-isCorrect = (arrows, response) ->
-  arrows.charAt(CORRECT_ARROW_INDEX) is response
-  
-# can assume arrows are congruent if the middle
-# two characters are the same
-isCongruent = (arrows) ->
-  return arrows.charAt(CORRECT_ARROW_INDEX) is \
-    arrows.charAt(CORRECT_ARROW_INDEX+1)
+  $('.fixationDiv').empty()
 
 # heart of the task
 showTrial = (trial) ->
@@ -256,11 +271,16 @@ showTrial = (trial) ->
   
   # resolved when user responds
   deferred.done((event, responseTime) ->
-    disableResponseButtons()
-    clearStimuli()
+    hideTarget()
+    hideCue()
     
-    response = event.delegateTarget.value
-    correct = isCorrect(trial.arrows, response)
+    response = event.delegateTarget.alt
+    if response is 'l'
+      response = RED_TRIANGLE
+    else
+      response = BLUE_TRIANGLE
+    
+    correct = trial.target[trial.cue] is response[trial.cue]
       
     # record meaning of user response event
     interpretation =
@@ -277,9 +297,9 @@ showTrial = (trial) ->
       else
         showFeedback 'feedback_incorrect'
       
-      TabCAT.UI.wait(PRACTICE_FEEDBACK_DISPLAY_DURATION).then(->
+      TabCAT.UI.wait(FEEDBACK_DURATION).then(->
         hideFeedback()
-        TabCAT.UI.wait(PRACTICE_PRE_TRIAL_DELAY).then(->
+        TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
           next()
         )
       )
@@ -291,9 +311,9 @@ showTrial = (trial) ->
   
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
-    disableResponseButtons()
-    hideArrow(trial.arrows, trial.upDown)
-      
+    hideTarget()
+    hideCue()
+    
     # record meaning of the event
     interpretation =
       response: null
@@ -304,7 +324,7 @@ showTrial = (trial) ->
 
     if inPracticeMode
       showFeedback 'feedback_no_response'
-      TabCAT.UI.wait(PRACTICE_FEEDBACK_DISPLAY_DURATION).then(->
+      TabCAT.UI.wait(FEEDBACK_DURATION).then(->
         hideFeedback()
         next()
       )
@@ -313,28 +333,36 @@ showTrial = (trial) ->
   )
 
   # start showing the trial
-  fixationDuration = _.random(FIXATION_PERIOD_MIN, FIXATION_PERIOD_MAX)
-  showFixation()
   
-  TabCAT.UI.wait(fixationDuration).then(->
-    enableResponseButtons()
-    trialStartTime = $.now()
-    showArrow(trial.arrows, trial.upDown)
-    
-    # if user responds, then resolve
-    $('#leftResponseButton, #rightResponseButton') \
-    .one('mousedown touchstart', (event) ->
-      responseTime = $.now() - trialStartTime
-      event.preventDefault()
-      event.stopPropagation()
-      deferred.resolve(event, responseTime)
+  TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
+    if trial.cue = COLOR_CUE
+      showCue('color_cue')
+    else
+      showCue('shape_cue')
+    TabCAT.UI.wait(CUE_DURATION).then(->
+      showFixation()
+      TabCAT.UI.wait(FIXATION_DURATION).then(->
+        hideFixation()
+        showTarget(trial.target)
+        # if user responds, then resolve
+        $('.responseLeftImg, .responseRightImg') \
+        .one('mousedown touchstart', (event) ->
+          responseTime = 0
+          event.preventDefault()
+          event.stopPropagation()
+          deferred.resolve(event, responseTime)
+        )
+        
+        TabCAT.UI.wait(TARGET_DURATION).then(->
+          #hideTarget()
+        )
+        
+        # if trial times out, then reject
+        TabCAT.UI.wait(TRIAL_TIMEOUT).then(->
+          deferred.reject()
+        )
+      )
     )
-
-    # if trial times out, then reject
-    TabCAT.UI.wait(STIMULI_DISPLAY_DURATION).then(->
-      deferred.reject()
-    )
-   
   )
 
 # primary task handler that controls entire flow of task
@@ -349,7 +377,6 @@ next = ->
         trialBlock = createTestingBlock()
         trialIndex = -1
         showInstructions 'testing_html'
-        showBeginButton()
       else if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
         TabCAT.Task.finish()
       else # start new practice block
@@ -358,27 +385,17 @@ next = ->
         numCorrectInPractice = 0
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
-        showBeginButton()
     else
       TabCAT.Task.finish()
-
-handleBeginClick = (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  clearStimuli()
-  showResponseButtons()
-  disableResponseButtons()
-  next()
 
 # summary of current stimulus
 getStimuli = ->
   trial = trialBlock[trialIndex]
   
   stimuli =
-    arrows: trial.arrows
-    upDown: trial.upDown
-    congruent: isCongruent(trial.arrows)
-    fixationDuration: fixationDuration
+    condition: trial?.condition
+    cue: trial?.cue
+    target: trial?.target
 
   return stimuli
 
@@ -394,41 +411,146 @@ getTaskState = ->
   else
     state.trialBlock = "testingBlock"
 
-  if($('#instructions').is(':visible'))
+  if($('.instructions').is(':visible'))
     state.instructions = true
 
   return state
+
+makeFixationDiv = ->
+  $fixationDiv = $('<div></div>', class: 'fixationDiv')
+
+showFixation = ->
+  $fixationDiv = $('.fixationDiv')
+  $fixationDiv.empty()
+  $fixationDiv.text(FIXATION)
+
+hideFixation = ->
+  $('.fixationDiv').empty()
+
+makeTargetDiv = ->
+  $targetDiv = $('<div></div>', class: 'targetDiv')
+
+showTarget = (obj) ->
+  $targetDiv = $('.targetDiv')
+  if objectsEqual(obj, RED_RECTANGLE)
+    $img = $('<img>',
+      class: 'targetImg',
+      src: 'img/setshifting/rect_red.png')
+  else
+    $img = $('<img>',
+      class: 'targetImg',
+      src: 'img/setshifting/tri_blue.png')
+  $targetDiv.append($img)
+
+hideTarget = ->
+  $('.targetDiv').empty()
+
+
 
 # log stray taps
 handleStrayTouchStart = (event) ->
   event.preventDefault()
   TabCAT.Task.logEvent(getTaskState(), event)
 
-# load initial screen
-showStartScreen = ->
+handleBeginButton = (event) ->
+  event.preventDefault()
+  event.stopPropagation()
+  $rectangle = $('#rectangle')
+  $rectangle.empty()
+  $rectangle.append(makeResponseDiv)
+  $rectangle.append(makeCueDiv)
+  $rectangle.append(makeFixationDiv)
+  $rectangle.append(makeTargetDiv)
+  next()
+
+handleNextButton = (event) ->
+  event.preventDefault()
+  event.stopPropagation()
   showInstructions 'practice2_html'
-  $('#beginButton').html($.t('begin_html'))
-  showBeginButton()
 
-# load the stimuli imgs
-loadStimuli = ->
-  # create the arrow imgs
-  $imgs = _.map(DEFAULT_TRIALS, (trial) ->
-    '<img id="' + trial.arrows + '_' + \
-      (if trial.upDown is 'up' then 'up' else 'down') + \
-      '" src="img/flanker/' + trial.arrows + '.png" ' + \
-      'style="display:none" ' + \
-      'class="arrow center ' + \
-      (if trial.upDown is 'up' then 'aboveFixation"' else 'belowFixation"') + \
-      '>')
+makeProgressButton = (translation, handler) ->
+  $button = $('<button></button>', class: 'progressButton')
+  $button.html($.t(translation))
+  $button.one('mousedown touchstart', handler)
+  $buttonDiv = $('<div></div>', class: 'progressButtonDiv')
+  $buttonDiv.html($button)
+
+makeResponseDiv = ->
+  $responseDiv = $('<div></div>', class: 'responseDiv')
+  $imgLeft = $('<img>',
+    alt: 'l',
+    class: 'responseImg responseLeftImg',
+    src: 'img/setshifting/tri_red.png')
+  $imgRight = $('<img>',
+    alt: 'r',
+    class: 'responseImg responseRightImg',
+    src: 'img/setshifting/rect_blue.png')
   
-  # create fixation img
-  $imgs = $imgs.join('') + '<img id="fixation" ' + \
-    'src="img/flanker/fixation.png" ' + \
-    'class="center fixation" ' +\
-    'style="display:none">'
+  $responseDiv.append($imgLeft).append($imgRight)
 
-  $('#stimuli').append($imgs)
+makeCueDiv = ->
+  $cueDiv = $('<div></div>', class: 'cueDiv')
+  
+showCue = (translation) ->
+  $('.cueDiv').text($.t(translation))
+
+hideCue = ->
+  $('.cueDiv').empty()
+
+showInstructions = (translation) ->
+  $rectangle = $('#rectangle')
+  $rectangle.empty()
+  $instructions = $('<div></div>', class: 'instructions')
+
+  $translation = $.t(translation, {returnObjectTrees: true})
+
+  $html = switch translation
+    when 'practice_html', 'practice2_html'
+    then _.map($translation, (value, key) ->
+      if (translation is 'practice_html' and key is '1') or
+      (translation is 'practice2_html' and key is '2')
+        value + '<br/>' +
+        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>'
+      else
+        '<p>' + value + '</p>'
+    )
+    when 'additional_practice_html'
+    then _.map($translation, (value, key) ->
+      if key is '3' or key is '6'
+        '<p><span style="float:left; margin-left: 10%">' + value + '</span>'
+      else if key is '4' or key is '7'
+        '<span style="float:right; margin-right: 10%">' +
+        value + '</span></p><br/>'
+      else if key is '5'
+        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>' +
+        '<p>' + value + '</p>'
+      else
+        '<p>' + value + '</p>'
+    )
+    when 'testing_html'
+    then _.map($translation, (value, key) ->
+      if key is '4'
+        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>' +
+        '<p>' + value + '</p>'
+      else
+        '<p>' + value + '</p>'
+    )
+    else []
+
+  $html = $html.join('')
+    
+  $instructions.append("<p></p><p></p>" + $html)
+  $instructions.appendTo($rectangle)
+  
+  $rectangle.append(makeResponseDiv)
+  $rectangle.append(makeCueDiv)
+  showCue('shape_cue')
+  
+  switch translation
+    when 'practice_html'
+      $rectangle.append(makeProgressButton('next_html', handleNextButton))
+    when 'practice2_html', 'additional_practice_html', 'testing_html'
+      $rectangle.append(makeProgressButton('begin_html', handleBeginButton))
 
 # INITIALIZATION
 @initTask = ->
@@ -449,8 +571,6 @@ loadStimuli = ->
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
     
-    loadStimuli()
-    disableResponseButtons()
-    showStartScreen()
+    showInstructions 'practice_html'
   )
 
