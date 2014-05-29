@@ -20,6 +20,7 @@
                     "js/enter-password.js",
                     "js/login.js",
                     "js/return-to-examiner.js",
+                    "js/tabcat-console.js",
                     "js/tasks.js",
                     "login.html",
                     "return-to-examiner.html",

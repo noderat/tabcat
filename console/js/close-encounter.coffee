@@ -97,7 +97,7 @@ setUpForm = ->
 @initCloseEncounterPage = ->
   TabCAT.UI.requireUserAndEncounter()
 
-  $(TabCAT.UI.updateStatusBar)
+  $(TabCAT.Console.updateStatusBar)
 
   $(setUpForm)
 

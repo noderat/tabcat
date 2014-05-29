@@ -64,10 +64,10 @@ submitEnterPasswordForm = (event) ->
     $loginForm = $('#loginForm')
     $loginForm.find('input[name=email]').val(user)
 
-    if TabCAT.UI.inSandbox() and user is SANDBOX_USER
+    if TabCAT.Console.inSandbox() and user is SANDBOX_USER
       $loginForm.find('input[name=password]').val(SANDBOX_PASSWORD)
 
     $loginForm.on('submit', submitEnterPasswordForm)
     $loginForm.find('button').removeAttr('disabled')
   )
-  $(TabCAT.UI.updateStatusBar)
+  $(TabCAT.Console.updateStatusBar)

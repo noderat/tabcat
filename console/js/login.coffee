@@ -58,7 +58,7 @@ submitLoginForm = (event) ->
   $.i18n.init()  # parse ?setLng=...
 
   # Make sure page gets bookmarked with sandbox icon and title.
-  if TabCAT.UI.inSandbox()
+  if TabCAT.Console.inSandbox()
     $('title').text(SANDBOX_TITLE)
     $('link[rel=apple-touch-icon]').attr('href', SANDBOX_ICON)
 

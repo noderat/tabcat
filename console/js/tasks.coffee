@@ -144,7 +144,7 @@ showTasks = ->
   TabCAT.UI.enableFastClick()
 
   $(->
-    TabCAT.UI.updateStatusBar()
+    TabCAT.Console.updateStatusBar()
     showTasks()
     $('#closeEncounter').on('click', ->
       window.location = 'close-encounter.html'

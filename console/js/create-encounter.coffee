@@ -60,7 +60,7 @@ submitCreateEncounterForm = (event) ->
   $(->
     $form = $('#createEncounter').find('form')
 
-    if TabCAT.UI.inSandbox()
+    if TabCAT.Console.inSandbox()
       $form.find('input[name=patientCode]').val(SANDBOX_PATIENT_CODE).attr(
         'autocomplete', 'off')
       $form.find('p.warning').text(SANDBOX_WARNING)
@@ -77,6 +77,6 @@ submitCreateEncounterForm = (event) ->
         $('p.message').text(
           'Closed encounter with Patient ' + closedEncounterWith)
   )
-  $(TabCAT.UI.updateStatusBar)
+  $(TabCAT.Console.updateStatusBar)
 
   TabCAT.DB.startSpilledDocSync()
