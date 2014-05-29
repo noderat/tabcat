@@ -1,0 +1,29 @@
+
+body {
+  background-color: #ffffff;
+  color: #000000;
+  /* Helvetica is the "everything is okay" font */
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+button {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: #000000;
+  border-radius: 0.7em;
+  background-color: #cccccc;
+  padding: 0.3em;
+  color: #000000;
+  font-size: 5em;
+}
+
+button:active {
+  position: relative;
+  top: 1px;
+}
+
+button:disabled {
+  border-color: #666666;
+  color: #666666;
+}
