@@ -342,9 +342,9 @@ TabCAT.Task.finish = (options) ->
       waitedForMinWait).then(
       ->
         if TabCAT.Task.patientHasDevice()
-          window.location = '../core/return-to-examiner.html'
+          window.location = '../console/return-to-examiner.html'
         else
-          window.location = '../core/tasks.html'
+          window.location = '../console/tasks.html'
       )
   )
 

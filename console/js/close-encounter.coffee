@@ -85,19 +85,25 @@ onOtherQualityIssuesClicked = (event) ->
 
 setUpForm = ->
   $form = $('#administrationNotesForm')
-  $form.on('submit', submitAdministrationNotesForm)
-  $form.find('button').removeAttr('disabled')
+
+  # save a click in the sandbox
+  if TabCAT.Console.inSandbox()
+    $form.find('input[name=goodForResearch][value=no]').attr(
+      'checked', 'checked')
 
   $form.find('input[name=qualityIssues][value=other]')
     .on('click', onOtherQualityIssuesClicked)
   # workaround to make labels clickable in iOS Safari 5
   $form.find('label').attr('onclick', '')
 
+  $form.on('submit', submitAdministrationNotesForm)
+  $form.find('button').removeAttr('disabled')
+
 
 @initCloseEncounterPage = ->
   TabCAT.UI.requireUserAndEncounter()
 
-  $(TabCAT.UI.updateStatusBar)
+  $(TabCAT.Console.updateStatusBar)
 
   $(setUpForm)
 
