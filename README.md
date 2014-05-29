@@ -79,7 +79,7 @@ Then run `make`.
 
 ### Using TabCAT
 
-To access TabCAT, browse to `/tabcat/_design/core/login.html` on your server.
+To access TabCAT, browse to `/tabcat/_design/console/login.html` on your server.
 
 If you're on a iPad, click "Add to Home Screen" under the bookmarks menu (upper left), hit the home button, and re-launch the browser from the shortcut you just created. This launches TabCAT in Standalone mode (no nav bar), which is what you want for running tasks.
 
