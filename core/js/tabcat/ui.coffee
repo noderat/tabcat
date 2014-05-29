@@ -371,18 +371,18 @@ TabCAT.UI.logout = ->
 
   TabCAT.User.logout().always(->
     window.location = (
-      '../core/login.html' + TabCAT.UI.encodeHashJSON(loggedOut: true))
+      '../console/login.html' + TabCAT.UI.encodeHashJSON(loggedOut: true))
   )
 
 
 # redirect to the login page
 TabCAT.UI.requestLogin = ->
-  TabCAT.UI.detour('../core/login.html')
+  TabCAT.UI.detour('../console/login.html')
 
 
 # redirect to the enter-password page
 TabCAT.UI.requestPassword = ->
-  TabCAT.UI.detour('../core/enter-password.html')
+  TabCAT.UI.detour('../console/enter-password.html')
 
 
 # Promise: force the user to log in to view this page.
@@ -431,7 +431,7 @@ TabCAT.UI.requireUserAndEncounter = (options) ->
   TabCAT.UI.requireUser(options)
 
   if not TabCAT.Encounter.isOpen()
-    TabCAT.UI.detour('../core/create-encounter.html')
+    TabCAT.UI.detour('../console/create-encounter.html')
 
 
 # redirect to the given page, with the intent of being redirected back
