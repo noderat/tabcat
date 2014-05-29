@@ -67,6 +67,7 @@ translations =
         'white TRIANGLE'
 
 # task version (one of a, b, c)
+# defaults to 'a' but set pseudo-randomly in initTask
 CPT_VERSION = 'a'
 
 # time to display the stimulus
@@ -423,6 +424,14 @@ loadStimuli = ->
   TabCAT.UI.enableFastClick()
   
   $(->
+    # pseudo-randomly select version based on encounter num
+    encounterNum = TabCAT.Encounter.getNum()
+    if encounterNum
+      CPT_VERSION = switch (encounterNum % 3)
+        when 0 then 'a'
+        when 1 then 'b'
+        when 2 then 'c'
+
     $task = $('#task')
     $rectangle = $('#rectangle')
     
