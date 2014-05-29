@@ -30,7 +30,7 @@ translations =
       practice_html:
         1: 'You will be presented with different objects ' +
            'on the screen.<br/>' +
-           'If this 5-POINTED STAR is presented on the screen,</br>' +
+           'If this $t(object_version) is presented on the screen,</br>' +
            'tap the button at the bottom of the screen.<br/>' +
            'If any other shape is presented, do not press any key.'
         2: 'Respond as quickly as you can without making mistakes.<br/>' +
@@ -42,7 +42,7 @@ translations =
            'Let\'s do another practice trial.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
-           'If the 5-POINTED STAR is presented on the screen,<br/>' +
+           'If the $t(object_version) is presented on the screen,<br/>' +
            'tap the button at the bottom of the screen.<br/>' +
            'If any other shape is presented, do not press any key.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
@@ -53,12 +53,18 @@ translations =
            'Let\'s move on to the task.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
-           'If the 5-POINTED STAR is presented on the screen,</br>' +
+           'If the $t(object_version) is presented on the screen,</br>' +
            'press the left arrow key.<br/>' +
            'If any other shape is presented, do not press any key.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
         4: 'Tap the "Begin" button to begin.'
+      object_version_a:
+        '5-POINTED STAR'
+      object_version_b:
+        'LEFT ARROW'
+      object_version_c:
+        'white TRIANGLE'
 
 # task version (one of a, b, c)
 CPT_VERSION = 'a'
@@ -213,7 +219,8 @@ disableResponseButton = ->
 
 showInstructions = (translation) ->
   clearStimuli()
-  $translation = $.t(translation, {returnObjectTrees: true})
+  $translation = $.t(translation, \
+    {returnObjectTrees: true, context: CPT_VERSION})
 
   $html = switch translation
     when 'practice_html', 'additional_practice_html' \
@@ -221,7 +228,7 @@ showInstructions = (translation) ->
       if (translation is 'practice_html' and key is '1') or
       (translation is 'additional_practice_html' and key is '2')
         '<p>' + value + '<br/></br>' +
-        '<img class="stimuli" src="img/cpt/a/target.png"/></p>'
+        '<img class="stimuli" src="img/cpt/'+CPT_VERSION+'/target.png"/></p>'
       else
         '<p>' + value + '</p>'
     )
@@ -245,17 +252,18 @@ showStimulus = (trial) ->
 showTrial = (trial) ->
   trialStartTime = $.now()
   responses = [] # keep track of all responses
+  responseEvent = null # event to log
   
   $('#responseButton').on('mousedown touchstart', (event) ->
-    responseTime = $.now() - trialStartTime
+    responseTime = ($.now() - trialStartTime) / 1000
     event.preventDefault()
     event.stopPropagation()
     responses.push(responseTime)
+    responseEvent = event
   )
   
   enableResponseButton()
   showStimulus(trial)
-  
  
   # All responses are recorded after the display of the stimulus.
   # The first response after the display of the stimulus is recorded
@@ -284,7 +292,7 @@ showTrial = (trial) ->
       else # more than one response for this trial
         correct = false # more than one response means automatically incorrect
         responseTime = _.first(responses)
-        extraResponses = responses.toString()
+        extraResponses = '[' + responses.toString() + ']'
       
       if inPracticeMode
         if correct
@@ -295,7 +303,7 @@ showTrial = (trial) ->
         responseTime: responseTime
         extraResponses: extraResponses
 
-      return interpretation
+      return {responseEvent: responseEvent, interpretation: interpretation}
     )
   )
   
@@ -306,8 +314,8 @@ showTrial = (trial) ->
     )
   )
   
-  $.when(registerResponses, trialDone).done((interpretation) ->
-    TabCAT.Task.logEvent(getTaskState(), 'trialComplete', interpretation)
+  $.when(registerResponses, trialDone).done((obj) ->
+    TabCAT.Task.logEvent(getTaskState(), obj.responseEvent, obj.interpretation)
     next()
   )
 

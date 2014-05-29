@@ -6,6 +6,7 @@ patient = require('../patient')
 CSV_HEADER = [
   'taskName',
   'taskVersion',
+  'taskForm',
   'taskLanguage',
   'patientCode',
   'encounterNum',
@@ -14,16 +15,14 @@ CSV_HEADER = [
   'taskFinish',
   'trialBlock',
   'trialNum',
-  'trialCongruent',
-  'trialArrows',
-  'trialUpDown',
-  'trialCorrResp',
-  'trialFixation',
+  'trialStimulus',
+  'trialExtraResponses',
   'respValue',
   'respCorr',
   'respRt',
   'taskTime'
 ]
+
 
 # convert ms to seconds
 TIME_CONVERTER = 1000
@@ -32,12 +31,13 @@ patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
   for encounter in patientRecord.encounters
     for task in encounter.tasks
-      if task.name is 'flanker' and task.eventLog? and task.finishedAt?
+      if task.name is 'cpt' and task.eventLog? and task.finishedAt?
         for item in task.eventLog
-          if item?.state?.stimuli?
+          if item?.interpretation? and item?.state?
             data = [
               task.name,
               task.version,
+              item.state.version,
               task.language,
               patientCode,
               encounter.encounterNum,
@@ -46,14 +46,11 @@ patientHandler = (patientRecord) ->
               task.finishedAt / TIME_CONVERTER,
               item.state.trialBlock,
               item.state.trialNum,
-              if item.state.stimuli.congruent then "1" else "0",
-              item.state.stimuli.arrows,
-              item.state.stimuli.upDown,
-              item.state.stimuli.arrows.charAt(2),
-              item.state.stimuli.fixationDuration / TIME_CONVERTER,
-              item.interpretation.response,
-              if item.interpretation.correct then "1" else "0",
-              item.interpretation.responseTime / TIME_CONVERTER,
+              item.state.stimuli.stimulus,
+              item.interpretation.extraResponses,
+              item.event?.type ? 'none',
+              if item.interpretation.correct then '1' else '0',
+              item.interpretation.responseTime,
               item.now / TIME_CONVERTER
             ]
 
@@ -72,7 +69,7 @@ exports.list = (head, req) ->
 
   start(headers:
     'Content-Disposition': (
-      "attachment; filename=\"flanker-detail-report-#{isoDate}.csv"),
+      "attachment; filename=\"cpt-detail-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
   send(csv.arrayToCsv([CSV_HEADER]))

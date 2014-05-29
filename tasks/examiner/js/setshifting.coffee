@@ -4,7 +4,7 @@
 #   1) Initial Delay: 800 ms (delay at beginning of trial)
 #   2) Cue Duration: 800 ms (time condition cue is displayed before fixation)
 #   3) Fixation Delay: 200 ms (time to display the fixation cue)
-#   4) target image: 5 seconds (or until response)
+#   4) Target Image: 5 seconds (or until response)
 #   5) Feedback During Practice: 2 seconds
 
 translations =
@@ -61,7 +61,6 @@ translations =
       shape_cue:
         'SHAPE'
 
-
 # for debugging
 pp = (msg) ->
   $debug = $('#debug')
@@ -69,6 +68,10 @@ pp = (msg) ->
     $debug.append('</br>' + JSON.stringify(val) for val in msg)
   else
     $debug.append(JSON.stringify(msg,null,4)).append('</br>')
+
+# whether to start with color trials (1=true; 0=false)
+# if null then it's randomly determined
+COLOR_FIRST = _.random(0,1)
 
 # one second delay before each block
 BEFORE_BLOCK_DELAY = 1000
@@ -83,15 +86,13 @@ CUE_DURATION = 800
 # length of time to display the fixation cue
 FIXATION_DURATION = 200
 
-# length of time to display the target
-TARGET_DURATION = 800
-
-# time the target is displayed from start of trial
+# time at which the target is displayed measured from start of trial
 TARGET_DISPLAY_TIME = PRE_TRIAL_DELAY + CUE_DURATION + FIXATION_DURATION
 
 # trial times out 5 seconds after target display
 TRIAL_TIMEOUT = TARGET_DISPLAY_TIME + 5000
 
+# length of time to display feedback in practice mode
 FEEDBACK_DURATION = 2000
 
 # If subjects gets 12/16 trials correct in a practice trial
@@ -108,13 +109,30 @@ ASPECT_RATIO = 4/3
 FIXATION = 'x'
 
 # possible responses
-RED_TRIANGLE   = {'color': 'red' , 'shape': 'triangle'}
-BLUE_RECTANGLE = {'color': 'blue', 'shape': 'rectangle'}
+RED_TRIANGLE =
+  color: 'red'
+  shape: 'triangle'
+  src: 'img/setshifting/tri_red.png'
+  
+BLUE_RECTANGLE =
+  color: 'blue'
+  shape: 'rectangle'
+  src: 'img/setshifting/rect_blue.png'
+
+LEFT_RESPONSE  = _.extend(RED_TRIANGLE,   {respValue: 'l'})
+RIGHT_RESPONSE = _.extend(BLUE_RECTANGLE, {respValue: 'r'})
 
 # possible targets
-RED_RECTANGLE = {'color': 'red' , 'shape': 'rectangle'}
-BLUE_TRIANGLE = {'color': 'blue', 'shape': 'triangle'}
-
+RED_RECTANGLE =
+  color: 'red'
+  shape: 'rectangle'
+  src: 'img/setshifting/rect_red.png'
+  
+BLUE_TRIANGLE =
+  color: 'blue'
+  shape: 'triangle'
+  src: 'img/setshifting/tri_blue.png'
+  
 # possible cues
 COLOR_CUE = 'color'
 SHAPE_CUE = 'shape'
@@ -131,14 +149,10 @@ SHAPE_DATA_TEMPLATE = [
 
 SHIFT_DATA_TEMPLATE = [
   {'condition': 'shift', 'cue': COLOR_CUE, 'target': RED_RECTANGLE},
-  {'condition': 'shift', 'cue': SHAPE_CUE, 'target': BLUE_TRIANGLE},
+  {'condition': 'shift', 'cue': COLOR_CUE, 'target': BLUE_TRIANGLE},
   {'condition': 'shift', 'cue': SHAPE_CUE, 'target': RED_RECTANGLE},
   {'condition': 'shift', 'cue': SHAPE_CUE, 'target': BLUE_TRIANGLE},
 ]
-
-# helper
-objectsEqual = (obj1, obj2) ->
-  return (obj1.color is obj2.color and obj1.shape is obj2.shape)
 
 # create a generic trial block
 #   colorFirst - whether to start with color trials (1=true; 0=false)
@@ -152,9 +166,9 @@ createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
   shapeCheckPassed = false
   shiftTrials = []
   shiftCheckPassed = false
-  
+
   if not colorFirst?
-    colorFirst = _.random(0,1)
+    colorFirst = 1
   
   if colorReps?
     colorTrialsInitial = _.flatten(COLOR_DATA_TEMPLATE for i in [0...colorReps])
@@ -174,6 +188,21 @@ createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
       shiftTrials = Examiner.generateTrials(shiftTrialsInitial, 1)
       shiftCheckPassed = shiftCheck(shiftTrials)
 
+    # now add shift information (i.e. which trials are shift trials)
+    # will be needed for reports
+    lastShiftTrial = _.clone(_.first(shiftTrials))
+    lastShiftTrial.shift = 0
+    shiftTrialsWithShiftInfo = [lastShiftTrial] # results array
+
+    for shiftTrial in _.rest(shiftTrials)
+      shiftTrial = _.clone(shiftTrial)
+      if lastShiftTrial.cue is shiftTrial.cue
+        shiftTrial.shift = 0
+      else
+        shiftTrial.shift = 1
+      shiftTrialsWithShiftInfo.push(shiftTrial)
+      lastShiftTrial = shiftTrial
+
   finalTrials = []
   if colorFirst
     finalTrials = colorTrials.concat(shapeTrials)
@@ -181,7 +210,7 @@ createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
     finalTrials = shapeTrials.concat(colorTrials)
 
   if shiftReps?
-    finalTrials = finalTrials.concat(shiftTrials)
+    finalTrials = finalTrials.concat(shiftTrialsWithShiftInfo)
     
   return finalTrials
 
@@ -202,7 +231,7 @@ colorAndShapeCheck = (trials) ->
 
   return true
 
-# check that the number of cue shifted trials is between 40% and 60%
+# check that the number of cue shifted trials is between 45% and 55%
 # and there are no runs of cues > 4
 shiftCheck = (trials) ->
   shiftCount = 0
@@ -218,20 +247,31 @@ shiftCheck = (trials) ->
     if cueCount > 4
       return false
     lastTrial = trial
-  
+
   shiftPercentage = shiftCount / trials.length
   return (shiftPercentage >= 0.45 and shiftPercentage <= 0.55)
 
-
 # return a practice block
 createPracticeBlock = ->
-  createBlock(1, 4, 4)
+  createBlock(COLOR_FIRST, 4, 4)
   #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
+
+# return throwaway block
+# prior to the first testing block, 2 "throwaway" trials of the
+# same cue condition (one with each target image) are presented.
+createThrowawayBlock = ->
+  if COLOR_FIRST
+    createBlock(COLOR_FIRST, 1, null)
+  else
+    createBlock(COLOR_FIRST, null, 1)
 
 # return a real testing block
 createTestingBlock = ->
-  createBlock(1, 10, 10, 16)
-  #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
+  createBlock(COLOR_FIRST, 10, 10, 16)
+  
+# pre-create testing block now since it can take some time and
+# don't want a noticeable delay after throwaway block
+testingBlock = createTestingBlock()
 
 # how many has the patient gotten correct in practice block?
 numCorrectInPractice = 0
@@ -247,14 +287,15 @@ practicePassed = ->
 # start off in practice mode
 inPracticeMode = true
 
+# go into throwaway mode only after practice and before real testing
+inThrowawayMode = false
+
 # current trial block
 # start off with a practice block
-trialBlock = createTestingBlock()
+trialBlock = createPracticeBlock()
 
 # current trial in current trial block
 trialIndex = -1
-
-#pp(createTestingBlock())
 
 showFeedback = (translation) ->
   $translation = $.t(translation)
@@ -272,13 +313,12 @@ showTrial = (trial) ->
   # resolved when user responds
   deferred.done((event, responseTime) ->
     hideTarget()
-    hideCue()
-    
+  
     response = event.delegateTarget.alt
-    if response is 'l'
-      response = RED_TRIANGLE
+    if response is LEFT_RESPONSE.respValue
+      response = LEFT_RESPONSE
     else
-      response = BLUE_TRIANGLE
+      response = RIGHT_RESPONSE
     
     correct = trial.target[trial.cue] is response[trial.cue]
       
@@ -299,24 +339,19 @@ showTrial = (trial) ->
       
       TabCAT.UI.wait(FEEDBACK_DURATION).then(->
         hideFeedback()
-        TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
-          next()
-        )
-      )
-    else
-      TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
         next()
       )
+    else
+      next()
   )
   
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
     hideTarget()
-    hideCue()
-    
+  
     # record meaning of the event
     interpretation =
-      response: null
+      response: 'none'
       responseTime: 0
       correct: false
 
@@ -332,34 +367,31 @@ showTrial = (trial) ->
       next()
   )
 
+  # if trial times out, then reject
+  TabCAT.UI.wait(TRIAL_TIMEOUT).then(->
+    deferred.reject()
+  )
+
   # start showing the trial
-  
   TabCAT.UI.wait(PRE_TRIAL_DELAY).then(->
-    if trial.cue = COLOR_CUE
+    if trial.cue is COLOR_CUE
       showCue('color_cue')
     else
       showCue('shape_cue')
     TabCAT.UI.wait(CUE_DURATION).then(->
+      hideCue()
       showFixation()
       TabCAT.UI.wait(FIXATION_DURATION).then(->
         hideFixation()
         showTarget(trial.target)
+        responseTimeStart = $.now()
         # if user responds, then resolve
         $('.responseLeftImg, .responseRightImg') \
         .one('mousedown touchstart', (event) ->
-          responseTime = 0
+          responseTime = $.now() - responseTimeStart
           event.preventDefault()
           event.stopPropagation()
           deferred.resolve(event, responseTime)
-        )
-        
-        TabCAT.UI.wait(TARGET_DURATION).then(->
-          #hideTarget()
-        )
-        
-        # if trial times out, then reject
-        TabCAT.UI.wait(TRIAL_TIMEOUT).then(->
-          deferred.reject()
         )
       )
     )
@@ -372,9 +404,10 @@ next = ->
     showTrial(trialBlock[trialIndex])
   else # end of block
     if inPracticeMode
-      if practicePassed() # passed practice so go to real testing
+      if practicePassed() # passed practice so go to throwaway block
         inPracticeMode = false
-        trialBlock = createTestingBlock()
+        inThrowawayMode = true
+        trialBlock = createThrowawayBlock()
         trialIndex = -1
         showInstructions 'testing_html'
       else if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
@@ -385,17 +418,28 @@ next = ->
         numCorrectInPractice = 0
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
+    else if inThrowawayMode # after throwaway block, go to real testing
+      inThrowawayMode = false
+      trialBlock = testingBlock
+      trialIndex = -1
+      next()
     else
       TabCAT.Task.finish()
 
 # summary of current stimulus
 getStimuli = ->
   trial = trialBlock[trialIndex]
-  
-  stimuli =
-    condition: trial?.condition
-    cue: trial?.cue
-    target: trial?.target
+
+  if trial
+    stimuli =
+      condition: trial.condition
+      cue: trial.cue
+      target: trial.target
+      corrResp: if trial.target[trial.cue] is LEFT_RESPONSE[trial.cue] \
+        then LEFT_RESPONSE.respValue else RIGHT_RESPONSE.respValue
+      shift: trial.shift ? 0
+  else
+    stimuli = {}
 
   return stimuli
 
@@ -408,6 +452,8 @@ getTaskState = ->
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
+  else if inThrowawayMode
+    state.trialBlock = "throwawayBlock"
   else
     state.trialBlock = "testingBlock"
 
@@ -430,22 +476,15 @@ hideFixation = ->
 makeTargetDiv = ->
   $targetDiv = $('<div></div>', class: 'targetDiv')
 
-showTarget = (obj) ->
+showTarget = (target) ->
   $targetDiv = $('.targetDiv')
-  if objectsEqual(obj, RED_RECTANGLE)
-    $img = $('<img>',
-      class: 'targetImg',
-      src: 'img/setshifting/rect_red.png')
-  else
-    $img = $('<img>',
-      class: 'targetImg',
-      src: 'img/setshifting/tri_blue.png')
+  $img = $('<img>',
+    class: 'targetImg',
+    src: target.src)
   $targetDiv.append($img)
 
 hideTarget = ->
   $('.targetDiv').empty()
-
-
 
 # log stray taps
 handleStrayTouchStart = (event) ->
@@ -455,13 +494,25 @@ handleStrayTouchStart = (event) ->
 handleBeginButton = (event) ->
   event.preventDefault()
   event.stopPropagation()
-  $rectangle = $('#rectangle')
-  $rectangle.empty()
-  $rectangle.append(makeResponseDiv)
-  $rectangle.append(makeCueDiv)
-  $rectangle.append(makeFixationDiv)
-  $rectangle.append(makeTargetDiv)
-  next()
+
+  prepBlock = (
+    $rectangle = $('#rectangle')
+    $rectangle.empty()
+    $rectangle.append(makeCueDiv)
+    $rectangle.append(makeFixationDiv)
+    $rectangle.append(makeTargetDiv)
+  )
+  
+  blockDelay = (
+    TabCAT.UI.wait(BEFORE_BLOCK_DELAY).then(->
+      return $.Deferred().resolve()
+    )
+  )
+
+  $.when(prepBlock, blockDelay).done(->
+    $rectangle.append(makeResponseDiv)
+    next()
+  )
 
 handleNextButton = (event) ->
   event.preventDefault()
@@ -478,13 +529,13 @@ makeProgressButton = (translation, handler) ->
 makeResponseDiv = ->
   $responseDiv = $('<div></div>', class: 'responseDiv')
   $imgLeft = $('<img>',
-    alt: 'l',
+    alt: LEFT_RESPONSE.respValue,
     class: 'responseImg responseLeftImg',
-    src: 'img/setshifting/tri_red.png')
+    src: LEFT_RESPONSE.src)
   $imgRight = $('<img>',
-    alt: 'r',
+    alt: RIGHT_RESPONSE.respValue,
     class: 'responseImg responseRightImg',
-    src: 'img/setshifting/rect_blue.png')
+    src: RIGHT_RESPONSE.src)
   
   $responseDiv.append($imgLeft).append($imgRight)
 
@@ -510,7 +561,7 @@ showInstructions = (translation) ->
       if (translation is 'practice_html' and key is '1') or
       (translation is 'practice2_html' and key is '2')
         value + '<br/>' +
-        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>'
+        '<img class="instructionsImg" src="' + RED_RECTANGLE.src + '"/>'
       else
         '<p>' + value + '</p>'
     )
@@ -522,7 +573,7 @@ showInstructions = (translation) ->
         '<span style="float:right; margin-right: 10%">' +
         value + '</span></p><br/>'
       else if key is '5'
-        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>' +
+        '<img class="instructionsImg" src="' + RED_RECTANGLE.src + '"/>' +
         '<p>' + value + '</p>'
       else
         '<p>' + value + '</p>'
@@ -530,7 +581,7 @@ showInstructions = (translation) ->
     when 'testing_html'
     then _.map($translation, (value, key) ->
       if key is '4'
-        '<img class="instructionsImg" src="img/setshifting/rect_red.png"/>' +
+        '<img class="instructionsImg" src="' + RED_RECTANGLE.src + '"/>' +
         '<p>' + value + '</p>'
       else
         '<p>' + value + '</p>'

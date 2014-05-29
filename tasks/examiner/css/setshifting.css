@@ -90,7 +90,7 @@ span.red {
 
 /* debug mode */
 #task div {
-  border: 1px solid;
+  border: 0px solid;
 }
 
 #debug {

@@ -144,13 +144,14 @@ translations =
         '沒有收到任何答覆。'
 
 
-
+# used for code testing purposes only
 TEST_TRIALS = [
   {'arrows':'lllll', 'upDown':'up'  },
   {'arrows':'lllll', 'upDown':'down'},
   {'arrows':'rrrrr', 'upDown':'up'  },
 ]
 
+# default trials used for actual testing
 DEFAULT_TRIALS = [
   {'arrows':'lllll', 'upDown':'up'  },
   {'arrows':'lllll', 'upDown':'down'},
@@ -160,6 +161,14 @@ DEFAULT_TRIALS = [
   {'arrows':'llrll', 'upDown':'down'},
   {'arrows':'rrlrr', 'upDown':'up'  },
   {'arrows':'rrlrr', 'upDown':'down'},
+]
+
+# after practice and prior to testing, these throwaway trials are given
+# but not included in scoring. the idea is to give additional practice trials
+# to get user ready for additional complexity of real testing
+THROWAWAY_TRIALS = [
+  {'arrows':'llrll', 'upDown':'up'  },
+  {'arrows':'lllll', 'upDown':'down'},
 ]
 
 # For each trial, the correct response is the middle arrow,
@@ -203,6 +212,11 @@ createPracticeBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 1)
   #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
 
+# return throwaway block
+createThrowawayBlock = ->
+  Examiner.generateTrials(THROWAWAY_TRIALS, 1)
+  #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
+
 # return a real testing block
 createTestingBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 2)
@@ -221,6 +235,9 @@ practicePassed = ->
 
 # start off in practice mode
 inPracticeMode = true
+
+# go into throwaway mode only after practice and before real testing
+inThrowawayMode = false
 
 # current trial block
 # start off with a practice block
@@ -424,9 +441,10 @@ next = ->
     showTrial(trialBlock[trialIndex])
   else # end of block
     if inPracticeMode
-      if practicePassed() # passed practice so go to real testing
+      if practicePassed() # passed practice so go to throwaway mode
         inPracticeMode = false
-        trialBlock = createTestingBlock()
+        inThrowawayMode = true
+        trialBlock = createThrowawayBlock()
         trialIndex = -1
         showInstructions 'testing_html'
         showBeginButton()
@@ -439,6 +457,11 @@ next = ->
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
         showBeginButton()
+    else if inThrowawayMode # after throwaway block, go to real testing
+      inThrowawayMode = false
+      trialBlock = createTestingBlock()
+      trialIndex = -1
+      next()
     else
       TabCAT.Task.finish()
 
@@ -471,6 +494,8 @@ getTaskState = ->
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
+  else if inThrowawayMode
+    state.trialBlock = "throwawayBlock"
   else
     state.trialBlock = "testingBlock"
 
