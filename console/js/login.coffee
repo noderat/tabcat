@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
-SANDBOX_TITLE = 'TabCAT Sandbox'
-SANDBOX_ICON = 'img/sandbox-icon.png'
-SANDBOX_USER = 's@ndbox'
-SANDBOX_PASSWORD = 's@ndbox'
-
-
 submitLoginForm = (event) ->
   event.preventDefault()
   form = $(event.target)
@@ -59,8 +53,8 @@ submitLoginForm = (event) ->
 
   # Make sure page gets bookmarked with sandbox icon and title.
   if TabCAT.Console.inSandbox()
-    $('title').text(SANDBOX_TITLE)
-    $('link[rel=apple-touch-icon]').attr('href', SANDBOX_ICON)
+    $('title').text(TabCAT.Console.sandboxTitle)
+    $('link[rel=apple-touch-icon]').attr('href', TabCAT.Console.sandboxIcon)
 
   TabCAT.UI.enableFastClick()
   TabCAT.UI.turnOffBounce()
@@ -87,7 +81,7 @@ submitLoginForm = (event) ->
     else if TabCAT.UI.readHashJSON().loggedOut
       $('#message').text('Logged out')
     else
-      if TabCAT.UI.inSandbox()
+      if TabCAT.Console.inSandbox()
         $('#message').text('Welcome to the sandbox. Hit "Log In" to start')
       else
         $('#message').text('Please log in with your email and password')
@@ -95,11 +89,11 @@ submitLoginForm = (event) ->
     $loginForm = $('#loginForm')
 
     # sandbox mode
-    if TabCAT.UI.inSandbox()
+    if TabCAT.Console.inSandbox()
       $('body').addClass('sandbox')
       # pre-fill form
-      $loginForm.find('input[name=email]').val(SANDBOX_USER)
-      $loginForm.find('input[name=password]').val(SANDBOX_PASSWORD)
+      $loginForm.find('input[name=email]').val(TabCAT.Console.sandboxUser)
+      $loginForm.find('input[name=password]').val(TabCAT.Console.sandboxPassword)
       $loginForm.find('input').attr('autocomplete', 'off')
 
     $loginForm.on('submit', submitLoginForm)
