@@ -1,9 +1,19 @@
+v0.6.3, 2014-05-02 -- Flanker
+- core library:
+  - Task.logEvent() uses $.now() when event.timeStamp is unreliable (#102)
+- tasks:
+  - flanker: new task! includes translations
+  - stargazer: correct version (v0.6.2)
+
 v0.6.2, 2014-03-27 -- Revert stargazer staircasing
 - build system:
   - kanso packages directories are included, since kan.so is down (#96)
+- core library:
+  - partial support for i18n via i18next library (#4)
 - tasks:
   - stargazer:
     - went back to original 2-up-1-down staircasing (kept new star layout)
+  - line-perception tasks: chinese translations, except for task name (#5)
 
 v0.6.1, 2014-03-20 -- Sandbox mode
 - build system:

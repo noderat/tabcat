@@ -45,7 +45,7 @@
         "js/examiner.js",
         "js/flanker.js",
         "js/setshifting.js",
-        "setshifting.html"                
+        "setshifting.html"
     ],
     "dependencies": {
         "attachments": null

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen" manifest="/tabcat/offline/cache.manifest">
+  <head>
+    <title>TabCAT</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="../core/img/favicon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/console.css">
+  </head>
+  <body>
+    <div id="statusBar"></div>
+    <div id="closeEncounter">
+      <form id="administrationNotesForm" action="#" method="post">
+        <fieldset class="required">
+          <legend><strong>Was this encounter useful for research?</strong></legend>
+          <label>
+            <input type="radio" name="goodForResearch" value="yes" required>
+            Yes
+          </label>
+          <label>
+            <input  type="radio" name="goodForResearch" value="no" required>
+            No
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend><strong>Check data quality issues</strong> (if any)</legend>
+          <div class="threeColumns">
+            <label>
+              <input type="checkbox" name="qualityIssues" value="behavior">
+              Behavioral Disturbances
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="secondLanguage">
+              ESL
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="hearing">
+              Hearing Impairment
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="effort">
+              Lack of Effort
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="education">
+              Minimal Education
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="motor">
+              Motor Difficulties
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="speech">
+              Speech Difficulties
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="unreliable">
+              Unreliable Informant
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="visual">
+              Visual Impairment
+            </label>
+            <label>
+              <input type="checkbox" name="qualityIssues" value="other">
+              Other (describe below)
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><strong>Other Comments</strong></legend>
+          <textarea name="comments"></textarea>
+        </fieldset>
+        <p id="error" class="error"></p>
+        <p>
+          <button type="submit" disabled>Close Encounter</button>
+        </p>
+      </form>
+    </div>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/tabcat-console.js"></script>
+    <script src="js/close-encounter.js"></script>
+    <script>initCloseEncounterPage();</script>
+  </body>
+</html>
