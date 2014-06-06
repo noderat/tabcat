@@ -2,8 +2,10 @@
 _ = require('js/vendor/underscore')._
 csv = require('js/vendor/ucsv')
 patient = require('../patient')
+examiner = require('./examiner')
 
 CSV_HEADER = [
+  'taskId',
   'taskName',
   'taskVersion',
   'taskLanguage',
@@ -27,38 +29,33 @@ CSV_HEADER = [
 # convert ms to seconds
 TIME_CONVERTER = 1000
 
+itemHandler = (patientRecord, encounter, task, item) ->
+  data = [
+    task._id,
+    task.name,
+    task.version,
+    task.language,
+    patientRecord.patientCode,
+    encounter.encounterNum,
+    encounter.year,
+    task.startedAt / TIME_CONVERTER,
+    task.finishedAt / TIME_CONVERTER,
+    item.state.trialBlock,
+    item.state.trialNum,
+    item.state.stimuli.condition,
+    item.state.stimuli.cue,
+    item.state.stimuli.corrResp,
+    item.state.stimuli.shift,
+    item.interpretation.response?.respValue ? "none",
+    if item.interpretation.correct then "1" else "0",
+    item.interpretation.responseTime / TIME_CONVERTER,
+    item.now / TIME_CONVERTER
+  ]
+  
+  send(csv.arrayToCsv([data]))
+
 patientHandler = (patientRecord) ->
-  patientCode = patientRecord.patientCode
-  for encounter in patientRecord.encounters
-    for task in encounter.tasks
-      if task.name is 'setshifting' and task.eventLog? and task.finishedAt?
-        for item in task.eventLog
-          if item?.interpretation? and item?.state?
-            data = [
-              task.name,
-              task.version,
-              task.language,
-              patientCode,
-              encounter.encounterNum,
-              encounter.year,
-              task.startedAt / TIME_CONVERTER,
-              task.finishedAt / TIME_CONVERTER,
-              item.state.trialBlock,
-              item.state.trialNum,
-              item.state.stimuli.condition,
-              item.state.stimuli.cue,
-              item.state.stimuli.corrResp,
-              item.state.stimuli.shift,
-              item.interpretation.response?.respValue ? "none",
-              if item.interpretation.correct then "1" else "0",
-              item.interpretation.responseTime / TIME_CONVERTER,
-              item.now / TIME_CONVERTER
-            ]
-
-            send(csv.arrayToCsv([data]))
-
-  # only keep the first task per patient
-  return
+  examiner.setshiftingPatientTraverser(patientRecord, itemHandler)
 
 exports.list = (head, req) ->
   keyType = req.path[req.path.length - 1]

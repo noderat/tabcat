@@ -27,9 +27,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 patient = require('./patient')
 adhocCPTDetailReport = require('./adhoc/cpt-detail-report')
+adhocCPTSummaryReport = require('./adhoc/cpt-summary-report')
 adhocFlankerDetailReport = require('./adhoc/flanker-detail-report')
+adhocFlankerSummaryReport = require('./adhoc/flanker-summary-report')
 adhocLineTasksReport = require('./adhoc/line-tasks-report')
 adhocSetShiftingDetailReport = require('./adhoc/set-shifting-detail-report')
+adhocSetShiftingSummaryReport = require('./adhoc/set-shifting-summary-report')
 adhocStargazerReport = require('./adhoc/stargazer-report')
 
 
@@ -71,9 +74,12 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
 exports.lists =
   dump: dumpList
   'adhoc-cpt-detail-report': adhocCPTDetailReport.list
+  'adhoc-cpt-summary-report': adhocCPTSummaryReport.list
   'adhoc-flanker-detail-report': adhocFlankerDetailReport.list
+  'adhoc-flanker-summary-report': adhocFlankerSummaryReport.list
   'adhoc-line-tasks-report': adhocLineTasksReport.list
   'adhoc-set-shifting-detail-report': adhocSetShiftingDetailReport.list
+  'adhoc-set-shifting-summary-report': adhocSetShiftingSummaryReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list
 
 exports.validate_doc_update = validateDocUpdate

@@ -383,7 +383,6 @@ showTrial = (trial) ->
       showFixation()
       TabCAT.UI.wait(FIXATION_DURATION).then(->
         hideFixation()
-        showTarget(trial.target)
         responseTimeStart = $.now()
         # if user responds, then resolve
         $('.responseLeftImg, .responseRightImg') \
@@ -393,6 +392,7 @@ showTrial = (trial) ->
           event.stopPropagation()
           deferred.resolve(event, responseTime)
         )
+        showTarget(trial.target)
       )
     )
   )

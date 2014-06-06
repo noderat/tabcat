@@ -219,7 +219,7 @@ createThrowawayBlock = ->
 
 # return a real testing block
 createTestingBlock = ->
-  Examiner.generateTrials(DEFAULT_TRIALS, 2)
+  Examiner.generateTrials(DEFAULT_TRIALS, 6)
   #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
 
 # how many has the patient gotten correct in practice block?
