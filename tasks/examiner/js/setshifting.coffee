@@ -15,41 +15,35 @@ translations =
       next_html:
         'Next'
       practice_html:
-        1: 'This is a matching task.</br>' +
+        1: 'This is a matching task. ' +
            'You will see an object in the center of the screen, and a word ' +
-           'at the bottom of the screen.  The word will be SHAPE or COLOR.' +
+           'at the bottom of the screen. The word will be SHAPE or COLOR. ' +
            'The word at the bottom of the screen will tell you how to match' +
            'the object in the center to one of the objects in the corners.'
-        2: 'When you have to match by COLOR, you should push the ' +
-           'LEFT button for RED and the RIGHT button for BLUE.'
-        3: 'When you have to match by SHAPE, you should push the ' +
-           'LEFT button for TRIANGLE and the RIGHT button for RECTANGLE.'
+        2: 'When you have to match by COLOR, you should tap the<br/>' +
+           'corner object that matches the COLOR of the center object.'
+        3: 'When you have to match by SHAPE, you should tap the<br/>' +
+           'corner object that matches the SHAPE of the center object.'
       practice2_html:
         1: 'Try to respond quickly and accurately, but if you make ' +
-           'a mistake just keep going. We\'ll try some practice trials first.'
-        2: 'Tap the "Begin" button to begin.'
+           'a mistake just keep going.'
+        2: 'We\'ll try some practice trials first.'
       additional_practice_html:
-        1: 'You have completed the practice trial. ' +
-           'Let\'s do another practice trial. The instrucctions are the same.'
-        2: 'When you have to match by COLOR, you should push the ' +
-           'left button for red and the right button for blue.'
-        3: 'LEFT = RED'
-        4: 'RIGHT = BLUE'
-        5: 'When you have to match by SHAPE, you should push the left ' +
-           'button for triangle and the right button for rectangle. '
-        6: 'LEFT = TRIANGLE'
-        7: 'RIGHT = RECTANGLE'
-        8: 'Tap the "Begin" button to begin.'
+        1: 'You have completed the practice trial.<br/>' +
+           'Let\'s do another practice trial. The instructions are the same.'
+        2: 'When you have to match by COLOR, you should tap the<br/>' +
+           'left object for red and the right object for blue.'
+        3: 'When you have to match by SHAPE, you should tap the<br/>' +
+           'left object for triangle and the right object for rectangle. '
       testing_html:
         1: 'Now let\'s move on to the task, the instructions are the same ' +
            'but you will no longer receive feedback after your responses.'
-        2: 'When you have to match by COLOR, you should push the LEFT ' +
-           'button for RED and the RIGHT button for BLUE.'
-        3: 'When you have to match by SHAPE, you should push the LEFT ' +
-           'button for TRIANGLE and the RIGHT button for RECTANGLE.'
-        4: 'Try to respond quickly and accurately, but if you make ' +
+        2: 'When you have to match by COLOR, you should tap the<br/>' +
+           'corner object that matches the COLOR of the center object.<br/>' +
+           'When you have to match by SHAPE, you should tap the<br/>' +
+           'corner object that matches the SHAPE of the center object.'
+        3: 'Try to respond quickly and accurately, but if you make ' +
            'a mistake just keep going.'
-        5: 'Tap the "Begin" button to begin.'
       color_cue:
         'COLOR'
       feedback_correct:
@@ -567,12 +561,7 @@ showInstructions = (translation) ->
     )
     when 'additional_practice_html'
     then _.map($translation, (value, key) ->
-      if key is '3' or key is '6'
-        '<p><span style="float:left; margin-left: 10%">' + value + '</span>'
-      else if key is '4' or key is '7'
-        '<span style="float:right; margin-right: 10%">' +
-        value + '</span></p><br/>'
-      else if key is '5'
+      if key is '2'
         '<img class="instructionsImg" src="' + RED_RECTANGLE.src + '"/>' +
         '<p>' + value + '</p>'
       else
@@ -580,7 +569,7 @@ showInstructions = (translation) ->
     )
     when 'testing_html'
     then _.map($translation, (value, key) ->
-      if key is '4'
+      if key is '3'
         '<img class="instructionsImg" src="' + RED_RECTANGLE.src + '"/>' +
         '<p>' + value + '</p>'
       else
@@ -590,7 +579,7 @@ showInstructions = (translation) ->
 
   $html = $html.join('')
     
-  $instructions.append("<p></p><p></p>" + $html)
+  $instructions.append("<p></p>" + $html)
   $instructions.appendTo($rectangle)
   
   $rectangle.append(makeResponseDiv)
