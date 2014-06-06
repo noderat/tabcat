@@ -16,7 +16,7 @@ translations =
       begin_html:
         'Begin'
       practice_html:
-        1: 'You will be shown a series of arrows on the screen, ' +
+        1: 'You will be shown a series of arrows on the screen,</br>' +
            'pointing to the left or to the right. For example:'
         2: 'or'
         3: 'Press the RIGHT button if the CENTER arrow ' +
@@ -31,7 +31,7 @@ translations =
       additional_practice_html:
         1: 'You have completed the practice trial. ' +
            'Let\'s do another practice trial.'
-        2: 'You will be shown a series of arrows on the screen, ' +
+        2: 'You will be shown a series of arrows on the screen, <br/>' +
            'pointing to the left or to the right. For example:'
         3: 'or'
         4: 'Press the RIGHT button if the CENTER arrow ' +
@@ -304,9 +304,9 @@ showInstructions = (translation) ->
     then _.map($translation, (value, key) ->
       if (translation is 'practice_html' and key is '2') or
       (translation is 'additional_practice_html' and key is '3')
-        '<img class="instructionsArrow" src="img/flanker/rrrrr.png"/>' +
+        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.png"/>' +
         '<br/>' + value + '<br/>' +
-        '<img class="instructionsArrow" src="img/flanker/llrll.png"/>'
+        '<img class="instructionsArrow" src="img/flanker/instr_llrll.png"/>'
       else
         '<p>' + value + '</p>'
     )

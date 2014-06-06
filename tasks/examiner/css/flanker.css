@@ -25,10 +25,10 @@ span.red {
 }
 
 #instructions {
-  width: 60%;
+  width: 98%;
   margin: auto;
   text-align: center;
-  font-size: 2.3em;
+  font-size: 3.5em;
 }
 
 #instructions p {
@@ -37,8 +37,7 @@ span.red {
 }
 
 #instructions img.instructionsArrow {
-  height: 7em;
-  width: 7em;
+
 }
 
 /* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
@@ -53,12 +52,12 @@ span.red {
   height: 300px;
   z-index: 3;
   text-align: center;
-  font-size: 5em;
+  font-size: 6em;
 }
 
 #stimuli img.arrow {
-  height: 30em;
-  width: 30em;
+  height: 40em;
+  width: 40em;
 }
 
 #stimuli img.center {
@@ -69,24 +68,24 @@ span.red {
 
 /* offset by half the image dimensions */
 #stimuli img.fixation {
-  height: 2em;
-  width: 2em;
-  margin-top: -1em;
-  margin-left: -1em;
+  height: 3em;
+  width: 3em;
+  margin-top: -1.5em;
+  margin-left: -1.5em;
   z-index: 2;
 }
 
-/* 5em above fixation = -(20/2 + 5) */
+/* 7em above fixation = -(40/2 + 7) */
 #stimuli img.aboveFixation {
-  margin-top: -20em;
-  margin-left: -15em;
+  margin-top: -27em;
+  margin-left: -20em;
   z-index: 1;
 }
 
-/* 5em below fixation = -(20/2 - 5) */
+/* 7em below fixation = -(40/2 - 7) */
 #stimuli img.belowFixation {
-  margin-top: -10em;
-  margin-left: -15em;
+  margin-top: -13em;
+  margin-left: -20em;
   z-index: 1;
 }
 
@@ -104,6 +103,5 @@ span.red {
 }
 
 #responseButtons img.responseArrow {
-  height: 0.8em;
-  
+  height: 0.8em; 
 }
