@@ -31,34 +31,31 @@ translations =
         1: 'You will be presented with different objects ' +
            'on the screen.<br/>' +
            'If this $t(object_version) is presented on the screen,</br>' +
-           'tap the button at the bottom of the screen.<br/>' +
-           'If any other shape is presented, do not press any key.'
+           'tap it as quickly as you can.<br/>' +
+           'If any other shape is presented, do not tap anything.'
         2: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
-        3: 'We will start with some practice trials.</br>' +
-           'Tap the "Begin" button to begin.'
+        3: 'We will start with some practice trials.'
       additional_practice_html:
         1: 'You have completed the practice trial.<br/>' +
            'Let\'s do another practice trial.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
            'If the $t(object_version) is presented on the screen,<br/>' +
-           'tap the button at the bottom of the screen.<br/>' +
-           'If any other shape is presented, do not press any key.'
+           'tap it as quickly as you can.<br/>' +
+           'If any other shape is presented, do not anything.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
-        4: 'Tap the "Begin" button to begin.'
       testing_html:
         1: 'You have completed the practice trial.<br/>' +
            'Let\'s move on to the task.'
         2: 'The instructions are the same.<br/>' +
            'You will be presented with different shapes on the screen.<br/>' +
            'If the $t(object_version) is presented on the screen,</br>' +
-           'press the left arrow key.<br/>' +
-           'If any other shape is presented, do not press any key.'
+           'tap it as quickly as you can.<br/>' +
+           'If any other shape is presented, do not tap anything.'
         3: 'Respond as quickly as you can without making mistakes.<br/>' +
            'If you do make a mistake just keep going.'
-        4: 'Tap the "Begin" button to begin.'
       object_version_a:
         '5-POINTED STAR'
       object_version_b:
