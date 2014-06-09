@@ -46,7 +46,7 @@ itemHandler = (patientRecord, encounter, task, item) ->
     item.interpretation.extraResponses,
     item.event?.type ? 'none',
     if item.interpretation.correct then '1' else '0',
-    item.interpretation.responseTime / TIME_CONVERTER,
+    item.interpretation.responseTime,
     item.now / TIME_CONVERTER
   ]
 

@@ -113,7 +113,7 @@ itemHandler = (patientRecord, encounter, task, item) ->
       totalCorr += 1
       if item.state.stimuli.stimulus is 'target'
         targetCorr += 1
-        target.push(item.interpretation.responseTime / TIME_CONVERTER)
+        target.push(item.interpretation.responseTime)
       else
         nontargetCorr += 1
 

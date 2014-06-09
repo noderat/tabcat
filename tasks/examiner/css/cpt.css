@@ -23,10 +23,6 @@ button:disabled {
   color: #cccccc;
 }
 
-#responseButton {
-  width: 30%;
-}
-
 /* debug mode */
 #task div {
   border: 0px solid;
@@ -37,44 +33,50 @@ button:disabled {
   left: 0;
 }
 
-#stimuli {
-  position: relative;
-  height: 85%;
-  /*background-color: #eeeeee; for debug */
-}
-
-#instructions {
+.instructions {
   width: 98%;
   margin: auto;
   text-align: center;
   font-size: 3.5em;
 }
 
-#instructions p {
+.instructions p {
   margin: 0;
   padding: 0.4em;
 }
 
-#instructions img.stimuli {
+.instructions img.stimuli {
   height: 7em;
   width: 7em;
 }
 
-/* offset by half the image dimensions */
-#stimuli img.target, img.nontarget {
+.beginButton {
+  width: 30%;
+}
+
+.beginButtonDiv {
+  height: 15%;
+  text-align: center;
+  width: 100%;
   position: absolute;
-  top: 50%;
+  bottom: 5%;
+  /*background-color: #cccccc;  for debug*/
+}
+
+/* offset by half the image dimensions */
+.stimulusDiv {
+  width: 100%;
+  position: absolute;
+  top: 75%;
   left: 50%;
+}
+
+.stimulusImg {
   height: 30em;
   width: 30em;
   margin-top: -15em;
   margin-left: -15em;
-  z-index: 2;
 }
 
-#responseButtons {
-  height: 15%;
-  text-align: center;
-  width: 100%;
-  /*background-color: #cccccc;  for debug*/
-}
+
+

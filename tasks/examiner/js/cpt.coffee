@@ -101,22 +101,27 @@ ASPECT_RATIO = 4/3
 
 # total of 20 trials (5 non targets, 15 targets)
 PRACTICE_TRIALS = [
-  {'stimulus': 'nontarget1'},
-  {'stimulus': 'nontarget2'},
-  {'stimulus': 'nontarget3'},
-  {'stimulus': 'nontarget4'},
-  {'stimulus': 'nontarget5'}
-].concat(({'stimulus': 'target'} for i in [0...PRACTICE_NUM_TARGETS]))
+  {'stimulus': 'nontarget1', 'filename': 'nt1.png'},
+  {'stimulus': 'nontarget2', 'filename': 'nt2.png'},
+  {'stimulus': 'nontarget3', 'filename': 'nt3.png'},
+  {'stimulus': 'nontarget4', 'filename': 'nt4.png'},
+  {'stimulus': 'nontarget5', 'filename': 'nt5.png'}
+].concat(
+  ({'stimulus': 'target', 'filename': 'target.png'} \
+    for i in [0...PRACTICE_NUM_TARGETS])
+)
 
 # total of 25 trials (5 non targets, 20 targets)
 REAL_TRIALS = [
-  {'stimulus': 'nontarget1'},
-  {'stimulus': 'nontarget2'},
-  {'stimulus': 'nontarget3'},
-  {'stimulus': 'nontarget4'},
-  {'stimulus': 'nontarget5'}
-].concat(({'stimulus': 'target'} for i in [0...REAL_NUM_TARGETS]))
-
+  {'stimulus': 'nontarget1', 'filename': 'nt1.png'},
+  {'stimulus': 'nontarget2', 'filename': 'nt2.png'},
+  {'stimulus': 'nontarget3', 'filename': 'nt3.png'},
+  {'stimulus': 'nontarget4', 'filename': 'nt4.png'},
+  {'stimulus': 'nontarget5', 'filename': 'nt5.png'}
+].concat(
+  ({'stimulus': 'target', 'filename': 'target.png'} \
+    for i in [0...REAL_NUM_TARGETS])
+)
 
 # for debugging
 pp = (msg) ->
@@ -189,62 +194,35 @@ trialBlock = createPracticeBlock()
 # current trial in current trial block
 trialIndex = -1
 
-clearStimuli = ->
-  $stimuli = $('#stimuli')
-  $stimuli.children().hide()
-
-showBeginButton = ->
-  hideResponseButton()
-  $beginButton = $('#beginButton')
-  $beginButton.one('mousedown touchstart', handleBeginClick)
-  $beginButton.show()
-
-hideBeginButton = ->
-  $('#beginButton').hide()
-    
-showResponseButton = ->
-  hideBeginButton()
-  $('#responseButton').show()
-
-hideResponseButton = ->
-  $('#responseButton').hide()
-
-enableResponseButton = ->
-  $('#responseButton').prop('disabled',false)
+# summary of current stimulus
+getStimuli = ->
+  trial = trialBlock[trialIndex]
   
-disableResponseButton = ->
-  $('#responseButton').prop('disabled',true)
+  stimuli =
+    stimulus: trial?.stimulus
 
-showInstructions = (translation) ->
-  clearStimuli()
-  $translation = $.t(translation, \
-    {returnObjectTrees: true, context: CPT_VERSION})
+  return stimuli
 
-  $html = switch translation
-    when 'practice_html', 'additional_practice_html' \
-    then _.map($translation, (value, key) ->
-      if (translation is 'practice_html' and key is '1') or
-      (translation is 'additional_practice_html' and key is '2')
-        '<p>' + value + '<br/></br>' +
-        '<img class="stimuli" src="img/cpt/'+CPT_VERSION+'/target.png"/></p>'
-      else
-        '<p>' + value + '</p>'
-    )
-    when 'testing_html' then _.map($translation, (value, key) ->
-      '<p>' + value + '</p>'
-    )
-    else []
+# summary of the current state of the task
+getTaskState = ->
+  state =
+    version: CPT_VERSION
+    trialNum: trialIndex
+    stimuli: getStimuli()
+    
+  if inPracticeMode
+    state.practiceMode = true
+    state.trialBlock = "practiceBlock" + numPracticeBlocks
+  else
+    state.trialBlock = "testingBlock"
 
-  $instructions = $('#instructions')
-  $instructions.html("<p></p><p></p>" + $html.join(''))
-  $instructions.show()
+  if($('#instructions').is(':visible'))
+    state.instructions = true
 
-showStimulus = (trial) ->
-  $stim = $('#' + trial.stimulus)
-  $stim.show()
-  TabCAT.UI.wait(STIMULUS_DISPLAY_DURATION).then(->
-    $stim.hide()
-  )
+  return state
+
+makeStimulusDiv = ->
+  $stimulusDiv = $('<div></div>', class: 'stimulusDiv')
 
 # heart of the task
 showTrial = (trial) ->
@@ -252,17 +230,26 @@ showTrial = (trial) ->
   responses = [] # keep track of all responses
   responseEvent = null # event to log
   
-  $('#responseButton').on('mousedown touchstart', (event) ->
+  $stimulusDiv = $('.stimulusDiv')
+  $img = $('<img>',
+    alt: trial.stimulus,
+    class: 'stimulusImg',
+    src: 'img/cpt/' + CPT_VERSION + '/' + trial.filename)
+  $img.on('mousedown touchstart', (event) ->
     responseTime = ($.now() - trialStartTime) / 1000
     event.preventDefault()
     event.stopPropagation()
     responses.push(responseTime)
     responseEvent = event
   )
+  $stimulusDiv.append($img)
   
-  enableResponseButton()
-  showStimulus(trial)
- 
+  TabCAT.UI.wait(STIMULUS_DISPLAY_DURATION).then(->
+    # do this instead of hiding or removing so we can continue
+    # recording responses on the img after stimulus goes away
+    $img.css('opacity', 0)
+  )
+  
   # All responses are recorded after the display of the stimulus.
   # The first response after the display of the stimulus is recorded
   # in terms of the response time. Any additional responses prior to the
@@ -271,8 +258,9 @@ showTrial = (trial) ->
   registerResponses = (
     # only allow this much time to respond
     TabCAT.UI.wait(RESPONSE_TIME_LIMIT).then(->
-      disableResponseButton()
-  
+      # disable responses by removing the img
+      $('.stimulusDiv').empty()
+      
       # once disabled can analyze and log responses
       extraResponses = 'none'
       if responses.length is 0
@@ -329,7 +317,6 @@ next = ->
         trialBlock = createTestingBlock()
         trialIndex = -1
         showInstructions 'testing_html'
-        showBeginButton()
       else if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
         TabCAT.Task.finish()
       else # start new practice block
@@ -338,76 +325,64 @@ next = ->
         numCorrectInPractice = 0
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
-        showBeginButton()
     else
       TabCAT.Task.finish()
 
 handleBeginClick = (event) ->
   event.preventDefault()
   event.stopPropagation()
-  clearStimuli()
-  showResponseButton()
-  disableResponseButton()
+
+  $rectangle = $('#rectangle')
+  $rectangle.empty()
+  $rectangle.append(makeStimulusDiv())
   
   # wait before display of initial trial in the block
   TabCAT.UI.wait(BEFORE_BLOCK_DELAY + INTER_STIMULUS_DELAY).then(->
     next()
   )
 
-# summary of current stimulus
-getStimuli = ->
-  trial = trialBlock[trialIndex]
-  
-  stimuli =
-    stimulus: trial?.stimulus
+makeBeginButton = ->
+  $button = $('<button></button>', class: 'beginButton')
+  $button.html($.t('begin_html'))
+  $button.one('mousedown touchstart', handleBeginClick)
+  $buttonDiv = $('<div></div>', class: 'beginButtonDiv')
+  $buttonDiv.html($button)
 
-  return stimuli
+showInstructions = (translation) ->
+  $rectangle = $('#rectangle')
+  $rectangle.empty()
+  $instructions = $('<div></div>', class: 'instructions')
 
-# summary of the current state of the task
-getTaskState = ->
-  state =
-    version: CPT_VERSION
-    trialNum: trialIndex
-    stimuli: getStimuli()
+  $translation = $.t(translation, \
+    {returnObjectTrees: true, context: CPT_VERSION})
+
+  $html = switch translation
+    when 'practice_html', 'additional_practice_html' \
+    then _.map($translation, (value, key) ->
+      if (translation is 'practice_html' and key is '1') or
+      (translation is 'additional_practice_html' and key is '2')
+        '<p>' + value + '<br/></br>' +
+        '<img class="stimuli" src="img/cpt/'+CPT_VERSION+'/target.png"/></p>'
+      else
+        '<p>' + value + '</p>'
+    )
+    when 'testing_html' then _.map($translation, (value, key) ->
+      '<p>' + value + '</p>'
+    )
+    else []
+
+
+  $html = $html.join('')
     
-  if inPracticeMode
-    state.practiceMode = true
-    state.trialBlock = "practiceBlock" + numPracticeBlocks
-  else
-    state.trialBlock = "testingBlock"
+  $instructions.append("<p></p>" + $html)
+  $instructions.appendTo($rectangle)
 
-  if($('#instructions').is(':visible'))
-    state.instructions = true
-
-  return state
+  $rectangle.append(makeBeginButton())
 
 # log stray taps
 handleStrayTouchStart = (event) ->
   event.preventDefault()
   TabCAT.Task.logEvent(getTaskState(), event)
-
-# load initial screen
-showStartScreen = ->
-  showInstructions 'practice_html'
-  $('#beginButton').html($.t('begin_html'))
-  showBeginButton()
-
-# load the stimuli imgs
-loadStimuli = ->
-  # create the non target imgs
-  $imgs = _.map([1,2,3,4,5], (num) ->
-    '<img id="nontarget' + num + '" ' + \
-      'src="img/cpt/' + CPT_VERSION + '/nt' + num + '.png" ' + \
-      'style="display:none" ' + \
-      'class="nontarget">')
-  
-  # create the target img
-  $imgs = $imgs.join('') + '<img id="target" ' + \
-    'src="img/cpt/' + CPT_VERSION + '/target.png" ' + \
-    'class="target" ' +\
-    'style="display:none">'
-
-  $('#stimuli').append($imgs)
   
 # INITIALIZATION
 @initTask = ->
@@ -425,9 +400,9 @@ loadStimuli = ->
     encounterNum = TabCAT.Encounter.getNum()
     if encounterNum
       CPT_VERSION = switch (encounterNum % 3)
-        when 0 then 'a'
-        when 1 then 'b'
-        when 2 then 'c'
+        when 0 then 'c'
+        when 1 then 'a'
+        when 2 then 'b'
 
     $task = $('#task')
     $rectangle = $('#rectangle')
@@ -436,8 +411,6 @@ loadStimuli = ->
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
     
-    loadStimuli()
-    disableResponseButton()
-    showStartScreen()
+    showInstructions 'practice_html'
   )
 
