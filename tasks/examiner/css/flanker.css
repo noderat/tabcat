@@ -96,8 +96,12 @@ span.red {
   /*background-color: #cccccc;  for debug*/
 }
 
+#beginButton {
+  width: 30%;
+}
+
 #responseButtons .responseButton {
-  width: 15%;
+  width: 30%;
   margin-left: 1em;
   margin-right: 1em;
 }
