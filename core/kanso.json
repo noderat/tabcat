@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.6.3",
+    "version": "0.7.0",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
                     "img/favicon.ico",

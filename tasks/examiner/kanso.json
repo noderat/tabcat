@@ -1,32 +1,32 @@
 {
     "name": "examiner",
-    "version": "0.6.3",
+    "version": "0.7.0",
     "description": "Examiner",
     "attachments": [
         "cpt.html",
         "css/cpt.css",
         "css/examiner.css",
         "css/flanker.css",
-        "css/setshifting.css",        
+        "css/setshifting.css",
         "flanker.html",
         "img/cpt/a/nt1.png",
         "img/cpt/a/nt2.png",
         "img/cpt/a/nt3.png",
         "img/cpt/a/nt4.png",
         "img/cpt/a/nt5.png",
-        "img/cpt/a/target.png",        
+        "img/cpt/a/target.png",
         "img/cpt/b/nt1.png",
         "img/cpt/b/nt2.png",
         "img/cpt/b/nt3.png",
         "img/cpt/b/nt4.png",
         "img/cpt/b/nt5.png",
-        "img/cpt/b/target.png",        
+        "img/cpt/b/target.png",
         "img/cpt/c/nt1.png",
         "img/cpt/c/nt2.png",
         "img/cpt/c/nt3.png",
         "img/cpt/c/nt4.png",
         "img/cpt/c/nt5.png",
-        "img/cpt/c/target.png",        
+        "img/cpt/c/target.png",
         "img/cpt/icon.png",
         "img/flanker/fixation.png",
         "img/flanker/icon.png",
@@ -42,7 +42,7 @@
         "img/setshifting/rect_blue.png",
         "img/setshifting/rect_red.png",
         "img/setshifting/tri_blue.png",
-        "img/setshifting/tri_red.png",                        
+        "img/setshifting/tri_red.png",
         "js/cpt.js",
         "js/examiner.js",
         "js/flanker.js",
@@ -78,7 +78,7 @@
                 "description": "Set Shifting",
                 "icon": "img/setshifting/icon.png",
                 "start": "setshifting.html"
-            }            
+            }
         }
     }
 }
