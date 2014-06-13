@@ -16,11 +16,10 @@ CSV_HEADER = [
   'taskFinish',
   'trialBlock',
   'trialNum',
-  'trialCongruent',
-  'trialArrows',
-  'trialUpDown',
+  'trialCondition',
+  'trialCue',
   'trialCorrResp',
-  'trialFixation',
+  'trialShift',
   'respValue',
   'respCorr',
   'respRt',
@@ -43,12 +42,11 @@ itemHandler = (patientRecord, encounter, task, item) ->
     task.finishedAt / TIME_CONVERTER,
     item.state.trialBlock,
     item.state.trialNum,
-    if item.state.stimuli.congruent then "1" else "0",
-    item.state.stimuli.arrows,
-    item.state.stimuli.upDown,
-    item.state.stimuli.arrows.charAt(2),
-    item.state.stimuli.fixationDuration / TIME_CONVERTER,
-    item.interpretation.response,
+    item.state.stimuli.condition,
+    item.state.stimuli.cue,
+    item.state.stimuli.corrResp,
+    item.state.stimuli.shift,
+    item.interpretation.response?.respValue ? "none",
     if item.interpretation.correct then "1" else "0",
     item.interpretation.responseTime / TIME_CONVERTER,
     item.now / TIME_CONVERTER
@@ -57,7 +55,7 @@ itemHandler = (patientRecord, encounter, task, item) ->
   send(csv.arrayToCsv([data]))
 
 patientHandler = (patientRecord) ->
-  examiner.flankerPatientTraverser(patientRecord, itemHandler)
+  examiner.setshiftingPatientTraverser(patientRecord, itemHandler)
 
 exports.list = (head, req) ->
   keyType = req.path[req.path.length - 1]
@@ -69,7 +67,7 @@ exports.list = (head, req) ->
 
   start(headers:
     'Content-Disposition': (
-      "attachment; filename=\"flanker-detail-report-#{isoDate}.csv"),
+      "attachment; filename=\"set-shifting-detail-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
   send(csv.arrayToCsv([CSV_HEADER]))

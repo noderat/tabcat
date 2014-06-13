@@ -3,19 +3,51 @@
     "version": "0.6.3",
     "description": "Examiner",
     "attachments": [
+        "cpt.html",
+        "css/cpt.css",
         "css/examiner.css",
         "css/flanker.css",
+        "css/setshifting.css",        
+        "flanker.html",
+        "img/cpt/a/nt1.png",
+        "img/cpt/a/nt2.png",
+        "img/cpt/a/nt3.png",
+        "img/cpt/a/nt4.png",
+        "img/cpt/a/nt5.png",
+        "img/cpt/a/target.png",        
+        "img/cpt/b/nt1.png",
+        "img/cpt/b/nt2.png",
+        "img/cpt/b/nt3.png",
+        "img/cpt/b/nt4.png",
+        "img/cpt/b/nt5.png",
+        "img/cpt/b/target.png",        
+        "img/cpt/c/nt1.png",
+        "img/cpt/c/nt2.png",
+        "img/cpt/c/nt3.png",
+        "img/cpt/c/nt4.png",
+        "img/cpt/c/nt5.png",
+        "img/cpt/c/target.png",        
+        "img/cpt/icon.png",
         "img/flanker/fixation.png",
         "img/flanker/icon.png",
+        "img/flanker/instr_llrll.png",
+        "img/flanker/instr_rrrrr.png",
         "img/flanker/left.png",
         "img/flanker/lllll.png",
         "img/flanker/llrll.png",
         "img/flanker/right.png",
         "img/flanker/rrlrr.png",
         "img/flanker/rrrrr.png",
+        "img/setshifting/icon.png",
+        "img/setshifting/rect_blue.png",
+        "img/setshifting/rect_red.png",
+        "img/setshifting/tri_blue.png",
+        "img/setshifting/tri_red.png",                        
+        "js/cpt.js",
         "js/examiner.js",
         "js/flanker.js",
-        "flanker.html"
+        "js/setshifting.js",
+        "setshifting.html"
     ],
     "dependencies": {
         "attachments": null
@@ -25,16 +57,28 @@
             "examiner": {
                 "description": "EXAMINER",
                 "tasks": [
-                    "flanker"
+                    "cpt",
+                    "flanker",
+                    "setshifting"
                 ]
             }
         },
         "tasks": {
+            "cpt": {
+                "description": "CPT",
+                "icon": "img/cpt/icon.png",
+                "start": "cpt.html"
+            },
             "flanker": {
                 "description": "Flanker",
                 "icon": "img/flanker/icon.png",
                 "start": "flanker.html"
-            }
+            },
+            "setshifting": {
+                "description": "Set Shifting",
+                "icon": "img/setshifting/icon.png",
+                "start": "setshifting.html"
+            }            
         }
     }
 }

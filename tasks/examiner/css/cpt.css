@@ -1,0 +1,82 @@
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  /* Helvetica is the "everything is okay" font */
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+button {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: #ffffff;
+  border-radius: 0.7em;
+  background-color: #666666;
+  padding: 0.3em;
+  color: #ffffff;
+  font-size: 5em;
+}
+
+button:disabled {
+  border-color: #cccccc;
+  color: #cccccc;
+}
+
+/* debug mode */
+#task div {
+  border: 0px solid;
+}
+
+#debug {
+  position: absolute;
+  left: 0;
+}
+
+.instructions {
+  width: 98%;
+  margin: auto;
+  text-align: center;
+  font-size: 3.5em;
+}
+
+.instructions p {
+  margin: 0;
+  padding: 0.4em;
+}
+
+.instructions img.stimuli {
+  height: 7em;
+  width: 7em;
+}
+
+.beginButton {
+  width: 30%;
+}
+
+.beginButtonDiv {
+  height: 15%;
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 5%;
+  /*background-color: #cccccc;  for debug*/
+}
+
+/* offset by half the image dimensions */
+.stimulusDiv {
+  width: 100%;
+  position: absolute;
+  top: 75%;
+  left: 50%;
+}
+
+.stimulusImg {
+  height: 30em;
+  width: 30em;
+  margin-top: -15em;
+  margin-left: -15em;
+}
+
+
+

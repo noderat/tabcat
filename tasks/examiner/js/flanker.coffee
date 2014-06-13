@@ -16,7 +16,7 @@ translations =
       begin_html:
         'Begin'
       practice_html:
-        1: 'You will be shown a series of arrows on the screen, ' +
+        1: 'You will be shown a series of arrows on the screen,</br>' +
            'pointing to the left or to the right. For example:'
         2: 'or'
         3: 'Press the RIGHT button if the CENTER arrow ' +
@@ -31,7 +31,7 @@ translations =
       additional_practice_html:
         1: 'You have completed the practice trial. ' +
            'Let\'s do another practice trial.'
-        2: 'You will be shown a series of arrows on the screen, ' +
+        2: 'You will be shown a series of arrows on the screen, <br/>' +
            'pointing to the left or to the right. For example:'
         3: 'or'
         4: 'Press the RIGHT button if the CENTER arrow ' +
@@ -144,13 +144,14 @@ translations =
         '沒有收到任何答覆。'
 
 
-
+# used for code testing purposes only
 TEST_TRIALS = [
   {'arrows':'lllll', 'upDown':'up'  },
   {'arrows':'lllll', 'upDown':'down'},
   {'arrows':'rrrrr', 'upDown':'up'  },
 ]
 
+# default trials used for actual testing
 DEFAULT_TRIALS = [
   {'arrows':'lllll', 'upDown':'up'  },
   {'arrows':'lllll', 'upDown':'down'},
@@ -160,6 +161,14 @@ DEFAULT_TRIALS = [
   {'arrows':'llrll', 'upDown':'down'},
   {'arrows':'rrlrr', 'upDown':'up'  },
   {'arrows':'rrlrr', 'upDown':'down'},
+]
+
+# after practice and prior to testing, these throwaway trials are given
+# but not included in scoring. the idea is to give additional practice trials
+# to get user ready for additional complexity of real testing
+THROWAWAY_TRIALS = [
+  {'arrows':'llrll', 'upDown':'up'  },
+  {'arrows':'lllll', 'upDown':'down'},
 ]
 
 # For each trial, the correct response is the middle arrow,
@@ -203,9 +212,14 @@ createPracticeBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 1)
   #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
 
+# return throwaway block
+createThrowawayBlock = ->
+  Examiner.generateTrials(THROWAWAY_TRIALS, 1)
+  #Examiner.generateTrials(TEST_TRIALS, 1, 'sequential')
+
 # return a real testing block
 createTestingBlock = ->
-  Examiner.generateTrials(DEFAULT_TRIALS, 2)
+  Examiner.generateTrials(DEFAULT_TRIALS, 6)
   #Examiner.generateTrials(TEST_TRIALS, 2, 'sequential')
 
 # how many has the patient gotten correct in practice block?
@@ -221,6 +235,9 @@ practicePassed = ->
 
 # start off in practice mode
 inPracticeMode = true
+
+# go into throwaway mode only after practice and before real testing
+inThrowawayMode = false
 
 # current trial block
 # start off with a practice block
@@ -287,9 +304,9 @@ showInstructions = (translation) ->
     then _.map($translation, (value, key) ->
       if (translation is 'practice_html' and key is '2') or
       (translation is 'additional_practice_html' and key is '3')
-        '<img class="instructionsArrow" src="img/flanker/rrrrr.png"/>' +
+        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.png"/>' +
         '<br/>' + value + '<br/>' +
-        '<img class="instructionsArrow" src="img/flanker/llrll.png"/>'
+        '<img class="instructionsArrow" src="img/flanker/instr_llrll.png"/>'
       else
         '<p>' + value + '</p>'
     )
@@ -424,9 +441,10 @@ next = ->
     showTrial(trialBlock[trialIndex])
   else # end of block
     if inPracticeMode
-      if practicePassed() # passed practice so go to real testing
+      if practicePassed() # passed practice so go to throwaway mode
         inPracticeMode = false
-        trialBlock = createTestingBlock()
+        inThrowawayMode = true
+        trialBlock = createThrowawayBlock()
         trialIndex = -1
         showInstructions 'testing_html'
         showBeginButton()
@@ -439,6 +457,11 @@ next = ->
         numPracticeBlocks += 1
         showInstructions 'additional_practice_html'
         showBeginButton()
+    else if inThrowawayMode # after throwaway block, go to real testing
+      inThrowawayMode = false
+      trialBlock = createTestingBlock()
+      trialIndex = -1
+      next()
     else
       TabCAT.Task.finish()
 
@@ -471,6 +494,8 @@ getTaskState = ->
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
+  else if inThrowawayMode
+    state.trialBlock = "throwawayBlock"
   else
     state.trialBlock = "testingBlock"
 
@@ -524,7 +549,7 @@ loadStimuli = ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
-
+    
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
