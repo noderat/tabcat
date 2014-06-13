@@ -71,6 +71,13 @@ patientHandler = (patientRecord) ->
           # note that this the server's local time
           isoDate = (new Date(timestamp)).toISOString()[..9]
 
+        notes = encounter.administrationNotes
+        goodForResearch = null
+        if notes?.goodForResearch?  # use 0/1 rather than false/true
+          goodForResearch = Number(notes.goodForResearch)
+        qualityIssues = (notes?.qualityIssues ? []).join(', ')
+        adminComments = notes?.comments ? null
+
         end = task.finishedAt ? _.last(task.eventLog)?.now
         if task.startedAt? and end?
           totalTime = end - task.startedAt
@@ -86,6 +93,9 @@ patientHandler = (patientRecord) ->
           patientCode,
           version,
           isoDate,
+          goodForResearch,
+          qualityIssues,
+          adminComments,
           totalTime,
           numTrials,
           cometHitRate
@@ -114,6 +124,9 @@ exports.list = (head, req) ->
     'patientCode',
     'version',
     'date',
+    'goodForResearch',
+    'qualityIssues',
+    'adminComments',
     'time',
     'trials',
     'cometHitRate'

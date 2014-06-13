@@ -149,7 +149,7 @@ TARGET_STAR_DURATION = 3000
 TARGET_STAR_PRACTICE_DURATION = 5000
 
 # how many reversals before we stop
-MAX_REVERSALS = 18
+MAX_REVERSALS = 2#18
 
 # how many comets do you have to catch before we show stars?
 MIN_COMETS_CAUGHT_BEFORE_STARS_SHOWN = 3
@@ -169,7 +169,7 @@ staircase = new TabCAT.Task.Staircase(
 )
 
 # use this to turn off comets, for faster debugging
-DEBUG_NO_COMETS = false
+DEBUG_NO_COMETS = true#false
 
 # if comets are turned off, turn screen black for this long instead
 DEBUG_DELAY_INSTEAD_OF_COMETS = 1000
@@ -181,7 +181,7 @@ DEBUG_NUM_STARS = null
 DEBUG_KEEP_TARGET_STARS_VISIBLE = false
 
 # skip practice mode
-DEBUG_SKIP_PRACTICE_MODE = false
+DEBUG_SKIP_PRACTICE_MODE = true#false
 
 # how many has the patient gotten correct in practice mode?
 numCorrectInPractice = 0
