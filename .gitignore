@@ -6,6 +6,7 @@
 /cache.manifest*
 /console/design.json
 /console/js/*.js
+/console/packages
 /core/design.json
 /core/js/*.js
 /core/js/couchdb/*.js
