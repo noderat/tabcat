@@ -92,16 +92,8 @@ patientHandler = (patientRecord) ->
 
 
 exports.list = (head, req) ->
-  keyType = req.path[req.path.length - 1]
-
-  if not (req.path.length is 6 and keyType is 'patient')
-    throw new Error('You may only dump the patient view')
-
-  isoDate = report.today()
-  start(headers:
-    'Content-Disposition': (
-      "attachment; filename=\"stargazer-report-#{isoDate}.csv"),
-    'Content-Type': 'text/csv')
+  report.requirePatientView(req)
+  start(headers: report.csvHeaders('stargazer-report'))
 
   csvHeader = [
     'patientCode',

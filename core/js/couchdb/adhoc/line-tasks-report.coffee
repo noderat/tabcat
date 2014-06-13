@@ -123,17 +123,8 @@ taskHeader = (prefix) ->
 
 
 exports.list = (head, req) ->
-  keyType = req.path[req.path.length - 1]
-
-  if not (req.path.length is 6 and keyType is 'patient')
-    throw new Error('You may only dump the patient view')
-
-  isoDate = (new Date()).toISOString()[..9]
-
-  start(headers:
-    'Content-Disposition': (
-      "attachment; filename=\"line-tasks-report-#{isoDate}.csv"),
-    'Content-Type': 'text/csv')
+  report.requirePatientView(req)
+  start(headers: report.csvHeaders('line-tasks-report'))
 
   csvHeader = ['patientCode']
   for prefix in TASK_PREFIXES
