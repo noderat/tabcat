@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 _ = require('js/vendor/underscore')._
 csv = require('js/vendor/ucsv')
 patient = require('../patient')
+report = require('./report')
 
 MAX_REVERSALS = 18
 
@@ -63,21 +64,6 @@ patientHandler = (patientRecord) ->
         if cometsShownAfterTrial0
           cometHitRate = cometsCaughtAfterTrial0 / cometsShownAfterTrial0
 
-        version = task.version ? null
-
-        isoDate = null
-        timestamp = task.limitedPHI?.clockOffset
-        if timestamp?
-          # note that this the server's local time
-          isoDate = (new Date(timestamp)).toISOString()[..9]
-
-        notes = encounter.administrationNotes
-        goodForResearch = null
-        if notes?.goodForResearch?  # use 0/1 rather than false/true
-          goodForResearch = Number(notes.goodForResearch)
-        qualityIssues = (notes?.qualityIssues ? []).join(', ')
-        adminComments = notes?.comments ? null
-
         end = task.finishedAt ? _.last(task.eventLog)?.now
         if task.startedAt? and end?
           totalTime = end - task.startedAt
@@ -91,15 +77,13 @@ patientHandler = (patientRecord) ->
 
         data = [
           patientCode,
-          version,
-          isoDate,
-          goodForResearch,
-          qualityIssues,
-          adminComments,
+          report.getVersion(task),
+          report.getDate(task)
+        ].concat(report.getDataQuality(encounter)).concat([
           totalTime,
           numTrials,
           cometHitRate
-        ].concat(starsAtReversal)
+        ]).concat(starsAtReversal)
 
         send(csv.arrayToCsv([data]))
 
@@ -113,8 +97,7 @@ exports.list = (head, req) ->
   if not (req.path.length is 6 and keyType is 'patient')
     throw new Error('You may only dump the patient view')
 
-  isoDate = (new Date()).toISOString()[..9]
-
+  isoDate = report.today()
   start(headers:
     'Content-Disposition': (
       "attachment; filename=\"stargazer-report-#{isoDate}.csv"),
@@ -122,15 +105,16 @@ exports.list = (head, req) ->
 
   csvHeader = [
     'patientCode',
-    'version',
-    'date',
+    report.VERSION_HEADER,
+    report.DATE_HEADER
+  ].concat(report.DATA_QUALITY_HEADERS).concat([
     'goodForResearch',
     'qualityIssues',
     'adminComments',
     'time',
     'trials',
     'cometHitRate'
-  ].concat(
+  ]).concat(
     ('starsAtRev' + i for i in [1..MAX_REVERSALS]))
 
   send(csv.arrayToCsv([csvHeader]))
