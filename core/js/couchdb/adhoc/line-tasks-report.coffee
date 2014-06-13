@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,24 @@ LINE_TASKS = [
   'line-orientation'
 ]
 
-COLUMNS_PER_TASK = MAX_REVERSALS + 3
+# short header column prefixes to use for each task
+TASK_PREFIXES = [
+  'Par',
+  'Prp',
+  'LO',
+]
+
+# the rest of the header column name, combined with TASK_PREFIXES
+# to make names like 'ParVersion'
+HEADER_SUFFIXES = [
+  'Version',
+  'Date',
+  'Time',
+  'Trials',
+  'TimePerTrial'
+]
+
+COLUMNS_PER_TASK = MAX_REVERSALS + HEADER_SUFFIXES.length
 
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
@@ -66,7 +83,17 @@ patientHandler = (patientRecord) ->
             item.state.intensity for item in task.eventLog \
             when item?.interpretation?.reversal)
 
+        version = task.version ? null
+
+        isoDate = null
+        timestamp = task.limitedPHI?.clockOffset
+        if timestamp?
+          # note that this the server's local time
+          isoDate = (new Date(timestamp)).toISOString()[..9]
+
         taskToInfo[task.name] =
+          version: version
+          isoDate: isoDate
           totalTime: totalTime
           numTrials: numTrials
           timePerTrial: totalTime / numTrials
@@ -82,11 +109,13 @@ patientHandler = (patientRecord) ->
     info = taskToInfo[taskName]
     if info?
       offset = i * COLUMNS_PER_TASK + 1
-      data[offset] = info.totalTime
-      data[offset + 1] = info.numTrials
-      data[offset + 2] = info.timePerTrial
+      data[offset] = info.version
+      data[offset + 1] = info.isoDate
+      data[offset + 2] = info.totalTime
+      data[offset + 3] = info.numTrials
+      data[offset + 4] = info.timePerTrial
       for intensity, j in info.intensitiesAtReversal
-        data[offset + 3 + j] = intensity
+        data[offset + HEADER_SUFFIXES.length + j] = intensity
 
   # replace undefined with null, so arrayToCsv() works
   data = (x ? null for x in data)
@@ -95,7 +124,7 @@ patientHandler = (patientRecord) ->
 
 
 taskHeader = (prefix) ->
-  [prefix + 'Time', prefix + 'Trials', prefix + 'TimePerTrial'].concat(
+  (prefix + suffix for suffix in HEADER_SUFFIXES).concat(
     (prefix + i for i in [1..MAX_REVERSALS]))
 
 
@@ -112,10 +141,9 @@ exports.list = (head, req) ->
       "attachment; filename=\"line-tasks-report-#{isoDate}.csv"),
     'Content-Type': 'text/csv')
 
-  csvHeader = ['patientCode'].concat(
-    taskHeader('Par')).concat(
-    taskHeader('Prp')).concat(
-    taskHeader('LO'))
+  csvHeader = ['patientCode']
+  for prefix in TASK_PREFIXES
+    csvHeader = csvHeader.concat(taskHeader(prefix))
 
   send(csv.arrayToCsv([csvHeader]))
 
