@@ -1,3 +1,24 @@
+v0.7.0, 2014-06-13 -- More EXAMINER, Console Split
+- core:
+  - added gauss library to vendor/ (currently not available in tasks)
+  - console split out (see below)
+- console:
+  - console has its own design document (console/) (#68)
+    - login page is /now tabcat/_design/console/login.html
+    - some otherwise unused TabCAT library methods are now only in console
+- reports:
+  - added date and version columns to line-tasks report (#112)
+  - added data quality fields to line-tasks and stargazer reports (#113)
+  - factored some common code into core/js/adhoc/report.coffee
+  - flanker now has summary and detailed report
+  - new cpt and set-shifting reports (summary and detailed)
+- tasks:
+  - flanker:
+    - small updates to label formatting
+    - added two throwaway trials between practice and testing
+  - cpt: new task!
+  - set-shifting: new task!
+
 v0.6.3, 2014-05-02 -- Flanker
 - core library:
   - Task.logEvent() uses $.now() when event.timeStamp is unreliable (#102)
