@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 _ = require('js/vendor/underscore')._
 csv = require('js/vendor/ucsv')
 patient = require('../patient')
+report = require('./report')
 
 MAX_REVERSALS = 20
 
@@ -36,7 +37,29 @@ LINE_TASKS = [
   'line-orientation'
 ]
 
-COLUMNS_PER_TASK = MAX_REVERSALS + 3
+# short header column prefixes to use for each task
+TASK_PREFIXES = [
+  'Par',
+  'Prp',
+  'LO',
+]
+
+# the rest of the header column name
+HEADER_SUFFIXES = [
+  report.VERSION_HEADER,
+  report.DATE_HEADER,
+].concat(report.DATA_QUALITY_HEADERS).concat([
+  'time',
+  'trials',
+  'timePerTrial'
+])
+
+# combine task prefix with header suffix
+makeHeader = (prefix, suffix) ->
+  prefix + suffix[..0].toUpperCase() + suffix[1..]
+
+
+COLUMNS_PER_TASK = MAX_REVERSALS + HEADER_SUFFIXES.length
 
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
@@ -66,11 +89,14 @@ patientHandler = (patientRecord) ->
             item.state.intensity for item in task.eventLog \
             when item?.interpretation?.reversal)
 
-        taskToInfo[task.name] =
-          totalTime: totalTime
-          numTrials: numTrials
-          timePerTrial: totalTime / numTrials
-          intensitiesAtReversal: intensitiesAtReversal
+        taskToInfo[task.name] = [
+          report.getVersion(task),
+          report.getDate(task),
+        ].concat(report.getDataQualityCols(encounter)).concat([
+          totalTime,
+          numTrials,
+          totalTime / numTrials
+        ]).concat(intensitiesAtReversal)
 
   if _.isEmpty(taskToInfo)
     return
@@ -82,11 +108,8 @@ patientHandler = (patientRecord) ->
     info = taskToInfo[taskName]
     if info?
       offset = i * COLUMNS_PER_TASK + 1
-      data[offset] = info.totalTime
-      data[offset + 1] = info.numTrials
-      data[offset + 2] = info.timePerTrial
-      for intensity, j in info.intensitiesAtReversal
-        data[offset + 3 + j] = intensity
+      for value, j in info
+        data[offset + j] = value
 
   # replace undefined with null, so arrayToCsv() works
   data = (x ? null for x in data)
@@ -95,27 +118,17 @@ patientHandler = (patientRecord) ->
 
 
 taskHeader = (prefix) ->
-  [prefix + 'Time', prefix + 'Trials', prefix + 'TimePerTrial'].concat(
+  (makeHeader(prefix, suffix) for suffix in HEADER_SUFFIXES).concat(
     (prefix + i for i in [1..MAX_REVERSALS]))
 
 
 exports.list = (head, req) ->
-  keyType = req.path[req.path.length - 1]
+  report.requirePatientView(req)
+  start(headers: report.csvHeaders('line-tasks-report'))
 
-  if not (req.path.length is 6 and keyType is 'patient')
-    throw new Error('You may only dump the patient view')
-
-  isoDate = (new Date()).toISOString()[..9]
-
-  start(headers:
-    'Content-Disposition': (
-      "attachment; filename=\"line-tasks-report-#{isoDate}.csv"),
-    'Content-Type': 'text/csv')
-
-  csvHeader = ['patientCode'].concat(
-    taskHeader('Par')).concat(
-    taskHeader('Prp')).concat(
-    taskHeader('LO'))
+  csvHeader = ['patientCode']
+  for prefix in TASK_PREFIXES
+    csvHeader = csvHeader.concat(taskHeader(prefix))
 
   send(csv.arrayToCsv([csvHeader]))
 
