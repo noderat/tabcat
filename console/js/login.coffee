@@ -93,7 +93,8 @@ submitLoginForm = (event) ->
       $('body').addClass('sandbox')
       # pre-fill form
       $loginForm.find('input[name=email]').val(TabCAT.Console.sandboxUser)
-      $loginForm.find('input[name=password]').val(TabCAT.Console.sandboxPassword)
+      $loginForm.find('input[name=password]').\
+        val(TabCAT.Console.sandboxPassword)
       $loginForm.find('input').attr('autocomplete', 'off')
 
     $loginForm.on('submit', submitLoginForm)
