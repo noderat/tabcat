@@ -1,3 +1,7 @@
+# used to put prefixes before headers
+exports.capitalize = (s) ->
+  s[..0].toUpperCase + s[1..]
+
 # current date (ISO format), for report name
 exports.today = ->
   (new Date()).toISOString()[..9]
@@ -25,7 +29,7 @@ exports.DATA_QUALITY_HEADERS = [
   'goodForResearch', 'qualityIssues', 'adminComments']
 
 # get data quality values from task
-exports.getDataQuality = (encounter) ->
+exports.getDataQualityCols = (encounter) ->
   notes = encounter.administrationNotes
   goodForResearch = null
   if notes?.goodForResearch?  # use 0/1 rather than false/true

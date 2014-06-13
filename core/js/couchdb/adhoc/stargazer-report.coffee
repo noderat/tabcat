@@ -79,7 +79,7 @@ patientHandler = (patientRecord) ->
           patientCode,
           report.getVersion(task),
           report.getDate(task)
-        ].concat(report.getDataQuality(encounter)).concat([
+        ].concat(report.getDataQualityCols(encounter)).concat([
           totalTime,
           numTrials,
           cometHitRate

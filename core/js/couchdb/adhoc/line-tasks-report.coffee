@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 _ = require('js/vendor/underscore')._
 csv = require('js/vendor/ucsv')
 patient = require('../patient')
+report = require('./report')
 
 MAX_REVERSALS = 20
 
@@ -43,15 +44,20 @@ TASK_PREFIXES = [
   'LO',
 ]
 
-# the rest of the header column name, combined with TASK_PREFIXES
-# to make names like 'ParVersion'
+# the rest of the header column name
 HEADER_SUFFIXES = [
-  'Version',
-  'Date',
-  'Time',
-  'Trials',
-  'TimePerTrial'
-]
+  report.VERSION_HEADER,
+  report.DATE_HEADER,
+].concat(report.DATA_QUALITY_HEADERS).concat([
+  'time',
+  'trials',
+  'timePerTrial'
+])
+
+# combine task prefix with header suffix
+makeHeader = (prefix, suffix) ->
+  prefix + suffix[..0].toUpperCase() + suffix[1..]
+
 
 COLUMNS_PER_TASK = MAX_REVERSALS + HEADER_SUFFIXES.length
 
@@ -83,21 +89,14 @@ patientHandler = (patientRecord) ->
             item.state.intensity for item in task.eventLog \
             when item?.interpretation?.reversal)
 
-        version = task.version ? null
-
-        isoDate = null
-        timestamp = task.limitedPHI?.clockOffset
-        if timestamp?
-          # note that this the server's local time
-          isoDate = (new Date(timestamp)).toISOString()[..9]
-
-        taskToInfo[task.name] =
-          version: version
-          isoDate: isoDate
-          totalTime: totalTime
-          numTrials: numTrials
-          timePerTrial: totalTime / numTrials
-          intensitiesAtReversal: intensitiesAtReversal
+        taskToInfo[task.name] = [
+          report.getVersion(task),
+          report.getDate(task),
+        ].concat(report.getDataQualityCols(encounter)).concat([
+          totalTime,
+          numTrials,
+          totalTime / numTrials
+        ]).concat(intensitiesAtReversal)
 
   if _.isEmpty(taskToInfo)
     return
@@ -109,13 +108,8 @@ patientHandler = (patientRecord) ->
     info = taskToInfo[taskName]
     if info?
       offset = i * COLUMNS_PER_TASK + 1
-      data[offset] = info.version
-      data[offset + 1] = info.isoDate
-      data[offset + 2] = info.totalTime
-      data[offset + 3] = info.numTrials
-      data[offset + 4] = info.timePerTrial
-      for intensity, j in info.intensitiesAtReversal
-        data[offset + HEADER_SUFFIXES.length + j] = intensity
+      for value, j in info
+        data[offset + j] = value
 
   # replace undefined with null, so arrayToCsv() works
   data = (x ? null for x in data)
@@ -124,7 +118,7 @@ patientHandler = (patientRecord) ->
 
 
 taskHeader = (prefix) ->
-  (prefix + suffix for suffix in HEADER_SUFFIXES).concat(
+  (makeHeader(prefix, suffix) for suffix in HEADER_SUFFIXES).concat(
     (prefix + i for i in [1..MAX_REVERSALS]))
 
 
