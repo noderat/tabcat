@@ -53,6 +53,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-color: transparent;
 }
 
+#rectangle div.sky div.msg em {
+    color: #ffcc66;
+}
+
 #cometSky img.comet {
     z-index: 1001;
     /* attempt to make animations not stutter on iOS Safari */
