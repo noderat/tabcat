@@ -39,8 +39,12 @@ VENDOR_JS = js/vendor/jquery.js $(filter-out jquery.js, $(wildcard js/vendor/*.j
 # files kanso expects to push
 KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)
 
+# get list of all tabcat databases on our host, and push to them
+TABCAT_DBS = $(shell curl -s $(TABCAT_HOST)/_all_dbs | ../scripts/json-ls '' | grep -E '^tabcat($$|-)')
+PUSHED_DBS = $(patsubst %, $(PUSHED)_%, $(TABCAT_DBS))
+
 .PHONY: all
-all: $(PUSHED)
+all: $(PUSHED_DBS)
 	@: # suppress "nothing to be done for "all" message
 
 .PHONY: clean
@@ -48,18 +52,16 @@ clean:
 	rm -f $(COFFEE_JS)
 	rm -f js/tabcat.js js/tabcat.js
 	rm -f .pushed-*
+	rm -f design.json
 	find . -name '*~' -delete
 
+# $(KANSO_DEPS) should include js/tabcat.js
 design.json: kanso.json $(KANSO_DEPS) $(MANIFEST)
 	kanso install
 	kanso show > $@
 
-# $(KANSO_DEPS) should include js/tabcat.js
-#
-# It's fine if we can't upload the config; we just want to ensure there is one.
-$(PUSHED): design.json
-	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/core
-	../scripts/force-put $< $(TABCAT_HOST)/tabcat-data/_design/core
+$(PUSHED_DBS): %: design.json
+	../scripts/force-put $< $(patsubst $(PUSHED)_%, $(TABCAT_HOST)/%, $@)/_design/core
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
