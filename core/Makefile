@@ -40,8 +40,9 @@ VENDOR_JS = js/vendor/jquery.js $(filter-out jquery.js, $(wildcard js/vendor/*.j
 KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)
 
 # get list of all tabcat databases on our host, and push to them
-TABCAT_DBS = $(shell curl -s $(TABCAT_HOST)/_all_dbs | ../scripts/json-ls '' | grep -E '^tabcat($$|-)')
-PUSHED_DBS = $(patsubst %, $(PUSHED)_%, $(TABCAT_DBS))
+# if we can't fetch this list, tabcat and tabcat-data will still be included
+TABCAT_DBS := $(sort tabcat tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | ../scripts/json-ls '' | grep -E '^tabcat-'))
+PUSHED_DBS := $(patsubst %, $(PUSHED)_%, $(TABCAT_DBS))
 
 .PHONY: all
 all: $(PUSHED_DBS)

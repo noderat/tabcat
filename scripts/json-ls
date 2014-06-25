@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// -*- mode: javascript -*-
+
 /*
 Copyright (c) 2013, Regents of the University of California
 All rights reserved.
@@ -90,8 +92,12 @@ var printAtLevel = function(data, level, dirName) {
 };
 
 inputPaths.forEach(function(inputPath) {
-    var data = JSON.parse(fs.readFileSync(inputPath || '/dev/stdin', 'utf8'));
-    levels.forEach(function(level) {
-        printAtLevel(data, level, path.dirname(inputPath));
-    });
+    var json = fs.readFileSync(inputPath || '/dev/stdin', 'utf8')
+    // ignore empty files
+    if (json) {
+        var data = JSON.parse(json)
+        levels.forEach(function(level) {
+            printAtLevel(data, level, path.dirname(inputPath));
+        });
+    }
 });
