@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013-2014, Regents of the University of California
+Copyright (c) 2013, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -57,13 +57,9 @@ DATA_DB = 'tabcat-data'
 # one hour, in milliseconds
 ONE_HOUR = 3600000
 
-# if the application cache is ready to update within a short time
-# of calling Task.start(), reload the page
-AUTO_RELOAD_TIME_LIMIT = 500
-
-# so we don't have to type window.* in functions
-applicationCache = @applicationCache
+# so we don't have to type window.localStorage in functions
 localStorage = @localStorage
+
 
 # The CouchDB document for this task. This stores information about the task as
 # a whole. We can store this in memory because each task is a single page.
@@ -138,17 +134,6 @@ TabCAT.Task.patientHasDevice = (value) ->
 #   (see TabCAT.Task.trackViewportInEventLog())
 TabCAT.Task.start = _.once((options) ->
   now = $.now()
-
-  # reload the page if the appcache has been updated
-  # or gets updated within a very short time
-  if applicationCache.status is applicationCache.UPDATEREADY
-    window.location.reload()
-  else
-    applicationCache.addEventListener('updateready', ->
-      console.log($.now() - now)
-      if $.now() - now <= AUTO_RELOAD_TIME_LIMIT
-       window.location.reload()
-    )
 
   # set up i18n
   i18n_options = _.extend(
