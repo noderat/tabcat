@@ -1,0 +1,22 @@
+{
+    "name": "scoring",
+    "version": "0.0.1",
+    "description": "Task scoring",
+    "attachments": [],
+    "modules": ["app.js",
+                "js/couchdb/patient.js",
+                "js/tabcat/scoring.js",
+                "js/vendor/gauss/gauss.js",
+                "js/vendor/gauss/collection.js",
+                "js/vendor/gauss/timeseries.js",
+                "js/vendor/gauss/vector.js",
+                "js/vendor/ucsv.js",
+                "js/vendor/underscore.js",
+                "scoring.js"],
+    "load": "app",
+    "dependencies": {
+        "attachments": null,
+        "modules": null,
+        "properties": null
+    }
+}

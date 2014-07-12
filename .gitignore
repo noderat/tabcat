@@ -16,3 +16,4 @@
 /tasks/*/Makefile
 /tasks/*/design.json
 /tasks/*/packages
+/tasks/*/scoring/packages
