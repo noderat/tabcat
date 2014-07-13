@@ -29,21 +29,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # This module may be accessed either from the browser, via
 # TabCAT.Scoring, or from within CouchDB, with
 # Scoring = require('js/tabcat/scoring')
+Scoring = {}
 
-# if on CouchDB, load libraries we need
-if @require?
-  _ = require('js/vendor/underscore')._
-  gauss = require('js/vendor/gauss')
+if module?  # inside CouchDB
+  _ = require('../vendor/underscore')._
+  gauss = require('../vendor/gauss/gauss')
+
+  module.exports = Scoring = {}
+else  # inside browser
+  @TabCAT ?= {}
+  @TabCAT.Scoring = Scoring
+
 
 
 # register a function to score a task. This function should take
 # a single argument, the eventLog, and return scoring information.
-exports.addTaskScorer = (taskName, scorer) ->
+Scoring.addTaskScorer = (taskName, scorer) ->
   taskScorers[taskName] = scorer
 
 
 # score a task, based on its eventLog
-exports.scoreTask = (taskName, eventLog) ->
+Scoring.scoreTask = (taskName, eventLog) ->
   scorer = taskScorers[taskName]
 
   if not scorer?
