@@ -24,11 +24,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
-if @require?
-  addTaskScorer = require('js/tabcat/scoring').addTaskScorer
-  gauss = require('js/gauss/gauss')
+if require?
+  gauss = require('./js/vendor/gauss/gauss')
+  Scoring = require('./js/tabcat/scoring')
 else
-  addTaskScorer = TabCAT.Scoring.addTaskScorer
+  Scoring = TabCAT.Scoring
 
 
 # everything is scored the same way: mea intensity at reversal, dropping
@@ -43,6 +43,6 @@ scorer = (eventLog) ->
   }
 
 
-addTaskScorer('parallel-line-length', scorer)
-addTaskScorer('perpendicular-line-length', scorer)
-addTaskScorer('line-orientation', scorer)
+Scoring.addTaskScorer('parallel-line-length', scorer)
+Scoring.addTaskScorer('perpendicular-line-length', scorer)
+Scoring.addTaskScorer('line-orientation', scorer)

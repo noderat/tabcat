@@ -28,13 +28,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 (function() {
-  var addTaskScorer, gauss, scorer;
+  var Scoring, gauss, scorer;
 
-  if (this.require != null) {
-    addTaskScorer = require('js/tabcat/scoring').addTaskScorer;
-    gauss = require('js/gauss/gauss');
+  if (typeof require !== "undefined" && require !== null) {
+    gauss = require('./js/vendor/gauss/gauss');
+    Scoring = require('./js/tabcat/scoring');
   } else {
-    addTaskScorer = TabCAT.Scoring.addTaskScorer;
+    Scoring = TabCAT.Scoring;
   }
 
   scorer = function(eventLog) {
@@ -57,10 +57,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     };
   };
 
-  addTaskScorer('parallel-line-length', scorer);
+  Scoring.addTaskScorer('parallel-line-length', scorer);
 
-  addTaskScorer('perpendicular-line-length', scorer);
+  Scoring.addTaskScorer('perpendicular-line-length', scorer);
 
-  addTaskScorer('line-orientation', scorer);
+  Scoring.addTaskScorer('line-orientation', scorer);
 
 }).call(this);
