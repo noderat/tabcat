@@ -57,7 +57,7 @@ design.json: kanso.json $(KANSO_DEPS) $(MANIFEST)
 	kanso show > $@
 
 $(PUSHED_DBS): %: design.json
-	../scripts/force-put $< $(patsubst $(PUSHED)_%, $(TABCAT_HOST)/%, $@)/_design/core
+	../scripts/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/core
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)
