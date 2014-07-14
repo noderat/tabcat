@@ -25,8 +25,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 if require?
-  gauss = require('./js/vendor/gauss/gauss')
-  Scoring = require('./js/tabcat/scoring')
+  gauss = require('js/vendor/gauss/gauss')
+  Scoring = require('js/tabcat/scoring')
 else
   Scoring = TabCAT.Scoring
 

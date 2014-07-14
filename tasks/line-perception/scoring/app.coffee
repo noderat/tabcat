@@ -27,13 +27,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 _ = require('js/vendor/underscore')._
 patient = require('js/couchdb/patient')
 Scoring = require('js/tabcat/scoring')
-#require('./scoring')
+require('scoring')
 
 
 scoreList = (head, req) ->
   dbAndView = req.path[-2..]
 
-  if not (req.path.length is 7 and _.equals(dbAndView, ['core', 'patient']))
+  if not (req.path.length is 7 and _.isEqual(dbAndView, ['core', 'patient']))
     throw new Error('You may only dump the patient view')
 
   start(headers:
