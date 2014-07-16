@@ -36,23 +36,36 @@ KANSO_DEPS = $(shell $(SCRIPTS)/json-ls /attachments+/modules kanso.json)
 DDOC_NAME = $(shell $(SCRIPTS)/json-ls name kanso.json)
 
 .PHONY: all
-all: $(PUSHED)_tabcat
+all: $(PUSHED_DBS)
 	@: # suppress "nothing to be done for "all" message
 
 .PHONY: clean
 clean:
 	rm -f $(COFFEE_JS)
 	rm -f .pushed-*
+	rm -f design.json
+	rm -f scoring/design.json
 	find . -name '*~' -delete
+
+# compiling COFFEE_JS
+$(COFFEE_JS): %.js: %.coffee
+	coffee -c $<
+	if which coffeelint; then coffeelint -q $<; fi
+
+# task, for "tabcat" DB
+$(PUSHED)_tabcat: design.json
+	$(SCRIPTS)/force-put $< $(TABCAT_HOST)/tabcat/_design/$(DDOC_NAME)
+	touch $@
 
 design.json: kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso show > $@
 
-$(PUSHED)_tabcat: design.json
-	$(SCRIPTS)/force-put $< $(TABCAT_HOST)/tabcat/_design/$(DDOC_NAME)
+# scoring code, for "tabcat-data*" DBs
+$(PUSHED_DATA_DBS): %: scoring/design.json
+	$(SCRIPTS)/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/$(DDOC_NAME)
 	touch $@
 
-$(COFFEE_JS): %.js: %.coffee
-	coffee -c $<
-	if which coffeelint; then coffeelint -q $<; fi
+scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js
+	cd $(@D); kanso install
+	cd $(@D); kanso show > $(@F)
