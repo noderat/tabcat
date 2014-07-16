@@ -31,7 +31,7 @@ else
   Scoring = TabCAT.Scoring
 
 
-# everything is scored the same way: mea intensity at reversal, dropping
+# everything is scored the same way: mean intensity at reversal, dropping
 # the first two
 scorer = (eventLog) ->
   intensitiesAtReversal = (
@@ -39,7 +39,8 @@ scorer = (eventLog) ->
     when item?.interpretation?.reversal)
 
   return {
-    'spatial-perception': gauss.Vector(intensitiesAtReversal[2..]).mean()
+    'spatial-perception':
+      score: gauss.Vector(intensitiesAtReversal[2..]).mean()
   }
 
 
