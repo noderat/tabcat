@@ -27,8 +27,12 @@
 
 include ../../Makefile.common  # $(TABCAT_HOST) and $(PUSHED)
 
+# generated/symlinked files for scoring
+SCORING_COFFEE_SRC = ./scoring/app.coffee ./scoring/scoring.coffee
+SCORING_SYMLINKS = scoring/app.coffee scoring/kanso.json
+
 # CoffeeScript to compile into JavaScript
-COFFEE_SRC = $(shell find . -name '*.coffee' -not -name '.*')
+COFFEE_SRC = $(sort $(shell find . -name '*.coffee' -not -name '.*') $(SCORING_COFFEE_SRC))
 COFFEE_JS = $(patsubst %.coffee, %.js, $(COFFEE_SRC))
 
 # files kanso expects to push
@@ -45,6 +49,7 @@ clean:
 	rm -f .pushed-*
 	rm -f design.json
 	rm -f scoring/design.json
+	find . -type l -delete
 	find . -name '*~' -delete
 
 # compiling COFFEE_JS
@@ -66,6 +71,19 @@ $(PUSHED_DATA_DBS): %: scoring/design.json
 	$(SCRIPTS)/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/$(DDOC_NAME)
 	touch $@
 
-scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js
+scoring:
+	mkdir -p $@
+
+scoring/design.json: scoring scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js
 	cd $(@D); kanso install
 	cd $(@D); kanso show > $(@F)
+
+$(SCORING_SYMLINKS): %: scoring
+	ln -sf ../../../task-defaults/$@ $@
+
+# scoring.coffee can be an empty file
+scoring/scoring.coffee: scoring
+	touch $@
+
+scoring/js: scoring
+	ln -sf ../../../core/js $@
