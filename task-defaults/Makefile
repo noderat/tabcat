@@ -71,19 +71,20 @@ $(PUSHED_DATA_DBS): %: scoring/design.json
 	$(SCRIPTS)/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/$(DDOC_NAME)
 	touch $@
 
-scoring:
-	mkdir -p $@
-
-scoring/design.json: scoring scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js
+scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js
+	mkdir -p $(@D)
 	cd $(@D); kanso install
 	cd $(@D); kanso show > $(@F)
 
-$(SCORING_SYMLINKS): %: scoring
+$(SCORING_SYMLINKS): %:
+	mkdir -p $(@D)
 	ln -sf ../../../task-defaults/$@ $@
 
 # scoring.coffee can be an empty file
-scoring/scoring.coffee: scoring
+scoring/scoring.coffee:
+	mkdir -p $(@D)
 	touch $@
 
-scoring/js: scoring
-	ln -sf ../../../core/js $@
+scoring/js:
+	mkdir -p $(@D)
+	ln -sfh ../../../core/js $@
