@@ -25,6 +25,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* common elements */
 
 #statusBar {
     background-color: #666699;
@@ -106,35 +107,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border-width: 3px;
 }
 
-/* used by login page */
+/* currently only used by login page */
 .blueBackground.sandbox {
     background-color: #cc9933;
     background-image: url('../img/sand.png');
 }
 
-
-#loginMain {
-    text-align: center;
-}
-
-#loginMain img.logo {
-    width: 180px;
-    height: 180px;
-    margin-top: 10px;
-    margin-bottom: -10px;
-}
-
-#loginMain p.version {
-    position: relative;
-    left: 20px;
-    color: #ffffff;
-    font-size: 16px;
-    margin: 0;
-}
-
-#loginForm label {
-    width: 130px;
-}
+/* messages */
 
 p.error {
     font-size: 18px;
@@ -151,6 +130,7 @@ p.message {
     color: #eeeecc;
 }
 
+/* forms */
 
 form.big p {
     margin: 15px;
@@ -191,6 +171,66 @@ form.big button[type=submit] {
 }
 
 
+/*** administration-notes.html ***/
+
+#administrationNotesForm {
+    font-size: 24px;
+}
+
+#administrationNotesForm fieldset {
+    margin-top: 20px;
+    padding: 5px;
+    border: none;
+}
+
+#administrationNotesForm fieldset div.threeColumns {
+    column-count: 3;
+    column-width: 150px;
+    column-gap: 50px;
+    -moz-column-count: 3;
+    -moz-column-width: 150px;
+    -moz-column-gap: 50px;
+    -webkit-column-count: 3;
+    -webkit-column-width: 150px;
+    -webkit-column-gap: 50px;
+}
+
+#administrationNotesForm legend {
+    font-size: 28px;
+    color: #eeeecc;
+}
+
+#administrationNotesForm fieldset.required legend:after {
+    content: '*';
+}
+
+#administrationNotesForm div.threeColumns label {
+    display: block;
+}
+
+#administrationNotesForm textarea {
+    width: 750px;
+    max-width: 750px;
+    height: 150px;
+    max-height: 150px;
+    font-size: 18px;
+}
+
+#administrationNotesForm p {
+    text-align: center;
+}
+
+#administrationNotesForm button {
+    font-size: 24px;
+    height: 50px;
+    border-radius: 10px;
+    border-width: 5px;
+    margin: 0px;
+}
+
+
+/*** create-encounter.html ***/
+
 #createEncounter {
     text-align: center;
 }
@@ -199,8 +239,37 @@ form.big button[type=submit] {
     width: 170px;
 }
 
+
+/*** enter-password.html ***/
+
 #enterPassword {
     text-align: center;
+}
+
+
+/*** login.html ***/
+
+#loginMain {
+    text-align: center;
+}
+
+#loginMain img.logo {
+    width: 180px;
+    height: 180px;
+    margin-top: 10px;
+    margin-bottom: -10px;
+}
+
+#loginMain p.version {
+    position: relative;
+    left: 20px;
+    color: #ffffff;
+    font-size: 16px;
+    margin: 0;
+}
+
+#loginForm label {
+    width: 130px;
 }
 
 #tasks div.battery {
@@ -212,6 +281,36 @@ form.big button[type=submit] {
     margin-bottom: 8px;
     border-radius: 12px;
 }
+
+
+/*** return-to-examiner.html ***/
+
+#returnToExaminer div.caption {
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    top: 35%;
+    text-align: center;
+    font-size: 8em;
+}
+
+#returnToExaminer button {
+    position: absolute;
+    display: block;
+    width: 25%;
+    left: 75%;
+    height: 20%;
+    top: 80%;
+    font-size: 2em;
+    border-radius: 0.5em;
+    border-width: 0.5em;
+    background-color: #666699;
+    color: #eeeeee;
+    border-color: #666699;
+}
+
+
+/*** tasks.html ***/
 
 #tasks div.task {
     background-color: #eeeeee;
@@ -268,83 +367,4 @@ form.big button[type=submit] {
 
 #tasks #taskList {
     margin-top: 25px;
-}
-
-#returnToExaminer div.caption {
-    position: absolute;
-    left: 5%;
-    width: 90%;
-    top: 35%;
-    text-align: center;
-    font-size: 8em;
-}
-
-#returnToExaminer button {
-    position: absolute;
-    display: block;
-    width: 25%;
-    left: 75%;
-    height: 20%;
-    top: 80%;
-    font-size: 2em;
-    border-radius: 0.5em;
-    border-width: 0.5em;
-    background-color: #666699;
-    color: #eeeeee;
-    border-color: #666699;
-}
-
-#administrationNotesForm {
-    font-size: 24px;
-}
-
-#administrationNotesForm fieldset {
-    margin-top: 20px;
-    padding: 5px;
-    border: none;
-}
-
-#administrationNotesForm fieldset div.threeColumns {
-    column-count: 3;
-    column-width: 150px;
-    column-gap: 50px;
-    -moz-column-count: 3;
-    -moz-column-width: 150px;
-    -moz-column-gap: 50px;
-    -webkit-column-count: 3;
-    -webkit-column-width: 150px;
-    -webkit-column-gap: 50px;
-}
-
-#administrationNotesForm legend {
-    font-size: 28px;
-    color: #eeeecc;
-}
-
-#administrationNotesForm fieldset.required legend:after {
-    content: '*';
-}
-
-#administrationNotesForm div.threeColumns label {
-    display: block;
-}
-
-#administrationNotesForm textarea {
-    width: 750px;
-    max-width: 750px;
-    height: 150px;
-    max-height: 150px;
-    font-size: 18px;
-}
-
-#administrationNotesForm p {
-    text-align: center;
-}
-
-#administrationNotesForm button {
-    font-size: 24px;
-    height: 50px;
-    border-radius: 10px;
-    border-width: 5px;
-    margin: 0px;
 }
