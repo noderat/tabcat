@@ -24,6 +24,7 @@
                     "js/tasks.js",
                     "login.html",
                     "return-to-examiner.html",
+                    "scoring.html",
                     "tasks.html"],
     "dependencies": {
         "attachments": null
