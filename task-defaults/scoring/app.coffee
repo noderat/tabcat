@@ -45,7 +45,9 @@ scoreList = (head, req) ->
     for encounter in patientRecord.encounters
       for task in encounter.tasks
         if task.finishedAt?
-          taskIdToScore[task._id] = Scoring.scoreTask(task.name, task.eventLog)
+          score = Scoring.scoreTask(task.name, task.eventLog)
+          if score?
+            taskIdToScore[task._id] = score
 
   patient.iterate(getRow, patientHandler)
 
