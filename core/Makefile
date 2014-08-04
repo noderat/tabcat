@@ -34,7 +34,7 @@ TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 TABCAT_GENERATED_JS = js/tabcat/generated.js
 
 # put jquery before other libs that might depend on it
-# gauss.js is only used inside CouchDB
+# gauss.js is only for non-browser JS
 VENDOR_JS = js/vendor/jquery.js $(filter-out %/jquery.js %/gauss.js, $(shell find js/vendor -name '*.js'))
 
 # files kanso expects to push

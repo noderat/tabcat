@@ -39,8 +39,10 @@ scorer = (eventLog) ->
     when item?.interpretation?.reversal)
 
   return {
-    'spatial-perception':
+    scores: [{
+      description: 'Spatial Perception'
       score: gauss.Vector(intensitiesAtReversal[2..]).mean()
+    }]
   }
 
 
