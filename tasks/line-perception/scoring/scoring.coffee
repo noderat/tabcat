@@ -41,7 +41,7 @@ scorer = (eventLog) ->
   return {
     scores: [{
       description: 'Spatial Perception'
-      score: gauss.Vector(intensitiesAtReversal[2..]).mean()
+      value: gauss.Vector(intensitiesAtReversal[2..]).mean()
     }]
   }
 

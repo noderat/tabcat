@@ -47,6 +47,34 @@ TASK_HTML = '''
 </div>
 '''
 
+SCORE_HTML = '''
+<div class="score">
+  <div class="scoreHeader">
+    <span class="description"></span>
+  </div>
+  <div class="scoreBody">
+    <div class="rawScore">
+      <p class="description">Raw Score</p>
+      <p class="value"></p>
+    </div>
+    <div class="norms">
+      <table class="norm">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Mean</th>
+            <th>Stddev</th>
+            <th>Percentile*</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+'''
+
 
 showScoring = ->
   $('#patientScoring').empty()
@@ -57,7 +85,7 @@ showScoring = ->
 
     TabCAT.Task.getBatteriesAndTasks().then((bt) ->
       tasksByName = bt.tasks
-      ddocToTaskIds = {}
+      designDocToTaskIds = {}
 
       for e in history.encounters by -1
         $encounter = $(ENCOUNTER_HTML)
@@ -80,8 +108,8 @@ showScoring = ->
             $task.find('.description').text(taskInfo.description)
 
             if t.finishedAt?
-              ddocToTaskIds[t.designDocId] ?= {}
-              ddocToTaskIds[t.designDocId][t._id] = true
+              designDocToTaskIds[t.designDocId] ?= {}
+              designDocToTaskIds[t.designDocId][t._id] = true
             else
               $task.find('.scores').text('(task not completed)')
 
@@ -93,6 +121,26 @@ showScoring = ->
           $tasks.append($task)
 
         $('#patientScoring').append($encounter)
+
+        for own designDocId, taskIds of designDocToTaskIds
+          do (designDocId, taskIds) ->
+            TabCAT.Scoring.scoreTasksForPatient(designDocId).then(
+              (taskToScoring) ->
+                for taskId in taskIds
+                  $scores = $tasks.find("#task-#{taskId} .scores")
+
+                  scores = taskToScoring[taskId]?.scores
+
+                  if scores?
+                    for score in scores
+                      $score = $(SCORE_HTML)
+                      $score.find('.scoreHeader .description').text(
+                        score.description)
+                      $score.find('.scoreBody .rawScore').text(
+                        score.value.toFixed(1))
+                  else
+                    $scores.text('(no scoring available for this task)')
+            )
     )
   )
 

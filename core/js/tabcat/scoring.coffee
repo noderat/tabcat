@@ -58,3 +58,17 @@ Scoring.scoreTask = (taskName, eventLog) ->
     return null
   else
     return scorer(eventLog)
+
+
+# Promise: score tasks for patient, returning a map from task ID to score
+Scoring.scoreTasksForPatient = (designDocId, patientCode) ->
+  patientCode ?= TabCAT.Encounter.getPatientCode()
+  if not patientCode?
+    return $.Deferred.resolve(null)
+
+  options = _.extend(options ? {}, query:
+    startkey: [patientCode]
+    endkey: [patientCode, []])
+
+  TabCAT.Couch.getDoc(
+    DATA_DB, "_design/#{designDocId}/_list/score/patient", options)
