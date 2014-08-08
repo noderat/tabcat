@@ -24,3 +24,78 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+
+ENCOUNTER_HTML = '''
+<div class="encounter">
+  <div class="encounterHeader">
+    <span class="encounterNum"></span>
+    <span class="date"></span>
+  </div>
+  <div class="tasks">
+  </div>
+</div>
+'''
+
+TASK_HTML = '''
+<div class="task" id="task-12345678">
+  <div class="taskHeader">
+    <img class="icon" src="img/icon.png">
+    <span class="description"></span>
+  </div>
+  <div class="scores">
+  </div>
+</div>
+'''
+
+
+showScoring = ->
+  $('#patientScoring').empty()
+
+  TabCAT.Patient.getHistory().then((history) ->
+    if not history?
+      return
+
+    TabCAT.Task.getBatteriesAndTasks().then((bt) ->
+      tasksByName = bt.tasks
+
+      for e in history.encounters by -1
+        $encounter = $(ENCOUNTER_HTML)
+        $encounter.attr('id', "encounter-#{e._id}")
+        $encounter.find('.encounterNum').text(
+          "Encounter #{e.encounterNum + 1}")
+        $encounter.find('.date').text(e.year)  # TODO: add full date if avail.
+
+        $tasks = $encounter.find('.tasks')
+
+        for t in e.tasks by -1
+          $task = $(TASK_HTML)
+          $task.attr('id', "task-#{t._id}")
+
+          taskInfo = bt.tasks[t.name] or {}
+
+          if taskInfo.icon?
+            $task.find('.icon').attr('src', taskInfo.urlRoot + taskInfo.icon)
+
+          $task.find('.description').text(taskInfo.description)
+
+          $tasks.append($task)
+
+        $('#patientScoring').append($encounter)
+    )
+  )
+
+
+
+
+# initialization
+@initPage = ->
+  TabCAT.UI.requireUserAndEncounter()
+
+  TabCAT.UI.enableFastClick()
+
+  $(->
+    TabCAT.Console.updateStatusBar()
+    showScoring()
+  )
+
+  TabCAT.DB.startSpilledDocSync()

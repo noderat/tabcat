@@ -293,7 +293,8 @@ form.big button[type=submit] {
 
 #patientScoring div.encounter {
     background-color: #eeeeee;
-    margin-left: 10px;
+    margin-left: 15px;
+    margin-bottom: 15px;
     padding: 15px;
     width: 670px;
     text-align: left;
