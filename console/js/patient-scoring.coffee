@@ -108,8 +108,9 @@ showScoring = ->
             $task.find('.description').text(taskInfo.description)
 
             if t.finishedAt?
-              designDocToTaskIds[t.designDocId] ?= {}
-              designDocToTaskIds[t.designDocId][t._id] = true
+              designDocId = taskInfo.designDocId
+              designDocToTaskIds[designDocId] ?= {}
+              designDocToTaskIds[designDocId][t._id] = true
             else
               $task.find('.scores').text('(task not completed)')
 
@@ -121,6 +122,8 @@ showScoring = ->
           $tasks.append($task)
 
         $('#patientScoring').append($encounter)
+
+        console.log(designDocToTaskIds)
 
         for own designDocId, taskIds of designDocToTaskIds
           do (designDocId, taskIds) ->

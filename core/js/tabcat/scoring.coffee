@@ -37,8 +37,14 @@ if module?  # inside CouchDB
 
   module.exports = Scoring = {}
 else  # inside browser
+  _ = @_
+  gauss = @gauss
+
   @TabCAT ?= {}
   @TabCAT.Scoring = Scoring
+
+
+DATA_DB = 'tabcat-data'
 
 
 # map from taskName to
@@ -71,4 +77,4 @@ Scoring.scoreTasksForPatient = (designDocId, patientCode) ->
     endkey: [patientCode, []])
 
   TabCAT.Couch.getDoc(
-    DATA_DB, "_design/#{designDocId}/_list/score/patient", options)
+    DATA_DB, "#{designDocId}/_list/score/core/patient", options)
