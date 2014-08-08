@@ -39,6 +39,10 @@ LOCAL_STORAGE_WARNING_THRESHOLD = 75
 # keep status messages for at least a second
 OFFLINE_STATUS_MIN_CHANGE_TIME = 2000
 
+# DB where design docs and task content is stored
+TABCAT_DB = 'tabcat'
+
+
 keepOfflineStatusUntil = null
 lastOfflineStatusType = 0
 
@@ -213,6 +217,22 @@ offlineStatusStoragePercentFullHtml = ->
     percentFullHtml = '<span class="warning">' + percentFullHtml + '</span>'
 
   return percentFullHtml
+
+
+TabCAT.Console.DEFAULT_TASK_ICON_URL = (
+  "/#{TABCAT_DB}/_design/console/img/icon.png")
+
+# extract icon URL from task info (from TabCAT.Task.getBatteriesAndTasks())
+TabCAT.Console.getTaskIconUrl = (task) ->
+  if task.designDocId? and task.icon?
+    "/#{TABCAT_DB}/#{task.designDocId}/#{task.icon}"
+  else
+    DEFAULT_TASK_ICON_URL
+
+# extract start URL from task info (from TabCAT.Task.getBatteriesAndTasks())
+TabCAT.Console.getTaskStartUrl = (task) ->
+  if task.designDocId? and task.start?
+    "/#{TABCAT_DB}/#{task.designDocId}/#{task.start}"
 
 
 # used by inSandbox()

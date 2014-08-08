@@ -64,11 +64,7 @@ showTasks = ->
 
         $taskDiv = $('<div></div>', class: 'task')
 
-        if task.icon?
-          iconUrl = task.urlRoot + task.icon
-        else
-          # default to TabCAT icon
-          iconUrl = 'img/icon.png'
+        iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
         if finished[taskName]
           # make the icon the background, and the checkmark the foreground
@@ -86,8 +82,9 @@ showTasks = ->
         $tasksDiv.append($taskDiv)
 
         do -> # create a separate scope for each click handler
-          startUrl = task.urlRoot + task.start
-          $taskDiv.on('click', (event) -> window.location = startUrl)
+          startUrl = TabCAT.Console.getTaskStartUrl(task)
+          if startUrl?
+            $taskDiv.on('click', (event) -> window.location = startUrl)
 
       $batteryDiv.append($tasksDiv)
       do ($tasksDiv) ->

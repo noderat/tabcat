@@ -88,8 +88,8 @@ eventSyncIntervalId = null
 
 # Promise: read all design docs in the tabcat DB, and return an object
 # containing "batteries" and "tasks", which map battery/task name to the
-# corresponding info from the design doc. In addition, we'll add the
-# url of the design document each task/battery came from in the urlRoot field.
+# corresponding info from the design doc, with the additional field
+# "designDocId"
 #
 # options is the same as for TabCAT.Couch.getAllDesignDocs
 TabCAT.Task.getBatteriesAndTasks = (options) ->
@@ -99,23 +99,20 @@ TabCAT.Task.getBatteriesAndTasks = (options) ->
       tasks = {}
 
       for designDoc in designDocs
-        urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
         kct = designDoc.kanso?.config?.tabcat
 
         if kct?.batteries?
           for own name, battery of kct.batteries
-            battery.urlRoot = urlRoot
+            battery.designDocId = designDoc._id
             batteries[name] = battery
 
         if kct?.tasks?
           for own name, task of kct.tasks
-            task.urlRoot = urlRoot
+            task.designDocId = designDoc._id
             tasks[name] = task
 
       return {batteries: batteries, tasks: tasks}
   )
-
-
 
 
 # Get a copy of the CouchDB doc for this task

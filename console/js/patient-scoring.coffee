@@ -39,7 +39,7 @@ ENCOUNTER_HTML = '''
 TASK_HTML = '''
 <div class="task" id="task-12345678">
   <div class="taskHeader">
-    <img class="icon" src="img/icon.png">
+    <img class="icon">
     <span class="description"></span>
   </div>
   <div class="scores">
@@ -57,13 +57,14 @@ showScoring = ->
 
     TabCAT.Task.getBatteriesAndTasks().then((bt) ->
       tasksByName = bt.tasks
+      ddocToTaskIds = {}
 
       for e in history.encounters by -1
         $encounter = $(ENCOUNTER_HTML)
         $encounter.attr('id', "encounter-#{e._id}")
         $encounter.find('.encounterNum').text(
-          "Encounter #{e.encounterNum + 1}")
-        $encounter.find('.date').text(e.year)  # TODO: add full date if avail.
+          "Encounter ##{e.encounterNum + 1}")
+        $encounter.find('.date').text(e.year)  # TODO: add full date
 
         $tasks = $encounter.find('.tasks')
 
@@ -71,12 +72,23 @@ showScoring = ->
           $task = $(TASK_HTML)
           $task.attr('id', "task-#{t._id}")
 
-          taskInfo = bt.tasks[t.name] or {}
+          taskInfo = bt.tasks[t.name]
 
-          if taskInfo.icon?
-            $task.find('.icon').attr('src', taskInfo.urlRoot + taskInfo.icon)
+          if taskInfo?
+            $task.find('.icon').attr(
+              'src', TabCAT.Console.getTaskIconUrl(taskInfo))
+            $task.find('.description').text(taskInfo.description)
 
-          $task.find('.description').text(taskInfo.description)
+            if t.finishedAt?
+              ddocToTaskIds[t.designDocId] ?= {}
+              ddocToTaskIds[t.designDocId][t._id] = true
+            else
+              $task.find('.scores').text('(task not completed)')
+
+          else
+            $task.find('.icon').attr('src',
+              TabCAT.Console.DEFAULT_TASK_ICON_URL)
+            $task.find('.description').text("Unknown Task: #{t.name}")
 
           $tasks.append($task)
 
