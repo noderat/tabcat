@@ -123,27 +123,27 @@ showScoring = ->
 
         $('#patientScoring').append($encounter)
 
-        console.log(designDocToTaskIds)
+      console.log(designDocToTaskIds)
 
-        for own designDocId, taskIds of designDocToTaskIds
-          do (designDocId, taskIds) ->
-            TabCAT.Scoring.scoreTasksForPatient(designDocId).then(
-              (taskToScoring) ->
-                for taskId in taskIds
-                  $scores = $tasks.find("#task-#{taskId} .scores")
+      for own designDocId, taskIds of designDocToTaskIds
+        do (designDocId, taskIds) ->
+          TabCAT.Scoring.scoreTasksForPatient(designDocId).then(
+            (taskToScoring) ->
+              for taskId in taskIds
+                $scores = $tasks.find("#task-#{taskId} .scores")
 
-                  scores = taskToScoring[taskId]?.scores
+                scores = taskToScoring[taskId]?.scores
 
-                  if scores?
-                    for score in scores
-                      $score = $(SCORE_HTML)
-                      $score.find('.scoreHeader .description').text(
-                        score.description)
-                      $score.find('.scoreBody .rawScore').text(
-                        score.value.toFixed(1))
-                  else
-                    $scores.text('(no scoring available for this task)')
-            )
+                if scores?
+                  for score in scores
+                    $score = $(SCORE_HTML)
+                    $score.find('.scoreHeader .description').text(
+                      score.description)
+                    $score.find('.scoreBody .rawScore').text(
+                      score.value.toFixed(1))
+                else
+                  $scores.text('(no scoring available for this task)')
+          )
     )
   )
 
