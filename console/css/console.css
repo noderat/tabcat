@@ -283,6 +283,129 @@ form.big button[type=submit] {
 }
 
 
+/*** patient-scoring.html ***/
+
+/* attempts to look similar to tasks.html */
+
+#patientScoring {
+    margin-top: 25px;
+}
+
+#patientScoring div.encounter {
+    background-color: #eeeeee;
+    margin-left: 10px;
+    padding: 15px;
+    width: 670px;
+    text-align: left;
+    border-radius: 18px;
+}
+
+#patientScoring div.encounter .encounterHeader {
+    color: #000000;
+    font-size: 24px;
+    margin: 0px;
+}
+
+#patientScoring div.encounter .encounterHeader .encounterNum {
+    font-size: 36px;
+}
+
+#patientScoring div.encounter .encounterHeader .date {
+    font-size: 18px;
+    float: right;
+}
+
+#patientScoring div.task {
+    background-color: #000000;
+    padding: 15px;
+    margin-top: 10px;
+    margin-right: 0px;
+    width: 640px;
+    text-align: left;
+    border-radius: 14px;
+}
+
+#patientScoring div.task img.icon {
+    width: 36px;
+    height: 36px;
+    background-size: 36px 36px;
+    border-radius: 6px;
+    vertical-align: middle;
+}
+
+#patientScoring div.task .taskHeader {
+    color: #eeeeee;
+    font-size: 24px;
+    height: 36px;
+}
+
+#patientScoring div.task .taskHeader .description {
+    vertical-align: middle;
+}
+
+#patientScoring div.task div.scores {
+    margin-top: 15px;
+}
+
+#patientScoring div.task div.score {
+    border-top: 1px solid #eeeeee;
+    padding: 5px;
+}
+
+#patientScoring div.task div.score .scoreHeader {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#patientScoring div.task div.score .scoreBody {
+    margin: 10px;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore {
+    display: inline-block;
+    clear: none;
+    vertical-align: top;
+    text-align: center;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore .description {
+    font-size: 10px;
+    margin: 4px;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore .value {
+    font-size: 60px;
+    margin: 4px;
+}
+
+
+#patientScoring div.task div.score .scoreBody div.norms {
+    display: inline-block;
+    clear: none;
+    margin-left: 10px;
+}
+
+#patientScoring div.task div.score .scoreBody div.norms th {
+    font-weight: normal;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+}
+
+#patientScoring div.task div.score .scoreBody div.norms td {
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    padding: 2px 8px 2px 8px;
+}
+
+#patientScoring div.task div.score .scoreFooter {
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+
 /*** return-to-examiner.html ***/
 
 #returnToExaminer div.caption {
@@ -307,129 +430,6 @@ form.big button[type=submit] {
     background-color: #666699;
     color: #eeeeee;
     border-color: #666699;
-}
-
-
-/*** scoring.html ***/
-
-/* attempts to look visually similar to tasks.html */
-
-#scoring {
-    margin-top: 25px;
-}
-
-#scoring div.encounter {
-    background-color: #eeeeee;
-    margin-left: 10px;
-    padding: 15px;
-    width: 670px;
-    text-align: left;
-    border-radius: 18px;
-}
-
-#scoring div.encounter .encounterHeader {
-    color: #000000;
-    font-size: 24px;
-    margin: 0px;
-}
-
-#scoring div.encounter .encounterHeader .encounterNum {
-    font-size: 36px;
-}
-
-#scoring div.encounter .encounterHeader .date {
-    font-size: 18px;
-    float: right;
-}
-
-#scoring div.task {
-    background-color: #000000;
-    padding: 15px;
-    margin-top: 10px;
-    margin-right: 0px;
-    width: 640px;
-    text-align: left;
-    border-radius: 14px;
-}
-
-#scoring div.task img.icon {
-    width: 36px;
-    height: 36px;
-    background-size: 36px 36px;
-    border-radius: 6px;
-    vertical-align: middle;
-}
-
-#scoring div.task .taskHeader {
-    color: #eeeeee;
-    font-size: 24px;
-    height: 36px;
-}
-
-#scoring div.task .taskHeader .description {
-    vertical-align: middle;
-}
-
-#scoring div.task div.scores {
-    margin-top: 15px;
-}
-
-#scoring div.task div.score {
-    border-top: 1px solid #eeeeee;
-    padding: 5px;
-}
-
-#scoring div.task div.score .scoreHeader {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-#scoring div.task div.score .scoreBody {
-    margin: 10px;
-}
-
-#scoring div.task div.score .scoreBody div.rawScore {
-    display: inline-block;
-    clear: none;
-    vertical-align: top;
-    text-align: center;
-}
-
-#scoring div.task div.score .scoreBody div.rawScore .description {
-    font-size: 10px;
-    margin: 4px;
-}
-
-#scoring div.task div.score .scoreBody div.rawScore .value {
-    font-size: 60px;
-    margin: 4px;
-}
-
-
-#scoring div.task div.score .scoreBody div.norms {
-    display: inline-block;
-    clear: none;
-    margin-left: 10px;
-}
-
-#scoring div.task div.score .scoreBody div.norms th {
-    font-weight: normal;
-    font-size: 10px;
-    text-align: center;
-    padding: 4px;
-}
-
-#scoring div.task div.score .scoreBody div.norms td {
-    font-weight: normal;
-    font-size: 15px;
-    text-align: center;
-    padding: 2px 8px 2px 8px;
-}
-
-#scoring div.task div.score .scoreFooter {
-    margin-top: 10px;
-    font-size: 10px;
 }
 
 
