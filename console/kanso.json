@@ -19,7 +19,7 @@
                     "js/create-encounter.js",
                     "js/enter-password.js",
                     "js/login.js",
-                    "patient-scoring.js",
+                    "js/patient-scoring.js",
                     "js/return-to-examiner.js",
                     "js/tabcat-console.js",
                     "js/tasks.js",
