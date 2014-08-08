@@ -71,7 +71,7 @@ $(PUSHED_DATA_DBS): %: scoring/design.json
 	$(SCRIPTS)/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/$(DDOC_NAME)
 	touch $@
 
-scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js
+scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js ../../core/js/tabcat/scoring.js
 	mkdir -p $(@D)
 	cd $(@D); kanso install
 	cd $(@D); kanso show > $(@F)
