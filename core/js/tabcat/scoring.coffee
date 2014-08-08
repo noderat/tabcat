@@ -74,7 +74,8 @@ Scoring.scoreTasksForPatient = (designDocId, patientCode) ->
 
   options = _.extend(options ? {}, query:
     startkey: [patientCode]
-    endkey: [patientCode, []])
+    endkey: [patientCode, []],
+    include_docs: true)
 
   TabCAT.Couch.getDoc(
     DATA_DB, "#{designDocId}/_list/score/core/patient", options)
