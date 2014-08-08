@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,50 +26,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # TASK INFO
 
-# DB where design docs and task content is stored
-TABCAT_DB = 'tabcat'
-
-
-# Promise: get an object containing "batteries" and "tasks"; these each
-# map battery/task name to the corresponding info from the design docs.
-#
-# This also adds a "urlRoot" and "finished" field to each task
-#
-# options is the same as for TabCAT.Couch.getAllDesignDocs
-getTaskInfo = (options) ->
-  TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
-    (designDocs) ->
-      batteries = {}
-      tasks = {}
-
-      finished = TabCAT.Encounter.getTasksFinished()
-
-      for designDoc in designDocs
-        kct = designDoc.kanso?.config?.tabcat
-        if kct?
-          _.extend(batteries, kct.batteries)
-
-          # add urlRoot and finished to each task
-          if kct.tasks?
-            urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
-            for own name, task of kct.tasks
-              tasks[name] = _.extend(task,
-                finished: !!finished[name]
-                urlRoot: urlRoot
-              )
-
-      return {batteries: batteries, tasks: tasks}
-    )
-
-
 # get task info from the server, and then display an icon and a description
 # for each task
 showTasks = ->
-  getTaskInfo().then((taskInfo) ->
+  TabCAT.Task.getBatteriesAndTasks().then((bt) ->
     $('#taskList').empty()
 
-    batteries = _.sortBy(_.values(taskInfo.batteries), (b) -> b.description)
-    tasksByName = taskInfo.tasks
+    batteries = _.sortBy(_.values(bt.batteries), (b) -> b.description)
+    tasksByName = bt.tasks
 
     # add a fake battery for all tasks
     allTaskNames = _.sortBy(
@@ -78,6 +42,8 @@ showTasks = ->
       description: 'All Tasks',
       tasks: allTaskNames
     )
+
+    finished = TabCAT.Encounter.getTasksFinished()
 
     for battery in batteries
       if not battery.description? or battery.tasks.length is 0
@@ -104,7 +70,7 @@ showTasks = ->
           # default to TabCAT icon
           iconUrl = 'img/icon.png'
 
-        if task.finished
+        if finished[taskName]
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')

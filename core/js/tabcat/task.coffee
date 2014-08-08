@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,37 @@ eventSyncXHR = null
 
 # ID of the timer for event uploads
 eventSyncIntervalId = null
+
+# Promise: read all design docs in the tabcat DB, and return an object
+# containing "batteries" and "tasks", which map battery/task name to the
+# corresponding info from the design doc. In addition, we'll add the
+# url of the design document each task/battery came from in the urlRoot field.
+#
+# options is the same as for TabCAT.Couch.getAllDesignDocs
+TabCAT.Task.getBatteriesAndTasks = (options) ->
+  TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
+    (designDocs) ->
+      batteries = {}
+      tasks = {}
+
+      for designDoc in designDocs
+        urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
+        kct = designDoc.kanso?.config?.tabcat
+
+        if kct?.batteries?
+          for own name, battery of kct.batteries
+            battery.urlRoot = urlRoot
+            batteries[name] = battery
+
+        if kct?.tasks?
+          for own name, task of kct.tasks
+            task.urlRoot = urlRoot
+            tasks[name] = task
+
+      return {batteries: batteries, tasks: tasks}
+  )
+
+
 
 
 # Get a copy of the CouchDB doc for this task
