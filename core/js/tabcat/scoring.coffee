@@ -24,27 +24,18 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
-# Utilities for scoring performance on TabCAT tasks.
+# Very thin module to make scoring accessible from either the browser
+# (via TabCAT.Scoring) or from CouchDB: Scoring = require('js/tabcat/scoring')
 #
-# This module may be accessed either from the browser, via
-# TabCAT.Scoring, or from within CouchDB, with
-# Scoring = require('js/tabcat/scoring')
+# Code that cannot run in both environments should go in another
+# module.
 Scoring = {}
 
 if module?  # inside CouchDB
-  _ = require('../vendor/underscore')._
-  gauss = require('../vendor/gauss/gauss')
-
   module.exports = Scoring = {}
 else  # inside browser
-  _ = @_
-  gauss = @gauss
-
   @TabCAT ?= {}
   @TabCAT.Scoring = Scoring
-
-
-DATA_DB = 'tabcat-data'
 
 
 # map from taskName to
@@ -64,18 +55,3 @@ Scoring.scoreTask = (taskName, eventLog) ->
     return null
   else
     return scorer(eventLog)
-
-
-# Promise: score tasks for patient, returning a map from task ID to score
-Scoring.scoreTasksForPatient = (designDocId, patientCode) ->
-  patientCode ?= TabCAT.Encounter.getPatientCode()
-  if not patientCode?
-    return $.Deferred.resolve(null)
-
-  options = _.extend(options ? {}, query:
-    startkey: [patientCode]
-    endkey: [patientCode, []],
-    include_docs: true)
-
-  TabCAT.Couch.getDoc(
-    DATA_DB, "#{designDocId}/_list/score/core/patient", options)

@@ -90,3 +90,25 @@ TabCAT.Patient.newDoc = (patientCode) ->
     type: 'patient'
     patientCode: patientCode
   }
+
+
+# Promise: use a single design document to score tasks for a patient,
+# returning a map from task ID to score.
+#
+# You'll need to do this once per design doc corresponding to tasks
+# performed by a patient, which means you'll need to know which tasks
+# a patient took, and what the corresponding design docs are.
+#
+# for an example, see console/js/patient-scoring.coffee
+TabCAT.Patient.scoreTasksFromDesignDoc = (designDocId, patientCode) ->
+  patientCode ?= TabCAT.Encounter.getPatientCode()
+  if not patientCode?
+    return $.Deferred.resolve(null)
+
+  options = _.extend(options ? {}, query:
+    startkey: [patientCode]
+    endkey: [patientCode, []],
+    include_docs: true)
+
+  TabCAT.Couch.getDoc(
+    DATA_DB, "#{designDocId}/_list/score/core/patient", options)

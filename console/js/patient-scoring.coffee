@@ -128,7 +128,7 @@ showScoring = ->
 
       for own designDocId, taskIds of designDocToTaskIds
         do (designDocId, taskIds) ->
-          TabCAT.Scoring.scoreTasksForPatient(designDocId).then(
+          TabCAT.Patient.scoreTasksFromDesignDoc(designDocId).then(
             (taskToScoring) ->
               for taskId in _.keys(taskIds)
                 $scores = $("#task-#{taskId} .scores")
