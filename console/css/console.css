@@ -346,11 +346,14 @@ form.big button[type=submit] {
 
 #patientScoring div.task div.scores {
     margin-top: 15px;
+    font-size: 12px;
+    font-style: italic;
 }
 
 #patientScoring div.task div.score {
     border-top: 1px solid #eeeeee;
     padding: 5px;
+    font-style: normal;
 }
 
 #patientScoring div.task div.score .scoreHeader {

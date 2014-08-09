@@ -107,12 +107,15 @@ showScoring = ->
               'src', TabCAT.Console.getTaskIconUrl(taskInfo))
             $task.find('.description').text(taskInfo.description)
 
+            $scores = $task.find('.scores')
+
             if t.finishedAt?
               designDocId = taskInfo.designDocId
               designDocToTaskIds[designDocId] ?= {}
               designDocToTaskIds[designDocId][t._id] = true
+              $scores.text('loading scores...')
             else
-              $task.find('.scores').text('(task not completed)')
+              $scores.text('task not completed')
 
           else
             $task.find('.icon').attr('src',
@@ -123,14 +126,13 @@ showScoring = ->
 
         $('#patientScoring').append($encounter)
 
-      console.log(designDocToTaskIds)
-
       for own designDocId, taskIds of designDocToTaskIds
         do (designDocId, taskIds) ->
           TabCAT.Scoring.scoreTasksForPatient(designDocId).then(
             (taskToScoring) ->
-              for taskId in taskIds
-                $scores = $tasks.find("#task-#{taskId} .scores")
+              for taskId in _.keys(taskIds)
+                $scores = $("#task-#{taskId} .scores")
+                $scores.empty()
 
                 scores = taskToScoring[taskId]?.scores
 
@@ -141,8 +143,10 @@ showScoring = ->
                       score.description)
                     $score.find('.scoreBody .rawScore').text(
                       score.value.toFixed(1))
+
+                    $scores.append($score)
                 else
-                  $scores.text('(no scoring available for this task)')
+                  $scores.text('no scoring available for this task')
           )
     )
   )
