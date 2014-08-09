@@ -141,7 +141,7 @@ showScoring = ->
                     $score = $(SCORE_HTML)
                     $score.find('.scoreHeader .description').text(
                       score.description)
-                    $score.find('.scoreBody .rawScore').text(
+                    $score.find('.scoreBody .rawScore .value').text(
                       score.value.toFixed(1))
 
                     $scores.append($score)
