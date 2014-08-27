@@ -51,7 +51,8 @@ Scoring.addTaskScorer = (taskName, scorer) ->
 Scoring.scoreTask = (taskName, eventLog) ->
   scorer = taskNameToScorer[taskName]
 
-  if not scorer?
+  # some very early versions of TabCAT didn't fill eventLog
+  if not (scorer? and eventLog?)
     return null
   else
     return scorer(eventLog)

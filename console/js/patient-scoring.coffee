@@ -97,6 +97,9 @@ showScoring = ->
         $tasks = $encounter.find('.tasks')
 
         for t in e.tasks by -1
+          if not t.name?
+            continue
+
           $task = $(TASK_HTML)
           $task.attr('id', "task-#{t._id}")
 
