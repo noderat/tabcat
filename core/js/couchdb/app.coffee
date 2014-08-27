@@ -62,6 +62,17 @@ dumpList = (head, req) ->
 
 
 validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
+  # server and DB admins are exempt from this policy
+  if '_admin' in userCtx.roles
+    return
+
+  if userCtx.name in secObj.admins.names
+    return
+
+  for role in userCtx.roles
+    if role in secObj.admins.roles
+      return
+
   if newDoc.user?
     if newDoc.user[newDoc.user.length - 1] is '?'
       if not (newDoc.uploadedBy? and newDoc.uploadedBy is userCtx.name)
