@@ -31,21 +31,79 @@ else
   Scoring = TabCAT.Scoring
 
 
+# norms as of 2014-08-16
+TASK_TO_NORMS =
+  'line-orientation': [
+    {
+      cohort:
+        ageRange: [50, 71]
+      mean: 5.0
+      n: 18
+      stdev: -1.8
+    }, {
+      cohort:
+        ageRange: [71, 92]
+      mean: 5.6
+      n: 19
+      stdev: -1.4
+    }
+  ],
+  'parallel-line-length': [
+    {
+      cohort:
+        ageRange: [50, 71]
+      mean: 4.1
+      n: 18
+      stdev: -1.9
+    }, {
+      cohort:
+        ageRange: [71, 92]
+      mean: 4.8
+      n: 19
+      stdev: -2.0
+    }
+  ],
+  'perpendicular-line-length': [
+    {
+      cohort:
+        ageRange: [50, 71]
+      mean: 11.0
+      n: 18
+      stdev: -5.1
+    }, {
+      cohort:
+        ageRange: [71, 92]
+      mean: 12.1
+      n: 19
+      stdev: -4.5
+    }
+  ]
+
+
+
 # everything is scored the same way: mean intensity at reversal, dropping
 # the first two
-scorer = (eventLog) ->
-  intensitiesAtReversal = (
-    item.state.intensity for item in eventLog \
-    when item?.interpretation?.reversal)
+makeScorer = (taskName) ->
 
-  return {
-    scores: [{
-      description: 'Spatial Perception'
-      value: gauss.Vector(intensitiesAtReversal[2..]).mean()
-    }]
-  }
+  scorer = (eventLog) ->
+    intensitiesAtReversal = (
+      item.state.intensity for item in eventLog \
+      when item?.interpretation?.reversal)
+
+    scores =
+      scores: [{
+        description: 'Spatial Perception'
+        value: gauss.Vector(intensitiesAtReversal[2..]).mean()
+      }]
+
+    if taskName in TASK_TO_NORMS
+      scores.norms = TASK_TO_NORMS[taskName]
+
+    return scores
 
 
-Scoring.addTaskScorer('parallel-line-length', scorer)
-Scoring.addTaskScorer('perpendicular-line-length', scorer)
-Scoring.addTaskScorer('line-orientation', scorer)
+Scoring.addTaskScorer('parallel-line-length',
+  makeScorer('parallel-line-length'))
+Scoring.addTaskScorer('perpendicular-line-length',
+  makeScorer('perpendicular-line-length'))
+Scoring.addTaskScorer('line-orientation', makeScorer('parallel-line-length'))
