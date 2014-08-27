@@ -93,7 +93,7 @@ exports.lists =
   'adhoc-set-shifting-summary-report': adhocSetShiftingSummaryReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list
 
-exports.validate_doc_update = validateDocUpdate
+#exports.validate_doc_update = validateDocUpdate
 
 exports.views =
   patient:
