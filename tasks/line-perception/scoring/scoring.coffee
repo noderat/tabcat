@@ -36,46 +36,52 @@ TASK_TO_NORMS =
   'line-orientation': [
     {
       cohort:
-        ageRange: [50, 71]
+        minAge: 50
+        maxAge: 70
       mean: 5.0
       n: 18
-      stdev: -1.8
+      stdev: 1.8
     }, {
       cohort:
-        ageRange: [71, 92]
+        minAge: 71
+        maxAge: 91
       mean: 5.6
       n: 19
-      stdev: -1.4
+      stdev: 1.4
     }
   ],
   'parallel-line-length': [
     {
       cohort:
-        ageRange: [50, 71]
+        minAge: 50
+        maxAge: 70
       mean: 4.1
       n: 18
-      stdev: -1.9
+      stdev: 1.9
     }, {
       cohort:
-        ageRange: [71, 92]
+        minAge: 71
+        maxAge: 91
       mean: 4.8
       n: 19
-      stdev: -2.0
+      stdev: 2.0
     }
   ],
   'perpendicular-line-length': [
     {
       cohort:
-        ageRange: [50, 71]
+        minAge: 50
+        maxAge: 70
       mean: 11.0
       n: 18
-      stdev: -5.1
+      stdev: 5.1
     }, {
       cohort:
-        ageRange: [71, 92]
+        minAge: 71
+        maxAge: 91
       mean: 12.1
       n: 19
-      stdev: -4.5
+      stdev: 4.5
     }
   ]
 
@@ -93,6 +99,7 @@ makeScorer = (taskName) ->
     scores =
       scores: [{
         description: 'Spatial Perception'
+        lessIsMore: true
         value: gauss.Vector(intensitiesAtReversal[2..]).mean()
       }]
 
