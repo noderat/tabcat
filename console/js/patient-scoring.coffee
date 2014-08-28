@@ -75,12 +75,6 @@ SCORE_HTML = '''
 </div>
 '''
 
-SCORE_FOOTER_HTML = '''
-<div class="scoreFooter">
-  * percentile assumes normal distribution
-</div>
-'''
-
 NORM_HTML = '''
 <tr>
   <td class="age"></td>
@@ -162,8 +156,6 @@ showScoring = ->
                     $score.find('.scoreBody .rawScore .value').text(
                       score.value.toFixed(1))
 
-                    showFooter = false
-
                     if score.norms?
                       for norm in score.norms
                         $norm = $(NORM_HTML)
@@ -178,10 +170,10 @@ showScoring = ->
                         $norm.find('.mean').text(norm.mean ? '-')
                         $norm.find('.stddev').text(norm.stddev ? '-')
 
-                        percentile = null
-                        if norm.percentile?
-                          percentile = norm.percentile
-                        else if norm.mean? and norm.stddev
+                        percentile = norm.percentile
+
+                        # infer percentile
+                        if (not percentile?) and norm.mean? and norm.stddev
                           g = gaussian(norm.mean, norm.stddev * norm.stddev)
                           percentile = 100 * g.cdf(score.value)
                           if score.lessIsMore
@@ -189,16 +181,10 @@ showScoring = ->
 
                         if percentile?
                           percentile = Math.floor(percentile) + '%'
-                          if not norm.percentile?
-                            percentile += '*'
-                            showFooter = true
 
                         $norm.find('.percentile').text(percentile ? '-')
 
                         $score.find('.scoreBody .norms tbody').append($norm)
-
-                    if showFooter
-                      $score.append(SCORE_FOOTER_HTML)
 
                     $scores.append($score)
                 else
