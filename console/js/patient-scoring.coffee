@@ -61,10 +61,10 @@ SCORE_HTML = '''
       <table class="norm">
         <thead>
           <tr>
-            <th>Age</th>
-            <th>Mean</th>
-            <th>Stddev</th>
-            <th>Percentile*</th>
+            <th class="age">Age</th>
+            <th class="mean">Mean</th>
+            <th class="stddev">Std. Dev.</th>
+            <th class="percentile">Percentile*</th>
           </tr>
         </thead>
         <tbody>
@@ -73,6 +73,16 @@ SCORE_HTML = '''
     </div>
   </div>
 </div>
+'''
+
+
+NORM_HTML = '''
+<tr>
+  <td class="age"></td>
+  <td class="mean"></td>
+  <td class="stddev"></td>
+  <td class="percentile"></td>
+</tr>
 '''
 
 
@@ -146,6 +156,22 @@ showScoring = ->
                       score.description)
                     $score.find('.scoreBody .rawScore .value').text(
                       score.value.toFixed(1))
+
+                    if score.norms?
+                      for norm in score.norms
+                        $norm = $(NORM_HTML)
+
+                        minAge = norm.cohort?.minAge ? 0
+                        if norm.cohort?.maxAge?
+                          age = minAge + '-' + norm.cohort.maxAge
+                        else
+                          age = minAge + '+'
+                        $norm.find('.age').text(age)
+
+                        $norm.find('.mean').text(norm.mean ? '-')
+                        $norm.find('.stddev').text(norm.stddev ? '-')
+
+                        $score.find('.scoreBody .norms tbody').append($norm)
 
                     $scores.append($score)
                 else

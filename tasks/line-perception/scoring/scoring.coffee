@@ -40,14 +40,14 @@ TASK_TO_NORMS =
         maxAge: 70
       mean: 5.0
       n: 18
-      stdev: 1.8
+      stddev: 1.8
     }, {
       cohort:
         minAge: 71
         maxAge: 91
       mean: 5.6
       n: 19
-      stdev: 1.4
+      stddev: 1.4
     }
   ],
   'parallel-line-length': [
@@ -57,14 +57,14 @@ TASK_TO_NORMS =
         maxAge: 70
       mean: 4.1
       n: 18
-      stdev: 1.9
+      stddev: 1.9
     }, {
       cohort:
         minAge: 71
         maxAge: 91
       mean: 4.8
       n: 19
-      stdev: 2.0
+      stddev: 2.0
     }
   ],
   'perpendicular-line-length': [
@@ -74,14 +74,14 @@ TASK_TO_NORMS =
         maxAge: 70
       mean: 11.0
       n: 18
-      stdev: 5.1
+      stddev: 5.1
     }, {
       cohort:
         minAge: 71
         maxAge: 91
       mean: 12.1
       n: 19
-      stdev: 4.5
+      stddev: 4.5
     }
   ]
 
@@ -90,27 +90,25 @@ TASK_TO_NORMS =
 # everything is scored the same way: mean intensity at reversal, dropping
 # the first two
 makeScorer = (taskName) ->
-
-  scorer = (eventLog) ->
+  (eventLog) ->
     intensitiesAtReversal = (
       item.state.intensity for item in eventLog \
       when item?.interpretation?.reversal)
 
-    scores =
-      scores: [{
-        description: 'Spatial Perception'
-        lessIsMore: true
-        value: gauss.Vector(intensitiesAtReversal[2..]).mean()
-      }]
+    score =
+      description: 'Spatial Perception'
+      lessIsMore: true
+      value: gauss.Vector(intensitiesAtReversal[2..]).mean()
 
-    if taskName in TASK_TO_NORMS
-      scores.norms = TASK_TO_NORMS[taskName]
+    if TASK_TO_NORMS[taskName]?
+      score.norms = TASK_TO_NORMS[taskName]
 
-    return scores
+    return {scores: [score]}
 
 
 Scoring.addTaskScorer('parallel-line-length',
   makeScorer('parallel-line-length'))
 Scoring.addTaskScorer('perpendicular-line-length',
   makeScorer('perpendicular-line-length'))
-Scoring.addTaskScorer('line-orientation', makeScorer('parallel-line-length'))
+Scoring.addTaskScorer('line-orientation',
+  makeScorer('line-orientation'))
