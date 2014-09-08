@@ -103,8 +103,6 @@ LinePerceptionTask = class
     )
     TabCAT.UI.turnOffBounce()
 
-    $.i18n.init(resStore: translations, fallbackLng: 'en')
-
     $(=>
       TabCAT.UI.requireLandscapeMode($('#task'))
       $('#task').on('mousedown touchstart', @handleStrayTouchStart)
