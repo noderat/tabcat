@@ -173,5 +173,3 @@ showTasks = ->
     )
     $('#closeEncounter').removeAttr('disabled')
   )
-
-  TabCAT.DB.startSpilledDocSync()

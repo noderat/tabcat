@@ -36,6 +36,9 @@ TabCAT.Console = {}
 DEFAULT_FALLBACK_LNG = 'en'
 
 # call this first. Analogous to TabCAT.Task.start()
+#
+# this sets up i18n, starts sync of spilled docs, and updates
+# the status bar (once the page is ready)
 TabCAT.Console.start = _.once((options) ->
   # set up i18n
   i18n_options = _.extend(
@@ -43,6 +46,10 @@ TabCAT.Console.start = _.once((options) ->
     options?.i18n)
   $.i18n.init(i18n_options)
 
+  # sync spilled docs
+  TabCAT.DB.startSpilledDocSync()
+
+  # update status bar
   $(TabCAT.Console.updateStatusBar)
 )
 

@@ -52,6 +52,8 @@ submitEnterPasswordForm = (event) ->
     window.location = 'login.html'
     return
 
+  TabCAT.Console.start()
+
   $(->
     $('#howToLogout').text(
       'Not ' + user + '? Tap the Log Out button (in the upper right)' +
@@ -67,4 +69,3 @@ submitEnterPasswordForm = (event) ->
     $loginForm.on('submit', submitEnterPasswordForm)
     $loginForm.find('button').removeAttr('disabled')
   )
-  $(TabCAT.Console.updateStatusBar)
