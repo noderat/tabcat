@@ -103,8 +103,6 @@ setUpForm = ->
 @initCloseEncounterPage = ->
   TabCAT.UI.requireUserAndEncounter()
 
-  $(TabCAT.Console.updateStatusBar)
+  TabCAT.Console.start()
 
   $(setUpForm)
-
-  TabCAT.DB.startSpilledDocSync()

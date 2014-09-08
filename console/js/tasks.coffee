@@ -29,6 +29,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # DB where design docs and task content is stored
 TABCAT_DB = 'tabcat'
 
+translations =
+  en:
+    translation:
+      all_tasks: 'All Tasks'
+  es:
+    translation:
+      all_tasks: 'Todas Tareas'
+
 
 # Promise: get an object containing "batteries" and "tasks"; these each
 # map battery/task name to the corresponding info from the design docs.
@@ -58,6 +66,12 @@ getTaskInfo = (options) ->
                 urlRoot: urlRoot
               )
 
+          # load 18n (will want to make this separate function
+          if kct.i18n?
+            for own lang, translations of kct.i18n
+              # add translations to the "config" namespace
+              $.i18n.addResourceBundle(lang, 'config', translations, true)
+
       return {batteries: batteries, tasks: tasks}
     )
 
@@ -68,24 +82,29 @@ showTasks = ->
   getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
 
-    batteries = _.sortBy(_.values(taskInfo.batteries), (b) -> b.description)
+    batteries = _.sortBy(_.pairs(taskInfo.batteries), (n, b) -> b.description)
     tasksByName = taskInfo.tasks
 
     # add a fake battery for all tasks
     allTaskNames = _.sortBy(
-      _.keys(tasksByName), (name) -> tasksByName[name].description)
-    batteries.push(
-      description: 'All Tasks',
-      tasks: allTaskNames
-    )
+      _.keys(tasksByName), (name) ->
+        $.t("config:tasks.#{name}.description",
+          defaultValue: tasksByName[name].description))
 
-    for battery in batteries
+    batteries.unshift(['all-tasks',
+      description: $.t('all_tasks')
+      tasks: allTaskNames
+    ])
+
+    for [batteryName, battery] in batteries
       if not battery.description? or battery.tasks.length is 0
         continue
 
       $batteryDiv = $('<div></div>', class: 'battery')
       $batteryHeader = $('<div></div>', class: 'header')
-      $batteryHeader.text(battery.description)
+      $batteryHeader.text(
+        $.t("config:batteries.#{batteryName}.description",
+          defaultValue: battery.description))
       $batteryDiv.append($batteryHeader)
 
       $tasksDiv = $('<div></div>', class: 'tasks collapsed')
@@ -114,7 +133,9 @@ showTasks = ->
         $taskDiv.append($icon)
 
         $taskDescription = $('<span></span>', class: 'description')
-        $taskDescription.text(task.description)
+        $taskDescription.text(
+          $.t("config:tasks.#{taskName}.description",
+            defaultValue: task.description))
         $taskDiv.append($taskDescription)
 
         $tasksDiv.append($taskDiv)
@@ -140,11 +161,11 @@ showTasks = ->
 # initialization
 @initPage = ->
   TabCAT.UI.requireUserAndEncounter()
-
   TabCAT.UI.enableFastClick()
 
+  TabCAT.Console.start(i18n: {resStore: translations})
+
   $(->
-    TabCAT.Console.updateStatusBar()
     showTasks()
     $('#closeEncounter').on('click', ->
       window.location = 'close-encounter.html'
@@ -152,5 +173,3 @@ showTasks = ->
     )
     $('#closeEncounter').removeAttr('disabled')
   )
-
-  TabCAT.DB.startSpilledDocSync()

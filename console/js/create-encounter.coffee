@@ -57,6 +57,8 @@ submitCreateEncounterForm = (event) ->
   TabCAT.UI.enableFastClick()
   TabCAT.UI.turnOffBounce()
 
+  TabCAT.Console.start()
+
   $(->
     $form = $('#createEncounter').find('form')
 
@@ -77,6 +79,3 @@ submitCreateEncounterForm = (event) ->
         $('p.message').text(
           'Closed encounter with Patient ' + closedEncounterWith)
   )
-  $(TabCAT.Console.updateStatusBar)
-
-  TabCAT.DB.startSpilledDocSync()

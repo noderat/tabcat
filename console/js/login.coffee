@@ -49,7 +49,7 @@ submitLoginForm = (event) ->
 
 
 @initPage = ->
-  $.i18n.init()  # parse ?setLng=...
+  TabCAT.Console.start()
 
   # Make sure page gets bookmarked with sandbox icon and title.
   if TabCAT.Console.inSandbox()

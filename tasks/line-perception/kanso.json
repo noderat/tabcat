@@ -26,6 +26,39 @@
                 ]
             }
         },
+        "i18n": {
+            "es": {
+                "batteries": {
+                    "line-perception": {
+                        "description": "Percepción de Líneas"
+                    }
+                },
+                "tasks": {
+                    "line-orientation": {
+                        "description": "Orientación de Líneas"
+                    },
+                    "parallel-line-length": {
+                        "description": "Largo de Líneas Paralelas"
+                    },
+                    "perpendicular-line-length": {
+                        "description": "Largo de Líneas Perpendiculares"
+                    }
+                }
+            },
+            "zh": {
+                "tasks": {
+                    "line-orientation": {
+                        "description": "線方向"
+                    },
+                    "parallel-line-length": {
+                        "description": "平行線的長度"
+                    },
+                    "perpendicular-line-length": {
+                        "description": "垂直線的長度"
+                    }
+                }
+            }
+        },
         "tasks": {
             "line-orientation": {
                 "description": "Line Orientation",
