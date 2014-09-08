@@ -35,7 +35,7 @@ translations =
       all_tasks: 'All Tasks'
   es:
     translation:
-      all_tasks: 'Todos Tareas'
+      all_tasks: 'Todas Tareas'
 
 
 # Promise: get an object containing "batteries" and "tasks"; these each
