@@ -211,6 +211,8 @@ form.big button[type=submit] {
     margin-left: 8px;
     margin-bottom: 8px;
     border-radius: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #tasks div.task {
@@ -221,6 +223,8 @@ form.big button[type=submit] {
     width: 600px;
     text-align: left;
     border-radius: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #tasks div.task:active {

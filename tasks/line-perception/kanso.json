@@ -38,10 +38,10 @@
                         "description": "Orientación de Líneas"
                     },
                     "parallel-line-length": {
-                        "description": "Longitud de Líneas Paralelas"
+                        "description": "Largo de Líneas Paralelas"
                     },
                     "perpendicular-line-length": {
-                        "description": "Longitud de Líneas Perpendiculares"
+                        "description": "Largo de Líneas Perpendiculares"
                     }
                 }
             },
