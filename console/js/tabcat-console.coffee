@@ -30,6 +30,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @TabCAT ?= {}
 TabCAT.Console = {}
 
+# INITIALIZATION
+
+# default fallback language, for i18n
+DEFAULT_FALLBACK_LNG = 'en'
+
+# call this first. Analogous to TabCAT.Task.start()
+#
+# this sets up i18n, starts sync of spilled docs, and updates
+# the status bar (once the page is ready)
+TabCAT.Console.start = _.once((options) ->
+  # set up i18n
+  i18n_options = _.extend(
+    {fallbackLng: DEFAULT_FALLBACK_LNG, resStore: {}},
+    options?.i18n)
+  $.i18n.init(i18n_options)
+
+  # sync spilled docs
+  TabCAT.DB.startSpilledDocSync()
+
+  # update status bar
+  $(TabCAT.Console.updateStatusBar)
+)
+
+
 # STATUS BAR
 
 # warn when local storage is more than 75% full
@@ -45,7 +69,6 @@ TABCAT_DB = 'tabcat'
 
 keepOfflineStatusUntil = null
 lastOfflineStatusType = 0
-
 
 # update the statusBar div, populating it if necessary
 #
@@ -222,14 +245,14 @@ offlineStatusStoragePercentFullHtml = ->
 TabCAT.Console.DEFAULT_TASK_ICON_URL = (
   "/#{TABCAT_DB}/_design/console/img/icon.png")
 
-# extract icon URL from task info (from TabCAT.Task.getBatteriesAndTasks())
+# extract icon URL from task info (from TabCAT.Task.getTaskInfo())
 TabCAT.Console.getTaskIconUrl = (task) ->
   if task.designDocId? and task.icon?
     "/#{TABCAT_DB}/#{task.designDocId}/#{task.icon}"
   else
     DEFAULT_TASK_ICON_URL
 
-# extract start URL from task info (from TabCAT.Task.getBatteriesAndTasks())
+# extract start URL from task info (from TabCAT.Task.getTaskInfo())
 TabCAT.Console.getTaskStartUrl = (task) ->
   if task.designDocId? and task.start?
     "/#{TABCAT_DB}/#{task.designDocId}/#{task.start}"

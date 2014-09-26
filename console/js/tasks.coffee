@@ -26,32 +26,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # TASK INFO
 
+translations =
+  en:
+    translation:
+      all_tasks: 'All Tasks'
+  es:
+    translation:
+      all_tasks: 'Todas Tareas'
+
+
 # get task info from the server, and then display an icon and a description
 # for each task
 showTasks = ->
-  TabCAT.Task.getBatteriesAndTasks().then((bt) ->
+  TabCAT.Task.getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
 
-    batteries = _.sortBy(_.values(bt.batteries), (b) -> b.description)
-    tasksByName = bt.tasks
+    batteries = _.sortBy(_.pairs(taskInfo.batteries), (n, b) -> b.description)
+    tasksByName = taskInfo.tasks
 
     # add a fake battery for all tasks
     allTaskNames = _.sortBy(
-      _.keys(tasksByName), (name) -> tasksByName[name].description)
-    batteries.push(
-      description: 'All Tasks',
+      _.keys(tasksByName), (name) ->
+        $.t("config:tasks.#{name}.description",
+          defaultValue: tasksByName[name].description))
+
+    batteries.push(['all-tasks',
+      description: $.t('all_tasks')
       tasks: allTaskNames
-    )
+    ])
 
     finished = TabCAT.Encounter.getTasksFinished()
 
-    for battery in batteries
+    for [batteryName, battery] in batteries
       if not battery.description? or battery.tasks.length is 0
         continue
 
       $batteryDiv = $('<div></div>', class: 'battery')
       $batteryHeader = $('<div></div>', class: 'header')
-      $batteryHeader.text(battery.description)
+      $batteryHeader.text(
+        $.t("config:batteries.#{batteryName}.description",
+          defaultValue: battery.description))
       $batteryDiv.append($batteryHeader)
 
       $tasksDiv = $('<div></div>', class: 'tasks collapsed')
@@ -76,7 +90,9 @@ showTasks = ->
         $taskDiv.append($icon)
 
         $taskDescription = $('<span></span>', class: 'description')
-        $taskDescription.text(task.description)
+        $taskDescription.text(
+          $.t("config:tasks.#{taskName}.description",
+            defaultValue: task.description))
         $taskDiv.append($taskDescription)
 
         $tasksDiv.append($taskDiv)
@@ -103,11 +119,11 @@ showTasks = ->
 # initialization
 @initPage = ->
   TabCAT.UI.requireUserAndEncounter()
-
   TabCAT.UI.enableFastClick()
 
+  TabCAT.Console.start(i18n: {resStore: translations})
+
   $(->
-    TabCAT.Console.updateStatusBar()
     showTasks()
     $('#closeEncounter').on('click', ->
       window.location = 'close-encounter.html'
@@ -115,5 +131,3 @@ showTasks = ->
     )
     $('#closeEncounter').removeAttr('disabled')
   )
-
-  TabCAT.DB.startSpilledDocSync()

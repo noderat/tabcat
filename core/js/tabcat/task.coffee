@@ -89,29 +89,29 @@ eventSyncIntervalId = null
 # Promise: read all design docs in the tabcat DB, and return an object
 # containing "batteries" and "tasks", which map battery/task name to the
 # corresponding info from the design doc, with the additional field
-# "designDocId"
+# "designDocId", and
 #
 # options is the same as for TabCAT.Couch.getAllDesignDocs
-TabCAT.Task.getBatteriesAndTasks = (options) ->
+TabCAT.Task.getTaskInfo = (options) ->
   TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
     (designDocs) ->
-      batteries = {}
-      tasks = {}
+      taskInfo = {}
 
       for designDoc in designDocs
         kct = designDoc.kanso?.config?.tabcat
 
-        if kct?.batteries?
-          for own name, battery of kct.batteries
-            battery.designDocId = designDoc._id
-            batteries[name] = battery
+        if kct?
+          # merge in this design doc
+          $.extend(true, taskInfo, kct)
 
-        if kct?.tasks?
-          for own name, task of kct.tasks
-            task.designDocId = designDoc._id
-            tasks[name] = task
+          # tag batteries and tasks with the design doc
+          # that defined them
+          for key in ['batteries', 'tasks']
+            if kct[key]?
+              for own name, _ of kct[key]
+                taskInfo[key][name].designDocId = designDoc._id
 
-      return {batteries: batteries, tasks: tasks}
+      return taskInfo
   )
 
 

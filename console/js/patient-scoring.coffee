@@ -92,8 +92,8 @@ showScoring = ->
     if not history?
       return
 
-    TabCAT.Task.getBatteriesAndTasks().then((bt) ->
-      tasksByName = bt.tasks
+    TabCAT.Task.getTaskInfo().then((taskInfo) ->
+      tasksByName = taskInfo.tasks
       designDocToTaskIds = {}
 
       for e in history.encounters by -1
@@ -112,7 +112,7 @@ showScoring = ->
           $task = $(TASK_HTML)
           $task.attr('id', "task-#{t._id}")
 
-          taskInfo = bt.tasks[t.name]
+          taskInfo = tasksByName[t.name]
 
           if taskInfo?
             $task.find('.icon').attr(
