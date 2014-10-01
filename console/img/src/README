@@ -3,5 +3,7 @@ This directory contains the raw source files for these images.
 logo.ai is the final TabCAT logo submission from 99designs.
 banner.svg is the logo, minus the background, cropped
 icon.svg is this logo reduced to a square, with a border
+(icon.svg is also used to generate logo.svg)
+icon-sandbox.svg is icon.svg with sandbox/sand.png as a background
 
 check-overlay.xcf is the xcf file used to create check.png
