@@ -52,11 +52,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #statusBar span.version {
     position: relative;
     margin: 0;
-    top: -4px;
-    left: -4px;
+    top: -11px;
     vertical-align: bottom;
-    color: #ffffff;
-    font-size: 16px;
+    color: #bbbbaa;
+    font-size: 12px;
 }
 
 #statusBar p.offline {
