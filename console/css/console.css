@@ -45,8 +45,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     text-align: left;
 }
 
-#statusBar img.banner {
+#statusBar span.banner {
+    display: inline-block;
+    width: 97px;
     height: 33px;
+    background-image: url('../img/banner.png');
+    background-size: 97px 33px;
+}
+
+#statusBar.sandbox span.banner {
+    background-image: url('../img/sandbox/banner.png');
 }
 
 #statusBar span.version {
@@ -56,6 +64,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     vertical-align: bottom;
     color: #bbbbaa;
     font-size: 12px;
+}
+
+#statusBar.sandbox span.version {
+    color: #ffffff;
 }
 
 #statusBar p.offline {

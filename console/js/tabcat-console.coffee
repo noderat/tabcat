@@ -85,7 +85,7 @@ TabCAT.Console.updateStatusBar = ->
     $statusBar.html(
       """
       <div class="left">
-        <img class="banner" src="img/banner.png">
+        <span class="banner"></span>
         <span class="version"></span>
         <p class="offline"></p>
       </div>
