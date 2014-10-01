@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #statusBar.sandbox {
     background-color: #cc9933;
-    background-image: url('../img/sand.png');
+    background-image: url('../img/sandbox/sand.png');
 }
 
 #statusBar div.left {
@@ -108,7 +108,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* used by login page */
 .blueBackground.sandbox {
     background-color: #cc9933;
-    background-image: url('../img/sand.png');
+    background-image: url('../img/sandbox/sand.png');
 }
 
 

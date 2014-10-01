@@ -258,7 +258,7 @@ TabCAT.Console.inSandbox = (hostname) ->
   SANDBOX_REGEX.test(hostname ? window.location.hostname)
 
 # constants for sandbox mode
-TabCAT.Console.sandboxIcon = 'img/sandbox-icon.png'
+TabCAT.Console.sandboxIcon = 'img/sandbox/icon.png'
 TabCAT.Console.sandboxPassword = 's@ndbox'
 TabCAT.Console.sandboxTitle = 'TabCAT Sandbox'
 TabCAT.Console.sandboxUser = 's@ndbox'
