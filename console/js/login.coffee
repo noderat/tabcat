@@ -60,7 +60,7 @@ submitLoginForm = (event) ->
   TabCAT.UI.turnOffBounce()
 
   $(->
-    $('.version').text(TabCAT.version)
+    $('.version').text("TabCAT #{TabCAT.version}")
 
     # continue session/encounter if user is restarting TabCAT
     if TabCAT.User.get() and not window.location.hash

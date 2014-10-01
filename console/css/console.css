@@ -121,7 +121,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 180px;
     height: 180px;
     margin-top: 10px;
-    margin-bottom: -10px;
+    margin-bottom: -14px;
     background-image: url('../img/logo.png');
     background-size: 180px 180px;
 }
@@ -131,11 +131,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #loginMain p.version {
-    position: relative;
-    left: 20px;
-    color: #ffffff;
+    color: #bbbbaa;
     font-size: 16px;
     margin: 0;
+}
+
+.sandbox #loginMain p.version {
+    color: #ffffff;
 }
 
 #loginForm label {
