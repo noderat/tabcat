@@ -120,12 +120,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #choices div.chosen {
-    color: #666699;
+    color: #324266;
     background-color: #eeeeee;
 }
 
 #choices div:active {
-    color: #666699;
+    color: #324266;
     background-color: #eeeeee;
 }
 
