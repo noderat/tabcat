@@ -130,16 +130,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #loginMain span.logo {
     display: inline-block;
-    width: 180px;
+    width: 529px;
     height: 180px;
     margin-top: 10px;
-    margin-bottom: -14px;
-    background-image: url('../img/logo.png');
-    background-size: 180px 180px;
+    background-image: url('../img/banner.png');
+    background-size: 529px 180px;
 }
 
 .sandbox #loginMain span.logo {
-    background-image: url('../img/sandbox/logo.png');
+    background-image: url('../img/sandbox/banner.png');
 }
 
 #loginMain p.version {
