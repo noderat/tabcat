@@ -66,7 +66,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     font-size: 12px;
 }
 
-#statusBar.sandbox span.version {
+#statusBar.sandbox p.version {
     color: #ffffff;
 }
 
@@ -130,6 +130,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #loginMain span.logo {
     display: inline-block;
+    position: relative;
     width: 529px;
     height: 180px;
     margin-top: 10px;
@@ -141,13 +142,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-image: url('../img/sandbox/banner.png');
 }
 
-#loginMain p.version {
-    color: #bbbbaa;
-    font-size: 16px;
+#loginMain span.logo p.version {
+    position: absolute;
+    top: 134px;
+    left: 308px;
+    font-size: 36px;
     margin: 0;
+    color: #bbbbaa;
 }
 
-.sandbox #loginMain p.version {
+.sandbox #loginMain span.logo p.version {
     color: #ffffff;
 }
 
