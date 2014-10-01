@@ -171,7 +171,7 @@ p.warning {
 
 p.message {
     font-size: 28px;
-    color: #eeeecc;
+    color: #f8e5b8;
 }
 
 
@@ -345,7 +345,7 @@ form.big button[type=submit] {
 
 #administrationNotesForm legend {
     font-size: 28px;
-    color: #eeeecc;
+    color: #f8e5b8;
 }
 
 #administrationNotesForm fieldset.required legend:after {
