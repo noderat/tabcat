@@ -89,7 +89,7 @@ TabCAT.Console.updateStatusBar = ->
     $statusBar.html(
       """
       <div class="left">
-        <img class="banner" src="img/banner-white.png">
+        <span class="banner"></span>
         <span class="version"></span>
         <p class="offline"></p>
       </div>
@@ -278,7 +278,7 @@ TabCAT.Console.inSandbox = (hostname) ->
   SANDBOX_REGEX.test(hostname ? window.location.hostname)
 
 # constants for sandbox mode
-TabCAT.Console.sandboxIcon = 'img/sandbox-icon.png'
+TabCAT.Console.sandboxIcon = 'img/sandbox/icon.png'
 TabCAT.Console.sandboxPassword = 's@ndbox'
 TabCAT.Console.sandboxTitle = 'TabCAT Sandbox'
 TabCAT.Console.sandboxUser = 's@ndbox'

@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* common elements */
 
 #statusBar {
-    background-color: #666699;
+    background-color: #324266;
     text-align: center;
     height: 50px;
     padding: 5px;
@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #statusBar.sandbox {
     background-color: #cc9933;
-    background-image: url('../img/sand.png');
+    background-image: url('../img/sandbox/sand.png');
 }
 
 #statusBar div.left {
@@ -46,18 +46,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     text-align: left;
 }
 
-#statusBar img.banner {
+#statusBar span.banner {
+    display: inline-block;
+    width: 97px;
     height: 33px;
+    background-image: url('../img/banner.png');
+    background-size: 97px 33px;
+}
+
+#statusBar.sandbox span.banner {
+    background-image: url('../img/sandbox/banner.png');
 }
 
 #statusBar span.version {
     position: relative;
     margin: 0;
-    top: -4px;
-    left: -4px;
+    top: -11px;
     vertical-align: bottom;
+    color: #bbbbaa;
+    font-size: 12px;
+}
+
+#statusBar.sandbox span.version {
     color: #ffffff;
-    font-size: 16px;
 }
 
 #statusBar p.offline {
@@ -110,7 +121,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* currently only used by login page */
 .blueBackground.sandbox {
     background-color: #cc9933;
-    background-image: url('../img/sand.png');
+    background-image: url('../img/sandbox/sand.png');
+}
+
+#loginMain {
+    text-align: center;
+}
+
+#loginMain span.logo {
+    display: inline-block;
+    position: relative;
+    width: 529px;
+    height: 180px;
+    margin-top: 10px;
+    background-image: url('../img/banner.png');
+    background-size: 529px 180px;
+}
+
+.sandbox #loginMain span.logo {
+    background-image: url('../img/sandbox/banner.png');
+}
+
+#loginMain span.logo p.version {
+    position: absolute;
+    top: 134px;
+    left: 308px;
+    font-size: 36px;
+    margin: 0;
+    color: #bbbbaa;
+}
+
+.sandbox #loginMain span.logo p.version {
+    color: #ffffff;
+}
+
+#loginForm label {
+    width: 130px;
 }
 
 /* messages */
@@ -127,7 +173,7 @@ p.warning {
 
 p.message {
     font-size: 28px;
-    color: #eeeecc;
+    color: #f8e5b8;
 }
 
 /* forms */
@@ -197,7 +243,7 @@ form.big button[type=submit] {
 
 #administrationNotesForm legend {
     font-size: 28px;
-    color: #eeeecc;
+    color: #f8e5b8;
 }
 
 #administrationNotesForm fieldset.required legend:after {
@@ -439,9 +485,9 @@ form.big button[type=submit] {
     font-size: 2em;
     border-radius: 0.5em;
     border-width: 0.5em;
-    background-color: #666699;
+    background-color: #324266;
     color: #eeeeee;
-    border-color: #666699;
+    border-color: #324266;
 }
 
 
