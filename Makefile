@@ -59,7 +59,7 @@ $(TASK_TARGETS): %: tasks/%/Makefile
 # no real magic here; just symlink to Makefile.default if the task doesn't
 # have its own Makefile
 $(TASK_MAKEFILES): %:
-	if [ ! -e $@ ]; then cd $(@D); ln -s ../Makefile.default Makefile; fi
+	if [ ! -e $@ ]; then cd $(@D); ln -sf ../Makefile.default Makefile; fi
 
 $(MANIFEST): scripts/make-manifest $(KANSO_FILES) $(MANIFEST_DEPS)
 	$< $(KANSO_FILES) > $@.tmp
