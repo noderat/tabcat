@@ -97,6 +97,12 @@ showScoring = ->
       designDocToTaskIds = {}
 
       for e in history.encounters by -1
+        # screen out un-numbered encounters (these shouldn't happen in normal
+        # operation, but have appeared in dev because I've been replicating
+        # real data into my dev database).
+        if not e.encounterNum?
+          continue
+
         $encounter = $(ENCOUNTER_HTML)
         $encounter.attr('id', "encounter-#{e._id}")
         $encounter.find('.encounterNum').text(
