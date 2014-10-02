@@ -16,10 +16,12 @@
                     "js/create-encounter.js",
                     "js/enter-password.js",
                     "js/login.js",
+                    "js/patient-scoring.js",
                     "js/return-to-examiner.js",
                     "js/tabcat-console.js",
                     "js/tasks.js",
                     "login.html",
+                    "patient-scoring.html",
                     "return-to-examiner.html",
                     "tasks.html"],
     "dependencies": {

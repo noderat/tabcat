@@ -34,15 +34,11 @@ TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 TABCAT_GENERATED_JS = js/tabcat/generated.js
 
 # put jquery before other libs that might depend on it
-VENDOR_JS = js/vendor/jquery.js $(filter-out jquery.js, $(wildcard js/vendor/*.js))
+# gauss.js is only for non-browser JS
+VENDOR_JS = js/vendor/jquery.js $(filter-out %/jquery.js %/gauss.js, $(shell find js/vendor -name '*.js'))
 
 # files kanso expects to push
 KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)
-
-# get list of all tabcat databases on our host, and push to them
-# if we can't fetch this list, tabcat and tabcat-data will still be included
-TABCAT_DBS := $(sort tabcat tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | ../scripts/json-ls '' | grep -E '^tabcat-'))
-PUSHED_DBS := $(patsubst %, $(PUSHED)_%, $(TABCAT_DBS))
 
 .PHONY: all
 all: $(PUSHED_DBS)
@@ -62,7 +58,7 @@ design.json: kanso.json $(KANSO_DEPS) $(MANIFEST)
 	kanso show > $@
 
 $(PUSHED_DBS): %: design.json
-	../scripts/force-put $< $(patsubst $(PUSHED)_%, $(TABCAT_HOST)/%, $@)/_design/core
+	../scripts/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/core
 	touch $@
 
 ifeq ($(TABCAT_DEBUG), 1)

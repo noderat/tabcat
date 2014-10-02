@@ -1,1 +1,4 @@
-/js/*.js
+Makefile
+*.js
+/scoring/kanso.json
+/scoring/app.coffee

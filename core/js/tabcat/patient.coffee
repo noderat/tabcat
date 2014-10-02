@@ -31,6 +31,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @TabCAT ?= {}
 TabCAT.Patient = {}
 
+DATA_DB = 'tabcat-data'
+
+# Promise: get basic patient info from the "patient" view. This contains
+# an "encounters" field which has a list of all encounters
+#
+# options are passed through to TabCAT.Couch.getDoc
+TabCAT.Patient.getHistory = (patientCode, options) ->
+  patientCode ?= TabCAT.Encounter.getPatientCode()
+  if not patientCode?
+    return $.Deferred.resolve(null)
+
+  options = _.extend(options ? {}, query:
+    startkey: [patientCode]
+    endkey: [patientCode, []])
+
+  TabCAT.Couch.getDoc(
+    DATA_DB, '_design/core/_list/dump/patient', options).then(
+    (dump) ->
+      return dump[0] ? null
+  )
+
+
 # merge info from oldDoc into doc. You rarely need to call this directly;
 # TabCAT.Couch will do this automatically.
 #
@@ -68,3 +90,25 @@ TabCAT.Patient.newDoc = (patientCode) ->
     type: 'patient'
     patientCode: patientCode
   }
+
+
+# Promise: use a single design document to score tasks for a patient,
+# returning a map from task ID to score.
+#
+# You'll need to do this once per design doc corresponding to tasks
+# performed by a patient, which means you'll need to know which tasks
+# a patient took, and what the corresponding design docs are.
+#
+# for an example, see console/js/patient-scoring.coffee
+TabCAT.Patient.scoreTasksFromDesignDoc = (designDocId, patientCode) ->
+  patientCode ?= TabCAT.Encounter.getPatientCode()
+  if not patientCode?
+    return $.Deferred.resolve(null)
+
+  options = _.extend(options ? {}, query:
+    startkey: [patientCode]
+    endkey: [patientCode, []],
+    include_docs: true)
+
+  TabCAT.Couch.getDoc(
+    DATA_DB, "#{designDocId}/_list/score/core/patient", options)

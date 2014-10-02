@@ -25,6 +25,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* common elements */
 
 #statusBar {
     background-color: #324266;
@@ -117,12 +118,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     border-width: 3px;
 }
 
-/* used by login page */
+/* currently only used by login page */
 .blueBackground.sandbox {
     background-color: #cc9933;
     background-image: url('../img/sandbox/sand.png');
 }
-
 
 #loginMain {
     text-align: center;
@@ -159,6 +159,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 130px;
 }
 
+/* messages */
+
 p.error {
     font-size: 18px;
     color: #ffcc99;
@@ -174,6 +176,7 @@ p.message {
     color: #f8e5b8;
 }
 
+/* forms */
 
 form.big p {
     margin: 15px;
@@ -214,112 +217,7 @@ form.big button[type=submit] {
 }
 
 
-#createEncounter {
-    text-align: center;
-}
-
-#createEncounter form label {
-    width: 170px;
-}
-
-#enterPassword {
-    text-align: center;
-}
-
-#tasks div.battery {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #eeeeee;
-    width: 650px;
-    margin-left: 8px;
-    margin-bottom: 8px;
-    border-radius: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#tasks div.task {
-    background-color: #eeeeee;
-    padding: 8px;
-    margin-left: 10px;
-    margin-bottom: 10px;
-    width: 600px;
-    text-align: left;
-    border-radius: 18px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#tasks div.task:active {
-    background-color: #cccccc;
-}
-
-#tasks p.message {
-    min-height: 32px;
-    margin: 10px;
-}
-
-#tasks img.icon {
-    width: 72px;
-    height: 72px;
-    background-size: 72px 72px;
-    border-radius: 12px;
-    vertical-align: middle;
-}
-
-#tasks div.task span.description {
-    font-size: 36px;
-    margin-left: 24px;
-    vertical-align: middle;
-    color: #000000;
-
-}
-
-#tasks div.battery div.header {
-    font-size: 32px;
-    width: 634px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 16px;
-}
-
-#tasks div.battery .collapsed {
-    display: none;
-}
-
-#tasks button {
-    font-size: 24px;
-    border-radius: 10px;
-    border-width: 5px;
-}
-
-#tasks #taskList {
-    margin-top: 25px;
-}
-
-#returnToExaminer div.caption {
-    position: absolute;
-    left: 5%;
-    width: 90%;
-    top: 35%;
-    text-align: center;
-    font-size: 8em;
-}
-
-#returnToExaminer button {
-    position: absolute;
-    display: block;
-    width: 25%;
-    left: 75%;
-    height: 20%;
-    top: 80%;
-    font-size: 2em;
-    border-radius: 0.5em;
-    border-width: 0.5em;
-    background-color: #324266;
-    color: #eeeeee;
-    border-color: #324266;
-}
+/*** administration-notes.html ***/
 
 #administrationNotesForm {
     font-size: 24px;
@@ -374,4 +272,280 @@ form.big button[type=submit] {
     border-radius: 10px;
     border-width: 5px;
     margin: 0px;
+}
+
+
+/*** create-encounter.html ***/
+
+#createEncounter {
+    text-align: center;
+}
+
+#createEncounter form label {
+    width: 170px;
+}
+
+
+/*** enter-password.html ***/
+
+#enterPassword {
+    text-align: center;
+}
+
+
+/*** login.html ***/
+
+#loginMain {
+    text-align: center;
+}
+
+#loginMain img.logo {
+    width: 180px;
+    height: 180px;
+    margin-top: 10px;
+    margin-bottom: -10px;
+}
+
+#loginMain p.version {
+    position: relative;
+    left: 20px;
+    color: #ffffff;
+    font-size: 16px;
+    margin: 0;
+}
+
+#loginForm label {
+    width: 130px;
+}
+
+#tasks div.battery {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eeeeee;
+    width: 650px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/*** patient-scoring.html ***/
+
+/* attempts to look similar to tasks.html */
+
+#patientScoring {
+    margin-top: 25px;
+}
+
+#patientScoring div.encounter {
+    background-color: #eeeeee;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    width: 670px;
+    text-align: left;
+    border-radius: 18px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#patientScoring div.encounter .encounterHeader {
+    color: #000000;
+    font-size: 24px;
+    margin: 0px;
+}
+
+#patientScoring div.encounter .encounterHeader .encounterNum {
+    font-size: 36px;
+}
+
+#patientScoring div.encounter .encounterHeader .date {
+    font-size: 18px;
+    float: right;
+}
+
+#patientScoring div.task {
+    background-color: #000000;
+    padding: 15px;
+    margin-top: 10px;
+    margin-right: 0px;
+    width: 640px;
+    text-align: left;
+    border-radius: 14px;
+}
+
+#patientScoring div.task img.icon {
+    width: 36px;
+    height: 36px;
+    background-size: 36px 36px;
+    border-radius: 6px;
+    vertical-align: middle;
+}
+
+#patientScoring div.task .taskHeader {
+    color: #eeeeee;
+    font-size: 24px;
+    height: 36px;
+}
+
+#patientScoring div.task .taskHeader .description {
+    vertical-align: middle;
+}
+
+#patientScoring div.task div.scores {
+    margin-top: 15px;
+    font-size: 12px;
+    font-style: italic;
+}
+
+#patientScoring div.task div.score {
+    border-top: 1px solid #eeeeee;
+    padding: 5px;
+    font-style: normal;
+}
+
+#patientScoring div.task div.score .scoreHeader {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#patientScoring div.task div.score .scoreBody {
+    margin: 10px;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore {
+    display: inline-block;
+    clear: none;
+    vertical-align: top;
+    text-align: center;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore .description {
+    font-size: 10px;
+    margin: 4px;
+}
+
+#patientScoring div.task div.score .scoreBody div.rawScore .value {
+    font-size: 60px;
+    margin: 4px;
+}
+
+
+#patientScoring div.task div.score .scoreBody div.norms {
+    display: inline-block;
+    clear: none;
+    margin-left: 10px;
+}
+
+#patientScoring div.task div.score .scoreBody div.norms table {
+    border-spacing: 0px;
+}
+
+#patientScoring div.task div.score .scoreBody div.norms th {
+    font-weight: normal;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+}
+
+#patientScoring div.task div.score .scoreBody div.norms td {
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    padding: 2px 8px 2px 8px;
+}
+
+#patientScoring div.task div.score .scoreFooter {
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+
+/*** return-to-examiner.html ***/
+
+#returnToExaminer div.caption {
+    position: absolute;
+    left: 5%;
+    width: 90%;
+    top: 35%;
+    text-align: center;
+    font-size: 8em;
+}
+
+#returnToExaminer button {
+    position: absolute;
+    display: block;
+    width: 25%;
+    left: 75%;
+    height: 20%;
+    top: 80%;
+    font-size: 2em;
+    border-radius: 0.5em;
+    border-width: 0.5em;
+    background-color: #324266;
+    color: #eeeeee;
+    border-color: #324266;
+}
+
+
+/*** tasks.html ***/
+
+#tasks div.task {
+    background-color: #eeeeee;
+    padding: 8px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    width: 600px;
+    text-align: left;
+    border-radius: 18px;
+}
+
+#tasks div.task:active {
+    background-color: #cccccc;
+}
+
+#tasks p.message {
+    min-height: 32px;
+    margin: 10px;
+}
+
+#tasks img.icon {
+    width: 72px;
+    height: 72px;
+    background-size: 72px 72px;
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
+#tasks div.task span.description {
+    font-size: 36px;
+    margin-left: 24px;
+    vertical-align: middle;
+    color: #000000;
+
+}
+
+#tasks div.battery div.header {
+    font-size: 32px;
+    width: 634px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}
+
+#tasks div.battery .collapsed {
+    display: none;
+}
+
+#tasks button {
+    font-size: 24px;
+    border-radius: 10px;
+    border-width: 5px;
+}
+
+#tasks #taskList {
+    margin-top: 25px;
 }

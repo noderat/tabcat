@@ -23,9 +23,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# roundabout way of figuring out which directory this file is in
+ROOT_DIR := $(realpath $(dir $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))))
+SCRIPTS := $(ROOT_DIR)/scripts
+
 # we use a lot of shell commands that redirect output into a file;
 # if these break, we don't want the resulting empty file.
 .DELETE_ON_ERROR:
 
 TABCAT_HOST ?= http://127.0.0.1:5984
 PUSHED = .pushed-$(subst :,_,$(subst /,_,$(TABCAT_HOST)))
+
+# find the names of all data DBs on the server. If this fails,
+# at least include tabcat-data
+TABCAT_DATA_DBS := $(sort tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | $(ROOT_DIR)/scripts/json-ls '' | grep -E '^tabcat-data-'))
+PUSHED_DATA_DBS := $(patsubst %, $(PUSHED)_%, $(TABCAT_DATA_DBS))
+
+# the above, but including the "tabcat" DB
+TABCAT_DBS := tabcat $(TABCAT_DATA_DBS)
+PUSHED_DBS := $(PUSHED)_tabcat $(PUSHED_DATA_DBS)
+
+# to recover DB url from PUSHED_DATA_DBS or PUSHED_DBS, use:
+# $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)

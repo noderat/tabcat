@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,34 @@ eventSyncXHR = null
 
 # ID of the timer for event uploads
 eventSyncIntervalId = null
+
+# Promise: read all design docs in the tabcat DB, and return an object
+# containing "batteries" and "tasks", which map battery/task name to the
+# corresponding info from the design doc, with the additional field
+# "designDocId", and
+#
+# options is the same as for TabCAT.Couch.getAllDesignDocs
+TabCAT.Task.getTaskInfo = (options) ->
+  TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
+    (designDocs) ->
+      taskInfo = {}
+
+      for designDoc in designDocs
+        kct = designDoc.kanso?.config?.tabcat
+
+        if kct?
+          # merge in this design doc
+          $.extend(true, taskInfo, kct)
+
+          # tag batteries and tasks with the design doc
+          # that defined them
+          for key in ['batteries', 'tasks']
+            if kct[key]?
+              for own name, _ of kct[key]
+                taskInfo[key][name].designDocId = designDoc._id
+
+      return taskInfo
+  )
 
 
 # Get a copy of the CouchDB doc for this task

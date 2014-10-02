@@ -56,10 +56,10 @@ tasks: $(TASK_TARGETS)
 $(TASK_TARGETS): %: tasks/%/Makefile
 	$(MAKE) -C tasks/$@
 
-# no real magic here; just symlink to Makefile.default if the task doesn't
-# have its own Makefile
+# no real magic here; just symlink to task-defaults/Makefile if the task
+# doesn't have its own Makefile
 $(TASK_MAKEFILES): %:
-	if [ ! -e $@ ]; then cd $(@D); ln -sf ../Makefile.default Makefile; fi
+	ln -sf ../../task-defaults/Makefile $@
 
 $(MANIFEST): scripts/make-manifest $(KANSO_FILES) $(MANIFEST_DEPS)
 	$< $(KANSO_FILES) > $@.tmp
@@ -75,5 +75,5 @@ $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
 clean:
 	$(MAKE) -C console clean
 	$(MAKE) -C core clean
-	for task in $(TASK_TARGETS); do if [ -e tasks/$$task/Makefile ]; then $(MAKE) -C tasks/$$task clean; else $(MAKE) -C tasks/$$task -f ../Makefile.task clean; fi done
+	for task in $(TASK_TARGETS); do if [ -e tasks/$$task/Makefile ]; then $(MAKE) -C tasks/$$task clean; else $(MAKE) -C tasks/$$task -f ../../task-defaults/Makefile clean; fi done
 	rm -f *~

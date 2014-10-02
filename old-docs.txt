@@ -2,12 +2,8 @@
 tabcat/_design/line-orientation
 tabcat/_design/parallel-line-length
 tabcat/_design/perpendicular-line-length
-# now part of examiner
-tabcat/_design/flanker
-# stopped uploading non-core design docs to tabcat-data (issue #65)
-tabcat-data/_design/dart
 tabcat-data/_design/line-orientation
-tabcat-data/_design/line-perception
 tabcat-data/_design/parallel-line-length
 tabcat-data/_design/perpendicular-line-length
-tabcat-data/_design/stargazer
+# now part of examiner
+tabcat/_design/flanker

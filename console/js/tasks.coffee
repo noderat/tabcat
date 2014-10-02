@@ -1,5 +1,5 @@
 ###
-Copyright (c) 2013, Regents of the University of California
+Copyright (c) 2013-2014, Regents of the University of California
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,9 +26,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 # TASK INFO
 
-# DB where design docs and task content is stored
-TABCAT_DB = 'tabcat'
-
 translations =
   en:
     translation:
@@ -38,48 +35,10 @@ translations =
       all_tasks: 'Todas Tareas'
 
 
-# Promise: get an object containing "batteries" and "tasks"; these each
-# map battery/task name to the corresponding info from the design docs.
-#
-# This also adds a "urlRoot" and "finished" field to each task
-#
-# options is the same as for TabCAT.Couch.getAllDesignDocs
-getTaskInfo = (options) ->
-  TabCAT.Couch.getAllDesignDocs(TABCAT_DB).then(
-    (designDocs) ->
-      batteries = {}
-      tasks = {}
-
-      finished = TabCAT.Encounter.getTasksFinished()
-
-      for designDoc in designDocs
-        kct = designDoc.kanso?.config?.tabcat
-        if kct?
-          _.extend(batteries, kct.batteries)
-
-          # add urlRoot and finished to each task
-          if kct.tasks?
-            urlRoot = "/#{TABCAT_DB}/#{designDoc._id}/"
-            for own name, task of kct.tasks
-              tasks[name] = _.extend(task,
-                finished: !!finished[name]
-                urlRoot: urlRoot
-              )
-
-          # load 18n (will want to make this separate function
-          if kct.i18n?
-            for own lang, translations of kct.i18n
-              # add translations to the "config" namespace
-              $.i18n.addResourceBundle(lang, 'config', translations, true)
-
-      return {batteries: batteries, tasks: tasks}
-    )
-
-
 # get task info from the server, and then display an icon and a description
 # for each task
 showTasks = ->
-  getTaskInfo().then((taskInfo) ->
+  TabCAT.Task.getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
 
     batteries = _.sortBy(_.pairs(taskInfo.batteries), (n, b) -> b.description)
@@ -91,10 +50,12 @@ showTasks = ->
         $.t("config:tasks.#{name}.description",
           defaultValue: tasksByName[name].description))
 
-    batteries.unshift(['all-tasks',
+    batteries.push(['all-tasks',
       description: $.t('all_tasks')
       tasks: allTaskNames
     ])
+
+    finished = TabCAT.Encounter.getTasksFinished()
 
     for [batteryName, battery] in batteries
       if not battery.description? or battery.tasks.length is 0
@@ -117,13 +78,9 @@ showTasks = ->
 
         $taskDiv = $('<div></div>', class: 'task')
 
-        if task.icon?
-          iconUrl = task.urlRoot + task.icon
-        else
-          # default to TabCAT icon
-          iconUrl = 'img/icon.png'
+        iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
-        if task.finished
+        if finished[taskName]
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')
@@ -141,8 +98,9 @@ showTasks = ->
         $tasksDiv.append($taskDiv)
 
         do -> # create a separate scope for each click handler
-          startUrl = task.urlRoot + task.start
-          $taskDiv.on('click', (event) -> window.location = startUrl)
+          startUrl = TabCAT.Console.getTaskStartUrl(task)
+          if startUrl?
+            $taskDiv.on('click', (event) -> window.location = startUrl)
 
       $batteryDiv.append($tasksDiv)
       do ($tasksDiv) ->

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen" manifest="/tabcat/offline/cache.manifest">
+  <head>
+    <title>Tasks</title>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="../core/img/favicon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/console.css">
+  </head>
+  <body>
+    <div id="statusBar"></div>
+    <div id="patientScoring">
+      <div class="encounter">
+        <div class="encounterHeader">
+          <span class="encounterNum">Encounter #11</span>
+          <span class="date">2014-04-11</span>
+        </div>
+        <div class="tasks">
+          <div class="task" id="task-12345678">
+            <div class="taskHeader">
+              <img class="icon" src="/tabcat/_design/line-perception/img/icon/parallel-line-length.png">
+              <span class="description">Parallel Line Length</span>
+            </div>
+            <div class="scores">
+              <div class="score">
+                <div class="scoreHeader">
+                  <span class="description">Visual Perception</span>
+                </div>
+                <div class="scoreBody">
+                  <div class="rawScore">
+                    <p class="description">Raw Score</p>
+                    <p class="value">5.5</p>
+                  </div>
+                  <div class="norms">
+                    <table class="norm">
+                      <thead>
+                        <tr>
+                          <th>Age</th>
+                          <th>Mean</th>
+                          <th>Stddev</th>
+                          <th>Percentile*</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>50-59</td>
+                          <td>7.4</td>
+                          <td>(1.7)</td>
+                          <td>95%</td>
+                        </tr>
+                        <tr>
+                          <td>60-69</td>
+                          <td>7.9</td>
+                          <td>(2.1)</td>
+                          <td>98%</td>
+                        </tr>
+                        <tr>
+                          <td>70-79</td>
+                          <td>7.9</td>
+                          <td>(2.1)</td>
+                          <td>98%</td>
+                        </tr>
+                        <tr>
+                          <td>80+</td>
+                          <td>7.9</td>
+                          <td>(2.1)</td>
+                          <td>98%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="scoreFooter">
+                    * Assuming normal distribution
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="score">
+              <div class="scoreHeader">
+                <span class="description">Perseveration</span>
+              </div>
+            </div>
+          </div>
+          <div class="task">
+            <div class="taskHeader">
+              <img class="icon" src="/tabcat/_design/line-perception/img/icon/perpendicular-line-length.png">
+              <span class="description">Perpendicular Line Length</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/tabcat-console.js"></script>
+    <script src="js/patient-scoring.js"></script>
+    <script>initPage();</script>
+  </body>
+</html>
