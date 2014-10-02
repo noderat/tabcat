@@ -1,6 +1,0 @@
-To finish scoring:
-- build page that shows what happened in each encounter for a given patient
-- add in scoring info
-  - to save AJAX requests, just issue one request per design doc
-- make it work offline
-- add buttons to access this page
