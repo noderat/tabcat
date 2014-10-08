@@ -55,7 +55,7 @@ showTasks = ->
       tasks: allTaskNames
     ])
 
-    finished = TabCAT.Encounter.getTasksFinished()
+    taskScoring = TabCAT.Encounter.getTaskScoring()
 
     for [batteryName, battery] in batteries
       if not battery.description? or battery.tasks.length is 0
@@ -80,7 +80,8 @@ showTasks = ->
 
         iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
-        if finished[taskName]
+        scoring = taskScoring[taskName]
+        if scoring?
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')

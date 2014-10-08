@@ -356,13 +356,15 @@ TabCAT.Task.finish = (options) ->
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 
-  TabCAT.Encounter.markTaskFinished(taskDoc.name)
-
   # make sure start() has completed!
   TabCAT.Task.start().then(->
     taskDoc.finishedAt = clockNow
     if options?.interpretation?
       taskDoc.interpretation = options?.interpretation
+
+    # score task (for offline operation)
+    scoring = TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
+    TabCAT.Encounter.addTaskScoring(taskDoc.name, scoring)
 
     $.when(
       TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),

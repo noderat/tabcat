@@ -38,8 +38,11 @@ else  # inside browser
   @TabCAT.Scoring = Scoring
 
 
-# map from taskName to
+# map from taskName to scoring function
 taskNameToScorer = {}
+
+# DEBUG: expose this
+Scoring.taskNameToScorer = taskNameToScorer
 
 # register a function to score a task. This function should take
 # a single argument, the eventLog, and return scoring information.
@@ -52,7 +55,8 @@ Scoring.scoreTask = (taskName, eventLog) ->
   scorer = taskNameToScorer[taskName]
 
   # some very early versions of TabCAT didn't fill eventLog
-  if not (scorer? and eventLog?)
-    return null
+  if scorer? and eventLog?
+    # don't trust scoring code
+    return try(scorer(eventLog)) or null
   else
-    return scorer(eventLog)
+    return null
