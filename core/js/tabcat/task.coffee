@@ -362,21 +362,26 @@ TabCAT.Task.finish = (options) ->
     if options?.interpretation?
       taskDoc.interpretation = options?.interpretation
 
-    # score task (for offline operation)
-    scoring = TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
-    TabCAT.Encounter.addTaskScoring(taskDoc.name, scoring)
-
     $.when(
       TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
       TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
+        # store data before scoring (in case scoring crashes)
+        TabCAT.Encounter.addTaskScoring(taskDoc.name, TabCAT.Task.score())
+
+        # back to console
         if TabCAT.Task.patientHasDevice()
           window.location = '../console/return-to-examiner.html'
         else
           window.location = '../console/tasks.html'
       )
   )
+
+
+# score the current task (must call Task.start() first)
+TabCAT.Task.score = ->
+  TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
 
 
 # get basic information about the browser. This should not change

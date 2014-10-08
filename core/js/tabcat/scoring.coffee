@@ -41,8 +41,6 @@ else  # inside browser
 # map from taskName to scoring function
 taskNameToScorer = {}
 
-# DEBUG: expose this
-Scoring.taskNameToScorer = taskNameToScorer
 
 # register a function to score a task. This function should take
 # a single argument, the eventLog, and return scoring information.
@@ -50,13 +48,17 @@ Scoring.addTaskScorer = (taskName, scorer) ->
   taskNameToScorer[taskName] = scorer
 
 
+# get the scorer for a particular task
+Scoring.getTaskScorer = (taskName) ->
+  taskNameToScorer[taskName]
+
+
 # score a task, based on its eventLog
 Scoring.scoreTask = (taskName, eventLog) ->
-  scorer = taskNameToScorer[taskName]
+  scorer = Scoring.getTaskScorer(taskName)
 
   # some very early versions of TabCAT didn't fill eventLog
   if scorer? and eventLog?
-    # don't trust scoring code
-    return try(scorer(eventLog)) or null
+    return scorer(eventLog)
   else
     return null
