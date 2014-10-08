@@ -69,19 +69,21 @@ TabCAT.Encounter.getNum = ->
     return encounterNum
 
 
-# keep track of tasks finished during the encounter, in localStorage
-TabCAT.Encounter.getTasksFinished = ->
-  (try JSON.parse(localStorage.encounterTasksFinished)) ? {}
+# get a map from task name to a list containing scoring for each time
+# that task was completed during this encounter
+TabCAT.Encounter.getTaskScoring = ->
+  (try JSON.parse(localStorage.encounterTaskScoring)) ? {}
 
 
-# mark a task as finished in localStorage.
+# add scoring for a task to localStorage.encounterTaskScoring
 #
-# TabCAT.Task.finish() does this automatically
-TabCAT.Encounter.markTaskFinished = (taskName) ->
-  finished = TabCAT.Encounter.getTasksFinished()
-  finished[taskName] = true
-  localStorage.encounterTasksFinished = JSON.stringify(finished)
-  return
+# TabCAT.Task.finish() will call this; you don't need to call it directly
+TabCAT.Encounter.addTaskScoring = (taskName, scoring) ->
+  taskScoring = TabCAT.Encounter.getTaskScoring()
+  taskScoring[taskName] ?= []
+  taskScoring[taskName].push(scoring)
+
+  localStorage.encounterTaskScoring = JSON.stringify(taskScoring)
 
 
 # return a new encounter doc (don't upload it)
@@ -198,9 +200,11 @@ TabCAT.Encounter.close = (options) ->
 
 # clear local storage relating to the current encounter
 TabCAT.Encounter.clear = ->
-  localStorage.removeItem('encounter')
-  localStorage.removeItem('encounterNum')
-  localStorage.removeItem('encounterTasksFinished')
+  # remove everything starting with "encounter". This handles obsolete keys.
+  for key in _.keys(localStorage)
+    if key[...9] is 'encounter'
+      localStorage.removeItem(key)
+
   TabCAT.Clock.clear()
 
 

@@ -356,8 +356,6 @@ TabCAT.Task.finish = (options) ->
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 
-  TabCAT.Encounter.markTaskFinished(taskDoc.name)
-
   # make sure start() has completed!
   TabCAT.Task.start().then(->
     taskDoc.finishedAt = clockNow
@@ -369,12 +367,21 @@ TabCAT.Task.finish = (options) ->
       TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
+        # store data before scoring (in case scoring crashes)
+        TabCAT.Encounter.addTaskScoring(taskDoc.name, TabCAT.Task.score())
+
+        # back to console
         if TabCAT.Task.patientHasDevice()
           window.location = '../console/return-to-examiner.html'
         else
           window.location = '../console/tasks.html'
       )
   )
+
+
+# score the current task (must call Task.start() first)
+TabCAT.Task.score = ->
+  TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
 
 
 # get basic information about the browser. This should not change

@@ -24,10 +24,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
-if require?
+if module?  # inside CouchDB
   gauss = require('js/vendor/gauss/gauss')
   Scoring = require('js/tabcat/scoring')
 else
+  gauss = @gauss
   Scoring = TabCAT.Scoring
 
 

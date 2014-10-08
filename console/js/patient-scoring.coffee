@@ -47,42 +47,6 @@ TASK_HTML = '''
 </div>
 '''
 
-SCORE_HTML = '''
-<div class="score">
-  <div class="scoreHeader">
-    <span class="description"></span>
-  </div>
-  <div class="scoreBody">
-    <div class="rawScore">
-      <p class="description">Raw Score</p>
-      <p class="value"></p>
-    </div>
-    <div class="norms">
-      <table class="norm">
-        <thead>
-          <tr>
-            <th class="age">Age</th>
-            <th class="mean">Mean</th>
-            <th class="stddev">Std. Dev.</th>
-            <th class="percentile">Percentile</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-'''
-
-NORM_HTML = '''
-<tr>
-  <td class="age"></td>
-  <td class="mean"></td>
-  <td class="stddev"></td>
-  <td class="percentile"></td>
-</tr>
-'''
 
 
 showScoring = ->
@@ -150,49 +114,10 @@ showScoring = ->
             (taskToScoring) ->
               for taskId in _.keys(taskIds)
                 $scores = $("#task-#{taskId} .scores")
-                $scores.empty()
-
                 scores = taskToScoring[taskId]?.scores
 
                 if scores?
-                  for score in scores
-                    $score = $(SCORE_HTML)
-                    $score.find('.scoreHeader .description').text(
-                      score.description)
-                    $score.find('.scoreBody .rawScore .value').text(
-                      score.value.toFixed(1))
-
-                    if score.norms?
-                      for norm in score.norms
-                        $norm = $(NORM_HTML)
-
-                        minAge = norm.cohort?.minAge ? 0
-                        if norm.cohort?.maxAge?
-                          age = minAge + '-' + norm.cohort.maxAge
-                        else
-                          age = minAge + '+'
-                        $norm.find('.age').text(age)
-
-                        $norm.find('.mean').text(norm.mean ? '-')
-                        $norm.find('.stddev').text(norm.stddev ? '-')
-
-                        percentile = norm.percentile
-
-                        # infer percentile
-                        if (not percentile?) and norm.mean? and norm.stddev
-                          g = gaussian(norm.mean, norm.stddev * norm.stddev)
-                          percentile = 100 * g.cdf(score.value)
-                          if score.lessIsMore
-                            percentile = 100 - percentile
-
-                        if percentile?
-                          percentile = Math.floor(percentile) + '%'
-
-                        $norm.find('.percentile').text(percentile ? '-')
-
-                        $score.find('.scoreBody .norms tbody').append($norm)
-
-                    $scores.append($score)
+                  TabCAT.Console.populateWithScores($scores, scores)
                 else
                   $scores.text('no scoring available for this task')
           )

@@ -10,7 +10,8 @@
         "js/line-perception.js",
         "line-orientation.html",
         "parallel-line-length.html",
-        "perpendicular-line-length.html"
+        "perpendicular-line-length.html",
+        "scoring/scoring.js"
     ],
     "dependencies": {
         "attachments": null
