@@ -81,7 +81,7 @@ showTasks = ->
         iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
         finished = taskScoring[taskName]?
-        scoring = _.last(taskScoring[taskName])
+        scores = _.last(taskScoring[taskName])?.scores
 
         if finished
           # make the icon the background, and the checkmark the foreground
@@ -101,12 +101,12 @@ showTasks = ->
         if finished
           $scoringMessage = $('<span></span>', class: 'scoringMessage')
 
-          if scoring
+          if scores
             $scoringMessage.text('tap to show scoring')
             $taskDiv.append($scoringMessage)
 
             $scores = $('<div></div>', class: 'scores collapsed')
-            $scores.text('SCORES')
+            TabCAT.Console.populateWithScores($scores, scores)
             $taskDiv.append($scores)
 
             # separate scope for each handler

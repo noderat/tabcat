@@ -522,7 +522,7 @@ form.big button[type=submit] {
     vertical-align: middle;
 }
 
-#tasks div.task span.description {
+#tasks div.task > span.description {
     position: absolute;
     font-size: 32px;
     top: 25px;
@@ -531,7 +531,7 @@ form.big button[type=submit] {
 }
 
 
-#tasks div.task span.scoringMessage {
+#tasks div.task > span.scoringMessage {
     position: absolute;
     font-size: 12px;
     font-style: italic;
@@ -540,6 +540,73 @@ form.big button[type=submit] {
     vertical-align: top;
 }
 
+#tasks div.task div.scores {
+    position: relative;
+    margin-top: 10px;
+    padding-left: 92px;
+    margin-bottom: -10px;
+    border-top: 1px solid #000000;
+}
+
+#tasks div.task div.scores div.score {
+    font-style: normal;
+}
+
+#tasks div.task div.scores div.score .scoreHeader {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#tasks div.task div.scores div.score .scoreBody {
+    margin: 10px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore {
+    display: inline-block;
+    clear: none;
+    vertical-align: top;
+    text-align: center;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore .description {
+    font-size: 10px;
+    margin: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore .value {
+    font-size: 60px;
+    margin: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms {
+    display: inline-block;
+    clear: none;
+    margin-left: 10px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms table {
+    border-spacing: 0px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms th {
+    font-weight: normal;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms td {
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    padding: 2px 8px 2px 8px;
+}
+
+#tasks div.task div.scores div.score .scoreFooter {
+    margin-top: 10px;
+    font-size: 10px;
+}
 
 #tasks div.battery div.header {
     font-size: 32px;
