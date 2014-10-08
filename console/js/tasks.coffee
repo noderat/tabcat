@@ -80,8 +80,10 @@ showTasks = ->
 
         iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
-        scoring = taskScoring[taskName]
-        if scoring?
+        finished = taskScoring[taskName]?
+        scoring = _.last(taskScoring[taskName])
+
+        if finished
           # make the icon the background, and the checkmark the foreground
           # TODO: use absolute positioning and z-indexes to do a real overlay
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')
@@ -96,12 +98,39 @@ showTasks = ->
             defaultValue: task.description))
         $taskDiv.append($taskDescription)
 
-        $tasksDiv.append($taskDiv)
+        if finished
+          $scoringMessage = $('<span></span>', class: 'scoringMessage')
 
-        do -> # create a separate scope for each click handler
-          startUrl = TabCAT.Console.getTaskStartUrl(task)
-          if startUrl?
-            $taskDiv.on('click', (event) -> window.location = startUrl)
+          if scoring
+            $scoringMessage.text('tap to show scoring')
+            $taskDiv.append($scoringMessage)
+
+            $scores = $('<div></div>', class: 'scores collapsed')
+            $scores.text('SCORES')
+            $taskDiv.append($scores)
+
+            # separate scope for each handler
+            do ($scores, $scoringMessage) ->
+              $taskDiv.on('click', (event) ->
+                # toggle visibility of scores
+                event.preventDefault()
+                if $scores.is('.collapsed')
+                  $scores.removeClass('collapsed')
+                  $scoringMessage.text('tap to hide scoring')
+                else
+                  $scores.addClass('collapsed')
+                  $scoringMessage.text('tap to show scoring')
+              )
+          else
+            $scoringMessage.text('no scoring available for this task')
+        else
+          do -> # create a separate scope for each click handler
+            startUrl = TabCAT.Console.getTaskStartUrl(task)
+            if startUrl?
+              # start the task
+              $taskDiv.on('click', (event) -> window.location = startUrl)
+
+        $tasksDiv.append($taskDiv)
 
       $batteryDiv.append($tasksDiv)
       do ($tasksDiv) ->
