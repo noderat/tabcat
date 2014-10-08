@@ -123,6 +123,7 @@ showTasks = ->
               )
           else
             $scoringMessage.text('no scoring available for this task')
+            $taskDiv.append($scoringMessage)
         else
           do -> # create a separate scope for each click handler
             startUrl = TabCAT.Console.getTaskStartUrl(task)

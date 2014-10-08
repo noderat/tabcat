@@ -494,6 +494,7 @@ form.big button[type=submit] {
 /*** tasks.html ***/
 
 #tasks div.task {
+    position: relative;
     background-color: #eeeeee;
     padding: 8px;
     margin-left: 10px;
@@ -501,6 +502,7 @@ form.big button[type=submit] {
     width: 600px;
     text-align: left;
     border-radius: 18px;
+    color: #000000;
 }
 
 #tasks div.task:active {
@@ -521,12 +523,23 @@ form.big button[type=submit] {
 }
 
 #tasks div.task span.description {
-    font-size: 36px;
-    margin-left: 24px;
-    vertical-align: middle;
-    color: #000000;
-
+    position: absolute;
+    font-size: 32px;
+    top: 25px;
+    left: 98px;
+    vertical-align: top;
 }
+
+
+#tasks div.task span.scoringMessage {
+    position: absolute;
+    font-size: 12px;
+    font-style: italic;
+    top: 64px;
+    left: 99px;
+    vertical-align: top;
+}
+
 
 #tasks div.battery div.header {
     font-size: 32px;
