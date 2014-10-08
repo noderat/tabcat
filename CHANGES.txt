@@ -1,3 +1,27 @@
+v0.8.0, 2014-10-08 -- Task scoring
+- core:
+  - scoring (#121)
+    - CouchDB backend can score eventLogs from tasks
+    - tasks also score themselves into localStorage for offline mode
+      - encounterTaskScoring (localStorage) replaces encounterTasksFinished
+  - security model no longer applies to admins, for replication (#130)
+  - make pushes to all tabcat-data* DBs on server (#123)
+  - i18n (#6)
+    - (there is not yet a way to change language in TabCAT interface)
+    - translations for some tasks -- some happened in 0.7.0
+    - translations for task names
+- console:
+  - use professional TabCAT logo (#133)
+    - background is now "cat navy blue"
+  - partially completed, hidden patient-scoring page
+- reports:
+  - line-tasks report has correct filename (#117)
+- tasks
+  - line-perception:
+    - scoring (#121)
+    - chinese translations (#5)
+  - stargazer: change to color of font for "ONE" (#119)
+
 v0.7.0, 2014-06-13 -- More EXAMINER, Console Split
 - core:
   - added gauss library to vendor/ (currently not available in tasks)
