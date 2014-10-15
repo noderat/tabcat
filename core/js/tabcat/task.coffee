@@ -367,8 +367,9 @@ TabCAT.Task.finish = (options) ->
       TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
-        # store data before scoring (in case scoring crashes)
-        TabCAT.Encounter.addTaskScoring(taskDoc.name, TabCAT.Task.score())
+        # protect against scoring crashing
+        score = try(TabCAT.Task.score())
+        TabCAT.Encounter.addTaskScoring(taskDoc.name, score)
 
         # back to console
         if TabCAT.Task.patientHasDevice()
