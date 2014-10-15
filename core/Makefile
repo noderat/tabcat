@@ -33,9 +33,12 @@ TABCAT_COFFEE_SRC = $(wildcard js/tabcat/*.coffee)
 TABCAT_COFFEE_JS = $(patsubst %.coffee, %.js, $(TABCAT_COFFEE_SRC))
 TABCAT_GENERATED_JS = js/tabcat/generated.js
 
-# put jquery before other libs that might depend on it
-# gauss.js is only for non-browser JS
-VENDOR_JS = js/vendor/jquery.js $(filter-out %/jquery.js %/gauss.js, $(shell find js/vendor -name '*.js'))
+# these should be loaded first
+FIRST_VENDOR_JS = js/vendor/es5-shim.js js/vendor/es5-sham.js js/vendor/jquery.js
+# non-browser JS only
+BAD_VENDOR_JS = js/vendor/gauss/gauss.js
+VENDOR_JS = $(FIRST_VENDOR_JS) $(sort $(filter-out $(TOP_VENDOR_JS) $(BAD_VENDOR_JS), $(shell find js/vendor -name '*.js')))
+
 
 # files kanso expects to push
 KANSO_DEPS = $(shell ../scripts/json-ls /attachments+/modules kanso.json)
