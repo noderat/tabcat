@@ -362,13 +362,18 @@ TabCAT.Task.finish = (options) ->
     if options?.interpretation?
       taskDoc.interpretation = options?.interpretation
 
+    alert('about to wait for putDoc()/syncEventLog()/min wait')
+
     $.when(
       TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
       TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
       waitedForMinWait).then(
       ->
         # store data before scoring (in case scoring crashes)
-        TabCAT.Encounter.addTaskScoring(taskDoc.name, TabCAT.Task.score())
+        try
+          TabCAT.Encounter.addTaskScoring(taskDoc.name, TabCAT.Task.score())
+        catch error
+          alert(error + '\n' + printStackTrace().join('\n'))
 
         # back to console
         if TabCAT.Task.patientHasDevice()
