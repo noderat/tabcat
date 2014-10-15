@@ -1,3 +1,8 @@
+v0.8.1, 2014-10-15 -- Fixes for iPad 1
+- core:
+  - added ECMAScript 5 shims so that gauss lib works on iPad 1 (#146)
+  - if task scoring fails, don't hang, and mark task as completed
+
 v0.8.0, 2014-10-08 -- Task scoring
 - core:
   - scoring (#121)
