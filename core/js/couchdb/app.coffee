@@ -82,6 +82,14 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
         throw {forbidden: 'user must match current user, or end with "?"'}
 
 
+notDesignDocFilter = (doc, req) ->
+  doc._id[...8] isnt '_design/'
+
+
+exports.filters =
+  notDesignDoc: notDesignDocFilter
+
+
 exports.lists =
   dump: dumpList
   'adhoc-cpt-detail-report': adhocCPTDetailReport.list
