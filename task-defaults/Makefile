@@ -91,5 +91,6 @@ scoring/js:
 
 # pack all the JS code into a single file, js/task.js.
 # Don't include tabcat.js because it's huge.
-js/task.js: $(COFFEE_JS)
+TASK_JS = scoring/scoring.js $(filter ./js/%,$(COFFEE_JS))
+js/task.js: $(TASK_JS)
 	cat $^ > $@
