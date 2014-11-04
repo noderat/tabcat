@@ -73,6 +73,11 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
     if role in secObj.admins.roles
       return
 
+  # config can only be written by admins
+  if newDoc._id is 'config'
+    throw {forbidden: 'only admins can change config'}
+
+  # protect user/uploadedBy fields
   if newDoc.user?
     if newDoc.user[newDoc.user.length - 1] is '?'
       if not (newDoc.uploadedBy? and newDoc.uploadedBy is userCtx.name)
