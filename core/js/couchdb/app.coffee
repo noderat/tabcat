@@ -73,6 +73,11 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
     if role in secObj.admins.roles
       return
 
+  # config can only be written by admins
+  if newDoc._id is 'config'
+    throw {forbidden: 'only admins can change config'}
+
+  # protect user/uploadedBy fields
   if newDoc.user?
     if newDoc.user[newDoc.user.length - 1] is '?'
       if not (newDoc.uploadedBy? and newDoc.uploadedBy is userCtx.name)
@@ -80,6 +85,14 @@ validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
     else
       if newDoc.user isnt userCtx.name
         throw {forbidden: 'user must match current user, or end with "?"'}
+
+
+notDesignDocFilter = (doc, req) ->
+  doc._id[...8] isnt '_design/'
+
+
+exports.filters =
+  notDesignDoc: notDesignDocFilter
 
 
 exports.lists =
@@ -93,7 +106,7 @@ exports.lists =
   'adhoc-set-shifting-summary-report': adhocSetShiftingSummaryReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list
 
-#exports.validate_doc_update = validateDocUpdate
+exports.validate_doc_update = validateDocUpdate
 
 exports.views =
   patient:
