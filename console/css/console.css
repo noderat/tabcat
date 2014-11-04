@@ -41,17 +41,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #statusBar div.left {
+    position: relative;
     float: left;
     width: 250px;
     text-align: left;
+    color: #bbbbaa;
+}
+
+#statusBar.sandbox div.left {
+    color: #ffffff;
 }
 
 #statusBar span.banner {
     display: inline-block;
-    width: 97px;
-    height: 33px;
+    width: 147px;
+    height: 50px;
     background-image: url('../img/banner.png');
-    background-size: 97px 33px;
+    background-size: 147px 50px;
 }
 
 #statusBar.sandbox span.banner {
@@ -61,19 +67,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #statusBar span.version {
     position: relative;
     margin: 0;
-    top: -11px;
+    top: -13px;
     vertical-align: bottom;
-    color: #bbbbaa;
-    font-size: 12px;
-}
-
-#statusBar.sandbox span.version {
-    color: #ffffff;
+    font-size: 18px;
 }
 
 #statusBar p.offline {
-    font-size: 12px;
-    margin: -1px 0px 0px 2px;
+    position: absolute;
+    font-size: 10px;
+    font-style: italic;
+    top: 30px;
+    left: 54px;
 }
 
 #statusBar p.offline span.warning {
