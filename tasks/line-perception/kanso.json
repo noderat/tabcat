@@ -7,11 +7,10 @@
         "img/icon/line-orientation.png",
         "img/icon/parallel-line-length.png",
         "img/icon/perpendicular-line-length.png",
-        "js/line-perception.js",
+        "js/task.js",
         "line-orientation.html",
         "parallel-line-length.html",
-        "perpendicular-line-length.html",
-        "scoring/scoring.js"
+        "perpendicular-line-length.html"
     ],
     "dependencies": {
         "attachments": null

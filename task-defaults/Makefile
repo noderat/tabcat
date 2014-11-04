@@ -88,3 +88,8 @@ scoring/scoring.coffee:
 scoring/js:
 	mkdir -p $(@D)
 	ln -sfh ../../../core/js $@
+
+# pack all the JS code into a single file, js/task.js.
+# Don't include tabcat.js because it's huge.
+js/task.js: $(COFFEE_JS)
+	cat $^ > $@
