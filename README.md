@@ -43,25 +43,24 @@ Finally, if you want to get involved in developing TabCAT, we recommend installi
 
 ### Setting up your server
 
-We're [working on automating this](https://github.com/UCSFMemoryAndAging/tabcat/issues/25), but until then, you'll need to do this from [Futon](http://wiki.apache.org/couchdb/Getting_started_with_Futon).
+The `setup_couchdb.sh` script will perform most of the setup needed for Couch DB.
 
-Open up Futon by browsing to `/_utils` on your server.
+```sh
+export COUCHDB_URL=<COUCHDB-URL>
+./setup_couchdb.sh
+```
 
-Click on the Configuration link on the left. Under the `couch_httpd_auth` section, set `allow_persistent_cookies` to `true` and `timeout` to `3600`. Under the `uuids` section, set `algorithm` to `random`.
+* Under the `couch_httpd_auth` section, sets `allow_persistent_cookies` to `true` and `timeout` to `3600`.
+* Under the `uuids` section, sets `algorithm` to `random`.
+* Creates an admin user whose username is read from the user.
+* Creates a `tabcat` user with a password read from the user. This password is also stored in the `.tabcat_password` file.
+* Creates a database named `tabcat`. Adds the `tabcat` user to the admins list. Adds a user provided email to members list.
+* Creates a database named `tabcat-data`. Adds the `tabcat` user to the admins list. Adds a user provided email to members list.
+* Under the `httpd` section, sets `bind_address` to `0.0.0.0`, so as to allow access to your server from other hosts.
 
-Create an admin user whose username is your email address (all lowercase). (Look for the link in the lower-right corner of Futon.)
-
-Then, sign out, and sign up a user named `tabcat` (again, lower-right corner).
-
-Then sign back in as your admin user and create a database named `tabcat`. Click on that database, go to "Security" (upper part of the screen) and under the Admins section set the Names of admins to `["tabcat"]`.
-
-Do the same thing with a database named `tabcat-data`. Then, while you're still in the "Security" popup, add your email (in quotes) to the Names section of members: `["your.email@somewhere.com"]`.
-
-(If you're on Iris Couch, you're done; go on to the next section.)
+You can also perform these operations from [Futon](http://wiki.apache.org/couchdb/Getting_started_with_Futon).
 
 It's probably a good idea to force users to access your server via SSL; see [How to Enable SSL](http://wiki.apache.org/couchdb/How_to_enable_SSL) for further instructions.
-
-Oh, and to allow access to your server from other hosts, you'll want to go to the `httpd` section of the "Configuration" page and set `bind_address` to `0.0.0.0`. (You don't need to do this if you're just testing/developing.)
 
 ### Adding additional users
 
