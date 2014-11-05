@@ -10,3 +10,4 @@ packages
 /core/js/couchdb/*.js
 /core/js/couchdb/*/*.js
 /core/js/tabcat/*.js
+/tasks/*/scoring/js

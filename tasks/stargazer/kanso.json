@@ -7,7 +7,7 @@
         "img/comet.png",
         "img/icon.png",
         "img/star.png",
-        "js/stargazer.js",
+        "js/task.js",
         "stargazer.html"
     ],
     "dependencies": {

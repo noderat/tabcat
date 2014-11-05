@@ -49,7 +49,7 @@ clean:
 	rm -f .pushed-*
 	rm -f design.json
 	rm -f scoring/design.json
-	find . -type l -delete
+	find . -type l -and -not -path ./Makefile -delete
 	find . -name '*~' -delete
 
 # compiling COFFEE_JS
@@ -88,3 +88,23 @@ scoring/scoring.coffee:
 scoring/js:
 	mkdir -p $(@D)
 	ln -sfh ../../../core/js $@
+
+
+# optionally, pack all the JS code into a single file, js/task.js.
+# (include js/task.js in kanso.json to activate this)
+#
+# You will still have to include ../core/js/tabcat.js separately because
+# it's big enough (currently, 290K) that we don't want to duplicate it.
+
+ifeq (,$(wildcard js/task.coffee))  # handle js/task.coffee normally'
+TASK_JS = scoring/scoring.js $(filter ./js/%,$(COFFEE_JS))
+ifeq ($(TABCAT_DEBUG), 1)
+# force rebuild of js/tabcat.js
+.PHONY: js/task.js
+js/task.js: $(TASK_JS)
+	cat $^ > $@
+else
+js/task.js: $(TASK_JS)
+	uglifyjs $^ -c warnings=false -o $@
+endif
+endif

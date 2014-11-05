@@ -75,5 +75,5 @@ $(PUSHED): $(DEFAULT_CONFIG) $(MANIFEST)
 clean:
 	$(MAKE) -C console clean
 	$(MAKE) -C core clean
-	for task in $(TASK_TARGETS); do if [ -e tasks/$$task/Makefile ]; then $(MAKE) -C tasks/$$task clean; else $(MAKE) -C tasks/$$task -f ../../task-defaults/Makefile clean; fi done
+	for task in $(TASK_TARGETS); do if [ -e tasks/$$task/Makefile ]; then $(MAKE) -C tasks/$$task clean; if [ -L tasks/$$task/Makefile ]; then rm tasks/$$task/Makefile; fi; else $(MAKE) -C tasks/$$task -f ../../task-defaults/Makefile clean; fi done
 	rm -f *~
