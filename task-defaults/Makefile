@@ -89,8 +89,12 @@ scoring/js:
 	mkdir -p $(@D)
 	ln -sfh ../../../core/js $@
 
-# pack all the JS code into a single file, js/task.js.
-# Don't include tabcat.js because it's huge.
+
+# optionally, pack all the JS code into a single file, js/task.js.
+# (include js/task.js in kanso.json to activate this)
+#
+# You will still have to include ../core/js/tabcat.js separately because
+# it's big enough (currently, 290K) that we don't want to duplicate it.
 TASK_JS = scoring/scoring.js $(filter ./js/%,$(COFFEE_JS))
 js/task.js: $(TASK_JS)
 	cat $^ > $@
