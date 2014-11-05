@@ -49,6 +49,7 @@ The `setup_couchdb.sh` script will perform most of the setup needed for Couch DB
 export COUCHDB_URL=<COUCHDB-URL>
 ./setup_couchdb.sh
 ```
+Under the hood, this script performs the following operations.
 
 * Under the `couch_httpd_auth` section, sets `allow_persistent_cookies` to `true` and `timeout` to `3600`.
 * Under the `uuids` section, sets `algorithm` to `random`.
