@@ -95,6 +95,9 @@ scoring/js:
 #
 # You will still have to include ../core/js/tabcat.js separately because
 # it's big enough (currently, 290K) that we don't want to duplicate it.
+
+ifeq (,$(wildcard js/task.coffee))  # handle js/task.coffee normally
 TASK_JS = scoring/scoring.js $(filter ./js/%,$(COFFEE_JS))
 js/task.js: $(TASK_JS)
 	cat $^ > $@
+endif
