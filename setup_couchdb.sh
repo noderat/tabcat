@@ -8,7 +8,7 @@ HTTPD_AUTH_SECTION=$CONFIG_URL/couch_httpd_auth
 UUIDS_SECTION=$CONFIG_URL/uuids
 ADMINS_SECTION=$CONFIG_URL/admins
 USERS_SECTION=$CONFIG_URL/users
-
+HTTPD_SECTION=$CONFIG_URL/httpd
 
 echo "Creating admin user ..."
 echo "Please enter Admin user's id:"
@@ -38,6 +38,9 @@ done
 echo "Configuring couch_httpd_auth ..."
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/allow_persistent_cookies -d '"true"'
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/timeout -d '"3600"'
+
+echo "Configuring httpd ..."
+curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_SECTION/bind_address -d '"0.0.0.0"'
 
 echo "Configuring uuids ..."
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $UUIDS_SECTION/algorithm -d '"random"'
