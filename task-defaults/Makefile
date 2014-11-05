@@ -49,7 +49,7 @@ clean:
 	rm -f .pushed-*
 	rm -f design.json
 	rm -f scoring/design.json
-	find . -type l -delete
+	find . -type l -and -not -path ./Makefile -delete
 	find . -name '*~' -delete
 
 # compiling COFFEE_JS
