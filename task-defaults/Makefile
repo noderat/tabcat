@@ -96,8 +96,15 @@ scoring/js:
 # You will still have to include ../core/js/tabcat.js separately because
 # it's big enough (currently, 290K) that we don't want to duplicate it.
 
-ifeq (,$(wildcard js/task.coffee))  # handle js/task.coffee normally
+ifeq (,$(wildcard js/task.coffee))  # handle js/task.coffee normally'
 TASK_JS = scoring/scoring.js $(filter ./js/%,$(COFFEE_JS))
+ifeq ($(TABCAT_DEBUG), 1)
+# force rebuild of js/tabcat.js
+.PHONY: js/task.js
 js/task.js: $(TASK_JS)
 	cat $^ > $@
+else
+js/task.js: $(TASK_JS)
+	uglifyjs $^ -c warnings=false -o $@
+endif
 endif
