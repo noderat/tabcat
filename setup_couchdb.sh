@@ -24,11 +24,14 @@ TABCAT_PASSWORD=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/tabcat -d '"'$TABCAT_PASSWORD'"'
 echo $TABCAT_PASSWORD > .tabcat_password
 
+echo "Please enter database user's email address:"
+read USER_EMAIL
+
 for db in tabcat tabcat-data
 do
     echo "Creating '$db' database with correct permissions..."
     curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db
-    curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]}}'
+    curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]},"members":{"names":["'$USER_EMAIL'"]}}'
 done
 
 
