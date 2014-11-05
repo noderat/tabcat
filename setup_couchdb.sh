@@ -7,7 +7,7 @@ CONFIG_URL=$COUCHDB_URL/_config
 HTTPD_AUTH_SECTION=$CONFIG_URL/couch_httpd_auth
 UUIDS_SECTION=$CONFIG_URL/uuids
 ADMINS_SECTION=$CONFIG_URL/admins
-USERS_SECTION=$CONFIG_URL/users
+USERS_SECTION=$COUCHDB_URL/_users
 HTTPD_SECTION=$CONFIG_URL/httpd
 
 echo "Creating admin user ..."
@@ -19,9 +19,9 @@ curl --header "Content-Type: application/json" -X PUT $ADMINS_SECTION/$ADMIN_USE
 
 AUTH_STRING=$ADMIN_USER:$ADMIN_PASSWORD
 
-echo "Creating password for tabcat user ..."
+echo "Creating tabcat user ..."
 TABCAT_PASSWORD=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/tabcat -d '"'$TABCAT_PASSWORD'"'
+curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/org.couchdb.user:tabcat -d '{"name":"tabcat", "password": "'$TABCAT_PASSWORD'", "type": "user", "roles": []}'
 echo $TABCAT_PASSWORD > .tabcat_password
 
 echo "Please enter database user's email address:"
