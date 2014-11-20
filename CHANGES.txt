@@ -1,3 +1,17 @@
+v0.8.2, 2014-11-19 -- Replication
+- build system:
+  - single js/task.js file for tasks if you included it in kanso.json (#143)
+- core:
+  - security model re-enabled (#149)
+  - notDesignDoc filter for replicating data only (#145)
+  - only admins can change configs
+- console:
+  - TabCAT logo takes up entire vertical space in status bar (#150)
+- setup:
+  - setup_couchdb.sh now configures everything execpt SSL (#25)
+- tasks:
+  - line-perception and dart now use js/task.js
+
 v0.8.1, 2014-10-15 -- Fixes for iPad 1
 - core:
   - added ECMAScript 5 shims so that gauss lib works on iPad 1 (#146)
