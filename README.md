@@ -77,6 +77,15 @@ Set the environment variable `TABCAT_HOST` to your web server's URL, with the `t
 
 Then run `make`.
 
+### Configuring TabCAT
+
+By default, TabCAT will not store any PHI at all, including dates
+(other than year).
+
+To change this, add a config file `/tabcat-data/config`. The easiest way to create this is through CouchDB's Futon interface; go to `/_utils/document.html?tabcat-data` and set the new document's ID to "config". To turn on dates, add a field `limitedPHI`, and set it to `true`. This enables storing of dates.
+
+There is also a field `PHI`, which if set to true, allows storing of any PHI (e.g. patient name, voice recordings). Currently, TabCAT doesn't make use of this feature, though it may in the future.
+
 ### Using TabCAT
 
 To access TabCAT, browse to `/tabcat/_design/console/login.html` on your server.
