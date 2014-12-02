@@ -109,6 +109,8 @@ TabCAT.Console.updateStatusBar = ->
     $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
+        # do something even if logout is slow
+        $statusBar.find('p.email').text('Logging out...')
         TabCAT.UI.logout()
       else
         TabCAT.UI.requestLogin()
