@@ -110,6 +110,7 @@ TabCAT.Encounter.newDoc = (patientCode, configDoc) ->
       month: date.getMonth() + 1
       day: date.getDate()
       clockOffset: clockOffset
+      timezoneOffset: date.getTimezoneOffset()
 
   return doc
 
