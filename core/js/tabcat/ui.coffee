@@ -37,6 +37,10 @@ TabCAT.UI = {}
 # or so after the page loads
 DEFAULT_REQUIRE_USER_TIMEOUT = 2000
 
+# don't take longer than 4 seconds to log in or log out
+DEFAULT_LOGIN_TIMEOUT = 4000
+DEFAULT_LOGOUT_TIMEOUT = 4000
+
 # Several things need to be done to make a web page look like an app.
 #
 # To turn off bounce/scrolling, call TabCAT.UI.turnOffBounce() and
@@ -160,9 +164,16 @@ TabCAT.UI.linkEmToPercentOfHeight = ($element) ->
 # to give case-insensitive behavior.
 #
 # Set user to null to re-enter current user's password
-TabCAT.UI.login = (user, password) ->
+#
+# You can use options to set a timeout (default is 4 seconds)
+TabCAT.UI.login = (user, password, options) ->
+  # set timeout, force to be relative to now
+  options = _.extend({}, options, now: $.now())
+  if not options.timeout?
+    options.timeout = DEFAULT_LOGIN_TIMEOUT
+
   previousUser = TabCAT.User.get()
-  TabCAT.User.login(user, password).then(->
+  TabCAT.User.login(user, password, options).then(->
     TabCAT.Task.patientHasDevice(false)
 
     destPath = 'create-encounter.html'
@@ -178,14 +189,21 @@ TabCAT.UI.login = (user, password) ->
 # Promise: log out, warning that this will close the current encounter.
 #
 # On success, redirect to the login page
+#
+# You can use options to set a timeout (default is 4 seconds)
 TabCAT.UI.logout = ->
+  # set timeout, force to be relative to now
+  options = _.extend({}, options, now: $.now())
+  if not options.timeout?
+    options.timeout = DEFAULT_LOGOUT_TIMEOUT
+
   if TabCAT.Encounter.isOpen()
     if not window.confirm(
       'Logging out will close the current encounter without administration' +
       ' notes. Proceed?')
       return
 
-  TabCAT.User.logout().always(->
+  TabCAT.User.logout(options).always(->
     window.location = (
       '../console/login.html' + TabCAT.UI.encodeHashJSON(loggedOut: true))
   )
