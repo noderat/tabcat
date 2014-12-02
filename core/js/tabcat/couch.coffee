@@ -53,13 +53,22 @@ TabCAT.Couch.randomUUID = () ->
 
 
 # Promise: log the user in. Usually you'll use TabCAT.UI.login()
-TabCAT.Couch.login = (user, password) ->
-  $.post('/_session', name: user, password: password)
+# you can specify timeout in options
+TabCAT.Couch.login = (user, password, options) ->
+  $.ajax(
+    type: 'POST',
+    url: '/_session',
+    data:
+      name: user
+      password: password
+    timeout: timeoutFrom(options)
+  )
 
 
 # log out the user. Usually you'll use TabCAT.UI.logout()
-TabCAT.Couch.logout = ->
-  $.ajax(type: 'DELETE', url: '/_session')
+# you can specify timeout via options
+TabCAT.Couch.logout = (options) ->
+  $.ajax(type: 'DELETE', url: '/_session', timeout: timeoutFrom(options))
 
 
 # Promise: get the username of the current user, or null
