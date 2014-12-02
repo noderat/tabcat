@@ -181,7 +181,8 @@ TabCAT.UI.login = (user, password) ->
 TabCAT.UI.logout = ->
   if TabCAT.Encounter.isOpen()
     if not window.confirm(
-      'Logging out will close the current encounter. Proceed?')
+      'Logging out will close the current encounter without administration' +
+      ' notes. Proceed?')
       return
 
   TabCAT.User.logout().always(->
