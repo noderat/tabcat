@@ -68,7 +68,9 @@ TabCAT.User.isAuthenticated = ->
 # security is on the DB server).
 #
 # Set user to null to re-enter current user's password.
-TabCAT.User.login = (user, password) ->
+#
+# You can set timeout with options
+TabCAT.User.login = (user, password, options) ->
   # clear out old session if user isn't just re-entering their password
   if user?
     TabCAT.Encounter.clear()
@@ -81,7 +83,7 @@ TabCAT.User.login = (user, password) ->
   if user?
     user = user.toLowerCase()
 
-  TabCAT.Couch.login(user, password).then(
+  TabCAT.Couch.login(user, password, options).then(
     (->
       localStorage.userIsAuthenticated = 'true'
       $.Deferred().resolve()
@@ -101,13 +103,20 @@ TabCAT.User.login = (user, password) ->
 # Promise: log out user, clean up the current encounter
 #
 # Usually you'll want to use TabCAT.UI.logout()
-TabCAT.User.logout = ->
-  TabCAT.Encounter.close().then(->
+#
+# You can set timeout with options. User will be logged out
+# for TabCAT's purposes whether or not the AJAX call to CouchDB succeeds.
+TabCAT.User.logout = (options) ->
+  # force timeout to be relative to now
+  if options?.timeout? and not options.now?
+    options = _.extend(options, now: $.now())
+
+  TabCAT.Encounter.close(options).then(->
     localStorage.removeItem('user')
     localStorage.removeItem('userIsAuthenticated')
     TabCAT.User.clearDocsSpilled()
 
-    TabCAT.Couch.logout()
+    TabCAT.Couch.logout(options)
   )
 
 
