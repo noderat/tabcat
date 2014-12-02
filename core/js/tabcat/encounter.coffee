@@ -193,7 +193,7 @@ TabCAT.Encounter.close = (options) ->
     encounterDoc.finishedAt = now
     if options?.administrationNotes?
       encounterDoc.administrationNotes = options.administrationNotes
-    TabCAT.DB.putDoc(DATA_DB, encounterDoc)
+    TabCAT.DB.putDoc(DATA_DB, encounterDoc, options)
   else
     $.Deferred().resolve()
 

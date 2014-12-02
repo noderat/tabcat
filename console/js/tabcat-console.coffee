@@ -109,25 +109,31 @@ TabCAT.Console.updateStatusBar = ->
     $statusBar.find('button.login').on('click', (event) ->
       button = $(event.target)
       if button.text() == 'Log Out'
+        $emailP = $statusBar.find('p.email')
+        # do something even if logout is slow
+        oldContents = $emailP.html()
+        $statusBar.find('p.email').text('Logging out...')
         TabCAT.UI.logout()
+        # this only happens if user decides not to log out
+        $emailP.html(oldContents)
       else
         TabCAT.UI.requestLogin()
     )
 
-  emailP = $statusBar.find('p.email')
-  button =  $statusBar.find('button.login')
-  encounterP = $statusBar.find('p.encounter')
+  $emailP = $statusBar.find('p.email')
+  $button =  $statusBar.find('button.login')
+  $encounterP = $statusBar.find('p.encounter')
 
   user = TabCAT.User.get()
 
   if user?
-    emailP.text(user)
-    button.text('Log Out')
+    $emailP.text(user)
+    $button.text('Log Out')
   else
-    emailP.text('not logged in')
-    button.text('Log In')
+    $emailP.text('not logged in')
+    $button.text('Log In')
 
-  button.show()
+  $button.show()
 
   # only check offline status occasionally
   updateOfflineStatus()
@@ -140,14 +146,14 @@ TabCAT.Console.updateStatusBar = ->
     encounterNum = TabCAT.Encounter.getNum()
     encounterNumText = if encounterNum? then ' #' + encounterNum else ''
 
-    encounterP.text(
+    $encounterP.text(
       'Encounter' + encounterNumText + ' with Patient ' + patientCode)
 
     if not TabCAT.Console.updateStatusBar.clockInterval?
       TabCAT.Console.updateStatusBar.clockInterval = window.setInterval(
         updateEncounterClock, 50)
   else
-    encounterP.empty()
+    $encounterP.empty()
     if TabCAT.Console.updateStatusBar.clockInterval?
       window.clearInterval(TabCAT.Console.updateStatusBar.clockInterval)
     $statusBar.find('p.clock').empty()
