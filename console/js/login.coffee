@@ -39,6 +39,9 @@ submitLoginForm = (event) ->
     errorP.text('Please enter your password')
     return
 
+  # don't look like device is frozen when login is just slow
+  $('#message').text('Logging in...')
+
   TabCAT.UI.login(email, password).then(
     null,
     (xhr) -> switch xhr.status
@@ -46,7 +49,6 @@ submitLoginForm = (event) ->
         'Incorrect email or password')
       else errorP.text(xhr.textStatus or 'Unknown error')
   )
-
 
 @initPage = ->
   TabCAT.Console.start()
