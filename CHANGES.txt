@@ -1,3 +1,13 @@
+v0.8.3, 2014-12-02 -- Timeout for login
+- core:
+  - login/logout functions can now time out (#159)
+  - store timezoneOffset in encounter
+- console:
+  - UI feedback when login/logout button pushed (#159)
+  - warn that logging out bypasses administration notes (#139)
+- documentation:
+  - explained how to enable (limited) PHI in README
+
 v0.8.2, 2014-11-19 -- Replication
 - build system:
   - single js/task.js file for tasks if you included it in kanso.json (#143)
