@@ -70,18 +70,34 @@ TabCAT.Encounter.getNum = ->
 
 
 # get a map from task name to a list containing scoring for each time
-# that task was completed during this encounter
+# that task was completed during this encounter.
+#
+# null for a task indicates that it couldn't be scored, and false
+# means that it wasn't completed
 TabCAT.Encounter.getTaskScoring = ->
   (try JSON.parse(localStorage.encounterTaskScoring)) ? {}
 
 
-# add scoring for a task to localStorage.encounterTaskScoring
-#
-# TabCAT.Task.finish() will call this; you don't need to call it directly
-TabCAT.Encounter.addTaskScoring = (taskName, scoring) ->
+# note that we've started this task but not yet scored it
+TabCAT.Encounter.addTaskAttempt = (taskName) ->
   taskScoring = TabCAT.Encounter.getTaskScoring()
   taskScoring[taskName] ?= []
-  taskScoring[taskName].push(scoring)
+  taskScoring[taskName].push(false)
+
+  localStorage.encounterTaskScoring = JSON.stringify(taskScoring)
+
+
+# add score for a task
+TabCAT.Encounter.addTaskScoring = (taskName, scoring) ->
+  taskScoring = TabCAT.Encounter.getTaskScoring()
+
+  scores = taskScoring[taskName] ? []
+  # assume we called addTaskAttempt() already
+  if _.last(scores) is false
+    scores.pop()
+  scores.push(scoring)
+
+  taskScoring[taskName] = scores
 
   localStorage.encounterTaskScoring = JSON.stringify(taskScoring)
 
