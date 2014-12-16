@@ -135,11 +135,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #loginMain span.logo {
     display: inline-block;
     position: relative;
-    width: 529px;
-    height: 180px;
-    margin-top: 10px;
+    width: 353px;
+    height: 120px;
+    margin-top: 7px;
     background-image: url('../img/banner.png');
-    background-size: 529px 180px;
+    background-size: 353px 120px;
 }
 
 .sandbox #loginMain span.logo {
@@ -148,9 +148,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #loginMain span.logo p.version {
     position: absolute;
-    top: 134px;
-    left: 308px;
-    font-size: 36px;
+    top: 89px;
+    left: 205px;
+    font-size: 24px;
     margin: 0;
     color: #bbbbaa;
 }
