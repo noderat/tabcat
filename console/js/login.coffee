@@ -59,7 +59,6 @@ submitLoginForm = (event) ->
     $('link[rel=apple-touch-icon]').attr('href', TabCAT.Console.sandboxIcon)
 
   TabCAT.UI.enableFastClick()
-  TabCAT.UI.turnOffBounce()
 
   $(->
     $('.version').text(TabCAT.version)
