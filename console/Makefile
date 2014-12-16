@@ -42,11 +42,16 @@ all: $(PUSHED)
 clean:
 	rm -f $(COFFEE_JS)
 	rm -f .pushed-*
+	rm -rf packages
 	find . -name '*~' -delete
 
-design.json: kanso.json $(KANSO_DEPS)
+design.json: packages kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso show > $@
+
+packages:
+	mkdir -p ../kanso-packages
+	ln -sfh ../kanso-packages $@
 
 $(PUSHED): design.json
 	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/console

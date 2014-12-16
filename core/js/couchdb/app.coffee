@@ -63,14 +63,14 @@ dumpList = (head, req) ->
 
 validateDocUpdate = (newDoc, oldDoc, userCtx, secObj) ->
   # server and DB admins are exempt from this policy
-  if '_admin' in userCtx.roles
+  if '_admin' in (userCtx.roles ? [])
     return
 
-  if userCtx.name in secObj.admins.names
+  if userCtx.name in (secObj?.admins?.names ? [])
     return
 
-  for role in userCtx.roles
-    if role in secObj.admins.roles
+  for role in (userCtx.roles ? [])
+    if role in (secObj?.admins?.roles ? [])
       return
 
   # config can only be written by admins

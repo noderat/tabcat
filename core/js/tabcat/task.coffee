@@ -172,6 +172,9 @@ TabCAT.Task.start = _.once((options) ->
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()
 
+  # note that we started this task but didn't score it
+  TabCAT.Encounter.addTaskAttempt(taskName)
+
   # TODO: redirect to the return-to-examiner page if the patient has the device
   # and this is examiner-administered
   if not options?.examinerAdministered

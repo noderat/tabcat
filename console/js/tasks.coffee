@@ -80,7 +80,8 @@ showTasks = ->
 
         iconUrl = TabCAT.Console.getTaskIconUrl(task)
 
-        finished = taskScoring[taskName]?
+        attempted = taskScoring[taskName]?
+        finished = attempted and _.last(taskScoring[taskName]) isnt false
         scores = _.last(taskScoring[taskName])?.scores
 
         if finished
@@ -98,39 +99,42 @@ showTasks = ->
             defaultValue: task.description))
         $taskDiv.append($taskDescription)
 
-        if finished
-          $scoringMessage = $('<span></span>', class: 'scoringMessage')
+        $scoringMessage = $('<span></span>', class: 'scoringMessage')
 
-          if scores
-            $scoringMessage.text('tap to show scoring')
-            $taskDiv.append($scoringMessage)
+        if scores
+          $scoringMessage.text('tap to show scoring')
+          $taskDiv.append($scoringMessage)
 
-            $scores = $('<div></div>', class: 'scores collapsed')
-            TabCAT.Console.populateWithScores($scores, scores)
-            $taskDiv.append($scores)
+          $scores = $('<div></div>', class: 'scores collapsed')
+          TabCAT.Console.populateWithScores($scores, scores)
+          $taskDiv.append($scores)
 
-            # separate scope for each handler
-            do ($scores, $scoringMessage) ->
-              $taskDiv.on('click', (event) ->
-                # toggle visibility of scores
-                event.preventDefault()
-                if $scores.is('.collapsed')
-                  $scores.removeClass('collapsed')
-                  $scoringMessage.text('tap to hide scoring')
-                else
-                  $scores.addClass('collapsed')
-                  $scoringMessage.text('tap to show scoring')
-              )
-          else
-            $scoringMessage.text('no scoring available for this task')
-            $taskDiv.append($scoringMessage)
+          # add handler to show scores (separate scope for each task)
+          do ($scores, $scoringMessage) ->
+            $taskDiv.on('click', (event) ->
+              # toggle visibility of scores
+              event.preventDefault()
+              if $scores.is('.collapsed')
+                $scores.removeClass('collapsed')
+                $scoringMessage.text('tap to hide scoring')
+              else
+                $scores.addClass('collapsed')
+                $scoringMessage.text('tap to show scoring')
+            )
+        else if finished
+          $scoringMessage.text('no scoring available for this task')
         else
-          do -> # create a separate scope for each click handler
+          if attempted
+            $scoringMessage.text('not completed; tap to retry')
+
+          # add handler to launch task (separate scope for each task)
+          do ->
             startUrl = TabCAT.Console.getTaskStartUrl(task)
             if startUrl?
               # start the task
               $taskDiv.on('click', (event) -> window.location = startUrl)
 
+        $taskDiv.append($scoringMessage)
         $tasksDiv.append($taskDiv)
 
       $batteryDiv.append($tasksDiv)
