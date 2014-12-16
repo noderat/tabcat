@@ -128,46 +128,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     background-image: url('../img/sandbox/sand.png');
 }
 
-#loginMain {
-    text-align: center;
-}
-
-#loginMain span.logo {
-    display: inline-block;
-    position: relative;
-    width: 353px;
-    height: 120px;
-    margin-top: 7px;
-    background-image: url('../img/banner.png');
-    background-size: 353px 120px;
-}
-
-.sandbox #loginMain span.logo {
-    background-image: url('../img/sandbox/banner.png');
-}
-
-#loginMain span.logo p.version {
-    position: absolute;
-    top: 89px;
-    left: 205px;
-    font-size: 24px;
-    margin: 0;
-    color: #bbbbaa;
-}
-
-.sandbox #loginMain span.logo p.version {
-    color: #ffffff;
-}
-
-#loginForm label {
-    width: 130px;
-}
-
-#loginMain #p.message {
-    font-size: 18px;
-    color: #f8e5b8;
-}
-
 /* messages */
 
 p.error {
@@ -323,21 +283,79 @@ form.big button[type=submit] {
     margin: 0;
 }
 
-#loginForm label {
-    width: 130px;
+
+#loginMain {
+    text-align: center;
 }
 
-#tasks div.battery {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #eeeeee;
-    width: 650px;
-    margin-left: 8px;
-    margin-bottom: 8px;
-    border-radius: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+#loginMain span.logo {
+    display: inline-block;
+    position: relative;
+    width: 353px;
+    height: 120px;
+    margin-top: 7px;
+    background-image: url('../img/banner.png');
+    background-size: 353px 120px;
 }
+
+.sandbox #loginMain span.logo {
+    background-image: url('../img/sandbox/banner.png');
+}
+
+#loginMain span.logo p.version {
+    position: absolute;
+    top: 89px;
+    left: 205px;
+    font-size: 24px;
+    margin: 0;
+    color: #bbbbaa;
+}
+
+.sandbox #loginMain span.logo p.version {
+    color: #ffffff;
+}
+
+#loginForm p {
+    margin: 10px;
+}
+
+#loginForm p.message {
+    min-height: 11px;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    font-size: 24px;
+}
+
+#loginForm label {
+    display: inline-block;
+    text-align: left;
+    font-size: 20px;
+    padding-right: 7px;
+    width: 104px;
+}
+
+#loginForm input {
+    width: 185px;
+    font-size: 20px;
+    color: #33334d;
+    height: 27px;
+}
+
+#loginForm button {
+    height: 11px;
+    font-size: 15px;
+    border-radius: 4px;
+}
+
+#loginForm button[type=submit] {
+    font-size: 20px;
+    height: 40px;
+    border-radius: 8px;
+    border-width: 3px;
+    margin: 4px;
+}
+
+
 
 
 /*** patient-scoring.html ***/
@@ -615,6 +633,18 @@ form.big button[type=submit] {
 #tasks div.task div.scores div.score .scoreFooter {
     margin-top: 10px;
     font-size: 10px;
+}
+
+#tasks div.battery {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eeeeee;
+    width: 650px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #tasks div.battery div.header {

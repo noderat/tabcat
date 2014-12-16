@@ -27,16 +27,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 submitLoginForm = (event) ->
   event.preventDefault()
   $form = $(event.target)
-  $errorP = $form.find('#error')
+  $message = $form.find('#message')
 
   email = $form.find('input[name=email]').val()
   if email.indexOf('@') is -1
-    $errorP.text('Please enter a valid email')
+    $message.text('Please enter a valid email')
     return
 
   password = $form.find('input[name=password]').val()
   if not password
-    $errorP.text('Please enter your password')
+    $message.text('Please enter your password')
     return
 
   # don't look like device is frozen when login is just slow
@@ -45,9 +45,9 @@ submitLoginForm = (event) ->
   TabCAT.UI.login(email, password).then(
     null,
     (xhr) -> switch xhr.status
-      when 401 then $errorP.text(
+      when 401 then $message.text(
         'Incorrect email or password')
-      else $errorP.text(xhr.textStatus or 'Unknown error')
+      else $message.text(xhr.textStatus or 'Unknown error')
   )
 
 @initPage = ->
@@ -62,6 +62,8 @@ submitLoginForm = (event) ->
   TabCAT.UI.turnOffBounce()
 
   $(->
+    $message = $('#message')
+
     $('.version').text(TabCAT.version)
 
     # continue session/encounter if user is restarting TabCAT
@@ -71,22 +73,22 @@ submitLoginForm = (event) ->
       TabCAT.Task.patientHasDevice(false)
 
       if TabCAT.Encounter.isOpen()
-        $('#message').text('Continuing encounter...')
+        $message.text('Continuing encounter...')
         window.location = 'tasks.html'
       else
-        $('#message').text('Continuing session...')
+        $message.text('Continuing session...')
         window.location = 'create-encounter.html'
       return
 
     if TabCAT.UI.srcPath()?
-      $('#message').text('You need to log in to view that page')
+      $message.text('You need to log in to view that page')
     else if TabCAT.UI.readHashJSON().loggedOut
-      $('#message').text('Logged out')
+      $message.text('Logged out')
     else
       if TabCAT.Console.inSandbox()
-        $('#message').text('Welcome to the sandbox. Hit "Log In" to start')
+        $message.text('Welcome to the sandbox. Hit "Log In" to start')
       else
-        $('#message').text('Please log in with your email and password')
+        $message.text('Please log in with your email and password')
 
     $loginForm = $('#loginForm')
 
