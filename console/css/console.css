@@ -163,6 +163,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     width: 130px;
 }
 
+#loginMain #p.message {
+    font-size: 18px;
+    color: #f8e5b8;
+}
+
 /* messages */
 
 p.error {

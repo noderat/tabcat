@@ -26,17 +26,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 submitLoginForm = (event) ->
   event.preventDefault()
-  form = $(event.target)
-  errorP = form.find('#error')
+  $form = $(event.target)
+  $errorP = $form.find('#error')
 
-  email = form.find('input[name=email]').val()
+  email = $form.find('input[name=email]').val()
   if email.indexOf('@') is -1
-    errorP.text('Please enter a valid email')
+    $errorP.text('Please enter a valid email')
     return
 
-  password = form.find('input[name=password]').val()
+  password = $form.find('input[name=password]').val()
   if not password
-    errorP.text('Please enter your password')
+    $errorP.text('Please enter your password')
     return
 
   # don't look like device is frozen when login is just slow
@@ -45,9 +45,9 @@ submitLoginForm = (event) ->
   TabCAT.UI.login(email, password).then(
     null,
     (xhr) -> switch xhr.status
-      when 401 then errorP.text(
+      when 401 then $errorP.text(
         'Incorrect email or password')
-      else errorP.text(xhr.textStatus or 'Unknown error')
+      else $errorP.text(xhr.textStatus or 'Unknown error')
   )
 
 @initPage = ->
