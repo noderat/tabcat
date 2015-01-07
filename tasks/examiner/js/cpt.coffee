@@ -15,7 +15,7 @@
 #   2) The trials are handled to ensure that there are no sequences
 #      of targets longer than 10 and no sequences of nontargets longer than 2.
 #   3) One second delay before each block
-    
+
 # All responses are recorded after the display of the stimulus.
 # The first response after the display of the stimulus is recorded
 # in terms of the response time.
@@ -101,25 +101,25 @@ ASPECT_RATIO = 4/3
 
 # total of 20 trials (5 non targets, 15 targets)
 PRACTICE_TRIALS = [
-  {'stimulus': 'nontarget1', 'filename': 'nt1.png'},
-  {'stimulus': 'nontarget2', 'filename': 'nt2.png'},
-  {'stimulus': 'nontarget3', 'filename': 'nt3.png'},
-  {'stimulus': 'nontarget4', 'filename': 'nt4.png'},
-  {'stimulus': 'nontarget5', 'filename': 'nt5.png'}
+  {'stimulus': 'nontarget1', 'filename': 'nt1.svg'},
+  {'stimulus': 'nontarget2', 'filename': 'nt2.svg'},
+  {'stimulus': 'nontarget3', 'filename': 'nt3.svg'},
+  {'stimulus': 'nontarget4', 'filename': 'nt4.svg'},
+  {'stimulus': 'nontarget5', 'filename': 'nt5.svg'}
 ].concat(
-  ({'stimulus': 'target', 'filename': 'target.png'} \
+  ({'stimulus': 'target', 'filename': 'target.svg'} \
     for i in [0...PRACTICE_NUM_TARGETS])
 )
 
 # total of 25 trials (5 non targets, 20 targets)
 REAL_TRIALS = [
-  {'stimulus': 'nontarget1', 'filename': 'nt1.png'},
-  {'stimulus': 'nontarget2', 'filename': 'nt2.png'},
-  {'stimulus': 'nontarget3', 'filename': 'nt3.png'},
-  {'stimulus': 'nontarget4', 'filename': 'nt4.png'},
-  {'stimulus': 'nontarget5', 'filename': 'nt5.png'}
+  {'stimulus': 'nontarget1', 'filename': 'nt1.svg'},
+  {'stimulus': 'nontarget2', 'filename': 'nt2.svg'},
+  {'stimulus': 'nontarget3', 'filename': 'nt3.svg'},
+  {'stimulus': 'nontarget4', 'filename': 'nt4.svg'},
+  {'stimulus': 'nontarget5', 'filename': 'nt5.svg'}
 ].concat(
-  ({'stimulus': 'target', 'filename': 'target.png'} \
+  ({'stimulus': 'target', 'filename': 'target.svg'} \
     for i in [0...REAL_NUM_TARGETS])
 )
 
@@ -135,7 +135,7 @@ pp = (msg) ->
 createBlock = (trials, reps) ->
   cptTrials = null
   cptSequenceCheckPassed = false
-  
+
   until cptSequenceCheckPassed
     cptTrials = Examiner.generateTrials(trials, reps)
     cptSequenceCheckPassed = cptSequenceCheck(cptTrials)
@@ -148,7 +148,7 @@ createBlock = (trials, reps) ->
 cptSequenceCheck = (trials) ->
   targetSequence = 0
   nontargetSequence = 0
-  
+
   for trial in trials
     if trial.stimulus is 'target'
       targetSequence += 1
@@ -197,7 +197,7 @@ trialIndex = -1
 # summary of current stimulus
 getStimuli = ->
   trial = trialBlock[trialIndex]
-  
+
   stimuli =
     stimulus: trial?.stimulus
 
@@ -209,7 +209,7 @@ getTaskState = ->
     version: CPT_VERSION
     trialNum: trialIndex
     stimuli: getStimuli()
-    
+
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
@@ -229,7 +229,7 @@ showTrial = (trial) ->
   trialStartTime = $.now()
   responses = [] # keep track of all responses
   responseEvent = null # event to log
-  
+
   $stimulusDiv = $('.stimulusDiv')
   $img = $('<img>',
     alt: trial.stimulus,
@@ -243,13 +243,13 @@ showTrial = (trial) ->
     responseEvent = event
   )
   $stimulusDiv.append($img)
-  
+
   TabCAT.UI.wait(STIMULUS_DISPLAY_DURATION).then(->
     # do this instead of hiding or removing so we can continue
     # recording responses on the img after stimulus goes away
     $img.css('opacity', 0)
   )
-  
+
   # All responses are recorded after the display of the stimulus.
   # The first response after the display of the stimulus is recorded
   # in terms of the response time. Any additional responses prior to the
@@ -260,7 +260,7 @@ showTrial = (trial) ->
     TabCAT.UI.wait(RESPONSE_TIME_LIMIT).then(->
       # disable responses by removing the img
       $('.stimulusDiv').empty()
-      
+
       # once disabled can analyze and log responses
       extraResponses = 'none'
       if responses.length is 0
@@ -279,11 +279,11 @@ showTrial = (trial) ->
         correct = false # more than one response means automatically incorrect
         responseTime = _.first(responses)
         extraResponses = '[' + responses.toString() + ']'
-      
+
       if inPracticeMode
         if correct
           numCorrectInPractice += 1
-          
+
       interpretation =
         correct: correct
         responseTime: responseTime
@@ -292,14 +292,14 @@ showTrial = (trial) ->
       return {responseEvent: responseEvent, interpretation: interpretation}
     )
   )
-  
+
   # wait this long before going to next trial
   trialDone = (
     TabCAT.UI.wait(TRIAL_TIMEOUT).then(->
       return $.Deferred().resolve()
     )
   )
-  
+
   $.when(registerResponses, trialDone).done((obj) ->
     TabCAT.Task.logEvent(getTaskState(), obj.responseEvent, obj.interpretation)
     next()
@@ -335,7 +335,7 @@ handleBeginClick = (event) ->
   $rectangle = $('#rectangle')
   $rectangle.empty()
   $rectangle.append(makeStimulusDiv())
-  
+
   # wait before display of initial trial in the block
   TabCAT.UI.wait(BEFORE_BLOCK_DELAY + INTER_STIMULUS_DELAY).then(->
     next()
@@ -362,7 +362,7 @@ showInstructions = (translation) ->
       if (translation is 'practice_html' and key is '1') or
       (translation is 'additional_practice_html' and key is '2')
         '<p>' + value + '<br/></br>' +
-        '<img class="stimuli" src="img/cpt/'+CPT_VERSION+'/target.png"/></p>'
+        '<img class="stimuli" src="img/cpt/'+CPT_VERSION+'/target.svg"/></p>'
       else
         '<p>' + value + '</p>'
     )
@@ -373,7 +373,7 @@ showInstructions = (translation) ->
 
 
   $html = $html.join('')
-    
+
   $instructions.append("<p></p>" + $html)
   $instructions.appendTo($rectangle)
 
@@ -383,7 +383,7 @@ showInstructions = (translation) ->
 handleStrayTouchStart = (event) ->
   event.preventDefault()
   TabCAT.Task.logEvent(getTaskState(), event)
-  
+
 # INITIALIZATION
 @initTask = ->
   TabCAT.Task.start(
@@ -391,10 +391,10 @@ handleStrayTouchStart = (event) ->
       resStore: translations
     trackViewport: true
   )
-  
+
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
-  
+
   $(->
     # pseudo-randomly select version based on encounter num
     encounterNum = TabCAT.Encounter.getNum()
@@ -406,11 +406,10 @@ handleStrayTouchStart = (event) ->
 
     $task = $('#task')
     $rectangle = $('#rectangle')
-    
+
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-    
+
     showInstructions 'practice_html'
   )
-
