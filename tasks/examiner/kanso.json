@@ -27,7 +27,7 @@
         "img/cpt/c/nt4.svg",
         "img/cpt/c/nt5.svg",
         "img/cpt/c/target.svg",
-        "img/cpt/icon.svg",
+        "img/cpt/icon.png",
         "img/flanker/fixation.png",
         "img/flanker/icon.png",
         "img/flanker/instr_llrll.png",
@@ -66,7 +66,7 @@
         "tasks": {
             "cpt": {
                 "description": "CPT",
-                "icon": "img/cpt/icon.svg",
+                "icon": "img/cpt/icon.png",
                 "start": "cpt.html"
             },
             "flanker": {
