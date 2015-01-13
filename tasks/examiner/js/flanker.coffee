@@ -325,9 +325,9 @@ showFeedback = (translation) ->
 
   $html = switch translation
     when 'feedback_correct' \
-      then '<span class="blue">' + $translation + '</span>'
+      then '<span class="correct">' + $translation + '</span>'
     when 'feedback_incorrect', 'feedback_no_response' \
-      then '<span class="red">' + $translation + '</span>'
+      then '<span class="incorrect">' + $translation + '</span>'
     else translation
 
   $feedback = $('#feedback')
