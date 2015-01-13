@@ -1,11 +1,11 @@
 
 
-span.blue {
-  color: #0000ff;
+span.correct {
+  color: #ffdd00;
 }
 
-span.red {
-  color: #ff0000;
+span.incorrect {
+  color: #ec1848;
 }
 
 /* debug mode */
@@ -43,12 +43,12 @@ span.red {
 /* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
 #stimuli div.feedback {
   position: absolute;
-  left: 0; 
+  left: 0;
   right: 0;
-  top: 0; 
+  top: 0;
   bottom: 0;
   margin: auto;
-  line-height: 300px; 
+  line-height: 300px;
   height: 300px;
   z-index: 3;
   text-align: center;
@@ -107,5 +107,5 @@ span.red {
 }
 
 #responseButtons img.responseArrow {
-  height: 0.8em; 
+  height: 0.8em;
 }

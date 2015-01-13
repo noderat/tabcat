@@ -274,7 +274,7 @@ showBeginButton = ->
 
 hideBeginButton = ->
   $('#beginButton').hide()
-    
+
 showResponseButtons = ->
   hideBeginButton()
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
@@ -286,7 +286,7 @@ hideResponseButtons = ->
 enableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',false)
-  
+
 disableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',true)
@@ -304,9 +304,9 @@ showInstructions = (translation) ->
     then _.map($translation, (value, key) ->
       if (translation is 'practice_html' and key is '2') or
       (translation is 'additional_practice_html' and key is '3')
-        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.png"/>' +
+        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.svg"/>' +
         '<br/>' + value + '<br/>' +
-        '<img class="instructionsArrow" src="img/flanker/instr_llrll.png"/>'
+        '<img class="instructionsArrow" src="img/flanker/instr_llrll.svg"/>'
       else
         '<p>' + value + '</p>'
     )
@@ -322,12 +322,12 @@ showInstructions = (translation) ->
 showFeedback = (translation) ->
   clearStimuli()
   $translation = $.t(translation)
-  
+
   $html = switch translation
     when 'feedback_correct' \
-      then '<span class="blue">' + $translation + '</span>'
+      then '<span class="correct">' + $translation + '</span>'
     when 'feedback_incorrect', 'feedback_no_response' \
-      then '<span class="red">' + $translation + '</span>'
+      then '<span class="incorrect">' + $translation + '</span>'
     else translation
 
   $feedback = $('#feedback')
@@ -340,7 +340,7 @@ hideFeedback = ->
 # is user response correct
 isCorrect = (arrows, response) ->
   arrows.charAt(CORRECT_ARROW_INDEX) is response
-  
+
 # can assume arrows are congruent if the middle
 # two characters are the same
 isCongruent = (arrows) ->
@@ -350,15 +350,15 @@ isCongruent = (arrows) ->
 # heart of the task
 showTrial = (trial) ->
   deferred = new $.Deferred()
-  
+
   # resolved when user responds
   deferred.done((event, responseTime) ->
     disableResponseButtons()
     clearStimuli()
-    
+
     response = event.delegateTarget.value
     correct = isCorrect(trial.arrows, response)
-      
+
     # record meaning of user response event
     interpretation =
       response: response
@@ -373,7 +373,7 @@ showTrial = (trial) ->
         showFeedback 'feedback_correct'
       else
         showFeedback 'feedback_incorrect'
-      
+
       TabCAT.UI.wait(PRACTICE_FEEDBACK_DISPLAY_DURATION).then(->
         hideFeedback()
         TabCAT.UI.wait(PRACTICE_PRE_TRIAL_DELAY).then(->
@@ -385,12 +385,12 @@ showTrial = (trial) ->
         next()
       )
   )
-  
+
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
     disableResponseButtons()
     hideArrow(trial.arrows, trial.upDown)
-      
+
     # record meaning of the event
     interpretation =
       response: null
@@ -412,12 +412,12 @@ showTrial = (trial) ->
   # start showing the trial
   fixationDuration = _.random(FIXATION_PERIOD_MIN, FIXATION_PERIOD_MAX)
   showFixation()
-  
+
   TabCAT.UI.wait(fixationDuration).then(->
     enableResponseButtons()
     trialStartTime = $.now()
     showArrow(trial.arrows, trial.upDown)
-    
+
     # if user responds, then resolve
     $('#leftResponseButton, #rightResponseButton') \
     .one('mousedown touchstart', (event) ->
@@ -431,7 +431,7 @@ showTrial = (trial) ->
     TabCAT.UI.wait(STIMULI_DISPLAY_DURATION).then(->
       deferred.reject()
     )
-   
+
   )
 
 # primary task handler that controls entire flow of task
@@ -476,7 +476,7 @@ handleBeginClick = (event) ->
 # summary of current stimulus
 getStimuli = ->
   trial = trialBlock[trialIndex]
-  
+
   stimuli =
     arrows: trial.arrows
     upDown: trial.upDown
@@ -490,7 +490,7 @@ getTaskState = ->
   state =
     trialNum: trialIndex
     stimuli: getStimuli()
-    
+
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
@@ -521,15 +521,15 @@ loadStimuli = ->
   $imgs = _.map(DEFAULT_TRIALS, (trial) ->
     '<img id="' + trial.arrows + '_' + \
       (if trial.upDown is 'up' then 'up' else 'down') + \
-      '" src="img/flanker/' + trial.arrows + '.png" ' + \
+      '" src="img/flanker/' + trial.arrows + '.svg" ' + \
       'style="display:none" ' + \
       'class="arrow center ' + \
       (if trial.upDown is 'up' then 'aboveFixation"' else 'belowFixation"') + \
       '>')
-  
+
   # create fixation img
   $imgs = $imgs.join('') + '<img id="fixation" ' + \
-    'src="img/flanker/fixation.png" ' + \
+    'src="img/flanker/fixation.svg" ' + \
     'class="center fixation" ' +\
     'style="display:none">'
 
@@ -542,20 +542,19 @@ loadStimuli = ->
       resStore: translations
     trackViewport: true
   )
-  
+
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
-  
+
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
-    
+
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-    
+
     loadStimuli()
     disableResponseButtons()
     showStartScreen()
   )
-
