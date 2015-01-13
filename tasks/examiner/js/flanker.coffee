@@ -256,6 +256,9 @@ pp = (msg) ->
 showFixation = ->
   $('#fixation').show()
 
+hideFixation = ->
+  $('#fixation').hide()
+
 showArrow = (arrows, upDown) ->
   $('#' + arrows + '_' + upDown).show()
 
@@ -416,6 +419,7 @@ showTrial = (trial) ->
   TabCAT.UI.wait(fixationDuration).then(->
     enableResponseButtons()
     trialStartTime = $.now()
+    hideFixation()
     showArrow(trial.arrows, trial.upDown)
 
     # if user responds, then resolve
