@@ -445,15 +445,14 @@ next = ->
     showTrial(trialBlock[trialIndex])
   else # end of block
     if inPracticeMode
-      if practicePassed() # passed practice so go to throwaway mode
+      # passed practice, or failed 3 practices, so go to throwaway mode
+      if practicePassed() or numPracticeBlocks is PRACTICE_MAX_BLOCKS
         inPracticeMode = false
         inThrowawayMode = true
         trialBlock = createThrowawayBlock()
         trialIndex = -1
         showInstructions 'testing_html'
         showBeginButton()
-      else if numPracticeBlocks is PRACTICE_MAX_BLOCKS # failed all 3 practices
-        TabCAT.Task.finish()
       else # start new practice block
         trialBlock = createPracticeBlock()
         trialIndex = -1
