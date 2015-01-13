@@ -106,12 +106,12 @@ FIXATION = 'x'
 RED_TRIANGLE =
   color: 'red'
   shape: 'triangle'
-  src: 'img/setshifting/tri_red.png'
-  
+  src: 'img/setshifting/tri_red.svg'
+
 BLUE_RECTANGLE =
   color: 'blue'
   shape: 'rectangle'
-  src: 'img/setshifting/rect_blue.png'
+  src: 'img/setshifting/rect_blue.svg'
 
 LEFT_RESPONSE  = _.extend(RED_TRIANGLE,   {respValue: 'l'})
 RIGHT_RESPONSE = _.extend(BLUE_RECTANGLE, {respValue: 'r'})
@@ -120,13 +120,13 @@ RIGHT_RESPONSE = _.extend(BLUE_RECTANGLE, {respValue: 'r'})
 RED_RECTANGLE =
   color: 'red'
   shape: 'rectangle'
-  src: 'img/setshifting/rect_red.png'
-  
+  src: 'img/setshifting/rect_red.svg'
+
 BLUE_TRIANGLE =
   color: 'blue'
   shape: 'triangle'
-  src: 'img/setshifting/tri_blue.png'
-  
+  src: 'img/setshifting/tri_blue.svg'
+
 # possible cues
 COLOR_CUE = 'color'
 SHAPE_CUE = 'shape'
@@ -163,7 +163,7 @@ createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
 
   if not colorFirst?
     colorFirst = 1
-  
+
   if colorReps?
     colorTrialsInitial = _.flatten(COLOR_DATA_TEMPLATE for i in [0...colorReps])
     until colorCheckPassed
@@ -205,7 +205,7 @@ createBlock = (colorFirst, colorReps, shapeReps, shiftReps) ->
 
   if shiftReps?
     finalTrials = finalTrials.concat(shiftTrialsWithShiftInfo)
-    
+
   return finalTrials
 
 # check to make sure the correct response is not the same response
@@ -231,7 +231,7 @@ shiftCheck = (trials) ->
   shiftCount = 0
   lastTrial = _.first(trials)
   cueCount = 1
-  
+
   for trial in _.rest(trials)
     if lastTrial.cue is trial.cue
       cueCount += 1
@@ -262,7 +262,7 @@ createThrowawayBlock = ->
 # return a real testing block
 createTestingBlock = ->
   createBlock(COLOR_FIRST, 10, 10, 16)
-  
+
 # pre-create testing block now since it can take some time and
 # don't want a noticeable delay after throwaway block
 testingBlock = createTestingBlock()
@@ -303,19 +303,19 @@ hideFeedback = ->
 # heart of the task
 showTrial = (trial) ->
   deferred = new $.Deferred()
-  
+
   # resolved when user responds
   deferred.done((event, responseTime) ->
     hideTarget()
-  
+
     response = event.delegateTarget.alt
     if response is LEFT_RESPONSE.respValue
       response = LEFT_RESPONSE
     else
       response = RIGHT_RESPONSE
-    
+
     correct = trial.target[trial.cue] is response[trial.cue]
-      
+
     # record meaning of user response event
     interpretation =
       response: response
@@ -330,7 +330,7 @@ showTrial = (trial) ->
         showFeedback 'feedback_correct'
       else
         showFeedback 'feedback_incorrect'
-      
+
       TabCAT.UI.wait(FEEDBACK_DURATION).then(->
         hideFeedback()
         next()
@@ -338,11 +338,11 @@ showTrial = (trial) ->
     else
       next()
   )
-  
+
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
     hideTarget()
-  
+
     # record meaning of the event
     interpretation =
       response: 'none'
@@ -442,7 +442,7 @@ getTaskState = ->
   state =
     trialNum: trialIndex
     stimuli: getStimuli()
-    
+
   if inPracticeMode
     state.practiceMode = true
     state.trialBlock = "practiceBlock" + numPracticeBlocks
@@ -496,7 +496,7 @@ handleBeginButton = (event) ->
     $rectangle.append(makeFixationDiv)
     $rectangle.append(makeTargetDiv)
   )
-  
+
   blockDelay = (
     TabCAT.UI.wait(BEFORE_BLOCK_DELAY).then(->
       return $.Deferred().resolve()
@@ -530,12 +530,12 @@ makeResponseDiv = ->
     alt: RIGHT_RESPONSE.respValue,
     class: 'responseImg responseRightImg',
     src: RIGHT_RESPONSE.src)
-  
+
   $responseDiv.append($imgLeft).append($imgRight)
 
 makeCueDiv = ->
   $cueDiv = $('<div></div>', class: 'cueDiv')
-  
+
 showCue = (translation) ->
   $('.cueDiv').text($.t(translation))
 
@@ -578,14 +578,14 @@ showInstructions = (translation) ->
     else []
 
   $html = $html.join('')
-    
+
   $instructions.append("<p></p>" + $html)
   $instructions.appendTo($rectangle)
-  
+
   $rectangle.append(makeResponseDiv)
   $rectangle.append(makeCueDiv)
   showCue('shape_cue')
-  
+
   switch translation
     when 'practice_html'
       $rectangle.append(makeProgressButton('next_html', handleNextButton))
@@ -599,18 +599,17 @@ showInstructions = (translation) ->
       resStore: translations
     trackViewport: true
   )
-  
+
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
-  
+
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
-    
+
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-    
+
     showInstructions 'practice_html'
   )
-

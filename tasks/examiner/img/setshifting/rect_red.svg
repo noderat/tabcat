@@ -10,9 +10,9 @@
    version="1.1"
    width="128"
    height="128"
-   id="svg4281">
+   id="svg3933">
   <metadata
-     id="metadata4287">
+     id="metadata3939">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -24,9 +24,12 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs4285" />
-  <path
-     d="M 21.694915,93.016949 64.542373,28.745763 108.20339,92.474576 z"
-     id="path5065"
-     style="fill:#0000ff;fill-opacity:1;stroke:none" />
+     id="defs3937" />
+  <rect
+     width="107.93221"
+     height="66.711861"
+     x="10.847458"
+     y="28.745762"
+     id="rect3949"
+     style="fill:#ff0000;fill-opacity:1" />
 </svg>
