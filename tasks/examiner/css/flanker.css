@@ -109,3 +109,21 @@ span.incorrect {
 #responseButtons img.responseArrow {
   height: 0.8em;
 }
+
+#left-button {
+    position: absolute;
+    height: 120.2%;
+    width: 90.1%;
+    left: -65.1%;
+    top: -10.1%;
+    border-radius: 50%;
+}
+
+#right-button {
+    position: absolute;
+    height: 120.2%;
+    width: 90.1%;
+    left: 75%;
+    top: -10.1%;
+    border-radius: 50%;
+}

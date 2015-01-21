@@ -557,6 +557,9 @@ loadStimuli = ->
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
+    # DEBUG
+    return
+
     loadStimuli()
     disableResponseButtons()
     showStartScreen()
