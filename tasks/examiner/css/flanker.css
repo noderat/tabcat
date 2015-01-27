@@ -135,7 +135,7 @@ button.sideButton:active {
 }
 
 button:focus {
-    outline:0 !important3*64/4;
+    outline:0 !important;
 }
 
 #leftButton {
@@ -146,10 +146,49 @@ button:focus {
     left: 85%;
 }
 
-div#stimuli {
+#square {
+    position: absolute;
+    width: 66%;
+    height: 88%;
+    left: 17%;
+    top: 6%;
+}
+
+.thumbsideImage {
+    background-image: url('../img/flanker/thumbside.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+
+}
+
+.instructions {
+    text-align: center;
+}
+
+#seatingInstructions {
+    font-size: 5em;
+}
+
+#seatingInstructions .top {
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 5%;
+}
+
+#seatingInstructions .thumbsideImage {
     position: absolute;
     width: 60%;
-    height: 90%;
+    height: 45%;
     left: 20%;
-    top: 5%;
+    top: 25%;
+}
+
+#seatingInstructions .bottom {
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 85%;
+    color: #ffb800;
+    font-weight: bold;
 }

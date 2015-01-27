@@ -549,17 +549,20 @@ loadStimuli = ->
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
 
-  # DEBUG
-  return
-
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
+    $seatingInstructions = $('#seatingInstructions')
 
-    $task.on('mousedown touchstart', handleStrayTouchStart)
+    # DEBUG
+    #$task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
+    $seatingInstructions.show()
+
+    # DEBUG
+    return
     loadStimuli()
     disableResponseButtons()
     showStartScreen()
