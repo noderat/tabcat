@@ -1,4 +1,10 @@
-
+body {
+  background-color: #324266;
+  color: #eeeeee;
+  /* Helvetica is the "everything is okay" font */
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+}
 
 span.correct {
   color: #ffdd00;
@@ -110,20 +116,28 @@ span.incorrect {
   height: 0.8em;
 }
 
-#left-button {
+button.sideButton {
+    border-color: #ffffff;
+    background-color: #b4b9bf;
+    border-width: 1em;
+    border-style: solid;
+    padding: 0;
+    margin: 0;
     position: absolute;
-    height: 120.2%;
-    width: 90.1%;
-    left: -65.1%;
-    top: -10.1%;
+    height: 200%;
+    width: 150%;
+    top: -50%;
     border-radius: 50%;
 }
 
-#right-button {
-    position: absolute;
-    height: 120.2%;
-    width: 90.1%;
-    left: 75%;
-    top: -10.1%;
-    border-radius: 50%;
+button.sideButton:active {
+    background-color: #787b80;
+}
+
+#leftButton {
+    left: -135%;
+}
+
+#rightButton {
+    left: 85%;
 }
