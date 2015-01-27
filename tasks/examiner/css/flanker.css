@@ -117,21 +117,25 @@ span.incorrect {
 }
 
 button.sideButton {
-    border-color: #ffffff;
-    background-color: #b4b9bf;
-    border-width: 1em;
-    border-style: solid;
-    padding: 0;
-    margin: 0;
     position: absolute;
     height: 200%;
     width: 150%;
     top: -50%;
-    border-radius: 50%;
+    padding: 0;
+    margin: 0;
+    border-color: #ffffff;
+    background-color: #b4b9bf;
+    border-width: 1em;
+    border-style: solid;
+    border-radius: 50%;  /* circular */
 }
 
 button.sideButton:active {
     background-color: #787b80;
+}
+
+button:focus {
+    outline:0 !important3*64/4;
 }
 
 #leftButton {
@@ -140,4 +144,12 @@ button.sideButton:active {
 
 #rightButton {
     left: 85%;
+}
+
+div#stimuli {
+    position: absolute;
+    width: 60%;
+    height: 90%;
+    left: 20%;
+    top: 5%;
 }
