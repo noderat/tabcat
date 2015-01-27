@@ -130,7 +130,7 @@ button.sideButton {
     border-radius: 50%;  /* circular */
 }
 
-button.sideButton:active {
+button.sideButton.pressed {
     background-color: #787b80;
 }
 
@@ -171,6 +171,7 @@ button:focus {
 
 #seatingInstructions .top {
     position: absolute;
+
     width: 100%;
     left: 0%;
     top: 5%;

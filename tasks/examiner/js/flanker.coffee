@@ -545,7 +545,7 @@ MAX_TIME_BETWEEN_TAPS = 250
 MAX_TIME_BETWEEN_CLICKS = 1000
 
 
-onBothButtons = (callback) ->
+onBothSideButtons = (callback) ->
   # map from button ID to when it was last tapped
   buttonLastTapped = {}
 
@@ -566,12 +566,34 @@ onBothButtons = (callback) ->
         now = $.now()
         for own otherButtonId, time of buttonLastTapped
           if otherButtonId != buttonId and time >= now - maxTime
-            $buttons.off()
+            resetSideButtons()
             callback()
             return
 
         buttonLastTapped[buttonId] = now
       )
+
+
+# add/remove the "pressed" class to a button to indicate when it's pressed
+# this isn't full emulation (if you press a button, slide off it, and slide
+# back on, it won't count as pressed), but that's fine since most events in
+# TabCAT fire on touchstart/mousedown
+trackWhenPressed = ($button, pressedClass) ->
+  pressedClass ?= 'pressed'
+
+  $button.on('mousedown touchstart', ->
+    $button.addClass('pressed'))
+  $button.on('mouseup mouseleave touchend touchcancel', ->
+    $button.removeClass('pressed'))
+
+
+resetSideButtons = ->
+  $buttons = $('.sideButton')
+
+  for button in $buttons
+    $button = $(button)
+    $button.off()
+    trackWhenPressed($button)
 
 
 # INITIALIZATION
@@ -596,12 +618,14 @@ onBothButtons = (callback) ->
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
-    $seatingInstructions.show()
-
-    onBothButtons(->
+    # TODO: fake "active" so both buttons can highlight at once
+    resetSideButtons()
+    onBothSideButtons(->
       $seatingInstructions.hide()
       $taskInstructions.fadeIn(duration: FADE_DURATION)
     )
+
+    $rectangle.fadeIn(duration: FADE_DURATION)
 
     # DEBUG
     return
