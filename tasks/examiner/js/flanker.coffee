@@ -207,6 +207,9 @@ STIMULI_DISPLAY_DURATION = 4000
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+# how long it takes to fade in a screen
+FADE_DURATION = 200
+
 # return a practice block
 createPracticeBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 1)
@@ -538,6 +541,39 @@ loadStimuli = ->
 
   $('#stimuli').append($imgs)
 
+MAX_TIME_BETWEEN_TAPS = 250
+MAX_TIME_BETWEEN_CLICKS = 1000
+
+
+onBothButtons = (callback) ->
+  # map from button ID to when it was last tapped
+  buttonLastTapped = {}
+
+  # TODO: add TabCAT event logging
+
+  $buttons = $('.sideButton')
+
+  for button in $buttons
+    $button = $(button)
+
+    do ($button) ->
+      $button.on('touchstart mousedown', (event) ->
+        maxTime = MAX_TIME_BETWEEN_TAPS
+        if event.type is 'mousedown'
+          maxTime = MAX_TIME_BETWEEN_CLICKS
+
+        buttonId = $button.attr('id')
+        now = $.now()
+        for own otherButtonId, time of buttonLastTapped
+          if otherButtonId != buttonId and time >= now - maxTime
+            $buttons.off()
+            callback()
+            return
+
+        buttonLastTapped[buttonId] = now
+      )
+
+
 # INITIALIZATION
 @initTask = ->
   TabCAT.Task.start(
@@ -553,6 +589,7 @@ loadStimuli = ->
     $task = $('#task')
     $rectangle = $('#rectangle')
     $seatingInstructions = $('#seatingInstructions')
+    $taskInstructions = $('#taskInstructions')
 
     # DEBUG
     #$task.on('mousedown touchstart', handleStrayTouchStart)
@@ -560,6 +597,11 @@ loadStimuli = ->
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     $seatingInstructions.show()
+
+    onBothButtons(->
+      $seatingInstructions.hide()
+      $taskInstructions.fadeIn(duration: FADE_DURATION)
+    )
 
     # DEBUG
     return
