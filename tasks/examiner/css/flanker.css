@@ -154,12 +154,6 @@ button:focus {
     top: 6%;
 }
 
-.thumbsideImage {
-    background-image: url('../img/flanker/thumbside.jpg');
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
 .instructions {
     text-align: center;
 }
@@ -168,16 +162,16 @@ button:focus {
     position: absolute;
     width: 100%;
     left: 0%;
-    top: 5%;
+    top: 0%;
+}
+
+#seatingInstructions .top p {
     font-size: 5em;
 }
 
-#seatingInstructions .thumbsideImage {
-    position: absolute;
-    width: 60%;
-    height: 45%;
-    left: 20%;
-    top: 25%;
+#seatingInstructions .howToHoldTablet {
+    width: 60em;
+    height: 45em;
 }
 
 #seatingInstructions .bottom {
