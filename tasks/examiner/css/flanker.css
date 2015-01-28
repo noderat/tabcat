@@ -158,23 +158,18 @@ button:focus {
     background-image: url('../img/flanker/thumbside.jpg');
     background-size: contain;
     background-repeat: no-repeat;
-
 }
 
 .instructions {
     text-align: center;
 }
 
-#seatingInstructions {
-    font-size: 5em;
-}
-
 #seatingInstructions .top {
     position: absolute;
-
     width: 100%;
     left: 0%;
     top: 5%;
+    font-size: 5em;
 }
 
 #seatingInstructions .thumbsideImage {
@@ -190,6 +185,43 @@ button:focus {
     width: 100%;
     left: 0%;
     top: 85%;
+    font-size: 5em;
+}
+
+.tapToContinue {
+    font-weight: bold;
+    color: #ffb800;
+}
+
+#taskInstructions .top {
+   position: absolute;
+   width: 100%;
+   left: 0%;
+   top: 0%;
+   font-size: 3em;
+}
+
+#taskInstructions .top span.center {
     color: #ffb800;
     font-weight: bold;
+}
+
+#taskInstructions img.fiveArrows {
+    width: 16em;
+    height: 2em;
+    clear: both;
+}
+
+#taskInstructions img.oneArrow {
+    width: 3em;
+    height: 2em;
+    vertical-align: middle;
+}
+
+#taskInstructions .bottom {
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 85%;
+    font-size: 5em;
 }
