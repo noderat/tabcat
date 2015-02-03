@@ -448,13 +448,16 @@ next = ->
 getStimuli = ->
   trial = trialBlock[trialIndex]
 
-  stimuli =
-    arrows: trial.arrows
-    upDown: trial.upDown
-    congruent: isCongruent(trial.arrows)
-    fixationDuration: fixationDuration
+  if trial?
+    stimuli =
+      arrows: trial.arrows
+      upDown: trial.upDown
+      congruent: isCongruent(trial.arrows)
+      fixationDuration: fixationDuration
 
-  return stimuli
+    return stimuli
+  else
+    return null
 
 # summary of the current state of the task
 getTaskState = ->
