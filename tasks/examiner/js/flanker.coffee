@@ -281,25 +281,9 @@ showBeginButton = ->
 hideBeginButton = ->
   $('#beginButton').hide()
 
-showResponseButtons = ->
-  hideBeginButton()
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.show()
-
-hideResponseButtons = ->
-  $('#leftResponseButton, #rightResponseButton').hide()
-
 enableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',false)
-
-disableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',true)
-
-# method not currently used
-responseButtonsEnabled = ->
-  !$('#leftResponseButton').prop('disabled')
 
 showInstructions = (translation) ->
   clearStimuli()
@@ -454,14 +438,14 @@ next = ->
         inThrowawayMode = true
         trialBlock = createThrowawayBlock()
         trialIndex = -1
-        showInstructions 'testing_html'
+        showInstructions($('#testingInstructions'))
         showBeginButton()
       else # start new practice block
         trialBlock = createPracticeBlock()
         trialIndex = -1
         numCorrectInPractice = 0
         numPracticeBlocks += 1
-        showInstructions 'additional_practice_html'
+        showInstructions($('#additionalPracticeInstructions'))
         showBeginButton()
     else if inThrowawayMode # after throwaway block, go to real testing
       inThrowawayMode = false
@@ -522,7 +506,7 @@ showStartScreen = ->
   showBeginButton()
 
 # load the stimuli imgs
-loadStimuli = ->
+initStimuli = ->
   # create the arrow imgs
   $imgs = _.map(DEFAULT_TRIALS, (trial) ->
     '<img id="' + trial.arrows + '_' + \
@@ -596,6 +580,30 @@ resetSideButtons = ->
     trackWhenPressed($button)
 
 
+# show the intial page
+showSeatingInstructions = ->
+  $seatingInstructions = $('#seatingInstructions')
+  resetSideButtons()
+  onBothSideButtons(->
+    $seatingInstructions.hide()
+    showInstructions($('#practiceInstructions'))
+  )
+
+  # don't fade in because this is the first thing we show
+  $seatingInstructions.show()
+
+
+# show the full instructions, for before practice
+showInstructions = ($instructionsDiv) ->
+  resetSideButtons()
+  onBothSideButtons(->
+    $instructionsDiv.hide()
+    next()
+  )
+
+  $instructionsDiv.fadeIn(duration: FADE_DURATION)
+
+
 # INITIALIZATION
 @initTask = ->
   TabCAT.Task.start(
@@ -610,31 +618,22 @@ resetSideButtons = ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
-    $seatingInstructions = $('#seatingInstructions')
-    $taskInstructions = $('#taskInstructions')
 
     # DEBUG
     #$task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
-    # for border-width
+    # for border-width. have to link to $rectangle because
+    # not visible yet
     for $button in $('.sideButton')
       TabCAT.UI.linkEmToPercentOfHeight($button, $rectangle)
 
-    # TODO: fake "active" so both buttons can highlight at once
-    resetSideButtons()
-    onBothSideButtons(->
-      $seatingInstructions.hide()
-      $taskInstructions.fadeIn(duration: FADE_DURATION)
-    )
+    # initialize #stimuli
+    initStimuli()
+
+    # start
+    showSeatingInstructions()
 
     $rectangle.fadeIn(duration: FADE_DURATION)
-
-    loadStimuli()
-
-    # DEBUG
-    return
-    disableResponseButtons()
-    showStartScreen()
   )
