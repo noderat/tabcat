@@ -12,8 +12,12 @@
   <body class="fullscreen unselectable">
     <div id="task" class="fullscreen">
       <div id="rectangle" style="display:none">
-        <button class="sideButton" id="leftButton"></button>
-        <button class="sideButton" id="rightButton"></button>
+        <div id="input">
+          <button id="leftButton" class="sideButton"></button>
+          <img id="leftButtonArrow" class="buttonArrow" src="img/flanker/left.svg">
+          <button id="rightButton" class="sideButton"></button>
+          <img id="rightButtonArrow" class="buttonArrow" src="img/flanker/right.svg">
+        </div>
         <div id="square">
           <div id="seatingInstructions" class="instructions">
             <div class="top">
@@ -51,6 +55,8 @@
               <span class="tapToContinue">Tap with both thumbs to start practice</span>
             </div>
           </div>
+          <div id="stimuli" style="display:none">
+
         </div>
       </div>
     </div>

@@ -618,6 +618,10 @@ resetSideButtons = ->
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
+    # for border-width
+    for $button in $('.sideButton')
+      TabCAT.UI.linkEmToPercentOfHeight($button, $rectangle)
+
     # TODO: fake "active" so both buttons can highlight at once
     resetSideButtons()
     onBothSideButtons(->
@@ -627,9 +631,10 @@ resetSideButtons = ->
 
     $rectangle.fadeIn(duration: FADE_DURATION)
 
+    loadStimuli()
+
     # DEBUG
     return
-    loadStimuli()
     disableResponseButtons()
     showStartScreen()
   )

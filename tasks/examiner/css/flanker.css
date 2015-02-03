@@ -14,6 +14,10 @@ span.incorrect {
   color: #ec1848;
 }
 
+button:focus {
+    outline:0 !important;
+}
+
 /* debug mode */
 #task div {
   border: 0px solid;
@@ -116,8 +120,9 @@ span.incorrect {
   height: 0.8em;
 }
 
-button.sideButton {
+#input button.sideButton {
     position: absolute;
+    z-index: 1000;
     height: 200%;
     width: 150%;
     top: -50%;
@@ -127,23 +132,36 @@ button.sideButton {
     background-color: #b4b9bf;
     border-width: 1em;
     border-style: solid;
-    border-radius: 50%;  /* circular */
+    border-radius: 50%;  /* circular, though we only see a small segment */
 }
 
-button.sideButton.pressed {
+#input img.buttonArrow {
+    position: absolute;
+    z-index: 1001;
+    pointer-events: none;
+    top: 46%;
+    width: 12em;
+    height: 8em;
+}
+
+#input button.sideButton.pressed {
     background-color: #787b80;
-}
-
-button:focus {
-    outline:0 !important;
 }
 
 #leftButton {
     left: -135%;
 }
 
+#leftButtonArrow {
+    left: 2%;
+}
+
 #rightButton {
     left: 85%;
+}
+
+#rightButtonArrow {
+    left: 89%;
 }
 
 #square {
