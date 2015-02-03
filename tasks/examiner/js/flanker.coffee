@@ -272,15 +272,6 @@ clearStimuli = ->
   $stimuli = $('#stimuli')
   $stimuli.children().hide()
 
-showBeginButton = ->
-  hideResponseButtons()
-  $beginButton = $('#beginButton')
-  $beginButton.one('mousedown touchstart', handleBeginClick)
-  $beginButton.show()
-
-hideBeginButton = ->
-  $('#beginButton').hide()
-
 enableResponseButtons = ->
   $responseButtons = $('#leftResponseButton, #rightResponseButton')
   $responseButtons.prop('disabled',false)
@@ -339,11 +330,13 @@ isCongruent = (arrows) ->
 
 # heart of the task
 showTrial = (trial) ->
+  resetSideButtons()
+
   deferred = new $.Deferred()
 
   # resolved when user responds
   deferred.done((event, responseTime) ->
-    disableResponseButtons()
+    resetSideButtons()
     clearStimuli()
 
     response = event.delegateTarget.value
@@ -378,7 +371,6 @@ showTrial = (trial) ->
 
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
-    disableResponseButtons()
     hideArrow(trial.arrows, trial.upDown)
 
     # record meaning of the event
@@ -404,13 +396,12 @@ showTrial = (trial) ->
   showFixation()
 
   TabCAT.UI.wait(fixationDuration).then(->
-    enableResponseButtons()
     trialStartTime = $.now()
     hideFixation()
     showArrow(trial.arrows, trial.upDown)
 
     # if user responds, then resolve
-    $('#leftResponseButton, #rightResponseButton') \
+    $('#leftButton, #rightButton') \
     .one('mousedown touchstart', (event) ->
       responseTime = $.now() - trialStartTime
       event.preventDefault()
@@ -439,14 +430,12 @@ next = ->
         trialBlock = createThrowawayBlock()
         trialIndex = -1
         showInstructions($('#testingInstructions'))
-        showBeginButton()
       else # start new practice block
         trialBlock = createPracticeBlock()
         trialIndex = -1
         numCorrectInPractice = 0
         numPracticeBlocks += 1
         showInstructions($('#additionalPracticeInstructions'))
-        showBeginButton()
     else if inThrowawayMode # after throwaway block, go to real testing
       inThrowawayMode = false
       trialBlock = createTestingBlock()
@@ -454,14 +443,6 @@ next = ->
       next()
     else
       TabCAT.Task.finish()
-
-handleBeginClick = (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  clearStimuli()
-  showResponseButtons()
-  disableResponseButtons()
-  next()
 
 # summary of current stimulus
 getStimuli = ->
@@ -619,8 +600,7 @@ showInstructions = ($instructionsDiv) ->
     $task = $('#task')
     $rectangle = $('#rectangle')
 
-    # DEBUG
-    #$task.on('mousedown touchstart', handleStrayTouchStart)
+    $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
