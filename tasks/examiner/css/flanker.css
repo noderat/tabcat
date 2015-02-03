@@ -152,7 +152,7 @@ button:focus {
     left: -135%;
 }
 
-#leftButtonArrow {
+#leftButtonArrowOverlay {
     left: 2%;
 }
 
@@ -160,7 +160,7 @@ button:focus {
     left: 85%;
 }
 
-#rightButtonArrow {
+#rightButtonArrowOverlay {
     left: 89%;
 }
 
