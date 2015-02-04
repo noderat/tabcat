@@ -10,6 +10,10 @@
 # 4) Feedback Display: in practice trials, displays feedback to the subject
 #    about their response for 2 seconds
 
+# translations current not used, need to update
+#
+# since so much content is in flanker.html recommend using the
+# data-i18n attribute and updating with $element.i18n()
 translations =
   en:
     translation:
@@ -252,10 +256,6 @@ trialIndex = -1
 # current fixation duration for current trial
 fixationDuration = null
 
-# for debugging
-pp = (msg) ->
-  $('#debug').append(JSON.stringify(msg)).append('</br>')
-
 showFixation = ->
   $('#fixation').show()
 
@@ -271,34 +271,6 @@ hideArrow = (arrows, upDown) ->
 clearStimuli = ->
   $stimuli = $('#stimuli')
   $stimuli.children().hide()
-
-enableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',false)
-
-showInstructions = (translation) ->
-  clearStimuli()
-  $translation = $.t(translation, {returnObjectTrees: true})
-
-  $html = switch translation
-    when 'practice_html', 'additional_practice_html' \
-    then _.map($translation, (value, key) ->
-      if (translation is 'practice_html' and key is '2') or
-      (translation is 'additional_practice_html' and key is '3')
-        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.svg"/>' +
-        '<br/>' + value + '<br/>' +
-        '<img class="instructionsArrow" src="img/flanker/instr_llrll.svg"/>'
-      else
-        '<p>' + value + '</p>'
-    )
-    when 'testing_html' then _.map($translation, (value, key) ->
-      '<p>' + value + '</p>'
-    )
-    else []
-
-  $instructions = $('#instructions')
-  $instructions.html("<p></p><p></p>" + $html.join(''))
-  $instructions.show()
 
 showFeedback = (translation) ->
   clearStimuli()
@@ -497,14 +469,14 @@ initStimuli = ->
       (if trial.upDown is 'up' then 'up' else 'down') + \
       '" src="img/flanker/' + trial.arrows + '.svg" ' + \
       'style="display:none" ' + \
-      'class="arrow center ' + \
+      'class="arrow ' + \
       (if trial.upDown is 'up' then 'aboveFixation"' else 'belowFixation"') + \
       '>')
 
   # create fixation img
   $imgs = $imgs.join('') + '<img id="fixation" ' + \
     'src="img/flanker/fixation.svg" ' + \
-    'class="center fixation" ' +\
+    'class="fixation" ' +\
     'style="display:none">'
 
   $('#stimuli').append($imgs)
@@ -602,6 +574,7 @@ showInstructions = ($instructionsDiv) ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
+    $square = $('#square')
 
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
@@ -619,4 +592,5 @@ showInstructions = ($instructionsDiv) ->
     showSeatingInstructions()
 
     $rectangle.fadeIn(duration: FADE_DURATION)
+    TabCAT.UI.linkEmToPercentOfHeight($square)
   )

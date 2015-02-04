@@ -6,14 +6,6 @@ body {
   margin: 0;
 }
 
-span.correct {
-  color: #ffdd00;
-}
-
-span.incorrect {
-  color: #ec1848;
-}
-
 button:focus {
     outline:0 !important;
 }
@@ -30,8 +22,8 @@ button:focus {
 
 #stimuli {
   position: relative;
-  height: 85%;
-  /*background-color: #eeeeee; for debug */
+  width: 100%;
+  height: 100%;
 }
 
 #instructions {
@@ -51,7 +43,7 @@ button:focus {
 }
 
 /* 'line-height' value is arbitrary; should be equal to 'height' for vertical centering */
-#stimuli div.feedback {
+#feedback {
   position: absolute;
   left: 0;
   right: 0;
@@ -60,43 +52,46 @@ button:focus {
   margin: auto;
   line-height: 300px;
   height: 300px;
-  z-index: 3;
   text-align: center;
-  font-size: 6em;
+  font-size: 8em;
+}
+
+
+#feedback span.correct {
+  color: #ffdd00;
+}
+
+#feedback span.incorrect {
+  color: #ec1848;
+}
+
+#stimuli img {
+  position: absolute;
 }
 
 #stimuli img.arrow {
-  height: 40em;
-  width: 40em;
-}
-
-#stimuli img.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  height: 60em;
+  width: 60em;
 }
 
 /* offset by half the image dimensions */
 #stimuli img.fixation {
-  height: 3em;
-  width: 3em;
-  margin-top: -1.5em;
-  margin-left: -1.5em;
-  z-index: 2;
+  height: 6em;
+  width: 6em;
+  top: 47%;
+  left: 47%;
 }
 
 /* 7em above fixation = -(40/2 + 7) */
 #stimuli img.aboveFixation {
-  margin-top: -27em;
-  margin-left: -20em;
-  z-index: 1;
+  left: 20%;
+  top: 0%;
 }
 
 /* 7em below fixation = -(40/2 - 7) */
 #stimuli img.belowFixation {
-  margin-top: -13em;
-  margin-left: -20em;
-  z-index: 1;
+  left: 20%;
+  top: 40%;
 }
 
 #responseButtons {
