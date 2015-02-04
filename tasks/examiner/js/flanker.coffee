@@ -308,7 +308,6 @@ showTrial = (trial) ->
 
   # resolved when user responds
   deferred.done((event, responseTime) ->
-    resetSideButtons()
     clearStimuli()
 
     response = event.delegateTarget.value
@@ -370,14 +369,22 @@ showTrial = (trial) ->
   TabCAT.UI.wait(fixationDuration).then(->
     trialStartTime = $.now()
     hideFixation()
+    resetSideButtons()
     showArrow(trial.arrows, trial.upDown)
+
+    responseStatus = {}
 
     # if user responds, then resolve
     $('#leftButton, #rightButton') \
     .one('mousedown touchstart', (event) ->
+      # don't do this more than once per trial
+      # can't use stopPropagation() because it messes with
+      # trackWhenPressed()
+      if reponseStatus?.responded
+        return
+      responseStatus.responded = true
+
       responseTime = $.now() - trialStartTime
-      event.preventDefault()
-      event.stopPropagation()
       deferred.resolve(event, responseTime)
     )
 
