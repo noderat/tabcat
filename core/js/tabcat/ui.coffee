@@ -135,11 +135,14 @@ TabCAT.UI.fixAspectRatio = ($element, ratio) ->
 #
 # Also, it is a good not to show text in elements sized this way until after
 # this method is called.
-TabCAT.UI.linkEmToPercentOfHeight = ($element) ->
+TabCAT.UI.linkEmToPercentOfHeight = ($element, $linkTo) ->
   if not $element?
     $element = $('body')
   else
     $element = $($element)
+
+  if not $linkTo?
+    $linkTo = $element
 
   # handle multiple elements correctly
   if $element.length > 1
@@ -148,8 +151,9 @@ TabCAT.UI.linkEmToPercentOfHeight = ($element) ->
 
   fixElement = ->
     # for font-size, "%" means % of default font size, not % of height.
-    sizeInPx = $element.height() / 100
+    sizeInPx = $linkTo.height() / 100
     $element.css('font-size': sizeInPx + 'px')
+
 
   fixElement($element)
 
