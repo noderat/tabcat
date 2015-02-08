@@ -12,6 +12,7 @@ v0.8.4, 2015-02-08 -- EXAMINER upgrade
   - flanker:
     - color changes (#175)
     - better instructions (#174)
+      - i18n temporarily disabled (need new translations)
     - always run test, even if flunked practice (#173)
     - hide fixation point (+) when showing arrows (#171)
   - all examiner tasks: convert PNGs to SVGs (#115)
