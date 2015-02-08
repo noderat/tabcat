@@ -1,3 +1,21 @@
+v0.8.4, 2015-02-08 -- EXAMINER upgrade
+- build system:
+  - single shared kanso packages directory (#129)
+  - make can handle '%' in $TABCAT_HOST
+- core:
+  - TabCAT.UI.linkEmToPercentOfHeight() can now link to another element
+  - fix validate_doc_update when secObjs.admins is undefined (#164)
+- console:
+  - higher login page layout, so keyboard doesn't cover fields (#163)
+  - track aborted tasks, show in task picker (#167)
+- tasks:
+  - flanker:
+    - color changes (#175)
+    - better instructions (#174)
+    - always run test, even if flunked practice (#173)
+    - hide fixation point (+) when showing arrows (#171)
+  - all examiner tasks: convert PNGs to SVGs (#115)
+
 v0.8.3, 2014-12-02 -- Timeout for login
 - core:
   - login/logout functions can now time out (#159)
