@@ -11,4 +11,3 @@ packages
 /core/js/couchdb/*/*.js
 /core/js/tabcat/*.js
 /tasks/*/scoring/js
-/kanso-packages
