@@ -36,7 +36,9 @@ PUSHED = .pushed-$(subst :,_,$(subst /,_,$(TABCAT_HOST)))
 
 # find the names of all data DBs on the server. If this fails,
 # at least include tabcat-data
-TABCAT_DATA_DBS := $(sort tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | $(ROOT_DIR)/scripts/json-ls '' | grep -E '^tabcat-data-'))
+# json-ls can't read from stdin on Windows, just use grep instead
+#TABCAT_DATA_DBS := $(sort tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | $(ROOT_DIR)/scripts/json-ls '' | grep -E '^tabcat-data-'))
+TABCAT_DATA_DBS := $(sort tabcat-data $(shell curl -sS $(TABCAT_HOST)/_all_dbs | grep -oE 'tabcat-data(-[^"]*)?'))
 PUSHED_DATA_DBS := $(patsubst %, $(PUSHED)_%, $(TABCAT_DATA_DBS))
 
 # the above, but including the "tabcat" DB
