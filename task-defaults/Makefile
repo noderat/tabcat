@@ -70,7 +70,7 @@ design.json: packages kanso.json $(KANSO_DEPS)
 
 packages:
 	mkdir -p ../../kanso-packages
-	ln -sfh ../../kanso-packages $@
+	ln -sfn ../../kanso-packages $@
 
 # scoring code, for "tabcat-data*" DBs
 $(PUSHED_DATA_DBS): %: scoring/design.json
@@ -93,11 +93,11 @@ scoring/scoring.coffee:
 
 scoring/js:
 	mkdir -p $(@D)
-	ln -sfh ../../../core/js $@
+	ln -sfn ../../../core/js $@
 
 scoring/packages:
 	mkdir -p $(@D)
-	ln -sfh ../packages $@
+	ln -sfn ../packages $@
 
 # optionally, pack all the JS code into a single file, js/task.js.
 # (include js/task.js in kanso.json to activate this)

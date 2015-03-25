@@ -63,7 +63,7 @@ design.json: packages kanso.json $(KANSO_DEPS) $(MANIFEST)
 
 packages:
 	mkdir -p ../kanso-packages
-	ln -sfh ../kanso-packages $@
+	ln -sfn ../kanso-packages $@
 
 $(PUSHED_DBS): %: design.json
 	../scripts/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/core

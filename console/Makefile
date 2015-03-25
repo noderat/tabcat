@@ -51,7 +51,7 @@ design.json: packages kanso.json $(KANSO_DEPS)
 
 packages:
 	mkdir -p ../kanso-packages
-	ln -sfh ../kanso-packages $@
+	ln -sfn ../kanso-packages $@
 
 $(PUSHED): design.json
 	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/console
