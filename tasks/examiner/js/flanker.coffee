@@ -10,6 +10,10 @@
 # 4) Feedback Display: in practice trials, displays feedback to the subject
 #    about their response for 2 seconds
 
+# translations current not used, need to update
+#
+# since so much content is in flanker.html recommend using the
+# data-i18n attribute and updating with $element.i18n()
 translations =
   en:
     translation:
@@ -207,6 +211,9 @@ STIMULI_DISPLAY_DURATION = 4000
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+# how long it takes to fade in a screen
+FADE_DURATION = 200
+
 # return a practice block
 createPracticeBlock = ->
   Examiner.generateTrials(DEFAULT_TRIALS, 1)
@@ -249,10 +256,6 @@ trialIndex = -1
 # current fixation duration for current trial
 fixationDuration = null
 
-# for debugging
-pp = (msg) ->
-  $('#debug').append(JSON.stringify(msg)).append('</br>')
-
 showFixation = ->
   $('#fixation').show()
 
@@ -268,59 +271,6 @@ hideArrow = (arrows, upDown) ->
 clearStimuli = ->
   $stimuli = $('#stimuli')
   $stimuli.children().hide()
-
-showBeginButton = ->
-  hideResponseButtons()
-  $beginButton = $('#beginButton')
-  $beginButton.one('mousedown touchstart', handleBeginClick)
-  $beginButton.show()
-
-hideBeginButton = ->
-  $('#beginButton').hide()
-
-showResponseButtons = ->
-  hideBeginButton()
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.show()
-
-hideResponseButtons = ->
-  $('#leftResponseButton, #rightResponseButton').hide()
-
-enableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',false)
-
-disableResponseButtons = ->
-  $responseButtons = $('#leftResponseButton, #rightResponseButton')
-  $responseButtons.prop('disabled',true)
-
-# method not currently used
-responseButtonsEnabled = ->
-  !$('#leftResponseButton').prop('disabled')
-
-showInstructions = (translation) ->
-  clearStimuli()
-  $translation = $.t(translation, {returnObjectTrees: true})
-
-  $html = switch translation
-    when 'practice_html', 'additional_practice_html' \
-    then _.map($translation, (value, key) ->
-      if (translation is 'practice_html' and key is '2') or
-      (translation is 'additional_practice_html' and key is '3')
-        '<img class="instructionsArrow" src="img/flanker/instr_rrrrr.svg"/>' +
-        '<br/>' + value + '<br/>' +
-        '<img class="instructionsArrow" src="img/flanker/instr_llrll.svg"/>'
-      else
-        '<p>' + value + '</p>'
-    )
-    when 'testing_html' then _.map($translation, (value, key) ->
-      '<p>' + value + '</p>'
-    )
-    else []
-
-  $instructions = $('#instructions')
-  $instructions.html("<p></p><p></p>" + $html.join(''))
-  $instructions.show()
 
 showFeedback = (translation) ->
   clearStimuli()
@@ -352,11 +302,12 @@ isCongruent = (arrows) ->
 
 # heart of the task
 showTrial = (trial) ->
+  resetSideButtons()
+
   deferred = new $.Deferred()
 
   # resolved when user responds
   deferred.done((event, responseTime) ->
-    disableResponseButtons()
     clearStimuli()
 
     response = event.delegateTarget.value
@@ -391,7 +342,6 @@ showTrial = (trial) ->
 
   # fails when user does not respond (i.e. trial times out)
   deferred.fail(->
-    disableResponseButtons()
     hideArrow(trial.arrows, trial.upDown)
 
     # record meaning of the event
@@ -417,17 +367,24 @@ showTrial = (trial) ->
   showFixation()
 
   TabCAT.UI.wait(fixationDuration).then(->
-    enableResponseButtons()
     trialStartTime = $.now()
     hideFixation()
+    resetSideButtons()
     showArrow(trial.arrows, trial.upDown)
 
+    responseStatus = {}
+
     # if user responds, then resolve
-    $('#leftResponseButton, #rightResponseButton') \
+    $('#leftButton, #rightButton') \
     .one('mousedown touchstart', (event) ->
+      # don't do this more than once per trial
+      # can't use stopPropagation() because it messes with
+      # trackWhenPressed()
+      if reponseStatus?.responded
+        return
+      responseStatus.responded = true
+
       responseTime = $.now() - trialStartTime
-      event.preventDefault()
-      event.stopPropagation()
       deferred.resolve(event, responseTime)
     )
 
@@ -451,15 +408,13 @@ next = ->
         inThrowawayMode = true
         trialBlock = createThrowawayBlock()
         trialIndex = -1
-        showInstructions 'testing_html'
-        showBeginButton()
+        showInstructions($('#testingInstructions'))
       else # start new practice block
         trialBlock = createPracticeBlock()
         trialIndex = -1
         numCorrectInPractice = 0
         numPracticeBlocks += 1
-        showInstructions 'additional_practice_html'
-        showBeginButton()
+        showInstructions($('#additionalPracticeInstructions'))
     else if inThrowawayMode # after throwaway block, go to real testing
       inThrowawayMode = false
       trialBlock = createTestingBlock()
@@ -468,25 +423,20 @@ next = ->
     else
       TabCAT.Task.finish()
 
-handleBeginClick = (event) ->
-  event.preventDefault()
-  event.stopPropagation()
-  clearStimuli()
-  showResponseButtons()
-  disableResponseButtons()
-  next()
-
 # summary of current stimulus
 getStimuli = ->
   trial = trialBlock[trialIndex]
 
-  stimuli =
-    arrows: trial.arrows
-    upDown: trial.upDown
-    congruent: isCongruent(trial.arrows)
-    fixationDuration: fixationDuration
+  if trial?
+    stimuli =
+      arrows: trial.arrows
+      upDown: trial.upDown
+      congruent: isCongruent(trial.arrows)
+      fixationDuration: fixationDuration
 
-  return stimuli
+    return stimuli
+  else
+    return null
 
 # summary of the current state of the task
 getTaskState = ->
@@ -519,24 +469,103 @@ showStartScreen = ->
   showBeginButton()
 
 # load the stimuli imgs
-loadStimuli = ->
+initStimuli = ->
   # create the arrow imgs
   $imgs = _.map(DEFAULT_TRIALS, (trial) ->
     '<img id="' + trial.arrows + '_' + \
       (if trial.upDown is 'up' then 'up' else 'down') + \
       '" src="img/flanker/' + trial.arrows + '.svg" ' + \
       'style="display:none" ' + \
-      'class="arrow center ' + \
+      'class="arrow ' + \
       (if trial.upDown is 'up' then 'aboveFixation"' else 'belowFixation"') + \
       '>')
 
   # create fixation img
   $imgs = $imgs.join('') + '<img id="fixation" ' + \
     'src="img/flanker/fixation.svg" ' + \
-    'class="center fixation" ' +\
+    'class="fixation" ' +\
     'style="display:none">'
 
   $('#stimuli').append($imgs)
+
+MAX_TIME_BETWEEN_TAPS = 250
+MAX_TIME_BETWEEN_CLICKS = 1000
+
+
+onBothSideButtons = (callback) ->
+  # map from button ID to when it was last tapped
+  buttonLastTapped = {}
+
+  # TODO: add TabCAT event logging
+
+  $buttons = $('.sideButton')
+
+  for button in $buttons
+    $button = $(button)
+
+    do ($button) ->
+      $button.on('touchstart mousedown', (event) ->
+        maxTime = MAX_TIME_BETWEEN_TAPS
+        if event.type is 'mousedown'
+          maxTime = MAX_TIME_BETWEEN_CLICKS
+
+        buttonId = $button.attr('id')
+        now = $.now()
+        for own otherButtonId, time of buttonLastTapped
+          if otherButtonId != buttonId and time >= now - maxTime
+            resetSideButtons()
+            callback()
+            return
+
+        buttonLastTapped[buttonId] = now
+      )
+
+
+# add/remove the "pressed" class to a button to indicate when it's pressed
+# this isn't full emulation (if you press a button, slide off it, and slide
+# back on, it won't count as pressed), but that's fine since most events in
+# TabCAT fire on touchstart/mousedown
+trackWhenPressed = ($button, pressedClass) ->
+  pressedClass ?= 'pressed'
+
+  $button.on('mousedown touchstart', ->
+    $button.addClass('pressed'))
+  $button.on('mouseup mouseleave touchend touchcancel', ->
+    $button.removeClass('pressed'))
+
+
+resetSideButtons = ->
+  $buttons = $('.sideButton')
+
+  for button in $buttons
+    $button = $(button)
+    $button.off()
+    trackWhenPressed($button)
+
+
+# show the intial page
+showSeatingInstructions = ->
+  $seatingInstructions = $('#seatingInstructions')
+  resetSideButtons()
+  onBothSideButtons(->
+    $seatingInstructions.hide()
+    showInstructions($('#practiceInstructions'))
+  )
+
+  # don't fade in because this is the first thing we show
+  $seatingInstructions.show()
+
+
+# show the full instructions, for before practice
+showInstructions = ($instructionsDiv) ->
+  resetSideButtons()
+  onBothSideButtons(->
+    $instructionsDiv.hide()
+    next()
+  )
+
+  $instructionsDiv.fadeIn(duration: FADE_DURATION)
+
 
 # INITIALIZATION
 @initTask = ->
@@ -552,12 +581,23 @@ loadStimuli = ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
+    $square = $('#square')
 
     $task.on('mousedown touchstart', handleStrayTouchStart)
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
-    loadStimuli()
-    disableResponseButtons()
-    showStartScreen()
+    # for border-width. have to link to $rectangle because
+    # not visible yet
+    for $button in $('.sideButton')
+      TabCAT.UI.linkEmToPercentOfHeight($button, $rectangle)
+
+    # initialize #stimuli
+    initStimuli()
+
+    # start
+    showSeatingInstructions()
+
+    $rectangle.fadeIn(duration: FADE_DURATION)
+    TabCAT.UI.linkEmToPercentOfHeight($square)
   )
