@@ -1,0 +1,31 @@
+{
+    "name": "memory",
+    "version": "0.8.4",
+    "description": "Memory",
+    "attachments": [
+        "css/memory.css",
+        "img/icon.png",
+        "js/task.js",
+        "memory.html"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "batteries": {
+            "memory": {
+                "description": "Memory Tasks",
+                "tasks": [
+                    "memory"
+                ]
+            }
+        },
+        "tasks": {
+            "memory": {
+                "description": "Memory",
+                "icon": "img/icon.png",
+                "start": "memory.html"
+            }
+        }
+    }
+}
