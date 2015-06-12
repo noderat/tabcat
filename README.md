@@ -12,6 +12,29 @@ TabCAT can deal with a poor or nonexistent network connection by automatically s
 Installation
 ------------
 
+### Development Environment
+
+A packaged development environment is now provided using VirtualBox and Vagrant.  The instructions here do not replace the instructions for installation of the server, but merely provide supplement:
+
+ * Download and install [Vagrant](https://www.vagrantup.com/downloads.html)
+ * Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+ * Clone the source into a directory of your choice.  Ensure that line-endings are checked out as Unix-style; otherwise, the setup scripts will not work.  Additionally, line-endings should be committed as Unix-style to avoid potential issues.
+ * Open a console and navigate to the directory of the cloned source. If on Windows, this console must be run as an administrator in order for symlinks to not break the build.
+ * Run the following command:  
+```sh
+vagrant up
+```
+ * From this directory, a private key is provided for accessing the virtual machine.  For this particular box, in order to SSH in, this is required.  The location of it is /.vagrant/machines/default/virtualbox/private_key  .  If using PuTTY, you will need to create a .ppk from the private_key by using PuTTYgen before it can be used to log in.  
+ * Using keypair authentication, log into the virtual machine using an SSH client of choice.  If ssh is found as a binary in your path, you can simply perform "vagrant ssh" and it will attempt to log you in. By default, the port for SSH on the VM is 2222, although Vagrant will attempt to re-assign it if it is already in use.  The user to authenticate is "vagrant".  This user has sudo privileges with no password required.
+ * Inside the VM, perform the following command to open port 5984 so that the server may be accessed from outside the VM.  It will need to be performed any time the VM is halted or reloaded.
+```sh
+sudo iptables -A  IN_public_allow -p tcp -m tcp --dport 5984 -m conntrack --ctstate NEW -j ACCEPT
+```
+ * To start the couchdb server, in an instance of an SSH session, perform the following command.  This can also be performed as a job that can run in the background, but if run in the foreground, this terminal window must be open while operating the TabCAT server.
+```sh
+sudo -u couchdb couchdb
+``` 
+
 ### Dependencies
 
 On the server side, TabCAT requires CouchDB ([installation instructions](http://docs.couchdb.org/en/latest/install/index.html)). We have been running on version 1.3.0, but anything later than 1.2.0 should work.
