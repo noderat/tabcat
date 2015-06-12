@@ -84,8 +84,8 @@ CHOICES = {
 SLIDES = [
   { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
   { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
-  { type: 'exampleRecall', person: PEOPLE.MAN1, recall 'food' },
-  { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall 'animal' },
+  { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
+  { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' },
   #there should be a break here for the two slides, with click confirmation
   { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
   { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
