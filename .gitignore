@@ -13,3 +13,4 @@ packages
 /tasks/*/scoring/js
 .tabcat_password
 .idea*
+.vagrant*
