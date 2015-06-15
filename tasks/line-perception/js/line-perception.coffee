@@ -77,6 +77,9 @@ LinePerceptionTask = class
   # start intensity of the real task here
   START_INTENSITY: null
 
+  # testing perseveration requires a 25 percent difference in the lines
+  PERSEVERATION_INTENSITY: 25
+
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
 
@@ -93,6 +96,10 @@ LinePerceptionTask = class
       stepsDown: @STEPS_DOWN
       stepsUp: @STEPS_UP
     )
+
+    @perseverationTrialsShown = 0
+
+    @currentReversal = 0 #used to track when perseveration trial should update
 
   # call this to show the task onscreen
   start: ->
@@ -127,9 +134,6 @@ LinePerceptionTask = class
 
     correct = event.data.correct
 
-    interpretation = @staircase.addResult(
-      correct, ignoreReversals: @inPracticeMode())
-
     if @inPracticeMode()
       if correct
         @practiceStreakLength += 1
@@ -139,6 +143,20 @@ LinePerceptionTask = class
           @staircase.lastIntensityChange = 0
       else
         @practiceStreakLength = 0
+
+    if @inPerseverationReversal()
+      if @shouldTestPerseveration()
+        @staircase.intensity = @PERSEVERATION_INTENSITY
+        @perseverationTrialsShown += 1
+
+    interpretation = @staircase.addResult(
+      correct,
+      ignoreReversals: @inPracticeMode(),
+      noChange: @shouldTestPerseveration())
+
+    if (@staircase.numReversals > @currentReversal)
+      @currentReversal += 1
+      @perseverationTrialsShown = 0 # reset for new reversals
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
@@ -190,6 +208,16 @@ LinePerceptionTask = class
   # should we show the practice mode caption?
   shouldShowPracticeCaption: ->
     @practiceStreakLength < @PRACTICE_CAPTION_MAX_STREAK
+
+  inPerseverationReversal: ->
+    @staircase.numReversals == 0 or
+      @staircase.numReversals == 3 or
+      @staircase.numReversals == 6 or
+      @staircase.numReversals == 9 or
+      @staircase.numReversals == 12
+
+  shouldTestPerseveration: ->
+    @perseverationTrialsShown <= 2
 
 
 # abstract base class for line length tasks
