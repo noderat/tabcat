@@ -80,6 +80,9 @@ LinePerceptionTask = class
   # testing perseveration requires a 25 percent difference in the lines
   PERSEVERATION_INTENSITY: 25
 
+  # how many perseveration trials per reversal
+  PERSEVERATION_TRIAL_MAX_STREAK: 2
+
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
 
@@ -100,6 +103,10 @@ LinePerceptionTask = class
     @perseverationTrialsShown = 0
 
     @currentReversal = 0 #used to track when perseveration trial should update
+
+    @intensityHasBeenReset = false
+
+    @lastIntensity = @START_INTENSITY
 
   # call this to show the task onscreen
   start: ->
@@ -145,9 +152,17 @@ LinePerceptionTask = class
         @practiceStreakLength = 0
 
     if @inPerseverationReversal()
+      if @firstTrialOfPerseverationTest()
+        @lastIntensity = @staircase.intensity
+        @intensityHasBeenReset = false
+
       if @shouldTestPerseveration()
         @staircase.intensity = @PERSEVERATION_INTENSITY
         @perseverationTrialsShown += 1
+      else if @shouldResetIntensity()
+        @intensityHasBeenReset = true
+        @staircase.intensity = @lastIntensity
+        @staircase.lastIntensityChange = 0
 
     interpretation = @staircase.addResult(
       correct,
@@ -217,7 +232,16 @@ LinePerceptionTask = class
       @staircase.numReversals == 12
 
   shouldTestPerseveration: ->
-    @perseverationTrialsShown <= 2
+    @perseverationTrialsShown <= @PERSEVERATION_TRIAL_MAX_STREAK and
+      !@inPracticeMode() and @inPerseverationReversal()
+
+  shouldResetIntensity: ->
+    @perseverationTrialsShown >= @PERSEVERATION_TRIAL_MAX_STREAK and
+      @inPerseverationReversal() and not @intensityHasBeenReset and
+      not @inPracticeMode()
+
+  firstTrialOfPerseverationTest: ->
+    @perseverationTrialsShown == 0
 
 
 # abstract base class for line length tasks
@@ -415,12 +439,31 @@ LineLengthTask = class extends LinePerceptionTask
     $bottomLineTargetDiv.on(
       'mousedown touchstart', trial.bottomLine, @handleLineTouchStart)
 
+
+    #stats for debugging, will remove for production
+    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
+    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $testingPerseveration = $(
+      '<p>testing perseveration: ' + @shouldTestPerseveration() + '</p>')
+    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
+    $perseverationTrialsShown = $(
+      '<p>perseveration trials shown: ' + @perseverationTrialsShown + '</p>')
+    $topLineLength = $(
+      '<p>top line length: ' + trial.topLine.targetCss.width + '</p>')
+    $bottomLineLength = $(
+      '<p>bottom line length: ' + trial.bottomLine.targetCss.width + '</p>')
+    $stats = $('<div></div>', class: 'testStats')
+    $stats.append($currentReversal, $numReversals, $testingPerseveration,
+      $intensity, $perseverationTrialsShown,
+      $topLineLength, $bottomLineLength)
+
     # put them in an offscreen div
     layoutNum = @staircase.trialNum % @NUM_LAYOUTS
     $containerDiv = $('<div></div>', class: 'parallelLineLayout' + layoutNum)
     $containerDiv.hide()
     $containerDiv.append(
-      $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
+      $topLineDiv, $topLineTargetDiv,
+      $bottomLineDiv, $bottomLineTargetDiv, $stats)
 
     # show practice caption, if required
     if @shouldShowPracticeCaption()
