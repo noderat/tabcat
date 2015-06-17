@@ -336,6 +336,24 @@ LineLengthTask = class extends LinePerceptionTask
     $line2TargetAreaDiv.on(
       'mousedown touchstart', trial.line2, @handleLineTouchStart)
 
+    #stats for debugging, will remove for production
+    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
+    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $testingCatchTrial = $(
+      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
+    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
+    $catchTrialsShown = $(
+      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
+    $line1skew = $(
+      '<p>line 1 skew: ' + trial.line1.skew + '</p>')
+    $line2skew = $(
+      '<p>line 2 skew: ' + trial.line2.skew + '</p>')
+    $stats = $('<div></div>', class: 'testStats')
+    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
+      $intensity, $catchTrialsShown,
+      $line1skew, $line2skew)
+
+
     # put them in a container, and rotate it
     $stimuliDiv = $('<div></div>', class: 'lineOrientationStimuli')
     $stimuliDiv.css(@rotationCss(trial.referenceLine.orientation))
@@ -355,6 +373,7 @@ LineLengthTask = class extends LinePerceptionTask
       $trialDiv.append($practiceCaptionDiv)
 
     $trialDiv.append($stimuliDiv)
+    $trialDiv.append($stats)
 
     return $trialDiv
 
