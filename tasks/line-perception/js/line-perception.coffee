@@ -77,11 +77,11 @@ LinePerceptionTask = class
   # start intensity of the real task here
   START_INTENSITY: null
 
-  # testing perseveration requires a 25 percent difference in the lines
-  PERSEVERATION_INTENSITY: 25
+  # testing on-task requires a 25 percent difference in the lines
+  ON_TASK_INTENSITY: 25
 
-  # how many perseveration trials per reversal
-  PERSEVERATION_TRIAL_MAX_STREAK: 2
+  # how many on-task trials per reversal
+  ON_TASK_TRIAL_MAX_STREAK: 2
 
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
@@ -100,9 +100,9 @@ LinePerceptionTask = class
       stepsUp: @STEPS_UP
     )
 
-    @perseverationTrialsShown = 0
+    @onTaskTrialsShown = 0
 
-    @currentReversal = 0 #used to track when perseveration trial should update
+    @currentReversal = 0 #used to track when on-task trial should update
 
     @intensityHasBeenReset = false
 
@@ -151,14 +151,14 @@ LinePerceptionTask = class
       else
         @practiceStreakLength = 0
 
-    if @inPerseverationReversal()
-      if @firstTrialOfPerseverationTest()
+    if @inOnTaskReversal()
+      if @firstTrialOfOnTaskTest()
         @lastIntensity = @staircase.intensity
         @intensityHasBeenReset = false
 
-      if @shouldTestPerseveration()
-        @staircase.intensity = @PERSEVERATION_INTENSITY
-        @perseverationTrialsShown += 1
+      if @shouldTestOnTask()
+        @staircase.intensity = @ON_TASK_INTENSITY
+        @onTaskTrialsShown += 1
       else if @shouldResetIntensity()
         @intensityHasBeenReset = true
         @staircase.intensity = @lastIntensity
@@ -167,11 +167,11 @@ LinePerceptionTask = class
     interpretation = @staircase.addResult(
       correct,
       ignoreReversals: @inPracticeMode(),
-      noChange: @shouldTestPerseveration())
+      noChange: @shouldTestOnTask())
 
     if (@staircase.numReversals > @currentReversal)
       @currentReversal += 1
-      @perseverationTrialsShown = 0 # reset for new reversals
+      @onTaskTrialsShown = 0 # reset for new reversals
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
@@ -224,24 +224,24 @@ LinePerceptionTask = class
   shouldShowPracticeCaption: ->
     @practiceStreakLength < @PRACTICE_CAPTION_MAX_STREAK
 
-  inPerseverationReversal: ->
+  inOnTaskReversal: ->
     @staircase.numReversals == 0 or
       @staircase.numReversals == 3 or
       @staircase.numReversals == 6 or
       @staircase.numReversals == 9 or
       @staircase.numReversals == 12
 
-  shouldTestPerseveration: ->
-    @perseverationTrialsShown <= @PERSEVERATION_TRIAL_MAX_STREAK and
-      !@inPracticeMode() and @inPerseverationReversal()
+  shouldTestOnTask: ->
+    @onTaskTrialsShown <= @ON_TASK_TRIAL_MAX_STREAK and
+      !@inPracticeMode() and @inOnTaskReversal()
 
   shouldResetIntensity: ->
-    @perseverationTrialsShown >= @PERSEVERATION_TRIAL_MAX_STREAK and
-      @inPerseverationReversal() and not @intensityHasBeenReset and
+    @onTaskTrialsShown >= @ON_TASK_TRIAL_MAX_STREAK and
+      @inOnTaskReversal() and not @intensityHasBeenReset and
       not @inPracticeMode()
 
-  firstTrialOfPerseverationTest: ->
-    @perseverationTrialsShown == 0
+  firstTrialOfOnTaskTest: ->
+    @onTaskTrialsShown == 0
 
 
 # abstract base class for line length tasks
@@ -443,18 +443,18 @@ LineLengthTask = class extends LinePerceptionTask
     #stats for debugging, will remove for production
     $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
     $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
-    $testingPerseveration = $(
-      '<p>testing perseveration: ' + @shouldTestPerseveration() + '</p>')
+    $testingOnTask = $(
+      '<p>testing on task: ' + @shouldTestOnTask() + '</p>')
     $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
-    $perseverationTrialsShown = $(
-      '<p>perseveration trials shown: ' + @perseverationTrialsShown + '</p>')
+    $onTaskTrialsShown = $(
+      '<p>on task trials shown: ' + @onTaskTrialsShown + '</p>')
     $topLineLength = $(
       '<p>top line length: ' + trial.topLine.targetCss.width + '</p>')
     $bottomLineLength = $(
       '<p>bottom line length: ' + trial.bottomLine.targetCss.width + '</p>')
     $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingPerseveration,
-      $intensity, $perseverationTrialsShown,
+    $stats.append($currentReversal, $numReversals, $testingOnTask,
+      $intensity, $onTaskTrialsShown,
       $topLineLength, $bottomLineLength)
 
     # put them in an offscreen div
