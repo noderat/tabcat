@@ -81,7 +81,7 @@ LinePerceptionTask = class
   ON_TASK_INTENSITY: 25
 
   # how many on-task trials per reversal
-  ON_TASK_TRIAL_MAX_STREAK: 2
+  CATCH_TRIAL_MAX: 2
 
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
@@ -100,13 +100,15 @@ LinePerceptionTask = class
       stepsUp: @STEPS_UP
     )
 
-    @onTaskTrialsShown = 0
+    @catchTrialsShown = 0
 
     @currentReversal = 0 #used to track when on-task trial should update
 
     @intensityHasBeenReset = false
 
     @lastIntensity = @START_INTENSITY
+
+    @completedCatchTrials = false
 
   # call this to show the task onscreen
   start: ->
@@ -125,7 +127,28 @@ LinePerceptionTask = class
 
   # show the next trial for the task
   showNextTrial: ->
+
+    if (@staircase.numReversals > @currentReversal)
+      @currentReversal += 1
+      @catchTrialsShown = 0 # reset for new reversals
+
+    if @inCatchTrialReversal() and not @inPracticeMode()
+      if @firstTrialOfCatchTrialTest()
+        @lastIntensity = @staircase.intensity
+        @intensityHasBeenReset = false
+        @completedCatchTrials = false
+
+      if @shouldResetIntensity()
+        @intensityHasBeenReset = true
+        @staircase.intensity = @lastIntensity
+        @staircase.lastIntensityChange = 0
+
+      else if @shouldTestCatchTrial()
+        @staircase.intensity = @ON_TASK_INTENSITY
+        @catchTrialsShown += 1
+
     $nextTrialDiv = @getNextTrialDiv()
+
     $('#task').empty()
     $('#task').append($nextTrialDiv)
     TabCAT.UI.fixAspectRatio($nextTrialDiv, @ASPECT_RATIO)
@@ -151,27 +174,13 @@ LinePerceptionTask = class
       else
         @practiceStreakLength = 0
 
-    if @inOnTaskReversal()
-      if @firstTrialOfOnTaskTest()
-        @lastIntensity = @staircase.intensity
-        @intensityHasBeenReset = false
-
-      if @shouldTestOnTask()
-        @staircase.intensity = @ON_TASK_INTENSITY
-        @onTaskTrialsShown += 1
-      else if @shouldResetIntensity()
-        @intensityHasBeenReset = true
-        @staircase.intensity = @lastIntensity
-        @staircase.lastIntensityChange = 0
-
     interpretation = @staircase.addResult(
       correct,
-      ignoreReversals: @inPracticeMode(),
-      noChange: @shouldTestOnTask())
+      ignoreReversals: @inPracticeMode()
+      inCatchTrial: @shouldTestCatchTrial() and not @completedCatchTrials)
 
-    if (@staircase.numReversals > @currentReversal)
-      @currentReversal += 1
-      @onTaskTrialsShown = 0 # reset for new reversals
+    if (@catchTrialsShown >= 2 and not @completedCatchTrials)
+      @completedCatchTrials = true
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
@@ -224,24 +233,24 @@ LinePerceptionTask = class
   shouldShowPracticeCaption: ->
     @practiceStreakLength < @PRACTICE_CAPTION_MAX_STREAK
 
-  inOnTaskReversal: ->
-    @staircase.numReversals == 0 or
-      @staircase.numReversals == 3 or
-      @staircase.numReversals == 6 or
-      @staircase.numReversals == 9 or
+  inCatchTrialReversal: ->
+    @staircase.numReversals == 0 or \
+      @staircase.numReversals == 3 or \
+      @staircase.numReversals == 6 or \
+      @staircase.numReversals == 9 or \
       @staircase.numReversals == 12
 
-  shouldTestOnTask: ->
-    @onTaskTrialsShown <= @ON_TASK_TRIAL_MAX_STREAK and
-      !@inPracticeMode() and @inOnTaskReversal()
+  shouldTestCatchTrial: ->
+    @catchTrialsShown < @CATCH_TRIAL_MAX and \
+      !@inPracticeMode() and @inCatchTrialReversal()
 
   shouldResetIntensity: ->
-    @onTaskTrialsShown >= @ON_TASK_TRIAL_MAX_STREAK and
-      @inOnTaskReversal() and not @intensityHasBeenReset and
+    @catchTrialsShown >= @CATCH_TRIAL_MAX and \
+      @inCatchTrialReversal() and not @intensityHasBeenReset and \
       not @inPracticeMode()
 
-  firstTrialOfOnTaskTest: ->
-    @onTaskTrialsShown == 0
+  firstTrialOfCatchTrialTest: ->
+    @catchTrialsShown == 0
 
 
 # abstract base class for line length tasks
@@ -443,18 +452,18 @@ LineLengthTask = class extends LinePerceptionTask
     #stats for debugging, will remove for production
     $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
     $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
-    $testingOnTask = $(
-      '<p>testing on task: ' + @shouldTestOnTask() + '</p>')
+    $testingCatchTrial = $(
+      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
     $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
-    $onTaskTrialsShown = $(
-      '<p>on task trials shown: ' + @onTaskTrialsShown + '</p>')
+    $catchTrialsShown = $(
+      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
     $topLineLength = $(
       '<p>top line length: ' + trial.topLine.targetCss.width + '</p>')
     $bottomLineLength = $(
       '<p>bottom line length: ' + trial.bottomLine.targetCss.width + '</p>')
     $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingOnTask,
-      $intensity, $onTaskTrialsShown,
+    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
+      $intensity, $catchTrialsShown,
       $topLineLength, $bottomLineLength)
 
     # put them in an offscreen div
@@ -552,11 +561,35 @@ LineLengthTask = class extends LinePerceptionTask
     $line2TargetDiv.on(
       'mousedown touchstart', trial.line2, @handleLineTouchStart)
 
+    #stats for debugging, will remove for production
+    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
+    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $testingCatchTrial = $(
+      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
+    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
+    $catchTrialsShown = $(
+      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
+    $shortLineLength = $(
+      '<p>short line length: ' + trial.line1.lineLength + '</p>')
+    $longLineLength = $(
+      '<p>long line length: ' + trial.line2.lineLength + '</p>')
+    $armLength = $(
+      '<p>arm length: ' + trial.armLength + '</p>')
+    $stemLength = $(
+      '<p>stem length: ' + trial.stemLength + '</p>')
+    $angle = $(
+      '<p>angle: ' + trial.angle + '</p>')
+    $stats = $('<div></div>', class: 'testStats')
+    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
+      $intensity, $catchTrialsShown,
+      $shortLineLength, $longLineLength,
+      $armLength, $stemLength, $angle)
+
     # put them in an offscreen div
     $containerDiv = $('<div></div>')
     $containerDiv.hide()
     $containerDiv.append(
-      $line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv)
+      $line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv, $stats)
 
     # show practice caption, if required
     if @shouldShowPracticeCaption()
@@ -609,6 +642,7 @@ LineLengthTask = class extends LinePerceptionTask
       height: stemLength
       width: @LINE_WIDTH
 
+
     # offset stem to the left or right to avoid perseverative tapping
     # in the center of the screen
     if _.sample([true, false])
@@ -642,11 +676,15 @@ LineLengthTask = class extends LinePerceptionTask
         correct: (armLength >= stemLength)
         css: line1Css
         targetCss: line1TargetCss
+        lineLength: shortLineLength
       line2:
         correct: (stemLength >= armLength)
         css: line2Css
         targetCss: line2TargetCss
+        lineLength: longLineLength
       angle: angle
+      armLength: armLength
+      stemLength: stemLength
     }
 
   rotatePercentBox: (box, angle) ->

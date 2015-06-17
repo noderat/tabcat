@@ -570,7 +570,10 @@ TabCAT.Task.Staircase = class
   # - ignoreReversals: if true, don't count reversals or include them
   #   in the interpretation we return. Useful for when we want practice mode
   #   to do some staircasing.
+  # - inCatchTrial: if true, ignore reversals, don't increment trialNum,
+  #   don't keep track of streaks, and don't score
   addResult: (correct, options) ->
+
     @trialNum += 1
 
     # normalize to true, false, or null
@@ -616,6 +619,7 @@ TabCAT.Task.Staircase = class
     # handle reversals
     reversal = (
       not options?.ignoreReversals and
+      not options?.inCatchTrial and
       (intensityChange * @lastIntensityChange < 0 or
         @intensity != rawIntensity))  # i.e. we hit the floor/ceiling
 
