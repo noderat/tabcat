@@ -385,6 +385,7 @@ TabCAT.Task.finish = (options) ->
 
 # score the current task (must call Task.start() first)
 TabCAT.Task.score = ->
+  #where does eventLog and taskDoc.name come from?
   TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
 
 
@@ -583,7 +584,7 @@ TabCAT.Task.Staircase = class
       correct: correct
 
     # bail out if result is not scored
-    if not correct? or options?.noChange
+    if not correct? or options?.noChange or options?.inCatchTrial
       return interpretation
 
     # handle streak

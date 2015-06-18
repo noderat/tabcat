@@ -96,10 +96,19 @@ makeScorer = (taskName) ->
       item.state.intensity for item in eventLog \
       when item?.interpretation?.reversal)
 
+    catchTrials = (
+      item.interpretation?.correct for item in eventLog \
+        when item?.state?.catchTrial is true
+    )
+
+    catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
+      / catchTrials.length ) * 100)
+
     score =
       description: 'Spatial Perception'
       lessIsMore: true
       value: gauss.Vector(intensitiesAtReversal[2..]).mean()
+      catchTrialsScore: catchTrialScore
 
     if TASK_TO_NORMS[taskName]?
       score.norms = TASK_TO_NORMS[taskName]

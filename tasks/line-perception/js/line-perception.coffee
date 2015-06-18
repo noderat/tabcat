@@ -210,6 +210,8 @@ LinePerceptionTask = class
 
     if @inPracticeMode()
       state.practiceMode = true
+    else if @inCatchTrialReversal() and not @completedCatchTrials
+      state.catchTrial = true
 
     return state
 
