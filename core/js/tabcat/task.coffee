@@ -594,6 +594,15 @@ TabCAT.Task.Staircase = class
       @streakLength = 1
       @lastCorrect = correct
 
+    #given this intensity range, change steps required
+    #TODO: only apply to line perception test
+    if 1 <= @intensity <= 4
+      @minCorrect = 2
+      @stepsUp = 1
+    else #reset to default values for lines test
+      @minCorrect = 1
+      @stepsUp = 3
+
     # find out if we're supposed to change intensity
     if correct and @streakLength >= @minCorrect
       change = -@stepsDown
