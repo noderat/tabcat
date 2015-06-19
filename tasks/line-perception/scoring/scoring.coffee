@@ -32,57 +32,48 @@ else
   Scoring = TabCAT.Scoring
 
 
-# norms as of 2014-08-16
+# norms as of 2015-06-16
 TASK_TO_NORMS =
   'line-orientation': [
     {
       cohort:
         minAge: 50
-        maxAge: 70
-      mean: 5.0
-      n: 18
-      stddev: 1.8
-    }, {
-      cohort:
-        minAge: 71
         maxAge: 91
-      mean: 5.6
-      n: 19
-      stddev: 1.4
+        meanAge: 70
+      mean: 4.7
+      n: 49
+      stddev: 2.0
+      education:
+        mean: 17.0
+        stdev: 2.0
     }
   ],
   'parallel-line-length': [
     {
       cohort:
         minAge: 50
-        maxAge: 70
-      mean: 4.1
-      n: 18
-      stddev: 1.9
-    }, {
-      cohort:
-        minAge: 71
         maxAge: 91
-      mean: 4.8
-      n: 19
-      stddev: 2.0
+        meanAge: 70
+      mean: 3.6
+      n: 49
+      stddev: 1.5
+      education:
+        mean: 17.0
+        stdev: 2.0
     }
   ],
   'perpendicular-line-length': [
     {
       cohort:
         minAge: 50
-        maxAge: 70
-      mean: 11.0
-      n: 18
-      stddev: 5.1
-    }, {
-      cohort:
-        minAge: 71
         maxAge: 91
-      mean: 12.1
-      n: 19
-      stddev: 4.5
+        meanAge: 70
+      mean: 10.2
+      n: 49
+      stddev: 4.0
+      education:
+        mean: 17.0
+        stdev: 2.0
     }
   ]
 
