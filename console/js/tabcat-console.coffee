@@ -302,6 +302,10 @@ SCORE_HTML = '''
       <p class="description">Raw Score</p>
       <p class="value"></p>
     </div>
+    <div class="catchTrialScore">
+      <p class="description">Catch Trial Score</p>
+      <p class="value"></p>
+    </div>
     <div class="norms">
       <table class="norm">
         <thead>
@@ -368,5 +372,12 @@ TabCAT.Console.populateWithScores = ($scoresDiv, scores) ->
         $norm.find('.percentile').text(percentile ? '-')
 
         $score.find('.scoreBody .norms tbody').append($norm)
+
+    catchTrialScore = "N/A"
+    if score.catchTrialsScore?
+      catchTrialScore = parseInt(score.catchTrialsScore) + '%'
+
+    $score.find('.scoreBody .catchTrialScore .value').text( \
+      catchTrialScore)
 
     $scoresDiv.append($score)
