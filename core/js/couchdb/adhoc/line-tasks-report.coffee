@@ -51,7 +51,8 @@ HEADER_SUFFIXES = [
 ].concat(report.DATA_QUALITY_HEADERS).concat([
   'time',
   'trials',
-  'timePerTrial'
+  'timePerTrial',
+  'catchTrialScore'
 ])
 
 # combine task prefix with header suffix
@@ -89,13 +90,24 @@ patientHandler = (patientRecord) ->
             item.state.intensity for item in task.eventLog \
             when item?.interpretation?.reversal)
 
+        catchTrials = (
+          item.interpretation?.correct for item in task.eventLog \
+          when item?.state?.catchTrial is true
+        )
+
+        catchTrialScore = 'N/A'
+        if catchTrials.length > 0
+          catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
+            / catchTrials.length ) * 100)
+
         taskToInfo[task.name] = [
           report.getVersion(task),
           report.getDate(task),
         ].concat(report.getDataQualityCols(encounter)).concat([
           totalTime,
           numTrials,
-          totalTime / numTrials
+          totalTime / numTrials,
+          catchTrialScore
         ]).concat(intensitiesAtReversal)
 
   if _.isEmpty(taskToInfo)
