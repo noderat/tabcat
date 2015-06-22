@@ -15,7 +15,7 @@ echo "Please enter Admin user's id:"
 read ADMIN_USER
 echo "Please enter Admin user's password:"
 read -s ADMIN_PASSWORD
-curl --header "Content-Type: application/json" -X PUT $ADMINS_SECTION/$ADMIN_USER -d '"'$ADMIN_PASSWORD'"'
+curl -X PUT $ADMINS_SECTION/$ADMIN_USER -d '"'$ADMIN_PASSWORD'"'
 
 AUTH_STRING=$ADMIN_USER:$ADMIN_PASSWORD
 
