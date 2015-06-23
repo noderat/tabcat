@@ -40,9 +40,9 @@ TASK_TO_NORMS =
         minAge: 50
         maxAge: 91
         meanAge: 70
-      mean: 4.7
+      mean: 5.5
       n: 49
-      stddev: 2.0
+      stddev: 2.3
       education:
         mean: 17.0
         stdev: 2.0
@@ -54,9 +54,9 @@ TASK_TO_NORMS =
         minAge: 50
         maxAge: 91
         meanAge: 70
-      mean: 3.6
+      mean: 4.3
       n: 49
-      stddev: 1.5
+      stddev: 1.7
       education:
         mean: 17.0
         stdev: 2.0
@@ -68,9 +68,9 @@ TASK_TO_NORMS =
         minAge: 50
         maxAge: 91
         meanAge: 70
-      mean: 10.2
+      mean: 11.9
       n: 49
-      stddev: 4.0
+      stddev: 4.7
       education:
         mean: 17.0
         stdev: 2.0
