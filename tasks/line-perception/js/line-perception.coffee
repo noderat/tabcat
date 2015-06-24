@@ -128,7 +128,9 @@ LinePerceptionTask = class
     correct = event.data.correct
 
     interpretation = @staircase.addResult(
-      correct, ignoreReversals: @inPracticeMode())
+      correct,
+      ignoreReversals: @inPracticeMode(),
+      useRefinedScoring: true)
 
     if @inPracticeMode()
       if correct

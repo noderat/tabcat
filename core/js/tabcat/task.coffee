@@ -570,6 +570,9 @@ TabCAT.Task.Staircase = class
   # - ignoreReversals: if true, don't count reversals or include them
   #   in the interpretation we return. Useful for when we want practice mode
   #   to do some staircasing.
+  # - useRefinedScoring: if true, uses advanced staircasing logic for higher
+  #   performers, based on the Levitt 1971 2 down (harder) and 1 up (easier)
+  #   rule to approximate 71% accuracy
   addResult: (correct, options) ->
     @trialNum += 1
 
@@ -589,6 +592,15 @@ TabCAT.Task.Staircase = class
     else
       @streakLength = 1
       @lastCorrect = correct
+
+    if options?.useRefinedScoring
+      #given this intensity range, change steps required
+      if 1 <= @intensity <= 4
+        @minCorrect = 2
+        @stepsUp = 1
+      else #reset to default values for lines test
+        @minCorrect = 1
+        @stepsUp = 3
 
     # find out if we're supposed to change intensity
     if correct and @streakLength >= @minCorrect
