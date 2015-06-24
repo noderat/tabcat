@@ -1,3 +1,8 @@
+v0.8.6, 2015-06-24 -- Added refined scoring
+- tasks:
+  - line-perception:
+    - added refined scoring for high performers
+
 v0.8.5, 2015-06-22 -- Update Line Perception Norms
 - build system:
   - fixed bug in initial couchdb setup script

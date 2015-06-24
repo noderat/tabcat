@@ -164,6 +164,12 @@ LinePerceptionTask = class
 
     correct = event.data.correct
 
+    interpretation = @staircase.addResult(
+      correct,
+      ignoreReversals: @inPracticeMode(),
+      inCatchTrial: @shouldTestCatchTrial() and not @completedCatchTrials,
+      useRefinedScoring: true)
+
     if @inPracticeMode()
       if correct
         @practiceStreakLength += 1
@@ -173,11 +179,6 @@ LinePerceptionTask = class
           @staircase.lastIntensityChange = 0
       else
         @practiceStreakLength = 0
-
-    interpretation = @staircase.addResult(
-      correct,
-      ignoreReversals: @inPracticeMode()
-      inCatchTrial: @shouldTestCatchTrial() and not @completedCatchTrials)
 
     if (@catchTrialsShown >= 2 and not @completedCatchTrials)
       @completedCatchTrials = true
