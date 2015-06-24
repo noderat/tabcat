@@ -1,1 +1,0 @@
-../../../task-defaults/scoring/app.coffee
