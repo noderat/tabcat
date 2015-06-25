@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="fullscreen">
 <head>
-    <title>Memory</title>
+    <title>Digit Symbol</title>
     <meta charset="utf-8" />
     <!-- turn off zooming -->
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../core/css/tabcat.css">
     <link rel="stylesheet" href="css/digit-symbol.css">
 </head>
-<body class="fullscreen unselectable blueBackground">
+<body class="fullscreen unselectable">
 <div id="task" class="fullscreen">
     <div id="rectangle">
         <div id="iconBar">
@@ -43,10 +43,29 @@
             </div>
         </div>
         <div id="startScreen" style="display:none">
-            <p>Welcome.</p>
-            <p>Ready to <span class="catch-comets">Begin Digit Symbol</span>?</p>
+
+            <div class="startScreenMessage"></div>
+
+            <p>Look at these boxes above.</p>
+            <p>Each has a number in the upper part and a picture in the lower part.  Each number has its own picture.</p>
+
             <button type="button">Begin</button>
         </div>
+
+        <div id="focusNumber">
+
+        </div>
+
+        <div id="symbolBar">
+            <div id="symbol1" class="symbol"><img src="img/3.1.png" /></div>
+            <div id="symbol2" class="symbol"><img src="img/7.1.png" /></div>
+            <div id="symbol3" class="symbol"><img src="img/4.1.png" /></div>
+            <div id="symbol4" class="symbol"><img src="img/1.1.png" /></div>
+            <div id="symbol5" class="symbol"><img src="img/6.1.png" /></div>
+            <div id="symbol6" class="symbol"><img src="img/5.1.png" /></div>
+            <div id="symbol7" class="symbol"><img src="img/2.1.png" /></div>
+        </div>
+
     </div>
 </div>
 <script src="../core/js/tabcat.js"></script>
