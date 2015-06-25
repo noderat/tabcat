@@ -59,10 +59,13 @@ showStartScreen = ->
     $rectangle = $('#rectangle')
 
     TabCAT.UI.requireLandscapeMode($task)
-    $task.on('mousedown touchstart', catchStrayTouchStart)
+    $task.on('mousedown touchstart', startTask)
 
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     showStartScreen()
   )
+
+@startTask = ->
+  return

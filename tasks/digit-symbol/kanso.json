@@ -6,7 +6,14 @@
         "css/digit-symbol.css",
         "img/icon.png",
         "js/task.js",
-        "digit-symbol.html"
+        "digit-symbol.html",
+        "img/1.1.png",
+        "img/2.1.png",
+        "img/3.1.png",
+        "img/4.1.png",
+        "img/5.1.png",
+        "img/6.1.png",
+        "img/7.1.png"
     ],
     "dependencies": {
         "attachments": null
