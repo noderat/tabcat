@@ -31,6 +31,8 @@ report = require('./report')
 
 MAX_REVERSALS = 20
 
+CATCH_TRIALS = 10
+
 LINE_TASKS = [
   'parallel-line-length',
   'perpendicular-line-length',
@@ -51,7 +53,8 @@ HEADER_SUFFIXES = [
 ].concat(report.DATA_QUALITY_HEADERS).concat([
   'time',
   'trials',
-  'timePerTrial'
+  'timePerTrial',
+  'catchTrialScore'
 ])
 
 # combine task prefix with header suffix
@@ -59,7 +62,7 @@ makeHeader = (prefix, suffix) ->
   prefix + suffix[..0].toUpperCase() + suffix[1..]
 
 
-COLUMNS_PER_TASK = MAX_REVERSALS + HEADER_SUFFIXES.length
+COLUMNS_PER_TASK = MAX_REVERSALS + CATCH_TRIALS + HEADER_SUFFIXES.length
 
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
@@ -89,19 +92,38 @@ patientHandler = (patientRecord) ->
             item.state.intensity for item in task.eventLog \
             when item?.interpretation?.reversal)
 
+        catchTrials = (
+          item.interpretation?.correct for item in task.eventLog \
+          when item?.state?.catchTrial is true
+        )
+
+        catchTrialScore = 'N/A'
+        if catchTrials.length > 0
+          catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
+            / catchTrials.length ) * 100)
+
+        if intensitiesAtReversal.length < MAX_REVERSALS
+          intensitiesAtReversal = intensitiesAtReversal.concat('') for i in \
+             [1..(MAX_REVERSALS - intensitiesAtReversal.length)]
+
+
         taskToInfo[task.name] = [
           report.getVersion(task),
           report.getDate(task),
         ].concat(report.getDataQualityCols(encounter)).concat([
           totalTime,
           numTrials,
-          totalTime / numTrials
-        ]).concat(intensitiesAtReversal)
+          totalTime / numTrials,
+          catchTrialScore
+        ]).concat(intensitiesAtReversal).concat(
+          catchTrials
+        )
 
   if _.isEmpty(taskToInfo)
     return
 
   data = []
+
 
   data[0] = patientCode
   for taskName, i in LINE_TASKS
@@ -121,6 +143,9 @@ taskHeader = (prefix) ->
   (makeHeader(prefix, suffix) for suffix in HEADER_SUFFIXES).concat(
     (prefix + i for i in [1..MAX_REVERSALS]))
 
+catchTrialsHeader = (prefix) ->
+  (prefix + "CatchTrial" + i for i in [1..CATCH_TRIALS])
+
 
 exports.list = (head, req) ->
   report.requirePatientView(req)
@@ -128,7 +153,11 @@ exports.list = (head, req) ->
 
   csvHeader = ['patientCode']
   for prefix in TASK_PREFIXES
-    csvHeader = csvHeader.concat(taskHeader(prefix))
+    csvHeader = csvHeader.concat(
+      taskHeader(prefix)
+    ).concat(
+      catchTrialsHeader(prefix)
+    )
 
   send(csv.arrayToCsv([csvHeader]))
 
