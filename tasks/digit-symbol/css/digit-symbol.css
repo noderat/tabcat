@@ -137,7 +137,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #symbol5 {
-    left: 60%;
+    left: 61%;
     bottom: 16%;
 }
 
@@ -149,4 +149,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #symbol7 {
     left: 87%;
     bottom: 60%;
+}
+
+#currentNumber {
+    font-size: 18em;
+    text-align: center;
+    margin: auto auto;
+    top: 45%;
+    right: 0;
+    left: 0;
+    color: white;
+}
+
+#secondsElapsed {
+    position: fixed;
+    font-size: 5em;
+    color: white;
+    bottom: 0;
+    left: 0;
+}
+
+#numberCorrect {
+    position: fixed;
+    font-size: 5em;
+    color: white;
+    bottom: 10%;
+    left: 0;
 }

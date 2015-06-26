@@ -36,13 +36,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # main div's aspect ratio (pretend we're on an iPad)
 ASPECT_RATIO = 4/3
 
+#range random digit symbol trial
+DIGIT_SYMBOL_RANGE = [1..7]
+
+#trial should last 2 minutes
+MAX_DURATION = 60 * 2
+
+DIGITS_TO_SYMBOLS = [
+
+]
+
+currentNumber = null
+
+allNumbers = []
+
+secondsElapsed = 0
+
+numberCorrect = 0
+
+timer = null
+
+
 showStartScreen = ->
   $startScreen = $('#startScreen')
 
   $startScreen.find('button').on('mousedown touchstart', ->
     $startScreen.hide()
-    $('body').removeClass('blueBackground')
-    showComets()
+    startTimer()
   )
 
   $startScreen.show()
@@ -57,9 +77,12 @@ showStartScreen = ->
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
+    $symbols = $('.symbol')
+
+    $symbols.on('mousedown touchstart', updateNumber)
 
     TabCAT.UI.requireLandscapeMode($task)
-    $task.on('mousedown touchstart', startTask)
+    #$task.on('mousedown touchstart', startTask)
 
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
@@ -67,5 +90,28 @@ showStartScreen = ->
     showStartScreen()
   )
 
-@startTask = ->
-  return
+startTask = ->
+  console.log "startTask called"
+
+updateNumber = ->
+  console.log "updating number"
+  currentNumber = _.sample(DIGIT_SYMBOL_RANGE)
+  allNumbers.push currentNumber
+  $currentNumber = $('#currentNumber')
+  $currentNumber.html(currentNumber)
+
+startTimer = ->
+  console.log "starting timer"
+  timer = setInterval timerMethod, 1000
+
+timerMethod = ->
+  secondsElapsed += 1
+  $timer = $('#secondsElapsed')
+  $timer.html(secondsElapsed + " seconds")
+  if (secondsElapsed >= MAX_DURATION)
+    endTask()
+
+
+endTask = ->
+  #end of test, display message and go back to home screen
+  clearInterval timer
