@@ -42,6 +42,44 @@ DIGIT_SYMBOL_RANGE = [1..7]
 #trial should last 2 minutes
 MAX_DURATION = 60 * 2
 
+SYMBOLS = [
+  {
+    image_number: 3,
+    name: "TRI_CIRCLES",
+    description: "Three connected circles, one filled"
+  },
+  {
+    image_number: 1,
+    name: "TRI_BLOCKS",
+    description: "Three blocks oriented in a square"
+  },
+  {
+    image_number: 2,
+    name: "INNER_CIRCLES",
+    description: "Two circles, one filled, inside larger circle"
+  },
+  {
+    image_number: 4,
+    name: "MOUSTACHE",
+    description: "Two spirals connected by line, resembles moustache"
+  },
+  {
+    image_number: 5,
+    name: "TALON",
+    description: "Two teardrops, resembles a talon of a claw"
+  },
+  {
+    image_number: 6
+    name: "MOBIUS",
+    description: "A filled 2D mobius"
+  },
+  {
+    image_number: 7
+    name: "DIAMOND",
+    description: "Half-filled diamond"
+  }
+]
+
 DIGITS_TO_SYMBOLS = [
 
 ]
@@ -98,6 +136,7 @@ updateNumber = ->
   currentNumber = _.sample(DIGIT_SYMBOL_RANGE)
   allNumbers.push currentNumber
   $currentNumber = $('#currentNumber')
+  $currentNumber.fadeOut(2000)
   $currentNumber.html(currentNumber)
 
 startTimer = ->
