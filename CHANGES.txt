@@ -1,3 +1,10 @@
+v0.8.7, 2015-06-26 -- Added catch trials for on-task measure
+- tasks:
+  - line-perception:
+    - added catch trials for on-task measures
+- reports:
+  - line perception reports now include catch trial data
+
 v0.8.6, 2015-06-24 -- Added refined scoring
 - tasks:
   - line-perception:
