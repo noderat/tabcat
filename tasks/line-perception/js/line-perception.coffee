@@ -339,24 +339,6 @@ LineLengthTask = class extends LinePerceptionTask
     $line2TargetAreaDiv.on(
       'mousedown touchstart', trial.line2, @handleLineTouchStart)
 
-    #stats for debugging, will remove for production
-    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
-    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
-    $testingCatchTrial = $(
-      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
-    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
-    $catchTrialsShown = $(
-      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
-    $line1skew = $(
-      '<p>line 1 skew: ' + trial.line1.skew + '</p>')
-    $line2skew = $(
-      '<p>line 2 skew: ' + trial.line2.skew + '</p>')
-    $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
-      $line1skew, $line2skew)
-
-
     # put them in a container, and rotate it
     $stimuliDiv = $('<div></div>', class: 'lineOrientationStimuli')
     $stimuliDiv.css(@rotationCss(trial.referenceLine.orientation))
@@ -376,7 +358,6 @@ LineLengthTask = class extends LinePerceptionTask
       $trialDiv.append($practiceCaptionDiv)
 
     $trialDiv.append($stimuliDiv)
-    $trialDiv.append($stats)
 
     return $trialDiv
 
@@ -470,31 +451,13 @@ LineLengthTask = class extends LinePerceptionTask
     $bottomLineTargetDiv.on(
       'mousedown touchstart', trial.bottomLine, @handleLineTouchStart)
 
-
-    #stats for debugging, will remove for production
-    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
-    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
-    $testingCatchTrial = $(
-      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
-    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
-    $catchTrialsShown = $(
-      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
-    $topLineLength = $(
-      '<p>top line length: ' + trial.topLine.targetCss.width + '</p>')
-    $bottomLineLength = $(
-      '<p>bottom line length: ' + trial.bottomLine.targetCss.width + '</p>')
-    $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
-      $topLineLength, $bottomLineLength)
-
     # put them in an offscreen div
     layoutNum = @staircase.trialNum % @NUM_LAYOUTS
     $containerDiv = $('<div></div>', class: 'parallelLineLayout' + layoutNum)
     $containerDiv.hide()
     $containerDiv.append(
       $topLineDiv, $topLineTargetDiv,
-      $bottomLineDiv, $bottomLineTargetDiv, $stats)
+      $bottomLineDiv, $bottomLineTargetDiv)
 
     # show practice caption, if required
     if @shouldShowPracticeCaption()
@@ -583,35 +546,11 @@ LineLengthTask = class extends LinePerceptionTask
     $line2TargetDiv.on(
       'mousedown touchstart', trial.line2, @handleLineTouchStart)
 
-    #stats for debugging, will remove for production
-    $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
-    $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
-    $testingCatchTrial = $(
-      '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
-    $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
-    $catchTrialsShown = $(
-      '<p>on task trials shown: ' + @catchTrialsShown + '</p>')
-    $shortLineLength = $(
-      '<p>short line length: ' + trial.line1.lineLength + '</p>')
-    $longLineLength = $(
-      '<p>long line length: ' + trial.line2.lineLength + '</p>')
-    $armLength = $(
-      '<p>arm length: ' + trial.armLength + '</p>')
-    $stemLength = $(
-      '<p>stem length: ' + trial.stemLength + '</p>')
-    $angle = $(
-      '<p>angle: ' + trial.angle + '</p>')
-    $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
-      $shortLineLength, $longLineLength,
-      $armLength, $stemLength, $angle)
-
     # put them in an offscreen div
     $containerDiv = $('<div></div>')
     $containerDiv.hide()
     $containerDiv.append(
-      $line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv, $stats)
+      $line1Div, $line1TargetDiv, $line2Div, $line2TargetDiv)
 
     # show practice caption, if required
     if @shouldShowPracticeCaption()
