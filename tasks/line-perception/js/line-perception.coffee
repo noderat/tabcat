@@ -77,6 +77,12 @@ LinePerceptionTask = class
   # start intensity of the real task here
   START_INTENSITY: null
 
+  # testing on-task requires a 25 percent difference in the lines
+  ON_TASK_INTENSITY: 25
+
+  # how many on-task trials per reversal
+  CATCH_TRIAL_MAX: 2
+
   # decrease intensity by this much when correct
   STEPS_DOWN: 1
 
@@ -93,6 +99,16 @@ LinePerceptionTask = class
       stepsDown: @STEPS_DOWN
       stepsUp: @STEPS_UP
     )
+
+    @catchTrialsShown = 0
+
+    @currentReversal = 0 #used to track when on-task trial should update
+
+    @intensityHasBeenReset = false
+
+    @lastIntensity = @START_INTENSITY
+
+    @completedCatchTrials = false
 
   # call this to show the task onscreen
   start: ->
@@ -111,7 +127,28 @@ LinePerceptionTask = class
 
   # show the next trial for the task
   showNextTrial: ->
+
+    if (@staircase.numReversals > @currentReversal)
+      @currentReversal += 1
+      @catchTrialsShown = 0 # reset for new reversals
+
+    if @inCatchTrialReversal() and not @inPracticeMode()
+      if @firstTrialOfCatchTrialTest()
+        @lastIntensity = @staircase.intensity
+        @intensityHasBeenReset = false
+        @completedCatchTrials = false
+
+      if @shouldResetIntensity()
+        @intensityHasBeenReset = true
+        @staircase.intensity = @lastIntensity
+        @staircase.lastIntensityChange = 0
+
+      else if @shouldTestCatchTrial()
+        @staircase.intensity = @ON_TASK_INTENSITY
+        @catchTrialsShown += 1
+
     $nextTrialDiv = @getNextTrialDiv()
+
     $('#task').empty()
     $('#task').append($nextTrialDiv)
     TabCAT.UI.fixAspectRatio($nextTrialDiv, @ASPECT_RATIO)
@@ -130,6 +167,7 @@ LinePerceptionTask = class
     interpretation = @staircase.addResult(
       correct,
       ignoreReversals: @inPracticeMode(),
+      inCatchTrial: @shouldTestCatchTrial() and not @completedCatchTrials,
       useRefinedScoring: true)
 
     if @inPracticeMode()
@@ -141,6 +179,9 @@ LinePerceptionTask = class
           @staircase.lastIntensityChange = 0
       else
         @practiceStreakLength = 0
+
+    if (@catchTrialsShown >= 2 and not @completedCatchTrials)
+      @completedCatchTrials = true
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
@@ -170,6 +211,8 @@ LinePerceptionTask = class
 
     if @inPracticeMode()
       state.practiceMode = true
+    else if @inCatchTrialReversal() and not @completedCatchTrials
+      state.catchTrial = true
 
     return state
 
@@ -192,6 +235,25 @@ LinePerceptionTask = class
   # should we show the practice mode caption?
   shouldShowPracticeCaption: ->
     @practiceStreakLength < @PRACTICE_CAPTION_MAX_STREAK
+
+  inCatchTrialReversal: ->
+    @staircase.numReversals == 0 or \
+      @staircase.numReversals == 3 or \
+      @staircase.numReversals == 6 or \
+      @staircase.numReversals == 9 or \
+      @staircase.numReversals == 12
+
+  shouldTestCatchTrial: ->
+    @catchTrialsShown < @CATCH_TRIAL_MAX and \
+      !@inPracticeMode() and @inCatchTrialReversal()
+
+  shouldResetIntensity: ->
+    @catchTrialsShown >= @CATCH_TRIAL_MAX and \
+      @inCatchTrialReversal() and not @intensityHasBeenReset and \
+      not @inPracticeMode()
+
+  firstTrialOfCatchTrialTest: ->
+    @catchTrialsShown == 0
 
 
 # abstract base class for line length tasks
@@ -394,7 +456,8 @@ LineLengthTask = class extends LinePerceptionTask
     $containerDiv = $('<div></div>', class: 'parallelLineLayout' + layoutNum)
     $containerDiv.hide()
     $containerDiv.append(
-      $topLineDiv, $topLineTargetDiv, $bottomLineDiv, $bottomLineTargetDiv)
+      $topLineDiv, $topLineTargetDiv,
+      $bottomLineDiv, $bottomLineTargetDiv)
 
     # show practice caption, if required
     if @shouldShowPracticeCaption()
@@ -540,6 +603,7 @@ LineLengthTask = class extends LinePerceptionTask
       height: stemLength
       width: @LINE_WIDTH
 
+
     # offset stem to the left or right to avoid perseverative tapping
     # in the center of the screen
     if _.sample([true, false])
@@ -573,11 +637,15 @@ LineLengthTask = class extends LinePerceptionTask
         correct: (armLength >= stemLength)
         css: line1Css
         targetCss: line1TargetCss
+        lineLength: shortLineLength
       line2:
         correct: (stemLength >= armLength)
         css: line2Css
         targetCss: line2TargetCss
+        lineLength: longLineLength
       angle: angle
+      armLength: armLength
+      stemLength: stemLength
     }
 
   rotatePercentBox: (box, angle) ->

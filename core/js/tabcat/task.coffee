@@ -385,6 +385,7 @@ TabCAT.Task.finish = (options) ->
 
 # score the current task (must call Task.start() first)
 TabCAT.Task.score = ->
+  #where does eventLog and taskDoc.name come from?
   TabCAT.Scoring.scoreTask(taskDoc.name, eventLog)
 
 
@@ -570,10 +571,13 @@ TabCAT.Task.Staircase = class
   # - ignoreReversals: if true, don't count reversals or include them
   #   in the interpretation we return. Useful for when we want practice mode
   #   to do some staircasing.
+  # - inCatchTrial: if true, ignore reversals, don't increment trialNum,
+  #   don't keep track of streaks, and don't score
   # - useRefinedScoring: if true, uses advanced staircasing logic for higher
   #   performers, based on the Levitt 1971 2 down (harder) and 1 up (easier)
   #   rule to approximate 71% accuracy
   addResult: (correct, options) ->
+
     @trialNum += 1
 
     # normalize to true, false, or null
@@ -583,7 +587,7 @@ TabCAT.Task.Staircase = class
       correct: correct
 
     # bail out if result is not scored
-    if not correct? or options?.noChange
+    if not correct? or options?.noChange or options?.inCatchTrial
       return interpretation
 
     # handle streak
@@ -628,6 +632,7 @@ TabCAT.Task.Staircase = class
     # handle reversals
     reversal = (
       not options?.ignoreReversals and
+      not options?.inCatchTrial and
       (intensityChange * @lastIntensityChange < 0 or
         @intensity != rawIntensity))  # i.e. we hit the floor/ceiling
 
