@@ -103,18 +103,33 @@ SYMBOLS =
     image_number: 7
     description: "Half-filled diamond"
 
+#all that needs to be done to create other forms
+#is to upload the images for them and add FORM_TWO, etc
+#with the same ICON_BAR and SYMBOL_BAR arrays
+#with references to the symbols in the order they should appear
+FORM_ORDER =
+  FORM_ONE:
+    ICON_BAR: [
+      SYMBOLS.TRI_BLOCKS
+      SYMBOLS.INNER_CIRCLES
+      SYMBOLS.TEARDROPS
+      SYMBOLS.TRI_CIRCLES
+      SYMBOLS.MOBIUS
+      SYMBOLS.DIAMOND
+      SYMBOLS.MOUSTACHE
+    ]
+    SYMBOL_BAR: [
+      SYMBOLS.TEARDROPS
+      SYMBOLS.MOUSTACHE
+      SYMBOLS.TRI_CIRCLES
+      SYMBOLS.TRI_BLOCKS
+      SYMBOLS.DIAMOND
+      SYMBOLS.MOBIUS
+      SYMBOLS.INNER_CIRCLES
+    ]
 
-#FORM_ORDER =
-#  FORM_ONE:
-#    ICON_BAR: {
-#      SYMBOLS.TRI_BLOCKS,
-#      SYMBOLS.INNER_CIRCLES,
-#      SYMBOLS.TEARDROPS,
-#      SYMBOLS.TRI_CIRCLES,
-#      SYMBOLS.MOBIUS,
-#      SYMBOLS.DIAMOND,
-#      SYMBOLS.MOUSTACHE }
-#    SYMBOL_BAR
+currentForm = FORM_ORDER.FORM_ONE
+currentFormNumber = 1
 
 currentNumber = null
 
@@ -143,6 +158,17 @@ showStartScreen = ->
 
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
+
+  for element, index in currentForm.ICON_BAR
+    $icon = $('#iconSymbol' + (index + 1))
+    $icon.find('.digitSymbolNumber').html(index + 1)
+    $icon.find('img').attr('src', 'img/' +
+      element.image_number + '.' + currentFormNumber + '.png')
+
+  for element, index in currentForm.SYMBOL_BAR
+    $symbol = $('#symbol' + (index + 1))
+    $symbol.find('img').attr('src', 'img/' + \
+        element.image_number + '.' + currentFormNumber + '.png')
 
   $(->
     $task = $('#task')
