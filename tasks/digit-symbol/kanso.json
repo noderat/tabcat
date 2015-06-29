@@ -4,7 +4,7 @@
     "description": "Digit Symbol",
     "attachments": [
         "css/digit-symbol.css",
-        "img/icon.png",
+        "img/icon/digit-symbol.png",
         "js/task.js",
         "digit-symbol.html",
         "img/1.1.png",
@@ -30,7 +30,7 @@
         "tasks": {
             "digit-symbol": {
                 "description": "Digit Symbol",
-                "icon": "img/icon.png",
+                "icon": "img/icon/digit-symbol.png",
                 "start": "digit-symbol.html"
             }
         }

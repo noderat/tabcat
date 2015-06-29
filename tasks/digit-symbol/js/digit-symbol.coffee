@@ -42,47 +42,79 @@ DIGIT_SYMBOL_RANGE = [1..7]
 #trial should last 2 minutes
 MAX_DURATION = 60 * 2
 
-SYMBOLS = [
-  {
-    image_number: 3,
-    name: "TRI_CIRCLES",
-    description: "Three connected circles, one filled"
-  },
-  {
-    image_number: 1,
-    name: "TRI_BLOCKS",
+#SYMBOLS = [
+#  {
+#    image_number: 3,
+#    name: "TRI_CIRCLES",
+#    description: "Three connected circles, one filled"
+#  },
+#  {
+#    image_number: 1,
+#    name: "TRI_BLOCKS",
+#    description: "Three blocks oriented in a square"
+#  },
+#  {
+#    image_number: 2,
+#    name: "INNER_CIRCLES",
+#    description: "Two circles, one filled, inside larger circle"
+#  },
+#  {
+#    image_number: 4,
+#    name: "MOUSTACHE",
+#    description: "Two spirals connected by line, resembles moustache"
+#  },
+#  {
+#    image_number: 5,
+#    name: "TALON",
+#    description: "Two teardrops, resembles a talon of a claw"
+#  },
+#  {
+#    image_number: 6
+#    name: "MOBIUS",
+#    description: "A filled 2D mobius"
+#  },
+#  {
+#    image_number: 7
+#    name: "DIAMOND",
+#    description: "Half-filled diamond"
+#  }
+#]
+
+SYMBOLS =
+  TRI_BLOCKS:
+    image_number: 1
     description: "Three blocks oriented in a square"
-  },
-  {
-    image_number: 2,
-    name: "INNER_CIRCLES",
+  INNER_CIRCLES:
+    image_number: 2
     description: "Two circles, one filled, inside larger circle"
-  },
-  {
-    image_number: 4,
-    name: "MOUSTACHE",
+  TRI_CIRCLES:
+    image_number: 3
+    description: "Three connected circles, one filled"
+  MOUSTACHE:
+    image_number: 4
     description: "Two spirals connected by line, resembles moustache"
-  },
-  {
-    image_number: 5,
-    name: "TALON",
-    description: "Two teardrops, resembles a talon of a claw"
-  },
-  {
+  TEARDROPS:
+    image_number: 5
+    description: "Two teardrops arranged in various ways"
+  MOBIUS:
     image_number: 6
-    name: "MOBIUS",
     description: "A filled 2D mobius"
-  },
-  {
+  DIAMOND:
     image_number: 7
-    name: "DIAMOND",
     description: "Half-filled diamond"
-  }
-]
 
-DIGITS_TO_SYMBOLS = [
 
-]
+#FORM_ORDER =
+#  FORM_ONE:
+#    ICON_BAR: {
+#      SYMBOLS.TRI_BLOCKS,
+#      SYMBOLS.INNER_CIRCLES,
+#      SYMBOLS.TEARDROPS,
+#      SYMBOLS.TRI_CIRCLES,
+#      SYMBOLS.MOBIUS,
+#      SYMBOLS.DIAMOND,
+#      SYMBOLS.MOUSTACHE }
+#    SYMBOL_BAR
 
 currentNumber = null
 
