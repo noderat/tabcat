@@ -645,3 +645,8 @@ TabCAT.Task.Staircase = class
 
     # done!
     return interpretation
+
+
+TabCAT.Task.isInDebugMode = ->
+  debugMode = TabCAT.UI.getQueryString 'debug'
+  return debugMode == 'true'
