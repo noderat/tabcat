@@ -328,3 +328,12 @@ TabCAT.UI.wait = (milliseconds) ->
   deferred = $.Deferred()
   window.setTimeout((-> deferred.resolve()), milliseconds)
   return deferred
+
+# inspired by
+# http://gomakethings.com/how-to-get-the-value-of\
+# -a-querystring-with-native-javascript/
+TabCAT.UI.getQueryString = (field, url) ->
+  href = url ?= window.location.href
+  reg = new RegExp '[?&]' + field + '=([^&#]*)', 'i'
+  string = reg.exec href
+  if string then string[1] else null

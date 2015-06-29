@@ -110,6 +110,8 @@ LinePerceptionTask = class
 
     @completedCatchTrials = false
 
+    @isInDebugMode = TabCAT.Task.isInDebugMode()
+
   # call this to show the task onscreen
   start: ->
     TabCAT.Task.start(
