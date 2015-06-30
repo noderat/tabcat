@@ -42,43 +42,12 @@ DIGIT_SYMBOL_RANGE = [1..7]
 #trial should last 2 minutes
 MAX_DURATION = 60 * 2
 
-#SYMBOLS = [
-#  {
-#    image_number: 3,
-#    name: "TRI_CIRCLES",
-#    description: "Three connected circles, one filled"
-#  },
-#  {
-#    image_number: 1,
-#    name: "TRI_BLOCKS",
-#    description: "Three blocks oriented in a square"
-#  },
-#  {
-#    image_number: 2,
-#    name: "INNER_CIRCLES",
-#    description: "Two circles, one filled, inside larger circle"
-#  },
-#  {
-#    image_number: 4,
-#    name: "MOUSTACHE",
-#    description: "Two spirals connected by line, resembles moustache"
-#  },
-#  {
-#    image_number: 5,
-#    name: "TALON",
-#    description: "Two teardrops, resembles a talon of a claw"
-#  },
-#  {
-#    image_number: 6
-#    name: "MOBIUS",
-#    description: "A filled 2D mobius"
-#  },
-#  {
-#    image_number: 7
-#    name: "DIAMOND",
-#    description: "Half-filled diamond"
-#  }
-#]
+#after choice is selected
+FADEOUT_DURATION = 700
+
+#fading to new number
+FADEIN_DURATION = 500
+
 
 SYMBOLS =
   TRI_BLOCKS:
@@ -119,13 +88,13 @@ FORM_ORDER =
       SYMBOLS.MOUSTACHE
     ]
     SYMBOL_BAR: [
-      SYMBOLS.TEARDROPS
-      SYMBOLS.MOUSTACHE
-      SYMBOLS.TRI_CIRCLES
-      SYMBOLS.TRI_BLOCKS
-      SYMBOLS.DIAMOND
-      SYMBOLS.MOBIUS
-      SYMBOLS.INNER_CIRCLES
+      { relativeSequence: 3, symbol: SYMBOLS.TEARDROPS }
+      { relativeSequence: 7, symbol: SYMBOLS.MOUSTACHE }
+      { relativeSequence: 4, symbol: SYMBOLS.TRI_CIRCLES }
+      { relativeSequence: 1, symbol: SYMBOLS.TRI_BLOCKS }
+      { relativeSequence: 6, symbol: SYMBOLS.DIAMOND }
+      { relativeSequence: 5, symbol: SYMBOLS.MOBIUS }
+      { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
     ]
 
 currentForm = FORM_ORDER.FORM_ONE
@@ -151,6 +120,7 @@ showStartScreen = ->
   )
 
   $startScreen.show()
+  updateCurrentNumber()
 
 # INITIALIZATION
 @initTask = ->
@@ -159,26 +129,35 @@ showStartScreen = ->
   TabCAT.UI.turnOffBounce()
   TabCAT.UI.enableFastClick()
 
+  #draw top row of digits and symbols
   for element, index in currentForm.ICON_BAR
     $icon = $('#iconSymbol' + (index + 1))
     $icon.find('.digitSymbolNumber').html(index + 1)
-    $icon.find('img').attr('src', 'img/' +
+    $icon.find('img').attr('src', 'img/' + \
       element.image_number + '.' + currentFormNumber + '.png')
 
+  #draw bottom row of digits and symbols
   for element, index in currentForm.SYMBOL_BAR
     $symbol = $('#symbol' + (index + 1))
     $symbol.find('img').attr('src', 'img/' + \
-        element.image_number + '.' + currentFormNumber + '.png')
+      element.symbol.image_number + '.' + currentFormNumber + '.png') \
+        .attr('data-sequence', element.relativeSequence)
 
   $(->
     $task = $('#task')
     $rectangle = $('#rectangle')
     $symbols = $('.symbol')
 
-    $symbols.on('mousedown touchstart', updateNumber)
+    $symbols.on('mousedown touchstart', (event) ->
+      correctAnswer = currentForm.ICON_BAR[currentNumber - 1]
+      console.log(correctAnswer)
+      if currentNumber == $(event.target).data('sequence')
+        #need to log correct event
+        numberCorrect++
+      updateCurrentNumber()
+    )
 
     TabCAT.UI.requireLandscapeMode($task)
-    #$task.on('mousedown touchstart', startTask)
 
     TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
@@ -186,22 +165,19 @@ showStartScreen = ->
     showStartScreen()
   )
 
-startTask = ->
-  console.log "startTask called"
-
-updateNumber = ->
-  console.log "updating number"
-  currentNumber = _.sample(DIGIT_SYMBOL_RANGE)
+updateCurrentNumber = ->
+  currentNumber = _.sample DIGIT_SYMBOL_RANGE
   allNumbers.push currentNumber
   $currentNumber = $('#currentNumber')
-  $currentNumber.fadeOut(2000)
-  $currentNumber.html(currentNumber)
+  $.when($currentNumber.fadeOut FADEOUT_DURATION ).then( ->
+    $currentNumber.html currentNumber
+    $currentNumber.fadeIn FADEIN_DURATION
+  )
 
 startTimer = ->
-  console.log "starting timer"
-  timer = setInterval timerMethod, 1000
+  timer = setInterval taskTimer, 1000
 
-timerMethod = ->
+taskTimer = ->
   secondsElapsed += 1
   $timer = $('#secondsElapsed')
   $timer.html(secondsElapsed + " seconds")
@@ -211,4 +187,5 @@ timerMethod = ->
 
 endTask = ->
   #end of test, display message and go back to home screen
+  console.log numberCorrect
   clearInterval timer
