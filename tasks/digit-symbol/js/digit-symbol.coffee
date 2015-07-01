@@ -193,14 +193,7 @@ translations =
     $rectangle = $('#rectangle')
     $symbols = $('.symbol')
 
-    $symbols.on('mousedown touchstart', ((event) ->
-      if @currentStimuli == $(event.target).data('sequence')
-        #need to log correct event
-        @numberCorrect++
-      if @isInDebugMode
-        @updateDebugInfo()
-      @updatecurrentStimuli()
-    ).bind(this))
+    $symbols.on('mousedown touchstart', @handleSymbolTouch.bind(this))
 
     TabCAT.UI.requireLandscapeMode($task)
 
@@ -208,6 +201,24 @@ translations =
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     @showStartScreen()
+
+  handleSymbolTouch: (event) ->
+
+    correct = false
+    if @currentStimuli == $(event.target).data('sequence')
+      #need to log correct event
+      @numberCorrect++
+      correct = true
+    if @isInDebugMode
+      @updateDebugInfo()
+    @updatecurrentStimuli()
+
+    interpretation =
+      correct: correct
+    console.log @getTaskState()
+    console.log event
+    console.log interpretation
+    TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
 
   updatecurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
@@ -241,3 +252,17 @@ translations =
   updateDebugInfo: ->
     $('#numberCorrect').html "Correct: " + @numberCorrect
     $('#totalShown').html "Total: " + @allNumbers.length
+
+  getTaskState: ->
+    state =
+      numberCorrect: @numberCorrect
+      stimuli: @currentStimuli
+      trialNum: @allNumbers.length
+
+    if @inPracticeMode
+      state.practiceMode = true
+
+    return state
+
+  inPracticeMode: ->
+    false #no practice mode for now
