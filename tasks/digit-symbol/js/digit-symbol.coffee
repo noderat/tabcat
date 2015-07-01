@@ -32,11 +32,11 @@ translations =
     translation:
       start_screen_html:
         1: 'Look at the boxes above.'
-        2: 'Each has a number in the upper part and a picture in the ' +
+        2: 'Each has a number in the upper part and a picture <br> in the ' +
            'lower part.  Each number has its own picture.'
-        3: 'Now look at the pictures below.  They match ' +
+        3: 'Now look at the pictures below.  <br>They match ' +
            'the pictures above.'
-      start_screen_example_html:
+      start_screen_next_html:
         1: 'Each time you see a number in the middle of the screen, ' +
            'look to see which picture matches the number above, ' +
            'and touch that picture below.'
@@ -129,18 +129,48 @@ translations =
 
     @$startScreen = $('#startScreen')
 
+    @isInDebugMode = TabCAT.Task.isInDebugMode()
+
 
   showStartScreen: ->
-    @$startScreen.find('button').on('mousedown touchstart', ( ->
+    @$startScreen.on('mousedown touchstart', ( ->
+      @startScreenNext()
+    ).bind(this))
+
+    instructions = $.t('start_screen_html', {returnObjectTrees: true})
+    html = _.map(instructions, (value, key) ->
+      '<p>' + value + '</p>') \
+      .join('')
+
+    @$startScreen.append html
+
+    @$startScreen.show()
+
+  startScreenNext: ->
+    instructions = $.t('start_screen_next_html', {returnObjectTrees: true})
+    html = _.map(instructions, (value, key) ->
+      '<p>' + value + '</p>')
+    .join('')
+
+    @$startScreen.empty().append html
+
+    $currentStimuli = $('#currentStimuli')
+    $currentStimuli.html 7
+
+    @$startScreen.on('mousedown touchstart', ( ->
       @$startScreen.hide()
       @startTimer()
       @updatecurrentStimuli()
     ).bind(this))
-    @$startScreen.show()
+
 
   # INITIALIZATION
   initTask: ->
-    TabCAT.Task.start(trackViewport: true)
+    TabCAT.Task.start(
+      i18n:
+        resStore: translations
+      trackViewport: true
+    )
 
     TabCAT.UI.turnOffBounce()
     TabCAT.UI.enableFastClick()
@@ -167,6 +197,8 @@ translations =
       if @currentStimuli == $(event.target).data('sequence')
         #need to log correct event
         @numberCorrect++
+      if @isInDebugMode
+        @updateDebugInfo()
       @updatecurrentStimuli()
     ).bind(this))
 
@@ -195,8 +227,9 @@ translations =
 
   taskTimer: ->
     @secondsElapsed += 1
-    $timer = $('#secondsElapsed')
-    $timer.html(@secondsElapsed + " seconds")
+    if @isInDebugMode == true
+      $timer = $('#secondsElapsed')
+      $timer.html(@secondsElapsed + " seconds")
     if (@secondsElapsed >= MAX_DURATION)
       @endTask()
 
@@ -204,3 +237,7 @@ translations =
     #end of test, display message and go back to home screen
     console.log @numberCorrect
     clearInterval @timer
+
+  updateDebugInfo: ->
+    $('#numberCorrect').html "Correct: " + @numberCorrect
+    $('#totalShown').html "Total: " + @allNumbers.length

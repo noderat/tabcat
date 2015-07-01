@@ -151,29 +151,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     bottom: 65%;
 }
 
+#startScreen {
+    font-size: 4em;
+    font-weight: bold;
+    text-align: center;
+    margin: auto auto;
+    color: white;
+}
+
+#startScreen p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 #currentStimuli {
     position: absolute;
     font-size: 18em;
     text-align: center;
     margin: auto auto;
-    top: 40%;
+    top: 41%;
     right: 0;
     left: 0;
     color: white;
 }
 
-#secondsElapsed {
+#debug {
     position: fixed;
-    font-size: 5em;
-    color: white;
     bottom: 0;
     left: 0;
-}
-
-#numberCorrect {
-    position: fixed;
     font-size: 5em;
     color: white;
-    bottom: 10%;
-    left: 0;
 }
