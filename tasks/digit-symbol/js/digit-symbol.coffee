@@ -27,11 +27,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 # empty translations block for now
-#translations =
-#  en:
-#    translation:
-#  es:
-#    translation:
+translations =
+  en:
+    translation:
+      start_screen_html:
+        1: 'Look at the boxes above.'
+        2: 'Each has a number in the upper part and a picture in the ' +
+           'lower part.  Each number has its own picture.'
+        3: 'Now look at the pictures below.  They match ' +
+           'the pictures above.'
+      start_screen_example_html:
+        1: 'Each time you see a number in the middle of the screen, ' +
+           'look to see which picture matches the number above, ' +
+           'and touch that picture below.'
 
 @DigitSymbolTask = class
 
@@ -49,6 +57,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   #fading to new number
   FADEIN_DURATION = 500
+
+  PRACTICE_TRIALS = 4
 
   #references and descriptions of symbols
   SYMBOLS =
@@ -105,7 +115,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @currentFormNumber = 1
 
     #current digit presented on screen
-    @currentNumber = null
+    @currentStimuli = null
 
     #array of all numbers presented in task
     @allNumbers = []
@@ -124,9 +134,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @$startScreen.find('button').on('mousedown touchstart', ( ->
       @$startScreen.hide()
       @startTimer()
+      @updatecurrentStimuli()
     ).bind(this))
     @$startScreen.show()
-    @updateCurrentNumber()
 
   # INITIALIZATION
   initTask: ->
@@ -154,11 +164,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $symbols = $('.symbol')
 
     $symbols.on('mousedown touchstart', ((event) ->
-      #correctAnswer = @currentForm.ICON_BAR[@currentNumber - 1]
-      if @currentNumber == $(event.target).data('sequence')
+      if @currentStimuli == $(event.target).data('sequence')
         #need to log correct event
         @numberCorrect++
-      @updateCurrentNumber()
+      @updatecurrentStimuli()
     ).bind(this))
 
     TabCAT.UI.requireLandscapeMode($task)
@@ -168,14 +177,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @showStartScreen()
 
-  updateCurrentNumber: ->
-    @currentNumber = _.sample DIGIT_SYMBOL_RANGE
-    @allNumbers.push @currentNumber
-    $currentNumber = $('#currentNumber')
-    $.when($currentNumber.fadeOut FADEOUT_DURATION ).then( (->
-      $currentNumber.html @currentNumber
-      $currentNumber.fadeIn FADEIN_DURATION
+  updatecurrentStimuli: ->
+    @currentStimuli = @getNewStimuli()
+    @allNumbers.push @currentStimuli
+    $currentStimuli = $('#currentStimuli')
+    $.when($currentStimuli.fadeOut FADEOUT_DURATION ).then( (->
+      $currentStimuli.html @currentStimuli
+      $currentStimuli.fadeIn FADEIN_DURATION
     ).bind(this))
+
+  getNewStimuli: ->
+    newStimuli = _.sample DIGIT_SYMBOL_RANGE
+    if newStimuli == @currentStimuli then @getNewStimuli() else newStimuli
 
   startTimer: ->
     @timer = setInterval @taskTimer.bind(this), 1000
@@ -186,7 +199,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $timer.html(@secondsElapsed + " seconds")
     if (@secondsElapsed >= MAX_DURATION)
       @endTask()
-
 
   endTask: ->
     #end of test, display message and go back to home screen

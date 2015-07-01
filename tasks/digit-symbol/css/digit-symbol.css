@@ -118,12 +118,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #symbol1 {
     left: 3%;
-    bottom: 60%;
+    bottom: 65%;
 }
 
 #symbol2 {
-    left: 17%;
-    bottom: 35%;
+    left: 15%;
+    bottom: 37%;
 }
 
 #symbol3 {
@@ -142,20 +142,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 #symbol6 {
-    left: 74%;
-    bottom: 35%;
+    left: 76%;
+    bottom: 37%;
 }
 
 #symbol7 {
     left: 87%;
-    bottom: 60%;
+    bottom: 65%;
 }
 
-#currentNumber {
+#currentStimuli {
+    position: absolute;
     font-size: 18em;
     text-align: center;
     margin: auto auto;
-    top: 45%;
+    top: 40%;
     right: 0;
     left: 0;
     color: white;
