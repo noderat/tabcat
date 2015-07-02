@@ -38,7 +38,7 @@ translations =
            'the pictures above.'
       start_screen_next_html:
         1: 'Each time you see a number in the middle of the screen, ' +
-           'look to see which picture matches the number above, ' +
+           'look to see <br> which picture matches the number above, ' +
            'and touch that picture below.'
       start_screen_practice:
         1: 'Let\'s practice.'
@@ -143,14 +143,14 @@ translations =
 
     instructions = @getTranslationParagraphs 'start_screen_html'
 
-    @$startScreen.append instructions
+    $('#startScreenMessage').append instructions
 
     @$startScreen.show()
 
   startScreenNext: ->
     instructions = @getTranslationParagraphs 'start_screen_next_html'
 
-    @$startScreen.empty().append instructions
+    $('#startScreenMessage').empty().append instructions
 
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html 7
@@ -162,12 +162,11 @@ translations =
   practiceModeMessage: ->
     @blankScreen()
 
-    @$startScreen.css('margin', 'auto auto')
     html = @getTranslationParagraphs 'start_screen_practice'
-    @$startScreen.html html
+    $('#startScreenMessage').html html
 
     @$startScreen.on('mousedown touchstart', ( ->
-      @$startScreen.empty()
+      $('#startScreenMessage').empty()
       @fillScreen()
       $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
     ).bind(this))
