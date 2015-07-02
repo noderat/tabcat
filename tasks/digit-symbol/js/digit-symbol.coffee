@@ -40,6 +40,9 @@ translations =
         1: 'Each time you see a number in the middle of the screen, ' +
            'look to see which picture matches the number above, ' +
            'and touch that picture below.'
+      start_screen_practice:
+        1: 'Let\'s practice.'
+        2: 'Work as quickly as you can <br> without making any mistakes'
 
 @DigitSymbolTask = class
 
@@ -131,38 +134,55 @@ translations =
 
     @isInDebugMode = TabCAT.Task.isInDebugMode()
 
+    @practiceTrialsShown = 0
 
   showStartScreen: ->
     @$startScreen.on('mousedown touchstart', ( ->
       @startScreenNext()
     ).bind(this))
 
-    instructions = $.t('start_screen_html', {returnObjectTrees: true})
-    html = _.map(instructions, (value, key) ->
-      '<p>' + value + '</p>') \
-      .join('')
+    instructions = @getTranslationParagraphs 'start_screen_html'
 
-    @$startScreen.append html
+    @$startScreen.append instructions
 
     @$startScreen.show()
 
   startScreenNext: ->
-    instructions = $.t('start_screen_next_html', {returnObjectTrees: true})
-    html = _.map(instructions, (value, key) ->
-      '<p>' + value + '</p>')
-    .join('')
+    instructions = @getTranslationParagraphs 'start_screen_next_html'
 
-    @$startScreen.empty().append html
+    @$startScreen.empty().append instructions
 
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html 7
 
     @$startScreen.on('mousedown touchstart', ( ->
-      @$startScreen.hide()
-      @startTimer()
-      @updatecurrentStimuli()
+      @practiceModeMessage()
     ).bind(this))
 
+  practiceModeMessage: ->
+    @blankScreen()
+
+    @$startScreen.css('margin', 'auto auto')
+    html = @getTranslationParagraphs 'start_screen_practice'
+    @$startScreen.html html
+
+    @$startScreen.on('mousedown touchstart', ( ->
+      @$startScreen.empty()
+      @fillScreen()
+      $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
+    ).bind(this))
+
+  #called between start screen and practice trials
+  blankScreen: ->
+    $('#iconBar').hide()
+    $('#currentStimuli').hide()
+    $('#symbolBar').hide()
+
+  #called to bring back screen after it's been blanked
+  fillScreen: ->
+    $('#iconBar').show()
+    $('#currentStimuli').show()
+    $('#symbolBar').show()
 
   # INITIALIZATION
   initTask: ->
@@ -191,9 +211,6 @@ translations =
 
     $task = $('#task')
     $rectangle = $('#rectangle')
-    $symbols = $('.symbol')
-
-    $symbols.on('mousedown touchstart', @handleSymbolTouch.bind(this))
 
     TabCAT.UI.requireLandscapeMode($task)
 
@@ -207,17 +224,25 @@ translations =
     correct = false
     if @currentStimuli == $(event.target).data('sequence')
       #need to log correct event
-      @numberCorrect++
+      if not @inPracticeMode()
+        @numberCorrect++
       correct = true
+    if @inPracticeMode()
+      @practiceTrialsShown++
+      #if we just left practicemode
+      if not @inPracticeMode()
+        #start task for real
+        @$startScreen.on('mousedown touchstart', ( ->
+          @startTimer()
+          @updatecurrentStimuli()
+        ).bind(this))
+
     if @isInDebugMode
       @updateDebugInfo()
     @updatecurrentStimuli()
 
     interpretation =
       correct: correct
-    console.log @getTaskState()
-    console.log event
-    console.log interpretation
     TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
 
   updatecurrentStimuli: ->
@@ -246,10 +271,12 @@ translations =
 
   endTask: ->
     #end of test, display message and go back to home screen
-    console.log @numberCorrect
     clearInterval @timer
 
   updateDebugInfo: ->
+    $('#practiceTrialsShown').html "Practice Trials Shown: " \
+      + @practiceTrialsShown
+    $('#inPracticeMode').html "In Practice Mode: " + @inPracticeMode()
     $('#numberCorrect').html "Correct: " + @numberCorrect
     $('#totalShown').html "Total: " + @allNumbers.length
 
@@ -265,4 +292,12 @@ translations =
     return state
 
   inPracticeMode: ->
-    false #no practice mode for now
+    @practiceTrialsShown <= PRACTICE_TRIALS
+
+
+  getTranslationParagraphs: (translation) ->
+    translations = $.t(translation, {returnObjectTrees: true})
+    html = _.map(translations, (value, key) ->
+      '<p>' + value + '</p>') \
+      .join('')
+    return html
