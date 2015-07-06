@@ -63,6 +63,8 @@ translations =
 
   PRACTICE_TRIALS = 4
 
+  EXAMPLE_STIMULI = 7
+
   #references and descriptions of symbols
   SYMBOLS =
     TRI_BLOCKS:
@@ -153,7 +155,7 @@ translations =
     $('#startScreenMessage').empty().append instructions
 
     $currentStimuli = $('#currentStimuli')
-    $currentStimuli.html 7
+    $currentStimuli.html EXAMPLE_STIMULI
 
     @$startScreen.on('mousedown touchstart', ( ->
       @practiceModeMessage()
@@ -167,7 +169,9 @@ translations =
 
     @$startScreen.on('mousedown touchstart', ( ->
       $('#startScreenMessage').empty()
+      $('#currentStimuli').empty()
       @fillScreen()
+      @updatecurrentStimuli()
       $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
     ).bind(this))
 
@@ -231,10 +235,8 @@ translations =
       #if we just left practicemode
       if not @inPracticeMode()
         #start task for real
-        @$startScreen.on('mousedown touchstart', ( ->
-          @startTimer()
-          @updatecurrentStimuli()
-        ).bind(this))
+        @startTimer()
+        @updatecurrentStimuli()
 
     if @isInDebugMode
       @updateDebugInfo()
