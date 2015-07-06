@@ -1,12 +1,28 @@
 {
     "name": "memory",
-    "version": "0.8.4",
+    "version": "0.8.8",
     "description": "Memory",
     "attachments": [
         "css/memory.css",
         "img/icon.png",
         "js/task.js",
-        "memory.html"
+        "memory.html",
+        "img/man1.jpg",
+        "img/man2.jpg",
+        "img/man3.jpg",
+        "img/man4.jpg",
+        "img/man5.jpg",
+        "img/man6.jpg",
+        "img/man7.jpg",
+        "img/man8.jpg",
+        "img/woman1.jpg",
+        "img/woman2.jpg",
+        "img/woman3.jpg",
+        "img/woman4.jpg",
+        "img/woman5.jpg",
+        "img/woman6.jpg",
+        "img/woman7.jpg",
+        "img/woman8.jpg"
     ],
     "dependencies": {
         "attachments": null
