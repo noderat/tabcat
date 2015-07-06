@@ -141,6 +141,7 @@ LinePerceptionTask = class
 
     if @inCatchTrialReversal() and not @inPracticeMode()
       if @firstTrialOfCatchTrialTest()
+        #remember intensity for after catch trials
         @lastIntensity = @staircase.intensity
         @intensityHasBeenReset = false
         @completedCatchTrials = false
@@ -149,7 +150,6 @@ LinePerceptionTask = class
         @intensityHasBeenReset = true
         @staircase.intensity = @lastIntensity
         @staircase.lastIntensityChange = 0
-
       else if @shouldTestCatchTrial()
         @staircase.intensity = @ON_TASK_INTENSITY
         @catchTrialsShown += 1
@@ -174,8 +174,11 @@ LinePerceptionTask = class
     interpretation = @staircase.addResult(
       correct,
       ignoreReversals: @inPracticeMode(),
-      inCatchTrial: @shouldTestCatchTrial() and not @completedCatchTrials,
+      inCatchTrial: @inCatchTrialReversal() and not @completedCatchTrials,
       useRefinedScoring: true)
+
+    if (@catchTrialsShown >= 2 and not @completedCatchTrials)
+      @completedCatchTrials = true
 
     if @inPracticeMode()
       @practiceTrialsShown += 1
@@ -187,9 +190,6 @@ LinePerceptionTask = class
           @staircase.lastIntensityChange = 0
       else
         @practiceStreakLength = 0
-
-    if (@catchTrialsShown >= 2 and not @completedCatchTrials)
-      @completedCatchTrials = true
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
