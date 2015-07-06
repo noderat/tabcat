@@ -71,6 +71,9 @@ LinePerceptionTask = class
   # get this many correct in a row to leave practice mode
   PRACTICE_MAX_STREAK: 4
 
+  # total number of possible practice trials
+  PRACTICE_TRIALS_MAX: 10
+
   # start practice mode here (set in subclasses)
   PRACTICE_START_INTENSITY: null
 
@@ -111,6 +114,8 @@ LinePerceptionTask = class
     @completedCatchTrials = false
 
     @isInDebugMode = TabCAT.Task.isInDebugMode()
+
+    @practiceTrialsShown = 0
 
   # call this to show the task onscreen
   start: ->
@@ -173,6 +178,7 @@ LinePerceptionTask = class
       useRefinedScoring: true)
 
     if @inPracticeMode()
+      @practiceTrialsShown += 1
       if correct
         @practiceStreakLength += 1
         if not @inPracticeMode()  # i.e. we just left practice mode
@@ -232,7 +238,9 @@ LinePerceptionTask = class
 
   # are we in practice mode?
   inPracticeMode: ->
+    return false if @practiceTrialsShown >= @PRACTICE_TRIALS_MAX
     @practiceStreakLength < @PRACTICE_MAX_STREAK
+
 
   # should we show the practice mode caption?
   shouldShowPracticeCaption: ->
@@ -344,6 +352,8 @@ LineLengthTask = class extends LinePerceptionTask
     #stats for debugging, will remove for production
     $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
     $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $practiceTrialsShown = $('<p>practice trials shown: ' +
+      @practiceTrialsShown + '</p>')
     $testingCatchTrial = $(
       '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
     $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
@@ -354,8 +364,8 @@ LineLengthTask = class extends LinePerceptionTask
     $line2skew = $(
       '<p>line 2 skew: ' + trial.line2.skew + '</p>')
     $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
+    $stats.append($currentReversal, $numReversals, $practiceTrialsShown,
+      $testingCatchTrial, $intensity, $catchTrialsShown,
       $line1skew, $line2skew)
 
 
@@ -478,6 +488,8 @@ LineLengthTask = class extends LinePerceptionTask
     #stats for debugging, will remove for production
     $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
     $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $practiceTrialsShown = $('<p>practice trials shown: ' + \
+      @practiceTrialsShown + '</p>')
     $testingCatchTrial = $(
       '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
     $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
@@ -488,8 +500,8 @@ LineLengthTask = class extends LinePerceptionTask
     $bottomLineLength = $(
       '<p>bottom line length: ' + trial.bottomLine.targetCss.width + '</p>')
     $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
+    $stats.append($currentReversal, $numReversals, $practiceTrialsShown
+      $testingCatchTrial, $intensity, $catchTrialsShown,
       $topLineLength, $bottomLineLength)
 
     # put them in an offscreen div
@@ -593,6 +605,8 @@ LineLengthTask = class extends LinePerceptionTask
     #stats for debugging, will remove for production
     $currentReversal = $('<p>current reversal: ' + @currentReversal + '</p>')
     $numReversals = $('<p>reversal: ' + @staircase.numReversals + '</p>')
+    $practiceTrialsShown = $('<p>practice trials shown: ' +
+      @practiceTrialsShown + '</p>')
     $testingCatchTrial = $(
       '<p>testing on task: ' + @shouldTestCatchTrial() + '</p>')
     $intensity = $('<p>intensity: ' + @staircase.intensity + '</p>')
@@ -609,8 +623,8 @@ LineLengthTask = class extends LinePerceptionTask
     $angle = $(
       '<p>angle: ' + trial.angle + '</p>')
     $stats = $('<div></div>', class: 'testStats')
-    $stats.append($currentReversal, $numReversals, $testingCatchTrial,
-      $intensity, $catchTrialsShown,
+    $stats.append($currentReversal, $numReversals, $practiceTrialsShown,
+      $testingCatchTrial, $intensity, $catchTrialsShown,
       $shortLineLength, $longLineLength,
       $armLength, $stemLength, $angle)
 
