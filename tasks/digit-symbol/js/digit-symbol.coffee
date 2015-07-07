@@ -139,7 +139,9 @@ translations =
     @practiceTrialsShown = 0
 
   showStartScreen: ->
-    @$startScreen.on('mousedown touchstart', ( ->
+    #disable image dragging on images for this task
+    $('img').on('dragstart', (event) -> event.preventDefault())
+    $('body').one('mousedown touchstart', ( ->
       @startScreenNext()
     ).bind(this))
 
@@ -157,7 +159,7 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    @$startScreen.on('mousedown touchstart', ( ->
+    $('body').one('mousedown touchstart', ( ->
       @practiceModeMessage()
     ).bind(this))
 
@@ -167,7 +169,7 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    @$startScreen.on('mousedown touchstart', ( ->
+    $('body').one('mousedown touchstart', ( ->
       $('#startScreenMessage').empty()
       $('#currentStimuli').empty()
       @fillScreen()
