@@ -56,13 +56,13 @@ makeScorer = (taskName) ->
     trials = (item.interpretation?.correct for item in eventLog \
       when not item?.state?.practiceMode )
 
-    taskScore = (( trials.filter((x)-> x if x == true).length \
-      / trials.length ) * 100)
+    totalCorrect = trials.filter((x)-> x if x == true).length
+    totalIncorrect = trials.length - totalCorrect
 
     score =
-      description: 'Percent Correct'
+      description: 'Correct / Incorrect'
       lessIsMore: false
-      value: taskScore
+      value: totalCorrect + " / " + totalIncorrect
 
     if TASK_TO_NORMS[taskName]?
       score.norms = TASK_TO_NORMS[taskName]
