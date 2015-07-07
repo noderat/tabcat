@@ -257,7 +257,10 @@ translations =
 
   getNewStimuli: ->
     newStimuli = _.sample DIGIT_SYMBOL_RANGE
-    if newStimuli == @currentStimuli then @getNewStimuli() else newStimuli
+    if newStimuli == @currentStimuli
+      return @getNewStimuli()
+    else
+      return newStimuli
 
   startTimer: ->
     @timer = setInterval @taskTimer.bind(this), 1000
