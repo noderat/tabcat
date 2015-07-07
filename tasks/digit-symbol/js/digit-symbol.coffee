@@ -273,6 +273,7 @@ translations =
   endTask: ->
     #end of test, display message and go back to home screen
     clearInterval @timer
+    TabCAT.Task.finish()
 
   updateDebugInfo: ->
     $('#practiceTrialsShown').html "Practice Trials Shown: " \
@@ -287,7 +288,7 @@ translations =
       stimuli: @currentStimuli
       trialNum: @allNumbers.length
 
-    if @inPracticeMode
+    if @inPracticeMode()
       state.practiceMode = true
 
     return state
