@@ -184,12 +184,12 @@ LinePerceptionTask = class
       @practiceTrialsShown += 1
       if correct
         @practiceStreakLength += 1
-        if not @inPracticeMode()  # i.e. we just left practice mode
-          # initialize the real trial
-          @staircase.intensity = @START_INTENSITY
-          @staircase.lastIntensityChange = 0
       else
         @practiceStreakLength = 0
+      if not @inPracticeMode()  # i.e. we just left practice mode
+        # initialize the real trial
+        @staircase.intensity = @START_INTENSITY
+        @staircase.lastIntensityChange = 0
 
     TabCAT.Task.logEvent(state, event, interpretation)
 
