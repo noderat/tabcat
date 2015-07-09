@@ -111,7 +111,7 @@ translations =
         { relativeSequence: 1, symbol: SYMBOLS.TRI_BLOCKS }
         { relativeSequence: 6, symbol: SYMBOLS.DIAMOND }
         { relativeSequence: 5, symbol: SYMBOLS.MOBIUS }
-        { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
+        { relativeSequence: 2, symbol: SYMBOLS.INNER_CIRCLES }
       ]
 
   constructor: ->
@@ -227,7 +227,8 @@ translations =
   handleSymbolTouch: (event) ->
 
     correct = false
-    if @currentStimuli == $(event.target).data('sequence')
+    selectedChoice = $(event.target).data('sequence')
+    if @currentStimuli == selectedChoice
       #need to log correct event
       if not @inPracticeMode()
         @numberCorrect++
@@ -245,7 +246,9 @@ translations =
     @updatecurrentStimuli()
 
     interpretation =
+      choice: selectedChoice
       correct: correct
+
     TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
 
   updatecurrentStimuli: ->
