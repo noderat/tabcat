@@ -232,9 +232,6 @@ translations =
     if @symbolsTouchable == false
       return
 
-    if ($(this).hasClass('fired') == true)
-      return8
-    $(this).addClass('fired')
     correct = false
     selectedChoice = $(event.target).data('sequence')
     if @currentStimuli == selectedChoice
@@ -254,8 +251,7 @@ translations =
         @updateCurrentStimuli()
 
     if @isInDebugMode
-      $.when(@updateDebugInfo()).then( ->
-        $(this).addClass('fired'))
+      @updateDebugInfo()
     @updateCurrentStimuli()
 
     interpretation =
@@ -305,7 +301,8 @@ translations =
     $('#inPracticeMode').html "In Practice Mode: " + @inPracticeMode()
     $('#numberIncorrect').html "Incorrect: " + @numberIncorrect
     $('#numberCorrect').html "Correct: " + @numberCorrect
-    $('#totalShown').html "Total: " + @allNumbers.length
+    total = parseInt(@numberCorrect + @numberIncorrect)
+    $('#totalShown').html "Total: " + total
 
   getTaskState: ->
     state =
@@ -319,7 +316,7 @@ translations =
     return state
 
   inPracticeMode: ->
-    @practiceTrialsShown <= PRACTICE_TRIALS
+    @practiceTrialsShown < PRACTICE_TRIALS
 
 
   getTranslationParagraphs: (translation) ->
