@@ -129,10 +129,13 @@ translations =
 
     @numberCorrect = 0
 
+    @numberIncorrect = 0
+
+    #determines whether symbols can be touched
+    @symbolsTouchable = true
+
     #contains the timer to keep track of progress
     @timer = null
-
-    @$startScreen = $('#startScreen')
 
     @isInDebugMode = TabCAT.Task.isInDebugMode()
 
@@ -149,7 +152,7 @@ translations =
 
     $('#startScreenMessage').append instructions
 
-    @$startScreen.show()
+    $('#startScreen').show()
 
   startScreenNext: ->
     instructions = @getTranslationParagraphs 'start_screen_next_html'
@@ -173,7 +176,7 @@ translations =
       $('#startScreenMessage').empty()
       $('#currentStimuli').empty()
       @fillScreen()
-      @updatecurrentStimuli()
+      @updateCurrentStimuli()
       $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
     ).bind(this))
 
@@ -226,6 +229,12 @@ translations =
 
   handleSymbolTouch: (event) ->
 
+    if @symbolsTouchable == false
+      return
+
+    if ($(this).hasClass('fired') == true)
+      return8
+    $(this).addClass('fired')
     correct = false
     selectedChoice = $(event.target).data('sequence')
     if @currentStimuli == selectedChoice
@@ -233,17 +242,21 @@ translations =
       if not @inPracticeMode()
         @numberCorrect++
       correct = true
+    else if not @inPracticeMode()
+      @numberIncorrect++
+
     if @inPracticeMode()
       @practiceTrialsShown++
       #if we just left practicemode
       if not @inPracticeMode()
         #start task for real
         @startTimer()
-        @updatecurrentStimuli()
+        @updateCurrentStimuli()
 
     if @isInDebugMode
-      @updateDebugInfo()
-    @updatecurrentStimuli()
+      $.when(@updateDebugInfo()).then( ->
+        $(this).addClass('fired'))
+    @updateCurrentStimuli()
 
     interpretation =
       choice: selectedChoice
@@ -251,13 +264,16 @@ translations =
 
     TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
 
-  updatecurrentStimuli: ->
+  updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
     @allNumbers.push @currentStimuli
     $currentStimuli = $('#currentStimuli')
+    @symbolsTouchable = false
     $.when($currentStimuli.fadeOut FADEOUT_DURATION ).then( (->
       $currentStimuli.html @currentStimuli
-      $currentStimuli.fadeIn FADEIN_DURATION
+      $.when($currentStimuli.fadeIn FADEIN_DURATION).then( (->
+        @symbolsTouchable = true
+      ).bind(this))
     ).bind(this))
 
   getNewStimuli: ->
@@ -287,6 +303,7 @@ translations =
     $('#practiceTrialsShown').html "Practice Trials Shown: " \
       + @practiceTrialsShown
     $('#inPracticeMode').html "In Practice Mode: " + @inPracticeMode()
+    $('#numberIncorrect').html "Incorrect: " + @numberIncorrect
     $('#numberCorrect').html "Correct: " + @numberCorrect
     $('#totalShown').html "Total: " + @allNumbers.length
 
