@@ -10,17 +10,19 @@
     <link rel="stylesheet" href="css/memory.css">
 </head>
 <body class="fullscreen unselectable blueBackground">
-<div id="task" class="fullscreen">
-    <div id="rectangle">
-        <div id="startScreen" style="display:none">
-            <p>Welcome, stargazer.</p>
-            <p>Ready to <span class="catch-comets">catch some comets</span>?</p>
-            <button type="button">Begin</button>
+    <div id="task" class="fullscreen">
+        <div id="rectangle">
+            <div id="startScreen" style="display:none">
+                <h1>Memmory Test - Example</h1>
+                <p>You will see pictures of people.  Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
+                <p>For example, remember his favorite food is:</p>
+                <div id="exampleImage"></div>
+                <div id="exampleFood"></div>
+            </div>
         </div>
     </div>
-</div>
-<script src="../core/js/tabcat.js"></script>
-<script src="js/task.js"></script>
-<script>initTask();</script>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/task.js"></script>
+    <script>new InitialMemoryTask().start();</script>
 </body>
 </html>

@@ -33,120 +33,139 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  es:
 #    translation:
 
-PEOPLE = {
-  MAN1: { #glasses and red shirt
-    FOOD: CHOICES.FOOD.APPLE,
-    IMAGE: 'man1'
-  },
-  MAN2: { #bald with sport coat
-    FOOD: CHOICES.FOOD.POTATO,
-    ANIMAL: CHOICES.ANIMAL.TURTLE,
-    IMAGE: 'man2'
-  },
-  MAN3: { #purple shirt
-    FOOD: CHOICES.FOOD.MELON,
-    ANIMAL: CHOICES.ANIMAL.COW,
-    IMAGE: 'man3'
-  },
-  WOMAN1: { #long dark hair
-    ANIMAL: CHOICES.ANIMAL.DOLPHIN,
-    IMAGE: 'woman1'
-  },
-  WOMAN2: { #hair pullled back with blue eyes
-    FOOD: CHOICES.FOOD.CARROTS,
-    ANIMAL: CHOICES.ANIMAL.WOLF,
-    IMAGE: 'woman2'
-  },
-  WOMAN3: { #glasses and gray hair
-    FOOD: CHOICES.FOOD.GRAPES,
-    ANIMAL: CHOICES.ANIMAL.SHARK,
-    IMAGE: 'woman3'
+MemoryTask = class
+
+  PEOPLE = {
+    MAN1: { #glasses and red shirt
+      FOOD: @CHOICES.FOOD.APPLE,
+      IMAGE: 'man1'
+    },
+    MAN2: { #bald with sport coat
+      FOOD: @CHOICES.FOOD.POTATO,
+      ANIMAL: @CHOICES.ANIMAL.TURTLE,
+      IMAGE: 'man2'
+    },
+    MAN3: { #purple shirt
+      FOOD: @CHOICES.FOOD.MELON,
+      ANIMAL: @CHOICES.ANIMAL.COW,
+      IMAGE: 'man3'
+    },
+    WOMAN1: { #long dark hair
+      ANIMAL: @CHOICES.ANIMAL.DOLPHIN,
+      IMAGE: 'woman1'
+    },
+    WOMAN2: { #hair pullled back with blue eyes
+      FOOD: @CHOICES.FOOD.CARROTS,
+      ANIMAL: @CHOICES.ANIMAL.WOLF,
+      IMAGE: 'woman2'
+    },
+    WOMAN3: { #glasses and gray hair
+      FOOD: @CHOICES.FOOD.GRAPES,
+      ANIMAL: @CHOICES.ANIMAL.SHARK,
+      IMAGE: 'woman3'
+    }
   }
-}
 
-CHOICES = {
-  ANIMAL: {
-    DOLPHIN,
-    WOLF,
-    TURTLE,
-    SHARK,
-    COW
-  },
-  FOOD: {
-    APPLE,
-    POTATO,
-    GRAPES,
-    MELON,
-    CARROTS
+  CHOICES = {
+    ANIMAL: {
+      DOLPHIN,
+      WOLF,
+      TURTLE,
+      SHARK,
+      COW
+    },
+    FOOD: {
+      APPLE,
+      POTATO,
+      GRAPES,
+      MELON,
+      CARROTS
+    }
   }
-}
 
-SLIDES = [
-  { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
-  { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
-  { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
-  { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' },
-  #there should be a break here for the two slides, with click confirmation
-  { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
-  #blank slide
-  { type: 'recallTwo', person: PEOPLE.MAN2 },
-  { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-  { type: 'recallTwo', person: PEOPLE.WOMAN2 },
-  { type: 'recallTwo', person: PEOPLE.MAN3 },
-  #break here
-  { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-  { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-  { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
-  #blank
-  { type: 'recallTwo', person: PEOPLE.MAN3 },
-  { type: 'recallTwo', person: PEOPLE.MAN2 },
-  { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-  { type: 'recallTwo', person: PEOPLE.WOMAN2 },
+  SLIDES = [
+    { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
+    { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
+    { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
+    { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' },
+    #there should be a break here for the two slides, with click confirmation
+    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
+    #blank slide
+    { type: 'recallTwo', person: PEOPLE.MAN2 },
+    { type: 'recallTwo', person: PEOPLE.WOMAN3 },
+    { type: 'recallTwo', person: PEOPLE.WOMAN2 },
+    { type: 'recallTwo', person: PEOPLE.MAN3 },
+    #break here
+    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
+    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
+    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
+    #blank
+    { type: 'recallTwo', person: PEOPLE.MAN3 },
+    { type: 'recallTwo', person: PEOPLE.MAN2 },
+    { type: 'recallTwo', person: PEOPLE.WOMAN3 },
+    { type: 'recallTwo', person: PEOPLE.WOMAN2 },
 
-]
+  ]
+  # main div's aspect ratio (pretend we're on an iPad)
+  ASPECT_RATIO = 4/3
 
-# main div's aspect ratio (pretend we're on an iPad)
-ASPECT_RATIO = 4/3
+  constructor: ->
+    #current form - static for now, will add switch later
+    #@currentForm = FORM_ORDER.FORM_ONE
+    #@currentFormNumber = 1
 
-showStartScreen = ->
-  $startScreen = $('#startScreen')
+    #current digit presented on screen
+    @currentStimuli = null
 
-  $startScreen.find('button').on('mousedown touchstart', ->
-    $startScreen.hide()
-    $('body').removeClass('blueBackground')
-    showComets()
-  )
+    @secondsElapsed = 0
 
-  $startScreen.show()
+    @isInDebugMode = TabCAT.Task.isInDebugMode()
 
-# INITIALIZATION
-@initTask = ->
-  TabCAT.Task.start(trackViewport: true)
+    @practiceTrialsShown = 0
 
-  TabCAT.UI.turnOffBounce()
-  TabCAT.UI.enableFastClick()
+  showStartScreen = ->
+    $startScreen = $('#startScreen')
+    $startScreen.show()
 
-  $(->
-    $task = $('#task')
-    $rectangle = $('#rectangle')
+  start: ->
+    TabCAT.Task.start(
+      i18n:
+        resStore: translations
+      trackViewport: true
+    )
+    TabCAT.UI.turnOffBounce()
 
-    TabCAT.UI.requireLandscapeMode($task)
-    $task.on('mousedown touchstart', catchStrayTouchStart)
+    $(=>
+      $task = $('#task')
+      $rectangle = $('#rectangle')
 
-    TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
-    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
+      TabCAT.UI.requireLandscapeMode($task)
+      $task.on('mousedown touchstart', catchStrayTouchStart)
 
-    showStartScreen()
-  )
+      TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
+      TabCAT.UI.linkEmToPercentOfHeight($rectangle)
+
+      @showStartScreen()
+    )
+
+InitialMemoryTask = class extends MemoryTask
+  constructor: ->
+    return
+
+  initTask: ->
+    return
+
+#Not implementing for now, just creating the skeleton
+DelayedRecallTask = class extends MemoryTask
