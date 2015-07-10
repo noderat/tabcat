@@ -37,20 +37,20 @@ translations =
 
 MemoryTask = class
   CHOICES = {
-    ANIMAL: [
-      'DOLPHIN',
-      'WOLF',
-      'TURTLE',
-      'SHARK',
-      'COW'
-    ],
-    FOOD: [
-      'APPLE',
-      'POTATO',
-      'GRAPES',
-      'MELON',
-      'CARROTS'
-    ]
+    ANIMAL: {
+      DOLPHIN: 'dolphin',
+      WOLF: 'wolf',
+      TURTLE: 'turtle',
+      SHARK: 'shark',
+      COW: 'cow'
+    },
+    FOOD: {
+      APPLE: 'apple',
+      POTATO: 'potato',
+      GRAPES: 'grapes',
+      MELON: 'melon',
+      CARROTS: 'carrots'
+    }
   }
 
   PEOPLE = {
@@ -84,41 +84,53 @@ MemoryTask = class
     }
   }
 
-  SLIDES = [
-    { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
-    { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
-    { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
-    { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' },
-    #there should be a break here for the two slides, with click confirmation
-    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
-    #blank slide
-    { type: 'recallTwo', person: PEOPLE.MAN2 },
-    { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-    { type: 'recallTwo', person: PEOPLE.WOMAN2 },
-    { type: 'recallTwo', person: PEOPLE.MAN3 },
-    #break here
-    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-    { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-    { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
-    #blank
-    { type: 'recallTwo', person: PEOPLE.MAN3 },
-    { type: 'recallTwo', person: PEOPLE.MAN2 },
-    { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-    { type: 'recallTwo', person: PEOPLE.WOMAN2 },
-
-  ]
+  FORM_ONE = {
+    EXAMPLE: [
+      { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
+      { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
+      { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
+      #{ type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
+      { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
+    ],
+    TRIALS: {
+      IMMEDIATE_RECALL: [
+        REMEMBER: [
+          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' }
+        ],
+        RECALL: [
+          { type: 'recallTwo', person: PEOPLE.MAN2 },
+          { type: 'recallTwo', person: PEOPLE.WOMAN3 },
+          { type: 'recallTwo', person: PEOPLE.WOMAN2 },
+          { type: 'recallTwo', person: PEOPLE.MAN3 }
+        ]
+      ],
+      DELAYED_RECALL: [
+        REMEMBER: [
+          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
+          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
+          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' }
+        ],
+        RECALL: [
+          { type: 'recallTwo', person: PEOPLE.MAN3 },
+          { type: 'recallTwo', person: PEOPLE.MAN2 },
+          { type: 'recallTwo', person: PEOPLE.WOMAN3 },
+          { type: 'recallTwo', person: PEOPLE.WOMAN2 }
+        ]
+      ]
+    }
+  }
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
 
@@ -138,6 +150,22 @@ MemoryTask = class
 
   showStartScreen: ->
     $('#startScreen').show()
+    for exampleTrial in FORM_ONE.EXAMPLE
+      do (exampleTrial) =>
+        console.log exampleTrial
+        # looking to move away from switch, will refactor later.
+        # looking for something to automatically call
+        # function with the same name as type, but there's some strange
+        # behavior regarding scope that I don't yet understand
+        switch exampleTrial.type
+          when "firstExampleRemember" then \
+            @firstExampleRemember exampleTrial.person, exampleTrial.remember
+          when "exampleRemember" then \
+            @exampleRemember exampleTrial.person, exampleTrial.remember
+          when "exampleRecall" then \
+            @exampleRecall exampleTrial.person, exampleTrial.recall
+          else console.log "some other type"
+
 
   start: ->
     TabCAT.Task.start(
@@ -147,18 +175,40 @@ MemoryTask = class
     )
     TabCAT.UI.turnOffBounce()
 
-    $(=>
-      $task = $('#task')
-      $rectangle = $('#rectangle')
+    $task = $('#task')
+    $rectangle = $('#rectangle')
 
-      TabCAT.UI.requireLandscapeMode($task)
-      $task.on('mousedown touchstart', ( -> ) )
+    TabCAT.UI.requireLandscapeMode($task)
+    $task.on('mousedown touchstart', ( -> ) )
 
-      TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
-      TabCAT.UI.linkEmToPercentOfHeight($rectangle)
+    TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
+    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
-      @showStartScreen()
-    )
+    @showStartScreen()
+
+  firstExampleRemember: (person, remember) ->
+    console.log "first example remember:"
+    console.log person
+    console.log remember
+
+  exampleRemember: (person, remember) ->
+    console.log "example remember:"
+    console.log person
+    console.log remember
+
+  exampleRecall: (person, recall) ->
+    console.log "example recall"
+    console.log person
+    console.log recall
+
+  rememberOne: (person, remember) ->
+    console.log "remember one:"
+    console.log person
+    console.log remember
+
+  recallTwo: (person) ->
+    console.log "recall both"
+
 
 @InitialMemoryTask = class extends MemoryTask
   constructor: ->
