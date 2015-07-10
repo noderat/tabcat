@@ -25,14 +25,88 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+h1 {
+    font-size: 8em;
+    font-weight: bold;
+    margin: 1%;
+    margin-top: 3%;
+
+}
+
+p {
+    font-size: 6em;
+    margin-left: 3%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+}
+
 .memoryHighlight {
-    color: teal;
+    color: cyan;
+}
+
+#startScreen {
+    float: left;
+    clear: both;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#exampleContainer {
+    width: 70%;
+    text-align: center;
+    height: 50%;
+    float: left;
+    clear: both;
+    margin-left: 15%;
+    margin-right: 15%;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+#exampleExplanation {
+    position: relative;
+    float: left;
+    clear: both;
+    height: 50%;
+    width: 100%;
 }
 
 #exampleImage {
+    float: left;
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
 
+#exampleImage img {
+    padding: 3%;
+    width: auto;
+    height: auto;
+    max-width: 95%;
+    max-height: 95%;
+    position: relative;
+    top: 50%;
+    margin: auto auto;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 #exampleFood {
+    float: left;
+    position: relative;
+    height: 100%;
+    width: 50%;
+    display: inline-block;
+}
 
+#exampleFood p {
+    position: relative;
+    top: 50%;
+    margin: auto auto;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }

@@ -27,59 +27,60 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 # empty translations block for now
-#translations =
-#  en:
-#    translation:
-#  es:
-#    translation:
+translations =
+  en:
+    translation:
+      '...'
+  es:
+    translation:
+      '...'
 
 MemoryTask = class
+  CHOICES = {
+    ANIMAL: [
+      'DOLPHIN',
+      'WOLF',
+      'TURTLE',
+      'SHARK',
+      'COW'
+    ],
+    FOOD: [
+      'APPLE',
+      'POTATO',
+      'GRAPES',
+      'MELON',
+      'CARROTS'
+    ]
+  }
 
   PEOPLE = {
     MAN1: { #glasses and red shirt
-      FOOD: @CHOICES.FOOD.APPLE,
+      FOOD: CHOICES.FOOD.APPLE,
       IMAGE: 'man1'
     },
     MAN2: { #bald with sport coat
-      FOOD: @CHOICES.FOOD.POTATO,
-      ANIMAL: @CHOICES.ANIMAL.TURTLE,
+      FOOD: CHOICES.FOOD.POTATO,
+      ANIMAL: CHOICES.ANIMAL.TURTLE,
       IMAGE: 'man2'
     },
     MAN3: { #purple shirt
-      FOOD: @CHOICES.FOOD.MELON,
-      ANIMAL: @CHOICES.ANIMAL.COW,
+      FOOD: CHOICES.FOOD.MELON,
+      ANIMAL: CHOICES.ANIMAL.COW,
       IMAGE: 'man3'
     },
     WOMAN1: { #long dark hair
-      ANIMAL: @CHOICES.ANIMAL.DOLPHIN,
+      ANIMAL: CHOICES.ANIMAL.DOLPHIN,
       IMAGE: 'woman1'
     },
     WOMAN2: { #hair pullled back with blue eyes
-      FOOD: @CHOICES.FOOD.CARROTS,
-      ANIMAL: @CHOICES.ANIMAL.WOLF,
+      FOOD: CHOICES.FOOD.CARROTS,
+      ANIMAL: CHOICES.ANIMAL.WOLF,
       IMAGE: 'woman2'
     },
     WOMAN3: { #glasses and gray hair
-      FOOD: @CHOICES.FOOD.GRAPES,
-      ANIMAL: @CHOICES.ANIMAL.SHARK,
+      FOOD: CHOICES.FOOD.GRAPES,
+      ANIMAL: CHOICES.ANIMAL.SHARK,
       IMAGE: 'woman3'
-    }
-  }
-
-  CHOICES = {
-    ANIMAL: {
-      DOLPHIN,
-      WOLF,
-      TURTLE,
-      SHARK,
-      COW
-    },
-    FOOD: {
-      APPLE,
-      POTATO,
-      GRAPES,
-      MELON,
-      CARROTS
     }
   }
 
@@ -135,9 +136,8 @@ MemoryTask = class
 
     @practiceTrialsShown = 0
 
-  showStartScreen = ->
-    $startScreen = $('#startScreen')
-    $startScreen.show()
+  showStartScreen: ->
+    $('#startScreen').show()
 
   start: ->
     TabCAT.Task.start(
@@ -152,7 +152,7 @@ MemoryTask = class
       $rectangle = $('#rectangle')
 
       TabCAT.UI.requireLandscapeMode($task)
-      $task.on('mousedown touchstart', catchStrayTouchStart)
+      $task.on('mousedown touchstart', ( -> ) )
 
       TabCAT.UI.fixAspectRatio($rectangle, ASPECT_RATIO)
       TabCAT.UI.linkEmToPercentOfHeight($rectangle)
@@ -160,12 +160,9 @@ MemoryTask = class
       @showStartScreen()
     )
 
-InitialMemoryTask = class extends MemoryTask
+@InitialMemoryTask = class extends MemoryTask
   constructor: ->
-    return
-
-  initTask: ->
-    return
+    super()
 
 #Not implementing for now, just creating the skeleton
-DelayedRecallTask = class extends MemoryTask
+@DelayedRecallTask = class extends MemoryTask
