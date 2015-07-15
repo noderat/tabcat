@@ -55,9 +55,6 @@ translations =
   #trial should last 2 minutes
   MAX_DURATION = 60 * 2
 
-  #after choice is selected
-  FADEOUT_DURATION = 700
-
   #fading to new number
   FADEIN_DURATION = 500
 
@@ -265,12 +262,12 @@ translations =
     @allNumbers.push @currentStimuli
     $currentStimuli = $('#currentStimuli')
     @symbolsTouchable = false
-    $.when($currentStimuli.fadeOut FADEOUT_DURATION ).then( (->
+    $currentStimuli.hide()
+    setTimeout( (=>
       $currentStimuli.html @currentStimuli
-      $.when($currentStimuli.fadeIn FADEIN_DURATION).then( (->
-        @symbolsTouchable = true
-      ).bind(this))
-    ).bind(this))
+      $currentStimuli.show()
+      @symbolsTouchable = true
+    ), 500)
 
   getNewStimuli: ->
     newStimuli = _.sample DIGIT_SYMBOL_RANGE
