@@ -147,13 +147,10 @@ translations =
     $('#startScreenMessage').append instructions.shift()
 
     $('body').unbind().on('tapone', ( (event) =>
-      alert "event has fired"
-      #setTimeout( =>
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
       else
         @startScreenNext()
-      #, 50)
     ))
 
     $('#startScreen').show()
