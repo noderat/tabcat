@@ -43,6 +43,8 @@ translations =
       start_screen_practice:
         1: 'Let\'s practice.'
         2: 'Work as quickly as you can <br> without making any mistakes'
+      are_you_ready:
+        1: 'Are you ready to begin?'
 
 @DigitSymbolTask = class
 
@@ -58,7 +60,7 @@ translations =
   #fading to new number
   FADEIN_DURATION = 500
 
-  PRACTICE_TRIALS = 4
+  PRACTICE_TRIAL_MAX_STREAK = 2
 
   EXAMPLE_STIMULI = 7
 
@@ -138,6 +140,8 @@ translations =
 
     @practiceTrialsShown = 0
 
+    @practiceTrialsCurrentStreak = 0
+
   showStartScreen: ->
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
@@ -146,7 +150,7 @@ translations =
 
     $('#startScreenMessage').append instructions.shift()
 
-    $('body').unbind().on('tapone', ( (event) =>
+    $('body').on('tapone', ( =>
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
       else
@@ -158,14 +162,13 @@ translations =
   startScreenNext: ->
     instructions = @getTranslationParagraphs 'start_screen_next_html'
 
-    $('body').unbind('mousedown touchstart')
-
     $('#startScreenMessage').empty().append instructions.shift()
 
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('body').unbind().one('mousedown touchstart', ( =>
+    $('body').on('tapone', ( =>
+      $('body').off('tapone')
       @practiceModeMessage()
     ))
 
@@ -175,12 +178,13 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    $('body').one('mousedown touchstart', ( =>
+    $('body').one('tapone', ( =>
+      $('body').off('tapone')
       $('#startScreenMessage').empty()
       $('#currentStimuli').empty()
       @fillScreen()
       @updateCurrentStimuli()
-      $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
+      $('.symbol').on('tapone', @handleSymbolTouch.bind(this))
     ))
 
   #called between start screen and practice trials
@@ -241,17 +245,19 @@ translations =
       #need to log correct event
       if not @inPracticeMode()
         @numberCorrect++
+      else
+        @practiceTrialsCurrentStreak++
       correct = true
     else if not @inPracticeMode()
       @numberIncorrect++
+    else
+      @practiceTrialsCurrentStreak = 0
 
     if @inPracticeMode()
       @practiceTrialsShown++
       #if we just left practicemode
       if not @inPracticeMode()
-        #start task for real
-        @startTimer()
-        @updateCurrentStimuli()
+        @trialBeginConfirmation()
 
     if @isInDebugMode
       @updateDebugInfo()
@@ -262,6 +268,22 @@ translations =
       correct: correct
 
     TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
+
+  trialBeginConfirmation: ->
+    @blankScreen()
+
+    html = @getTranslationParagraphs 'are_you_ready'
+    $('#startScreenMessage').html html
+
+    $('body').one('tapone', ( =>
+      $('#startScreenMessage').empty()
+      $('#currentStimuli').empty()
+      @fillScreen()
+      @updateCurrentStimuli()
+      @startTimer()
+      $('.symbol').on('tapone', @handleSymbolTouch.bind(this))
+    ))
+
 
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
@@ -319,7 +341,7 @@ translations =
     return state
 
   inPracticeMode: ->
-    @practiceTrialsShown < PRACTICE_TRIALS
+    @practiceTrialsCurrentStreak < PRACTICE_TRIAL_MAX_STREAK
 
 
   getTranslationParagraphs: (translation) ->
