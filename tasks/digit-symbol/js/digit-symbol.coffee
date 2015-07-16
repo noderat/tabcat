@@ -141,27 +141,33 @@ translations =
   showStartScreen: ->
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
-    $('body').one('mousedown touchstart', ( ->
-      @startScreenNext()
-    ).bind(this))
 
     instructions = @getTranslationParagraphs 'start_screen_html'
 
-    $('#startScreenMessage').append instructions
+    $('#startScreenMessage').append instructions.shift()
+
+    $('body').on('mousedown touchstart', ( =>
+      if instructions.length
+        $('#startScreenMessage').append instructions.shift()
+      else
+        @startScreenNext()
+    ))
 
     $('#startScreen').show()
 
   startScreenNext: ->
     instructions = @getTranslationParagraphs 'start_screen_next_html'
 
-    $('#startScreenMessage').empty().append instructions
+    $('body').unbind('mousedown touchstart')
+
+    $('#startScreenMessage').empty().append instructions.shift()
 
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('body').one('mousedown touchstart', ( ->
+    $('body').one('mousedown touchstart', ( =>
       @practiceModeMessage()
-    ).bind(this))
+    ))
 
   practiceModeMessage: ->
     @blankScreen()
@@ -169,13 +175,13 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    $('body').one('mousedown touchstart', ( ->
+    $('body').one('mousedown touchstart', ( =>
       $('#startScreenMessage').empty()
       $('#currentStimuli').empty()
       @fillScreen()
       @updateCurrentStimuli()
       $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
-    ).bind(this))
+    ))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -319,6 +325,5 @@ translations =
   getTranslationParagraphs: (translation) ->
     translations = $.t(translation, {returnObjectTrees: true})
     html = _.map(translations, (value, key) ->
-      '<p>' + value + '</p>') \
-      .join('')
+      '<p>' + value + '</p>')
     return html
