@@ -146,11 +146,14 @@ translations =
 
     $('#startScreenMessage').append instructions.shift()
 
-    $('body').on('mousedown touchstart', ( =>
+    $('body').unbind().on('tapone', ( (event) =>
+      alert "event has fired"
+      #setTimeout( =>
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
       else
         @startScreenNext()
+      #, 50)
     ))
 
     $('#startScreen').show()
@@ -165,7 +168,7 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('body').one('mousedown touchstart', ( =>
+    $('body').unbind().one('mousedown touchstart', ( =>
       @practiceModeMessage()
     ))
 

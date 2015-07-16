@@ -23,7 +23,8 @@
                 "js/vendor/gauss/timeseries.js",
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
-                "js/vendor/underscore.js"],
+                "js/vendor/underscore.js",
+                "js/vendor/jgestures.min.js"],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
