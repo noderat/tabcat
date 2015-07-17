@@ -142,6 +142,8 @@ translations =
 
     @practiceTrialsCurrentStreak = 0
 
+    @finishedPracticeMode = false
+
   showStartScreen: ->
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
@@ -150,7 +152,7 @@ translations =
 
     $('#startScreenMessage').append instructions.shift()
 
-    $('body').on('tapone', ( =>
+    $('body').on('mousedown touchstart', ( =>
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
       else
@@ -167,8 +169,9 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('body').on('tapone', ( =>
-      $('body').off('tapone')
+    $('body').on('mousedown touchstart', ( =>
+      $('body').off('mousedown touchstart')
+      console.log "before practice mode message"
       @practiceModeMessage()
     ))
 
@@ -178,14 +181,19 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    $('body').one('tapone', ( =>
-      $('body').off('tapone')
-      $('#startScreenMessage').empty()
-      $('#currentStimuli').empty()
-      @fillScreen()
-      @updateCurrentStimuli()
-      $('.symbol').on('tapone', @handleSymbolTouch.bind(this))
-    ))
+    $('body').one('mousedown touchstart', \
+      @practiceModeMessageBodyHandler.bind(this))
+    console.log "after registering body touch in practice mode message"
+
+  practiceModeMessageBodyHandler: ->
+    console.log "inside practice mode message"
+    $('body').off('mousedown touchstart')
+    $('#startScreenMessage').empty()
+    $('#currentStimuli').empty()
+    @fillScreen()
+    @updateCurrentStimuli()
+    $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
+    console.log "after registering symbol touch handler"
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -236,32 +244,42 @@ translations =
 
   handleSymbolTouch: (event) ->
 
+    console.log event
+    console.log "before:", @practiceTrialsCurrentStreak
+
     if @symbolsTouchable == false
       return
 
     correct = false
+    #required handling code for 'tapone' event
+    #selectedChoice = $(event.target).find('img').data('sequence')
+    #required handling code for 'mousedown touchstart'
     selectedChoice = $(event.target).data('sequence')
+    console.log "current stimuli", @currentStimuli
+    console.log "choice", selectedChoice
     if @currentStimuli == selectedChoice
+      console.log "stimuli is selected choice"
       #need to log correct event
       if not @inPracticeMode()
         @numberCorrect++
       else
+        console.log "correct"
         @practiceTrialsCurrentStreak++
       correct = true
     else if not @inPracticeMode()
+      console.log "not in practice mode, not correct"
       @numberIncorrect++
     else
+      console.log "in practice mode, incorrect"
       @practiceTrialsCurrentStreak = 0
+
+    console.log "after:", @practiceTrialsCurrentStreak
 
     if @inPracticeMode()
       @practiceTrialsShown++
-      #if we just left practicemode
-      if not @inPracticeMode()
-        @trialBeginConfirmation()
 
     if @isInDebugMode
       @updateDebugInfo()
-    @updateCurrentStimuli()
 
     interpretation =
       choice: selectedChoice
@@ -269,21 +287,51 @@ translations =
 
     TabCAT.Task.logEvent(@getTaskState(), event, interpretation)
 
+    if @readyToBeginTask()
+      console.log "beginning task, should only see once"
+      @finishedPracticeMode = true
+      #turning off body here doesn't fix the bug
+      #$('body').off('mousedown touchstart')
+      @trialBeginConfirmation()
+      #if i turn off the body event listener here,
+      #the body's mousedown touchstart event doesn't fire
+      #$('body').off('mousedown touchstart')
+      console.log "after trial begin confirmation"
+      return
+
+    console.log "shouldn't appear after trial begin confirm"
+    @updateCurrentStimuli()
+
+  readyToBeginTask: ->
+    @practiceTrialsCurrentStreak is 2 and not @finishedPracticeMode
+
   trialBeginConfirmation: ->
+    $('.symobl').off('mousedown touchstart')
+    $('body').off('mousedown touchstart')
+
+    console.log "beginning trial confirm"
     @blankScreen()
 
     html = @getTranslationParagraphs 'are_you_ready'
+    console.log html
     $('#startScreenMessage').html html
 
-    $('body').one('tapone', ( =>
-      $('#startScreenMessage').empty()
-      $('#currentStimuli').empty()
-      @fillScreen()
-      @updateCurrentStimuli()
-      @startTimer()
-      $('.symbol').on('tapone', @handleSymbolTouch.bind(this))
-    ))
+    console.log "registering mousedown touchstart"
+    $('body').unbind().on('mousedown touchstart', @beginTask.bind(this))
+    console.log "registered event, should appear right  after register"
+    return
 
+  beginTask: ->
+    console.log "beginning task, responding to mousedown touchstart"
+    $('body').off('mousedown touchstart')
+    console.log 'turning off event'
+    $('#startScreenMessage').empty()
+    $('#currentStimuli').empty()
+    @fillScreen()
+    @updateCurrentStimuli()
+    #@startTimer()
+    $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
+    return
 
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
