@@ -152,11 +152,15 @@ translations =
 
     $('#startScreenMessage').append instructions.shift()
 
-    $('#task').on('click', ( =>
+    $('#task').on('tap', ( (event) =>
+
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
       else
         @startScreenNext()
+
+      event.stopPropagation()
+      return false
     ))
 
     $('#startScreen').show()
@@ -169,10 +173,12 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#task').on('click', ( =>
-      $('#task').off('click')
+    $('#task').on('tap', ( (event) =>
+      $('#task').off('tap')
       console.log "before practice mode message"
       @practiceModeMessage()
+      event.stopPropagation()
+      return false
     ))
 
   practiceModeMessage: ->
@@ -181,7 +187,7 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    $('#task').one('click', \
+    $('#task').one('tap', \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
@@ -189,7 +195,7 @@ translations =
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    $('.symbol').on('click', @handleSymbolTouch.bind(this))
+    $('.symbol').on('tap', @handleSymbolTouch.bind(this))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -243,12 +249,10 @@ translations =
     event.stopPropagation()
 
     if @symbolsTouchable == false
-      return
+      return false
 
     correct = false
-    #required handling code for 'click' event
-    #selectedChoice = $(event.target).find('img').data('sequence')
-    #required handling code for 'click'
+    #required handling code for 'tap'
     selectedChoice = $(event.target).data('sequence')
     if @currentStimuli == selectedChoice
       #need to log correct event
@@ -278,9 +282,11 @@ translations =
       $('.symbol').unbind()
       @finishedPracticeMode = true
       @trialBeginConfirmation()
-      return
+      return false
 
     @updateCurrentStimuli()
+
+    return false
 
   readyToBeginTask: ->
     @practiceTrialsCurrentStreak is 2 and not @finishedPracticeMode
@@ -292,21 +298,17 @@ translations =
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-
-    console.log "registering click"
-    $('#task').on('click', @beginTask.bind(this))
-    console.log "registered event, should appear right  after register"
+    $('#task').on('tap', @beginTask.bind(this))
     return
 
   beginTask: ->
-    console.log "beginning task, responding to click"
-    $('#task').off('click')
+    $('#task').off('tap')
     $('#startScreenMessage').empty()
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
     @startTimer()
-    $('.symbol').on 'click', @handleSymbolTouch.bind(this)
+    $('.symbol').on 'tap', @handleSymbolTouch.bind(this)
     return
 
   updateCurrentStimuli: ->

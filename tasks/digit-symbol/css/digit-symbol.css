@@ -165,7 +165,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #startScreen {
     position: fixed;
-    font-size: 4em;
+    font-size: 3.5em;
     font-weight: bold;
     width: 100%;
     text-align: center;
@@ -190,7 +190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     font-size: 18em;
     text-align: center;
     margin: auto auto;
-    top: 42%;
+    top: 43%;
     right: 0;
     left: 0;
     color: white;
