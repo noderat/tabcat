@@ -150,6 +150,8 @@ translations =
 
     @finishedPracticeMode = false
 
+    @startTime = null
+
     #holding tank for stimuli, only to be used as reference to not
     #bump numbers back-to-back
     @lastTank = []
@@ -402,6 +404,7 @@ translations =
     return true
 
   startTimer: ->
+    @startTime = new Date()
     @timer = setInterval @taskTimer.bind(this), 1000
 
   taskTimer: ->
@@ -427,6 +430,7 @@ translations =
     $('#totalShown').html "Total: " + total
 
   getTaskState: ->
+
     state =
       numberCorrect: @numberCorrect
       stimuli: @currentStimuli
@@ -434,6 +438,9 @@ translations =
 
     if @inPracticeMode()
       state.practiceMode = true
+    else if @finishedPracticeMode is true
+      secondsSinceStart = Math.abs((new Date() - @startTime) / 1000)
+      state.sencondsSinceStart = secondsSinceStart
 
     return state
 
