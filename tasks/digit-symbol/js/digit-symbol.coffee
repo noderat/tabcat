@@ -242,10 +242,10 @@ translations =
 
     #draw bottom row of digits and symbols
     for element, index in @currentForm.SYMBOL_BAR
-      $symbol = $('#symbol' + (index + 1))
+      $symbol = $('#symbol' + (index + 1)) \
+        .attr('data-sequence', element.relativeSequence)
       $symbol.find('img').attr('src', 'img/' + \
-        element.symbol.image_number + '.' + @currentFormNumber + '.png') \
-          .attr('data-sequence', element.relativeSequence)
+        element.symbol.image_number + '.' + @currentFormNumber + '.png')
 
     $task = $('#task')
     $rectangle = $('#rectangle')
@@ -264,19 +264,28 @@ translations =
     if @symbolsTouchable == false
       return false
 
+    eventTarget = $(event.target).closest(".symbol")
+
+    #pale yellow by default
+    highlightColor = "rgba(255,255,204, .5)"
+
     correct = false
     #required handling code for 'tap'
-    selectedChoice = $(event.target).data('sequence')
+    selectedChoice = eventTarget.data('sequence')
     if @currentStimuli == selectedChoice
       #need to log correct event
       if not @inPracticeMode()
         @numberCorrect++
       else
+        #green highlight for correct
+        highlightColor = "rgba(0,255,0, .5)"
         @practiceTrialsCurrentStreak++
       correct = true
     else if not @inPracticeMode()
       @numberIncorrect++
     else
+      #red highlight for incorrect
+      highlightColor = "rgba(255,0,0,.5)"
       @practiceTrialsCurrentStreak = 0
 
     if @inPracticeMode()
@@ -284,6 +293,8 @@ translations =
 
     if @isInDebugMode
       @updateDebugInfo()
+
+    eventTarget.effect("highlight", {color: highlightColor}, 500)
 
     interpretation =
       choice: selectedChoice

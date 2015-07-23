@@ -24,7 +24,8 @@
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
                 "js/vendor/underscore.js",
-                "js/vendor/jquery.mobile.custom.js"],
+                "js/vendor/jquery.mobile.custom.js",
+                "js/vendor/jquery-ui.js"],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
