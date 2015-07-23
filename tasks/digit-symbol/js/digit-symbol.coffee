@@ -30,6 +30,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 translations =
   en:
     translation:
+      begin_button_html:
+        'Begin'
+      next_button_html:
+        'Next'
       start_screen_html:
         1: 'Look at the boxes above.'
         2: 'Each has a number in the upper part and a picture <br> in the ' +
@@ -161,14 +165,19 @@ translations =
     @currentTank = []
 
   showStartScreen: ->
+
+    $('#backButton').unbind().hide()
+    $('#nextButton').unbind().show()
+    $('#beginButton').unbind().hide()
+
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
 
     instructions = @getTranslationParagraphs 'start_screen_html'
 
-    $('#startScreenMessage').append instructions.shift()
+    $('#startScreenMessage').empty().append instructions.shift()
 
-    $('#task').on('tap', ( (event) =>
+    $('#nextButton').on('tap', ( (event) =>
 
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
@@ -182,6 +191,16 @@ translations =
     $('#startScreen').show()
 
   startScreenNext: ->
+
+    $('#backButton').show()
+
+    $('#backButton').on('tap', ( (event) =>
+      $('#backButton').off('tap')
+      @showStartScreen()
+      event.stopPropagation()
+      return false
+    ))
+
     instructions = @getTranslationParagraphs 'start_screen_next_html'
 
     $('#startScreenMessage').empty().append instructions.shift()
@@ -189,8 +208,10 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#task').on('tap', ( (event) =>
-      $('#task').off('tap')
+    console.log "second part of instructions"
+
+    $('#nextButton').on('tap', ( (event) =>
+      $('#nextButton').off('tap')
       @practiceModeMessage()
       event.stopPropagation()
       return false
@@ -214,6 +235,7 @@ translations =
 
   #called between start screen and practice trials
   blankScreen: ->
+    #also hide buttons?
     $('#iconBar').hide()
     $('#currentStimuli').hide()
     $('#symbolBar').hide()

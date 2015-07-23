@@ -25,6 +25,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+button:focus {
+    outline:0 !important;
+}
+
 #iconBar {
     margin: 2% auto;
     text-align: center;
@@ -161,6 +165,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     left: auto;
     right: 0%;
     bottom: 67%;
+}
+
+#progressButtonsContainer {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    top: 66%;
+}
+
+.progressButton {
+    border-width: 0.2em;
+    border-style: solid;
+    border-color: #ffffff;
+    border-radius: 0.7em;
+    background-color: #666666;
+    padding: 0.3em;
+    color: #ffffff;
+    font-size: 5em;
+}
+
+#backButton {
+    display: none;
+}
+
+#nextButton {
+
+}
+
+#beginButton {
+    display: none;
 }
 
 #startScreen {
