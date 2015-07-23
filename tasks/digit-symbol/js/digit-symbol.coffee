@@ -60,6 +60,12 @@ translations =
   #fading to new number
   FADEIN_DURATION = 500
 
+  #max iterations in attempt to build psuedo random array
+  MAX_PSEUDO_RANDOM_ATTEMPTS = 250
+
+  #total number of stimuli in a holding tank
+  TOTAL_IN_RANDOM_TANK = 14
+
   PRACTICE_TRIAL_MAX_STREAK = 2
 
   EXAMPLE_STIMULI = 7
@@ -144,6 +150,14 @@ translations =
 
     @finishedPracticeMode = false
 
+    #holding tank for stimuli, only to be used as reference to not
+    #bump numbers back-to-back
+    @lastTank = []
+
+    #holding tank for current stimuli, to to be used with shift()
+    #to get next stimuli
+    @currentTank = []
+
   showStartScreen: ->
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
@@ -175,7 +189,6 @@ translations =
 
     $('#task').on('tap', ( (event) =>
       $('#task').off('tap')
-      console.log "before practice mode message"
       @practiceModeMessage()
       event.stopPropagation()
       return false
@@ -324,11 +337,58 @@ translations =
     ), 500)
 
   getNewStimuli: ->
-    newStimuli = _.sample DIGIT_SYMBOL_RANGE
-    if newStimuli == @currentStimuli
-      return @getNewStimuli()
+
+    if @inPracticeMode()
+      newStimuli = _.sample DIGIT_SYMBOL_RANGE
+      if newStimuli == @currentStimuli
+        newStimuli = @getNewStimuli(false)
     else
-      return newStimuli
+      if @currentTank.length is 0
+        @lastTank = @currentTank = @generatePseudoRandomArray()
+        console.log "current tank", @currentTank
+      newStimuli = @currentTank.shift()
+
+    return newStimuli
+
+  generatePseudoRandomArray: ->
+    psuedoRandomArray = []
+    previous = null
+    iterations = 0
+
+    for x in [1..TOTAL_IN_RANDOM_TANK]
+      do ( =>
+        while true
+          iterations++
+          next = _.sample( DIGIT_SYMBOL_RANGE )
+          if @psuedoRandomArrayPassesFilter(psuedoRandomArray, next, previous)
+            previous = next
+            psuedoRandomArray.push next
+            break
+          #to get out of infinite loop in call stack
+          if iterations >= MAX_PSEUDO_RANDOM_ATTEMPTS
+            break
+      )
+    #we broke out the loop early due to lack of solution
+    if psuedoRandomArray.length < TOTAL_IN_RANDOM_TANK
+      psuedoRandomArray = @generatePseudoRandomArray()
+    return psuedoRandomArray
+
+  psuedoRandomArrayPassesFilter: (psuedoRandomArray, next, previous) ->
+    #set previous to last element of
+    #current tank if applicable
+    if previous == null and @lastTank.length
+      previous = @lastTank[@lastTank.length - 1]
+
+    #if two values occur one after another
+    return false if next == previous
+
+    #if value occurs at least twice in current tank
+    currentCount = psuedoRandomArray.filter( (value) ->
+      return value == next
+    ).length
+    return false if currentCount >= 2
+
+    return true
 
   startTimer: ->
     @timer = setInterval @taskTimer.bind(this), 1000
