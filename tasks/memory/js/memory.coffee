@@ -89,11 +89,10 @@ MemoryTask = class
       { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
       { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
       { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
-      #{ type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
       { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
     ],
     TRIALS: {
-      IMMEDIATE_RECALL: [
+      IMMEDIATE_RECALL: {
         REMEMBER: [
           { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
           { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
@@ -110,25 +109,25 @@ MemoryTask = class
           { type: 'recallTwo', person: PEOPLE.WOMAN2 },
           { type: 'recallTwo', person: PEOPLE.MAN3 }
         ]
-      ],
-      DELAYED_RECALL: [
+      },
+      DELAYED_RECALL: {
         REMEMBER: [
-          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' }
+          {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal'},
+          {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food'},
+          {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal'},
+          {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal'},
+          {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food'},
+          {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal'},
+          {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food'},
+          {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food'}
         ],
         RECALL: [
-          { type: 'recallTwo', person: PEOPLE.MAN3 },
-          { type: 'recallTwo', person: PEOPLE.MAN2 },
-          { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-          { type: 'recallTwo', person: PEOPLE.WOMAN2 }
+          {type: 'recallTwo', person: PEOPLE.MAN3},
+          {type: 'recallTwo', person: PEOPLE.MAN2},
+          {type: 'recallTwo', person: PEOPLE.WOMAN3},
+          {type: 'recallTwo', person: PEOPLE.WOMAN2}
         ]
-      ]
+      }
     }
   }
   # main div's aspect ratio (pretend we're on an iPad)
@@ -148,24 +147,63 @@ MemoryTask = class
 
     @practiceTrialsShown = 0
 
-  showStartScreen: ->
-    $('#startScreen').show()
-    for exampleTrial in FORM_ONE.EXAMPLE
-      do (exampleTrial) =>
-        console.log exampleTrial
-        # looking to move away from switch, will refactor later.
-        # looking for something to automatically call
-        # function with the same name as type, but there's some strange
-        # behavior regarding scope that I don't yet understand
-        switch exampleTrial.type
-          when "firstExampleRemember" then \
-            @firstExampleRemember exampleTrial.person, exampleTrial.remember
-          when "exampleRemember" then \
-            @exampleRemember exampleTrial.person, exampleTrial.remember
-          when "exampleRecall" then \
-            @exampleRecall exampleTrial.person, exampleTrial.recall
-          else console.log "some other type"
+    #can switch this later
+    @currentForm = FORM_ONE
 
+  showStartScreen: ->
+
+    @showNextTrial(@currentForm.EXAMPLE)
+
+    $("#task").on('tap', =>
+      if @currentForm.EXAMPLE.length
+        @showNextTrial(@currentForm.EXAMPLE)
+      else
+        @showInstructionsScreen()
+    )
+
+  showNextTrial: (slides) ->
+
+    nextSlide = slides.shift()
+    console.log nextSlide
+    # looking to move away from switch, will refactor later.
+    # looking for something to automatically call
+    # function with the same name as type, but there's some strange
+    # behavior regarding scope that I don't yet understand
+    switch nextSlide.type
+      when "firstExampleRemember" then \
+        @firstExampleRemember nextSlide.person, nextSlide.remember
+      when "exampleRemember" then \
+        @exampleRemember nextSlide.person, nextSlide.remember
+      when "exampleRecall" then \
+        @exampleRecall nextSlide.person, nextSlide.recall
+      else console.log "some other type"
+
+  showInstructionsScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").show()
+
+    $("#task").one('tap', =>
+      @beginTrials(@currentForm)
+    )
+
+  showRememberScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").show()
+    #resume after this
+
+  beginTrials: (form) ->
+    @showRememberScreen()
+    $("#task").on('tap', =>
+      $("#rememberScreen").hide()
+
+      if form.TRIALS.IMMEDIATE_RECALL.REMEMBER.length
+        @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.REMEMBER)
+      else
+        console.log "out of remember slides, recall"
+    )
 
   start: ->
     TabCAT.Task.start(
@@ -187,19 +225,31 @@ MemoryTask = class
     @showStartScreen()
 
   firstExampleRemember: (person, remember) ->
-    console.log "first example remember:"
-    console.log person
-    console.log remember
+    $("#exampleImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#exampleFood").empty().html("<p>" + person.FOOD + "</p>")
+    $("#exampleScreen").show()
 
   exampleRemember: (person, remember) ->
-    console.log "example remember:"
-    console.log person
-    console.log remember
+    $("#exampleScreen").hide()
+    $("#recallOne").hide()
+    $("#recallBoth").hide()
+
+    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#rememberOne").show().empty().html( \
+      "<p>" + person[remember.toUpperCase()] + "</p>" )
+    $("#trialScreen").show()
 
   exampleRecall: (person, recall) ->
-    console.log "example recall"
-    console.log person
-    console.log recall
+    $("#exampleScreen").hide()
+    $("#rememberOne").hide()
+    $("#recallBoth").hide()
+
+    #does nothing for now, may use to validate later
+    correctAnswer = person[recall.toUpperCase()]
+
+    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
+    $("#trialScreen").show()
 
   rememberOne: (person, remember) ->
     console.log "remember one:"
