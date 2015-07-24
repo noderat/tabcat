@@ -164,7 +164,6 @@ MemoryTask = class
   showNextTrial: (slides) ->
 
     nextSlide = slides.shift()
-    console.log nextSlide
     # looking to move away from switch, will refactor later.
     # looking for something to automatically call
     # function with the same name as type, but there's some strange
@@ -176,9 +175,14 @@ MemoryTask = class
         @exampleRemember nextSlide.person, nextSlide.remember
       when "exampleRecall" then \
         @exampleRecall nextSlide.person, nextSlide.recall
+      when "rememberOne" then \
+        @rememberOne nextSlide.person, nextSlide.remember
+      when "recallTwo" then \
+        @recallTwo nextSlide.person
       else console.log "some other type"
 
   showInstructionsScreen: ->
+    $("#task").unbind()
     $("#exampleScreen").hide()
     $("#trialScreen").hide()
     $("#instructionsScreen").show()
@@ -194,15 +198,35 @@ MemoryTask = class
     $("#rememberScreen").show()
     #resume after this
 
+  showBlankScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").hide()
+
   beginTrials: (form) ->
     @showRememberScreen()
-    $("#task").on('tap', =>
+    $("#task").unbind().on('tap', (event) =>
       $("#rememberScreen").hide()
-
       if form.TRIALS.IMMEDIATE_RECALL.REMEMBER.length
         @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.REMEMBER)
       else
-        console.log "out of remember slides, recall"
+        @beginRecall(form)
+      event.stopPropagation()
+      return false
+    )
+
+  beginRecall: (form) ->
+    @showBlankScreen()
+
+    $("#task").unbind().on('tap', =>
+      $("#rememberScreen").hide()
+
+      if form.TRIALS.IMMEDIATE_RECALL.RECALL.length
+        @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.RECALL)
+      else
+        $("#task").unbind()
+        console.log "out of recalls"
     )
 
   start: ->
@@ -252,12 +276,23 @@ MemoryTask = class
     $("#trialScreen").show()
 
   rememberOne: (person, remember) ->
-    console.log "remember one:"
-    console.log person
-    console.log remember
+    $("#recallBoth").hide()
+    $("#recallOne").hide()
+
+    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#rememberOne").show().empty().html(
+      "<p>" + person[remember.toUpperCase()] + "</p>" )
+    $("#trialScreen").show()
 
   recallTwo: (person) ->
-    console.log "recall both"
+    $("#exampleScreen").hide()
+    $("#rememberOne").hide()
+    $("#recallOne").hide()
+    $("#recallBoth").hide()
+
+    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#recallBoth").show()
+    $("#trialScreen").show()
 
 
 @InitialMemoryTask = class extends MemoryTask
