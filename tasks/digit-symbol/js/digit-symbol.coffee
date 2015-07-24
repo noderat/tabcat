@@ -169,6 +169,7 @@ translations =
     $('#backButton').unbind().hide()
     $('#nextButton').unbind().show()
     $('#beginButton').unbind().hide()
+    $('#currentStimuli').empty()
 
     #disable image dragging on images for this task
     $('img').on('dragstart', (event) -> event.preventDefault())
@@ -192,13 +193,10 @@ translations =
 
   startScreenNext: ->
 
-    $('#backButton').show()
+    @fillScreen()
 
-    $('#backButton').on('tap', ( (event) =>
-      $('#backButton').off('tap')
+    $('#backButton').show().one('tap', ( (event) =>
       @showStartScreen()
-      event.stopPropagation()
-      return false
     ))
 
     instructions = @getTranslationParagraphs 'start_screen_next_html'
@@ -208,13 +206,8 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    console.log "second part of instructions"
-
-    $('#nextButton').on('tap', ( (event) =>
-      $('#nextButton').off('tap')
+    $('#nextButton').one('tap', ( (event) =>
       @practiceModeMessage()
-      event.stopPropagation()
-      return false
     ))
 
   practiceModeMessage: ->
@@ -223,10 +216,16 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').html html
 
-    $('#task').one('tap', \
+    $('#backButton').show().one('tap', ( (event) =>
+      @startScreenNext()
+    ))
+
+    $('#nextButton').show().one('tap', \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
+    $('#backButton').hide()
+    $('#nextButton').hide()
     $('#startScreenMessage').empty()
     $('#currentStimuli').empty()
     @fillScreen()
@@ -235,7 +234,6 @@ translations =
 
   #called between start screen and practice trials
   blankScreen: ->
-    #also hide buttons?
     $('#iconBar').hide()
     $('#currentStimuli').hide()
     $('#symbolBar').hide()
@@ -346,11 +344,20 @@ translations =
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-    $('#task').on('tap', @beginTask.bind(this))
+    $('#backButton').show().one('tap', ( (event) =>
+      #clear practice trials streak so it doesn't think we're in real task
+      @practiceTrialsCurrentStreak = 0
+      @finishedPracticeMode = false
+      @practiceModeMessage()
+    ))
+    $('#beginButton').show().on('tap', @beginTask.bind(this))
     return
 
   beginTask: ->
-    $('#task').off('tap')
+    $('#backButton').unbind().hide()
+    $('#nextButton').unbind().hide()
+    $('#beginButton').unbind().hide()
+
     $('#startScreenMessage').empty()
     $('#currentStimuli').empty()
     @fillScreen()
