@@ -42,49 +42,151 @@ MemoryTask = class
       WOLF: 'wolf',
       TURTLE: 'turtle',
       SHARK: 'shark',
-      COW: 'cow'
+      COW: 'cow',
+      BEAR: 'bear',
+      FROG: 'frog',
+      SHEEP: 'sheep',
+      RABBIT: 'rabbit',
+      PIG: 'pig',
+      WHALE: 'whale',
+      GOAT: 'goat',
+      MONKEY: 'monkey',
+      SNAKE: 'snake',
+      FOX: 'fox',
+      MOUSE: 'mouse',
+      TIGER: 'tiger'
     },
     FOOD: {
       APPLE: 'apple',
       POTATO: 'potato',
       GRAPES: 'grapes',
       MELON: 'melon',
-      CARROTS: 'carrots'
+      COCONUT: 'coconut',
+      CHERRY: 'cherry',
+      LETTUCE: 'lettuce',
+      PEAS: 'peas',
+      CARROT: 'carrot',
+      TOMATO: 'tomato',
+      MUSHROOM: 'mushroom',
+      LEMON: 'lemon',
+      PLUM: 'plum',
+      BANANA: 'banana',
+      MANGO: 'mango',
+      PEPPER: 'pepper',
+      SQUASH: 'squash'
     }
   }
 
   PEOPLE = {
-    MAN1: { #glasses and red shirt
-      FOOD: CHOICES.FOOD.APPLE,
-      IMAGE: 'man1'
-    },
-    MAN2: { #bald with sport coat
-      FOOD: CHOICES.FOOD.POTATO,
-      ANIMAL: CHOICES.ANIMAL.TURTLE,
-      IMAGE: 'man2'
-    },
-    MAN3: { #purple shirt
-      FOOD: CHOICES.FOOD.MELON,
-      ANIMAL: CHOICES.ANIMAL.COW,
-      IMAGE: 'man3'
-    },
-    WOMAN1: { #long dark hair
-      ANIMAL: CHOICES.ANIMAL.DOLPHIN,
-      IMAGE: 'woman1'
-    },
-    WOMAN2: { #hair pullled back with blue eyes
-      FOOD: CHOICES.FOOD.CARROTS,
-      ANIMAL: CHOICES.ANIMAL.WOLF,
-      IMAGE: 'woman2'
-    },
-    WOMAN3: { #glasses and gray hair
-      FOOD: CHOICES.FOOD.GRAPES,
-      ANIMAL: CHOICES.ANIMAL.SHARK,
-      IMAGE: 'woman3'
-    }
+    MAN_EXAMPLE:
+      IMAGE: 'man-example.jpg'
+    MAN_1:
+      IMAGE: 'man1.jpg'
+    MAN_2:
+      IMAGE: 'man2.jpg'
+    MAN_3:
+      IMAGE: 'man3.jpg'
+    MAN_4:
+      IMAGE: 'man4.jpg'
+    MAN_5:
+      IMAGE: 'man5.jpg'
+    MAN_6:
+      IMAGE: 'man6.jpg'
+    MAN_7:
+      IMAGE: 'man7.jpg'
+    MAN_8:
+      IMAGE: 'man8.jpg'
+    WOMAN_EXAMPLE:
+      IMAGE: 'woman-example.jpg'
+    WOMAN_1:
+      IMAGE: 'woman1.jpg'
+    WOMAN_2:
+      IMAGE: 'woman2.jpg'
+    WOMAN_3:
+      IMAGE: 'woman3.jpg'
+    WOMAN_4:
+      IMAGE: 'woman4.jpg'
+    WOMAN_5:
+      IMAGE: 'woman5.jpg'
+    WOMAN_6:
+      IMAGE: 'woman6.jpg'
+    WOMAN_7:
+      IMAGE: 'woman7.jpg'
+    WOMAN_8:
+      IMAGE: 'woman8.jpg'
   }
 
-  FORM_ONE = {
+  #assigning people and food/animal combinations to different forms
+  FORMS = {
+    EXAMPLE: [
+      {
+        FOOD: CHOICES.FOOD.POTATO,
+        PERSON: PEOPLE.MAN_EXAMPLE
+      },
+      {
+        ANIMAL: CHOICES.ANIMAL.DOLPHIN,
+        PERSON: PEOPLE.WOMAN_EXAMPLE
+      }
+    ],
+    FORM_ONE: [
+      {
+        PERSON: PEOPLE.MAN_5
+        STIMULI:
+          ANIMAL:
+            label: 'animal',
+            item: CHOICES.ANIMAL.TURTLE
+          FOOD:
+            label: 'food',
+            item: CHOICES.FOOD.POTATO
+      }
+#      {
+#        FOOD: CHOICES.FOOD.MELON,
+#        ANIMAL: CHOICES.ANIMAL.COW,
+#        PERSON: PEOPLE.MAN_6
+#      },
+#      {
+#        FOOD: CHOICES.FOOD.CARROTS,
+#        ANIMAL: CHOICES.ANIMAL.WOLF,
+#        PERSON: PEOPLE.WOMAN_5
+#      },
+#      {
+#        FOOD: CHOICES.FOOD.CARROTS,
+#        ANIMAL: CHOICES.ANIMAL.WOLF,
+#        PERSON: PEOPLE.WOMAN_6
+#      }
+    ]
+  }
+
+#    MAN1: { #glasses and red shirt
+#      FOOD: CHOICES.FOOD.APPLE,
+#      IMAGE: 'man1'
+#    },
+#    MAN2: { #bald with sport coat
+#      FOOD: CHOICES.FOOD.POTATO,
+#      ANIMAL: CHOICES.ANIMAL.TURTLE,
+#      IMAGE: 'man2'
+#    },
+#    MAN3: { #purple shirt
+#      FOOD: CHOICES.FOOD.MELON,
+#      ANIMAL: CHOICES.ANIMAL.COW,
+#      IMAGE: 'man3'
+#    },
+#    WOMAN1: { #long dark hair
+#      ANIMAL: CHOICES.ANIMAL.DOLPHIN,
+#      IMAGE: 'woman1'
+#    },
+#    WOMAN2: { #hair pullled back with blue eyes
+#      FOOD: CHOICES.FOOD.CARROTS,
+#      ANIMAL: CHOICES.ANIMAL.WOLF,
+#      IMAGE: 'woman2'
+#    },
+#    WOMAN3: { #glasses and gray hair
+#      FOOD: CHOICES.FOOD.GRAPES,
+#      ANIMAL: CHOICES.ANIMAL.SHARK,
+#      IMAGE: 'woman3'
+#    }
+
+  IMMEDIATE_RECALL = {
     EXAMPLE: [
       { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
       { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
@@ -92,24 +194,22 @@ MemoryTask = class
       { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
     ],
     TRIALS: {
-      IMMEDIATE_RECALL: {
-        REMEMBER: [
-          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal' },
-          { type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food' }
-        ],
-        RECALL: [
-          { type: 'recallTwo', person: PEOPLE.MAN2 },
-          { type: 'recallTwo', person: PEOPLE.WOMAN3 },
-          { type: 'recallTwo', person: PEOPLE.WOMAN2 },
-          { type: 'recallTwo', person: PEOPLE.MAN3 }
-        ]
-      },
+      EXPOSURE: [
+        {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food'},
+        {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal'},
+        {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food'},
+        {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal'},
+        {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food'},
+        {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal'},
+        {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal'},
+        {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food'}
+      ],
+      RECALL: [
+        {type: 'recallTwo', person: PEOPLE.MAN2},
+        {type: 'recallTwo', person: PEOPLE.WOMAN3},
+        {type: 'recallTwo', person: PEOPLE.WOMAN2},
+        {type: 'recallTwo', person: PEOPLE.MAN3}
+      ],
       DELAYED_RECALL: {
         REMEMBER: [
           {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal'},
@@ -153,7 +253,33 @@ MemoryTask = class
     @practiceTrialsShown = 0
 
     #can switch this later
-    @currentForm = FORM_ONE
+    @currentForm = 'FORM_ONE'
+
+    @sequence = @generateRandomSequences(@currentForm)
+
+  #needs randomzied exposure and recall
+  generateRandomSequences: (currentForm) ->
+    sequence = []
+
+    for data in FORMS[currentForm]
+      do ->
+        for stimuli in data.STIMULI
+          do ->
+            obj =
+              action: 'rememberOne',
+              person: data.PERSON,
+              type: stimuli.label
+              item: stimuli.item
+
+        sequence.push obj
+        obj = {type: 'rememberOne', person: person, remember: 'animal'}
+        sequence.push obj
+
+    sequence = _.shuffle sequence
+    console.log sequence
+
+
+
 
   showStartScreen: ->
     @showNextTrial(@currentForm.EXAMPLE)
@@ -264,7 +390,7 @@ MemoryTask = class
     @showStartScreen()
 
   firstExampleRemember: (person, remember) ->
-    $("#exampleImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#exampleImage img").attr('src', "img/" + person.IMAGE)
     $("#exampleFood").empty().html("<p>" + person.FOOD + "</p>")
     $("#exampleScreen").show()
 
@@ -273,7 +399,7 @@ MemoryTask = class
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#rememberOne").show().empty().html( \
       "<p>" + person[remember.toUpperCase()] + "</p>" )
     $("#trialScreen").show()
@@ -286,7 +412,7 @@ MemoryTask = class
     #does nothing for now, may use to validate later
     correctAnswer = person[recall.toUpperCase()]
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
     $("#trialScreen").show()
 
@@ -294,7 +420,7 @@ MemoryTask = class
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#rememberOne").show().empty().html(
       "<p>" + person[remember.toUpperCase()] + "</p>" )
     $("#trialScreen").show()
@@ -305,7 +431,7 @@ MemoryTask = class
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE + ".jpg")
+    $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#recallBoth").show()
     $("#trialScreen").show()
 
