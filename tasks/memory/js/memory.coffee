@@ -133,6 +133,9 @@ MemoryTask = class
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
 
+  # value in milliseconds
+  TIME_BETWEEN_STIMULI = 3000
+
   constructor: ->
     #current form - static for now, will add switch later
     #@currentForm = FORM_ORDER.FORM_ONE
@@ -151,18 +154,33 @@ MemoryTask = class
     @currentForm = FORM_ONE
 
   showStartScreen: ->
-
     @showNextTrial(@currentForm.EXAMPLE)
 
-    $("#task").on('tap', =>
-      if @currentForm.EXAMPLE.length
-        @showNextTrial(@currentForm.EXAMPLE)
+    $("#task").one('tap', =>
+      @iterateExampleScreens(@currentForm)
+    )
+
+  iterateExampleScreens: (form) ->
+    @showNextTrial(form.EXAMPLE)
+
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      if form.EXAMPLE.length
+        @iterateExampleScreens(form)
       else
         @showInstructionsScreen()
     )
 
-  showNextTrial: (slides) ->
+  iterateRememberTrials: (form) ->
+    @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.REMEMBER)
 
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      if form.TRIALS.IMMEDIATE_RECALL.REMEMBER.length
+        @iterateRememberTrials(form)
+      else
+        @beginRecall(form)
+    )
+
+  showNextTrial: (slides) ->
     nextSlide = slides.shift()
     # looking to move away from switch, will refactor later.
     # looking for something to automatically call
@@ -206,14 +224,9 @@ MemoryTask = class
 
   beginTrials: (form) ->
     @showRememberScreen()
-    $("#task").unbind().on('tap', (event) =>
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
       $("#rememberScreen").hide()
-      if form.TRIALS.IMMEDIATE_RECALL.REMEMBER.length
-        @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.REMEMBER)
-      else
-        @beginRecall(form)
-      event.stopPropagation()
-      return false
+      @iterateRememberTrials(form)
     )
 
   beginRecall: (form) ->
