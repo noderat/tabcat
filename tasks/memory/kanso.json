@@ -9,6 +9,7 @@
         "js/task.js",
         "immediate-recall.html",
         "delayed-recall.html",
+        "img/man-example.jpg",
         "img/man1.jpg",
         "img/man2.jpg",
         "img/man3.jpg",
@@ -24,7 +25,8 @@
         "img/woman5.jpg",
         "img/woman6.jpg",
         "img/woman7.jpg",
-        "img/woman8.jpg"
+        "img/woman8.jpg",
+        "img/woman-example.jpg"
     ],
     "dependencies": {
         "attachments": null

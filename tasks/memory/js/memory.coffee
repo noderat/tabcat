@@ -133,8 +133,10 @@ MemoryTask = class
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
 
-  # value in milliseconds
+  # time values in milliseconds
   TIME_BETWEEN_STIMULI = 3000
+
+  TIME_BETWEEN_RECALL = 10000
 
   constructor: ->
     #current form - static for now, will add switch later
