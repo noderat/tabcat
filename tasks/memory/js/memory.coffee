@@ -308,9 +308,11 @@ MemoryTask = class
     $("#trialScreen").show()
 
 
-@InitialMemoryTask = class extends MemoryTask
+@ImmediateRecallMemoryTask = class extends MemoryTask
   constructor: ->
     super()
 
 #Not implementing for now, just creating the skeleton
-@DelayedRecallTask = class extends MemoryTask
+@DelayedRecallMemoryTask = class extends MemoryTask
+  constructor: ->
+    super()
