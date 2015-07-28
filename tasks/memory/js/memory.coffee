@@ -116,18 +116,35 @@ MemoryTask = class
       IMAGE: 'woman8.jpg'
   }
 
+  #these stay the same throughout forms
+  EXAMPLE_TRIALS = [
+    {
+      type: 'firstExampleRemember',
+      person: PEOPLE.MAN_EXAMPLE,
+      remember: 'food',
+      item: CHOICES.FOOD.APPLE
+
+    },
+    {
+      type: 'exampleRemember',
+      person: PEOPLE.WOMAN_EXAMPLE ,
+      remember: 'animal',
+      item: CHOICES.ANIMAL.DOLPHIN
+    },
+    {
+      type: 'exampleRecall',
+      person: PEOPLE.MAN_EXAMPLE,
+      recall: 'food'
+    },
+    {
+      type: 'exampleRecall',
+      person: PEOPLE.WOMAN_EXAMPLE,
+      recall: 'animal'
+    }
+  ]
+
   #assigning people and food/animal combinations to different forms
   FORMS = {
-    EXAMPLE: [
-      {
-        FOOD: CHOICES.FOOD.POTATO,
-        PERSON: PEOPLE.MAN_EXAMPLE
-      },
-      {
-        ANIMAL: CHOICES.ANIMAL.DOLPHIN,
-        PERSON: PEOPLE.WOMAN_EXAMPLE
-      }
-    ],
     FORM_ONE: [
       {
         PERSON: PEOPLE.MAN_5
@@ -137,62 +154,42 @@ MemoryTask = class
             item: CHOICES.ANIMAL.TURTLE
           FOOD:
             label: 'food',
-            item: CHOICES.FOOD.POTATO
+            item: CHOICES.FOOD.COCONUT
+      },
+      {
+        PERSON: PEOPLE.MAN_6
+        STIMULI:
+          ANIMAL:
+            label: 'animal',
+            item: CHOICES.ANIMAL.WOLF
+          FOOD:
+            label: 'food',
+            item: CHOICES.FOOD.CHERRY
+      },
+      {
+        PERSON: PEOPLE.WOMAN_5
+        STIMULI:
+          ANIMAL:
+            label: 'animal',
+            item: CHOICES.ANIMAL.SHARK
+          FOOD:
+            label: 'food',
+            item: CHOICES.FOOD.LETTUCE
+      },
+      {
+        PERSON: PEOPLE.WOMAN_5
+        STIMULI:
+          ANIMAL:
+            label: 'animal',
+            item: CHOICES.ANIMAL.COW
+          FOOD:
+            label: 'food',
+            item: CHOICES.FOOD.PEAS
       }
-#      {
-#        FOOD: CHOICES.FOOD.MELON,
-#        ANIMAL: CHOICES.ANIMAL.COW,
-#        PERSON: PEOPLE.MAN_6
-#      },
-#      {
-#        FOOD: CHOICES.FOOD.CARROTS,
-#        ANIMAL: CHOICES.ANIMAL.WOLF,
-#        PERSON: PEOPLE.WOMAN_5
-#      },
-#      {
-#        FOOD: CHOICES.FOOD.CARROTS,
-#        ANIMAL: CHOICES.ANIMAL.WOLF,
-#        PERSON: PEOPLE.WOMAN_6
-#      }
     ]
   }
 
-#    MAN1: { #glasses and red shirt
-#      FOOD: CHOICES.FOOD.APPLE,
-#      IMAGE: 'man1'
-#    },
-#    MAN2: { #bald with sport coat
-#      FOOD: CHOICES.FOOD.POTATO,
-#      ANIMAL: CHOICES.ANIMAL.TURTLE,
-#      IMAGE: 'man2'
-#    },
-#    MAN3: { #purple shirt
-#      FOOD: CHOICES.FOOD.MELON,
-#      ANIMAL: CHOICES.ANIMAL.COW,
-#      IMAGE: 'man3'
-#    },
-#    WOMAN1: { #long dark hair
-#      ANIMAL: CHOICES.ANIMAL.DOLPHIN,
-#      IMAGE: 'woman1'
-#    },
-#    WOMAN2: { #hair pullled back with blue eyes
-#      FOOD: CHOICES.FOOD.CARROTS,
-#      ANIMAL: CHOICES.ANIMAL.WOLF,
-#      IMAGE: 'woman2'
-#    },
-#    WOMAN3: { #glasses and gray hair
-#      FOOD: CHOICES.FOOD.GRAPES,
-#      ANIMAL: CHOICES.ANIMAL.SHARK,
-#      IMAGE: 'woman3'
-#    }
-
   IMMEDIATE_RECALL = {
-    EXAMPLE: [
-      { type: 'firstExampleRemember', person: PEOPLE.MAN1, remember: 'food' },
-      { type: 'exampleRemember', person: PEOPLE.WOMAN1 , remember: 'animal' },
-      { type: 'exampleRecall', person: PEOPLE.MAN1, recall: 'food' },
-      { type: 'exampleRecall', person: PEOPLE.WOMAN1, recall: 'animal' }
-    ],
     TRIALS: {
       EXPOSURE: [
         {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food'},
@@ -253,47 +250,44 @@ MemoryTask = class
     @practiceTrialsShown = 0
 
     #can switch this later
-    @currentForm = 'FORM_ONE'
+    @currentForm = @getCurrentForm()
 
-    @sequence = @generateRandomSequences(@currentForm)
+    @formStimuli = FORMS[@currentForm]
 
-  #needs randomzied exposure and recall
-  generateRandomSequences: (currentForm) ->
-    sequence = []
+  getCurrentForm: ->
+    return 'FORM_ONE'
 
-    for data in FORMS[currentForm]
-      do ->
-        for stimuli in data.STIMULI
-          do ->
+  generateExampleStimuli: ->
+    rememberStimuli = []
+
+    for data in @formStimuli
+      do ( ->
+        for key, stimuli of data.STIMULI
+          do ( ->
             obj =
               action: 'rememberOne',
               person: data.PERSON,
-              type: stimuli.label
+              type: stimuli.label,
               item: stimuli.item
 
-        sequence.push obj
-        obj = {type: 'rememberOne', person: person, remember: 'animal'}
-        sequence.push obj
-
-    sequence = _.shuffle sequence
-    console.log sequence
-
-
-
+            rememberStimuli.push obj
+          )
+      )
+    return _.shuffle rememberStimuli
 
   showStartScreen: ->
-    @showNextTrial(@currentForm.EXAMPLE)
+    @showNextTrial(EXAMPLE_TRIALS)
 
     $("#task").one('tap', =>
       @iterateExampleScreens(@currentForm)
     )
 
-  iterateExampleScreens: (form) ->
-    @showNextTrial(form.EXAMPLE)
+  iterateExampleScreens: ->
+    @showNextTrial(EXAMPLE_TRIALS)
 
-    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
-      if form.EXAMPLE.length
-        @iterateExampleScreens(form)
+    $("#task").one('tap', =>
+      if EXAMPLE_TRIALS.length
+        @iterateExampleScreens()
       else
         @showInstructionsScreen()
     )
@@ -316,9 +310,9 @@ MemoryTask = class
     # behavior regarding scope that I don't yet understand
     switch nextSlide.type
       when "firstExampleRemember" then \
-        @firstExampleRemember nextSlide.person, nextSlide.remember
+        @firstExampleRemember nextSlide.person, nextSlide.item
       when "exampleRemember" then \
-        @exampleRemember nextSlide.person, nextSlide.remember
+        @exampleRemember nextSlide.person, nextSlide.item
       when "exampleRecall" then \
         @exampleRecall nextSlide.person, nextSlide.recall
       when "rememberOne" then \
@@ -389,19 +383,19 @@ MemoryTask = class
 
     @showStartScreen()
 
-  firstExampleRemember: (person, remember) ->
+  firstExampleRemember: (person, item) ->
     $("#exampleImage img").attr('src', "img/" + person.IMAGE)
-    $("#exampleFood").empty().html("<p>" + person.FOOD + "</p>")
+    $("#exampleFood").empty().html("<p>" + item + "</p>")
     $("#exampleScreen").show()
 
-  exampleRemember: (person, remember) ->
+  exampleRemember: (person, item) ->
     $("#exampleScreen").hide()
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
     $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#rememberOne").show().empty().html( \
-      "<p>" + person[remember.toUpperCase()] + "</p>" )
+      "<p>" + item + "</p>" )
     $("#trialScreen").show()
 
   exampleRecall: (person, recall) ->
