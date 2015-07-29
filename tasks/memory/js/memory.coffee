@@ -177,7 +177,7 @@ MemoryTask = class
             item: CHOICES.FOOD.LETTUCE
       },
       {
-        PERSON: PEOPLE.WOMAN_5
+        PERSON: PEOPLE.WOMAN_6
         STIMULI:
           ANIMAL:
             label: 'animal',
@@ -189,44 +189,6 @@ MemoryTask = class
     ]
   }
 
-  IMMEDIATE_RECALL = {
-    TRIALS: {
-      EXPOSURE: [
-        {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food'},
-        {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal'},
-        {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food'},
-        {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal'},
-        {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food'},
-        {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal'},
-        {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal'},
-        {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food'}
-      ],
-      RECALL: [
-        {type: 'recallTwo', person: PEOPLE.MAN2},
-        {type: 'recallTwo', person: PEOPLE.WOMAN3},
-        {type: 'recallTwo', person: PEOPLE.WOMAN2},
-        {type: 'recallTwo', person: PEOPLE.MAN3}
-      ],
-      DELAYED_RECALL: {
-        REMEMBER: [
-          {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'animal'},
-          {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'food'},
-          {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'animal'},
-          {type: 'rememberOne', person: PEOPLE.MAN2, remember: 'animal'},
-          {type: 'rememberOne', person: PEOPLE.WOMAN2, remember: 'food'},
-          {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'animal'},
-          {type: 'rememberOne', person: PEOPLE.WOMAN3, remember: 'food'},
-          {type: 'rememberOne', person: PEOPLE.MAN3, remember: 'food'}
-        ],
-        RECALL: [
-          {type: 'recallTwo', person: PEOPLE.MAN3},
-          {type: 'recallTwo', person: PEOPLE.MAN2},
-          {type: 'recallTwo', person: PEOPLE.WOMAN3},
-          {type: 'recallTwo', person: PEOPLE.WOMAN2}
-        ]
-      }
-    }
-  }
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
 
@@ -270,36 +232,6 @@ MemoryTask = class
 
     return _.shuffle recalls
 
-  showStartScreen: ->
-    @showNextTrial(EXAMPLE_TRIALS)
-
-    $("#task").one('tap', =>
-      @iterateExampleScreens(@currentForm)
-    )
-
-  iterateExampleScreens: ->
-    @showNextTrial(EXAMPLE_TRIALS)
-
-    $("#task").one('tap', =>
-      if EXAMPLE_TRIALS.length
-        @iterateExampleScreens()
-      else
-        @showInstructionsScreen()
-    )
-
-  iterateFirstExposureTrials: (trials) ->
-    @showNextTrial(trials)
-
-    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
-      if trials.length
-        @iterateFirstExposureTrials(trials)
-      else
-        @beginFirstRecall()
-    )
-
-  iterateSecondExposureTrials: ->
-
-
   showNextTrial: (slides) ->
     nextSlide = slides.shift()
     # looking to move away from switch, will refactor later.
@@ -326,7 +258,7 @@ MemoryTask = class
     $("#instructionsScreen").show()
 
     $("#task").one('tap', =>
-      @beginTrials()
+      @beginFirstExposureTrials()
     )
 
   showRememberScreen: ->
@@ -341,35 +273,6 @@ MemoryTask = class
     $("#trialScreen").hide()
     $("#instructionsScreen").hide()
     $("#rememberScreen").hide()
-
-  beginTrials: () ->
-    @showRememberScreen()
-    #generate trials for exposure
-    trials = @generateExampleStimuli()
-    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
-      $("#rememberScreen").hide()
-      @iterateFirstExposureTrials(trials)
-    )
-
-  beginFirstRecall: ->
-    @showBlankScreen()
-
-    trials = @generateRecalls()
-
-    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
-      @iterateFirstRecallTrials(trials)
-    )
-
-  iterateFirstRecallTrials: (trials) ->
-
-    @showNextTrial(trials)
-
-    TabCAT.UI.wait(TIME_BETWEEN_RECALL).then( =>
-      if trials.length
-        @iterateFirstRecallTrials(trials)
-      else
-        console.log "should stop here for now"
-    )
 
   start: ->
     TabCAT.Task.start(
@@ -389,6 +292,101 @@ MemoryTask = class
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     @showStartScreen()
+
+  showStartScreen: ->
+    @showNextTrial(EXAMPLE_TRIALS)
+
+    $("#task").one('tap', =>
+      @iterateExampleScreens(@currentForm)
+    )
+
+  beginFirstExposureTrials: ->
+    @showRememberScreen()
+    #generate trials for exposure
+    trials = @generateExampleStimuli()
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      $("#rememberScreen").hide()
+      @iterateFirstExposureTrials(trials)
+    )
+
+  beginSecondExposureTrials: ->
+    @showRememberScreen()
+    #generate trials for exposure
+    trials = @generateExampleStimuli()
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      $("#rememberScreen").hide()
+      @iterateSecondExposureTrials(trials)
+    )
+
+  beginFirstRecall: ->
+    @showBlankScreen()
+
+    trials = @generateRecalls()
+
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      @iterateFirstRecallTrials(trials)
+    )
+
+  beginSecondRecall: ->
+    @showBlankScreen()
+
+    trials = @generateRecalls()
+
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      @iterateSecondRecallTrials(trials)
+    )
+
+  iterateFirstRecallTrials: (trials) ->
+
+    @showNextTrial(trials)
+
+    TabCAT.UI.wait(TIME_BETWEEN_RECALL).then( =>
+      if trials.length
+        @iterateFirstRecallTrials(trials)
+      else
+        @beginSecondExposureTrials()
+    )
+
+  iterateSecondRecallTrials: (trials) ->
+
+    @showNextTrial(trials)
+
+    TabCAT.UI.wait(TIME_BETWEEN_RECALL).then( =>
+      if trials.length
+        @iterateSecondRecallTrials(trials)
+      else
+        @endTask()
+    )
+
+  iterateExampleScreens: ->
+    @showNextTrial(EXAMPLE_TRIALS)
+
+    $("#task").one('tap', =>
+      if EXAMPLE_TRIALS.length
+        @iterateExampleScreens()
+      else
+        @showInstructionsScreen()
+    )
+
+  iterateFirstExposureTrials: (trials) ->
+    @showNextTrial(trials)
+
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      if trials.length
+        @iterateFirstExposureTrials(trials)
+      else
+        @beginFirstRecall()
+    )
+
+  iterateSecondExposureTrials: (trials) ->
+    @showNextTrial(trials)
+
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      if trials.length
+        @iterateSecondExposureTrials(trials)
+      else
+        @beginSecondRecall()
+    )
 
   firstExampleRemember: (person, item) ->
     $("#exampleImage img").attr('src', "img/" + person.IMAGE)
@@ -436,12 +434,14 @@ MemoryTask = class
     $("#recallBoth").show()
     $("#trialScreen").show()
 
+  endTask: ->
+    TabCAT.Task.finish()
 
-@ImmediateRecallMemoryTask = class extends MemoryTask
+@LearningMemoryTask = class extends MemoryTask
   constructor: ->
     super()
 
 #Not implementing for now, just creating the skeleton
-@DelayedRecallMemoryTask = class extends MemoryTask
+@DelayMemoryTask = class extends MemoryTask
   constructor: ->
     super()

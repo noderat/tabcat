@@ -4,11 +4,11 @@
     "description": "Memory",
     "attachments": [
         "css/memory.css",
-        "img/immediate-recall.png",
-        "img/delayed-recall.png",
+        "img/learning.png",
+        "img/delay.png",
         "js/task.js",
-        "immediate-recall.html",
-        "delayed-recall.html",
+        "learning.html",
+        "delay.html",
         "img/man-example.jpg",
         "img/man1.jpg",
         "img/man2.jpg",
@@ -36,21 +36,21 @@
             "memory": {
                 "description": "Memory Tasks",
                 "tasks": [
-                    "immediate-recall",
-                    "delayed-recall"
+                    "learning",
+                    "delay"
                 ]
             }
         },
         "tasks": {
-            "immediate-recall": {
-                "description": "Immediate Recall",
-                "icon": "img/immediate-recall.png",
-                "start": "immediate-recall.html"
+            "learning": {
+                "description": "Learning",
+                "icon": "img/learning.png",
+                "start": "learning.html"
             },
-            "delayed-recall": {
-                "description": "Delayed Recall",
-                "icon": "img/delayed-recall.png",
-                "start": "delayed-recall.html"
+            "delay": {
+                "description": "Delay",
+                "icon": "img/delay.png",
+                "start": "delay.html"
             }
         }
     }
