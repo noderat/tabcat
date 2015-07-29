@@ -119,25 +119,25 @@ MemoryTask = class
   #these stay the same throughout forms
   EXAMPLE_TRIALS = [
     {
-      type: 'firstExampleRemember',
+      action: 'firstExampleRemember',
       person: PEOPLE.MAN_EXAMPLE,
       remember: 'food',
       item: CHOICES.FOOD.APPLE
 
     },
     {
-      type: 'exampleRemember',
+      action: 'exampleRemember',
       person: PEOPLE.WOMAN_EXAMPLE ,
       remember: 'animal',
       item: CHOICES.ANIMAL.DOLPHIN
     },
     {
-      type: 'exampleRecall',
+      action: 'exampleRecall',
       person: PEOPLE.MAN_EXAMPLE,
       recall: 'food'
     },
     {
-      type: 'exampleRecall',
+      action: 'exampleRecall',
       person: PEOPLE.WOMAN_EXAMPLE,
       recall: 'animal'
     }
@@ -236,25 +236,13 @@ MemoryTask = class
   TIME_BETWEEN_RECALL = 10000
 
   constructor: ->
-    #current form - static for now, will add switch later
-    #@currentForm = FORM_ORDER.FORM_ONE
-    #@currentFormNumber = 1
-
-    #current digit presented on screen
-    @currentStimuli = null
-
-    @secondsElapsed = 0
-
-    @isInDebugMode = TabCAT.Task.isInDebugMode()
-
-    @practiceTrialsShown = 0
-
     #can switch this later
     @currentForm = @getCurrentForm()
 
     @formStimuli = FORMS[@currentForm]
 
   getCurrentForm: ->
+    #static for now, will have some way of determining later
     return 'FORM_ONE'
 
   generateExampleStimuli: ->
@@ -275,6 +263,13 @@ MemoryTask = class
       )
     return _.shuffle rememberStimuli
 
+  generateRecalls: ->
+    recalls = []
+    for data in @formStimuli
+      do -> recalls.push { action: 'recallBoth', person: data.PERSON }
+
+    return _.shuffle recalls
+
   showStartScreen: ->
     @showNextTrial(EXAMPLE_TRIALS)
 
@@ -292,15 +287,18 @@ MemoryTask = class
         @showInstructionsScreen()
     )
 
-  iterateRememberTrials: (form) ->
-    @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.REMEMBER)
+  iterateFirstExposureTrials: (trials) ->
+    @showNextTrial(trials)
 
     TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
-      if form.TRIALS.IMMEDIATE_RECALL.REMEMBER.length
-        @iterateRememberTrials(form)
+      if trials.length
+        @iterateFirstExposureTrials(trials)
       else
-        @beginRecall(form)
+        @beginFirstRecall()
     )
+
+  iterateSecondExposureTrials: ->
+
 
   showNextTrial: (slides) ->
     nextSlide = slides.shift()
@@ -308,7 +306,7 @@ MemoryTask = class
     # looking for something to automatically call
     # function with the same name as type, but there's some strange
     # behavior regarding scope that I don't yet understand
-    switch nextSlide.type
+    switch nextSlide.action
       when "firstExampleRemember" then \
         @firstExampleRemember nextSlide.person, nextSlide.item
       when "exampleRemember" then \
@@ -316,9 +314,9 @@ MemoryTask = class
       when "exampleRecall" then \
         @exampleRecall nextSlide.person, nextSlide.recall
       when "rememberOne" then \
-        @rememberOne nextSlide.person, nextSlide.remember
-      when "recallTwo" then \
-        @recallTwo nextSlide.person
+        @rememberOne nextSlide.person, nextSlide.item
+      when "recallBoth" then \
+        @recallBoth nextSlide.person
       else console.log "some other type"
 
   showInstructionsScreen: ->
@@ -328,7 +326,7 @@ MemoryTask = class
     $("#instructionsScreen").show()
 
     $("#task").one('tap', =>
-      @beginTrials(@currentForm)
+      @beginTrials()
     )
 
   showRememberScreen: ->
@@ -344,24 +342,33 @@ MemoryTask = class
     $("#instructionsScreen").hide()
     $("#rememberScreen").hide()
 
-  beginTrials: (form) ->
+  beginTrials: () ->
     @showRememberScreen()
+    #generate trials for exposure
+    trials = @generateExampleStimuli()
     TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
       $("#rememberScreen").hide()
-      @iterateRememberTrials(form)
+      @iterateFirstExposureTrials(trials)
     )
 
-  beginRecall: (form) ->
+  beginFirstRecall: ->
     @showBlankScreen()
 
-    $("#task").unbind().on('tap', =>
-      $("#rememberScreen").hide()
+    trials = @generateRecalls()
 
-      if form.TRIALS.IMMEDIATE_RECALL.RECALL.length
-        @showNextTrial(form.TRIALS.IMMEDIATE_RECALL.RECALL)
+    TabCAT.UI.wait(TIME_BETWEEN_STIMULI).then( =>
+      @iterateFirstRecallTrials(trials)
+    )
+
+  iterateFirstRecallTrials: (trials) ->
+
+    @showNextTrial(trials)
+
+    TabCAT.UI.wait(TIME_BETWEEN_RECALL).then( =>
+      if trials.length
+        @iterateFirstRecallTrials(trials)
       else
-        $("#task").unbind()
-        console.log "out of recalls"
+        console.log "should stop here for now"
     )
 
   start: ->
@@ -410,16 +417,16 @@ MemoryTask = class
     $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
     $("#trialScreen").show()
 
-  rememberOne: (person, remember) ->
+  rememberOne: (person, item) ->
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
     $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#rememberOne").show().empty().html(
-      "<p>" + person[remember.toUpperCase()] + "</p>" )
+      "<p>" + item + "</p>" )
     $("#trialScreen").show()
 
-  recallTwo: (person) ->
+  recallBoth: (person) ->
     $("#exampleScreen").hide()
     $("#rememberOne").hide()
     $("#recallOne").hide()
