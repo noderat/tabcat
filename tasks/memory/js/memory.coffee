@@ -224,7 +224,18 @@ MemoryTask = class
             rememberStimuli.push obj
           )
       )
-    return _.shuffle rememberStimuli
+    return @shuffleStimuli rememberStimuli
+
+  shuffleStimuli: (stimuli) ->
+    shuffledStimuli = _.shuffle stimuli
+    passes = _.every(shuffledStimuli, (value, index) ->
+      return true unless shuffledStimuli[index].person == \
+        shuffledStimuli[index - 1]?.person
+    )
+    if passes == true
+      return shuffledStimuli
+    else
+      return @shuffleStimuli(stimuli)
 
   generateRecalls: ->
     recalls = []
@@ -250,7 +261,6 @@ MemoryTask = class
         @rememberOne nextSlide.person, nextSlide.item
       when "recallBoth" then \
         @recallBoth nextSlide.person
-      else console.log "some other type"
 
   showInstructionsScreen: ->
     $("#task").unbind()
