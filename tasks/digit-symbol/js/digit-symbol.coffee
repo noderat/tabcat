@@ -156,6 +156,8 @@ translations =
 
     @startTime = null
 
+    @inPracticeModePause = false
+
     #holding tank for stimuli, only to be used as reference to not
     #bump numbers back-to-back
     @lastTank = []
@@ -295,17 +297,21 @@ translations =
     #required handling code for 'tap'
     selectedChoice = eventTarget.data('sequence')
     if @currentStimuli == selectedChoice
+      @inPracticeModePause = false
       #need to log correct event
       if not @inPracticeMode()
         @numberCorrect++
       else
         #green highlight for correct
+        @removeIncorrectHighlights()
         highlightColor = "rgba(0,255,0, .5)"
         @practiceTrialsCurrentStreak++
       correct = true
     else if not @inPracticeMode()
       @numberIncorrect++
     else
+      @inPracticeModePause = true
+      eventTarget.addClass('incorrect')
       #red highlight for incorrect
       highlightColor = "rgba(255,0,0,.5)"
       @practiceTrialsCurrentStreak = 0
@@ -316,6 +322,7 @@ translations =
     if @isInDebugMode
       @updateDebugInfo()
 
+    #if shouldHighlight is true
     eventTarget.effect("highlight", {color: highlightColor}, 500)
 
     interpretation =
@@ -330,9 +337,13 @@ translations =
       @trialBeginConfirmation()
       return false
 
-    @updateCurrentStimuli()
+    if @inPracticeModePause is false
+      @updateCurrentStimuli()
 
     return false
+
+  removeIncorrectHighlights: ->
+    $(".incorrect").removeClass('incorrect')
 
   readyToBeginTask: ->
     @practiceTrialsCurrentStreak is 2 and not @finishedPracticeMode

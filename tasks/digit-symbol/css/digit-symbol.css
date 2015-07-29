@@ -238,3 +238,7 @@ button:focus {
     font-size: 3em;
     color: white;
 }
+
+.incorrect {
+    background-color: red;
+}
