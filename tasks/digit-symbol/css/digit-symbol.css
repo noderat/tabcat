@@ -167,13 +167,6 @@ button:focus {
     bottom: 67%;
 }
 
-#progressButtonsContainer {
-    text-align: center;
-    width: 100%;
-    position: absolute;
-    top: 66%;
-}
-
 .progressButton {
     border-width: 0.2em;
     border-style: solid;

@@ -196,3 +196,34 @@ p {
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
+
+.progressButton {
+    border-width: 0.2em;
+    border-style: solid;
+    border-color: #ffffff;
+    border-radius: 0.7em;
+    background-color: #666666;
+    padding: 0.3em;
+    color: #ffffff;
+    font-size: 5em;
+}
+
+#backButton {
+    display: none;
+    position: absolute;
+    top: 85%;
+    left: 3%;
+}
+
+#nextButton {
+    position: absolute;
+    top: 85%;
+    left: 85%;
+}
+
+#beginButton {
+    display: none;
+    position:absolute;
+    top: 85%;
+    left: 85%;
+}

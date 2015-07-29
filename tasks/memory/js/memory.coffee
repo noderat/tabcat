@@ -244,33 +244,22 @@ MemoryTask = class
 
     return _.shuffle recalls
 
-  showNextTrial: (slides) ->
-    nextSlide = slides.shift()
+  showNextTrial: (slide) ->
     # looking to move away from switch, will refactor later.
     # looking for something to automatically call
     # function with the same name as type, but there's some strange
     # behavior regarding scope that I don't yet understand
-    switch nextSlide.action
+    switch slide.action
       when "firstExampleRemember" then \
-        @firstExampleRemember nextSlide.person, nextSlide.item
+        @firstExampleRemember slide.person, slide.item
       when "exampleRemember" then \
-        @exampleRemember nextSlide.person, nextSlide.item
+        @exampleRemember slide.person, slide.item
       when "exampleRecall" then \
-        @exampleRecall nextSlide.person, nextSlide.recall
+        @exampleRecall slide.person, slide.recall
       when "rememberOne" then \
-        @rememberOne nextSlide.person, nextSlide.item
+        @rememberOne slide.person, slide.item
       when "recallBoth" then \
-        @recallBoth nextSlide.person
-
-  showInstructionsScreen: ->
-    $("#task").unbind()
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
-    $("#instructionsScreen").show()
-
-    $("#task").one('tap', =>
-      @beginFirstExposureTrials()
-    )
+        @recallBoth slide.person
 
   showRememberScreen: ->
     $("#exampleScreen").hide()
@@ -357,14 +346,74 @@ MemoryTask = class
   constructor: ->
     super()
 
-  showStartScreen: ->
-    @showNextTrial(@EXAMPLE_TRIALS)
+    @currentExampleTrial = 0
 
-    $("#task").one('tap', =>
-      @iterateExampleScreens(@currentForm)
+  showStartScreen: ->
+    $("#backButton").hide()
+    @currentExampleTrial = 0
+
+    @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
+
+    @currentExampleTrial++
+
+    $("#nextButton").unbind().show().one('tap', =>
+      @iterateExampleScreens()
+    )
+
+  iterateExampleScreens: ->
+
+    #these should already be in this state the first time
+    #but should be reset if back button was pressed from instruction screen
+    $("#beginButton").hide()
+    $("#nextButton").show()
+    $("#backButton").show()
+
+    @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
+
+    $("#nextButton").unbind().one('tap', (event) =>
+      @currentExampleTrial++
+      if @currentExampleTrial <= @EXAMPLE_TRIALS.length - 1
+        @iterateExampleScreens()
+      else
+        @showInstructionsScreen()
+      event.stopPropagation()
+      return false
+    )
+
+    $("#backButton").unbind().one('tap', (event) =>
+      @currentExampleTrial--
+      if @currentExampleTrial == 0
+        @showStartScreen()
+      else
+        @iterateExampleScreens()
+
+      event.stopPropagation()
+      return false
+    )
+
+  showInstructionsScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").show()
+
+    $("#nextButton").unbind().hide()
+    $("#beginButton").unbind().show().one('tap', =>
+      #start actual task
+      @beginFirstExposureTrials()
+    )
+
+    $("#backButton").unbind().one('tap', =>
+      @currentExampleTrial--
+      $("#exampleScreen").show()
+      $("#trialScreen").show()
+      $("#instructionsScreen").hide()
+      @iterateExampleScreens()
     )
 
   beginFirstExposureTrials: ->
+    $("#beginButton").unbind().hide()
+    $("#backButton").unbind().hide()
+
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExampleStimuli()
@@ -402,7 +451,7 @@ MemoryTask = class
 
   iterateFirstRecallTrials: (trials) ->
 
-    @showNextTrial(trials)
+    @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
       if trials.length
@@ -413,7 +462,7 @@ MemoryTask = class
 
   iterateSecondRecallTrials: (trials) ->
 
-    @showNextTrial(trials)
+    @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
       if trials.length
@@ -422,18 +471,8 @@ MemoryTask = class
         @endTask()
     )
 
-  iterateExampleScreens: ->
-    @showNextTrial(@EXAMPLE_TRIALS)
-
-    $("#task").one('tap', =>
-      if @EXAMPLE_TRIALS.length
-        @iterateExampleScreens()
-      else
-        @showInstructionsScreen()
-    )
-
   iterateFirstExposureTrials: (trials) ->
-    @showNextTrial(trials)
+    @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       if trials.length
@@ -443,7 +482,7 @@ MemoryTask = class
     )
 
   iterateSecondExposureTrials: (trials) ->
-    @showNextTrial(trials)
+    @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       if trials.length
@@ -469,7 +508,7 @@ MemoryTask = class
 
   iterateDelayedRecallTrials: (trials) ->
 
-    @showNextTrial(trials)
+    @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
       if trials.length
