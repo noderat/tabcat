@@ -197,9 +197,12 @@ translations =
 
     @fillScreen()
 
-    $('#backButton').show().one('tap', ( (event) =>
+    stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
+
+    $('#backButton').show().one('tap', =>
+      stimuliSymbol.removeClass("correct")
       @showStartScreen()
-    ))
+    )
 
     instructions = @getTranslationParagraphs 'start_screen_next_html'
 
@@ -208,9 +211,15 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#nextButton').one('tap', ( (event) =>
+    stimuliSymbol.addClass("correct")
+    stimuliSymbol.effect("highlight",
+      {color: "rgba(0,255,0, .5)"}, 500
+    )
+
+    $('#nextButton').unbind().one('tap', =>
+      stimuliSymbol.removeClass("correct")
       @practiceModeMessage()
-    ))
+    )
 
   practiceModeMessage: ->
     @blankScreen()
