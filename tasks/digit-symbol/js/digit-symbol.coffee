@@ -333,8 +333,10 @@ translations =
 
     if @readyToBeginTask()
       $('.symbol').unbind()
-      @finishedPracticeMode = true
-      @trialBeginConfirmation()
+      TabCAT.UI.wait(700).then( =>
+        @finishedPracticeMode = true
+        @trialBeginConfirmation()
+      )
       return false
 
     if @inPracticeModePause is false
