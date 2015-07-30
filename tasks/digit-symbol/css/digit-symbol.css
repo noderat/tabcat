@@ -210,6 +210,10 @@ button:focus {
     color: white;
 }
 
+.bigFont {
+    font-size: 2em !important;
+}
+
 #startScreenMessage {
     position: fixed;
     left: 0;

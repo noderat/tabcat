@@ -225,11 +225,12 @@ translations =
     @blankScreen()
 
     html = @getTranslationParagraphs 'start_screen_practice'
-    $('#startScreenMessage').html html
+    $('#startScreenMessage').addClass('bigFont').html html
 
-    $('#backButton').show().one('tap', ( (event) =>
+    $('#backButton').show().one('tap', =>
+      $('#startScreenMessage').removeClass('bigFont')
       @startScreenNext()
-    ))
+    )
 
     $('#nextButton').show().one('tap', \
       @practiceModeMessageBodyHandler.bind(this))
