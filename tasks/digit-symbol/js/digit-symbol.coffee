@@ -36,7 +36,9 @@ translations =
         'Next'
       start_screen_html:
         1: 'Look at the boxes above.'
-        2: 'Each has its own picture.'
+        2: 'Each number has its own picture.'
+        3: 'Now look at the pictures below. <br>They match ' +
+           'the pictures above.'
       start_screen_next_html:
         1: 'Each time you see a number in the middle of the screen, ' +
            'look to see <br> which picture matches the number above, ' +
