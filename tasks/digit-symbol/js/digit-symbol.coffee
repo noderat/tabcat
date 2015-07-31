@@ -36,10 +36,7 @@ translations =
         'Next'
       start_screen_html:
         1: 'Look at the boxes above.'
-        2: 'Each has a number in the upper part and a picture <br> in the ' +
-           'lower part.  Each number has its own picture.'
-        3: 'Now look at the pictures below.  <br>They match ' +
-           'the pictures above.'
+        2: 'Each has its own picture.'
       start_screen_next_html:
         1: 'Each time you see a number in the middle of the screen, ' +
            'look to see <br> which picture matches the number above, ' +
@@ -211,14 +208,14 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    stimuliSymbol.addClass("correct")
-    stimuliSymbol.effect("highlight",
-      {color: "rgba(0,255,0, .5)"}, 500
-    )
-
     $('#nextButton').unbind().one('tap', =>
-      stimuliSymbol.removeClass("correct")
-      @practiceModeMessage()
+      stimuliSymbol.effect("highlight",
+        {color: "rgba(0,255,0, 1)"}, 500)
+      stimuliSymbol.addClass("correct")
+      $('#nextButton').unbind().one('tap', =>
+        stimuliSymbol.removeClass("correct")
+        @practiceModeMessage()
+      )
     )
 
   practiceModeMessage: ->
