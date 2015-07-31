@@ -125,7 +125,6 @@ MemoryTask = class
         person: @PEOPLE.MAN_EXAMPLE,
         remember: 'food',
         item: @CHOICES.FOOD.APPLE
-
       },
       {
         action: 'exampleRemember',
@@ -147,48 +146,91 @@ MemoryTask = class
 
     #assigning people and food/animal combinations to different forms
     @FORMS = {
-      FORM_ONE: [
-        {
-          PERSON: @PEOPLE.MAN_5
-          STIMULI:
-            ANIMAL:
-              label: 'animal',
-              item: @CHOICES.ANIMAL.TURTLE
-            FOOD:
-              label: 'food',
-              item: @CHOICES.FOOD.COCONUT
-        },
-        {
-          PERSON: @PEOPLE.MAN_6
-          STIMULI:
-            ANIMAL:
-              label: 'animal',
-              item: @CHOICES.ANIMAL.WOLF
-            FOOD:
-              label: 'food',
-              item: @CHOICES.FOOD.CHERRY
-        },
-        {
-          PERSON: @PEOPLE.WOMAN_5
-          STIMULI:
-            ANIMAL:
-              label: 'animal',
-              item: @CHOICES.ANIMAL.SHARK
-            FOOD:
-              label: 'food',
-              item: @CHOICES.FOOD.LETTUCE
-        },
-        {
-          PERSON: @PEOPLE.WOMAN_6
-          STIMULI:
-            ANIMAL:
-              label: 'animal',
-              item: @CHOICES.ANIMAL.COW
-            FOOD:
-              label: 'food',
-              item: @CHOICES.FOOD.PEAS
-        }
-      ]
+      FORM_ONE:
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.MAN_5,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TURTLE
+        }, {
+          person: @PEOPLE.WOMAN_6,
+          label: 'food',
+          item: @CHOICES.FOOD.PEAS
+        },{
+          person: @PEOPLE.WOMAN_5,
+          label: 'food',
+          item: @CHOICES.FOOD.LETTUCE
+        }, {
+          person: @PEOPLE.MAN_6,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WOLF
+        },{
+          person: @PEOPLE.WOMAN_5,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SHARK
+        }, {
+          person: @PEOPLE.MAN_5,
+          label: 'food',
+          item: @CHOICES.FOOD.COCONUT
+        },{
+          person: @PEOPLE.MAN_6,
+          label: 'food',
+          item: @CHOICES.FOOD.CHERRY
+        }, {
+          person: @PEOPLE.WOMAN_6,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.COW
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_5 },
+          { person: @PEOPLE.MAN_5 },
+          { person: @PEOPLE.WOMAN_6 },
+          { person: @PEOPLE.MAN_6 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_5,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SHARK
+        },{
+          person: @PEOPLE.MAN_5,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TURTLE
+        },{
+          person: @PEOPLE.WOMAN_6,
+          label: 'food',
+          item: @CHOICES.FOOD.PEAS
+        },{
+          person: @PEOPLE.MAN_6,
+          label: 'food',
+          item: @CHOICES.FOOD.CHERRY
+        },{
+          person: @PEOPLE.WOMAN_6,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.COW
+        },{
+          person: @PEOPLE.WOMAN_5,
+          label: 'food',
+          item: @CHOICES.FOOD.LETTUCE
+        }, {
+          person: @PEOPLE.MAN_6,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WOLF
+        },{
+          person: @PEOPLE.MAN_5,
+          label: 'food',
+          item: @CHOICES.FOOD.COCONUT
+        }],
+        SECOND_RECALL: [
+          { person: @PEOPLE.MAN_6 },
+          { person: @PEOPLE.MAN_5 },
+          { person: @PEOPLE.WOMAN_6 },
+          { person: @PEOPLE.WOMAN_5 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.WOMAN_6 },
+          { person: @PEOPLE.MAN_5 },
+          { person: @PEOPLE.MAN_6 },
+          { person: @PEOPLE.WOMAN_5 }
+        ]
     }
 
     #can switch this later
@@ -208,41 +250,27 @@ MemoryTask = class
     #static for now, will have some way of determining later
     return 'FORM_ONE'
 
-  generateExampleStimuli: ->
-    rememberStimuli = []
+  generateExposureStimuli: (exposureData) ->
+    stimuli = []
 
-    for data in @formStimuli
+    for data in exposureData
       do ( ->
-        for key, stimuli of data.STIMULI
-          do ( ->
-            obj =
-              action: 'rememberOne',
-              person: data.PERSON,
-              type: stimuli.label,
-              item: stimuli.item
+        obj =
+          action: 'rememberOne',
+          person: data.person,
+          type: data.label,
+          item: data.item
 
-            rememberStimuli.push obj
-          )
+        stimuli.push obj
       )
-    return @shuffleStimuli rememberStimuli
 
-  shuffleStimuli: (stimuli) ->
-    shuffledStimuli = _.shuffle stimuli
-    passes = _.every(shuffledStimuli, (value, index) ->
-      return true unless shuffledStimuli[index].person == \
-        shuffledStimuli[index - 1]?.person
-    )
-    if passes == true
-      return shuffledStimuli
-    else
-      return @shuffleStimuli(stimuli)
+    return stimuli
 
-  generateRecalls: ->
+  generateRecalls: (recallData) ->
     recalls = []
-    for data in @formStimuli
-      do -> recalls.push { action: 'recallBoth', person: data.PERSON }
-
-    return _.shuffle recalls
+    for data in recallData
+      do -> recalls.push { action: 'recallBoth', person: data.person }
+    return recalls
 
   showNextTrial: (slide) ->
     # looking to move away from switch, will refactor later.
@@ -416,7 +444,7 @@ MemoryTask = class
 
     @showRememberScreen()
     #generate trials for exposure
-    trials = @generateExampleStimuli()
+    trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       $("#rememberScreen").hide()
       @iterateFirstExposureTrials(trials)
@@ -425,7 +453,7 @@ MemoryTask = class
   beginSecondExposureTrials: ->
     @showRememberScreen()
     #generate trials for exposure
-    trials = @generateExampleStimuli()
+    trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
@@ -434,7 +462,7 @@ MemoryTask = class
   beginFirstRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls()
+    trials = @generateRecalls(@formStimuli.FIRST_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
@@ -443,7 +471,7 @@ MemoryTask = class
   beginSecondRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls()
+    trials = @generateRecalls(@formStimuli.SECOND_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
@@ -500,7 +528,7 @@ MemoryTask = class
     @beginDelayedRecall()
 
   beginDelayedRecall: ->
-    trials = @generateRecalls()
+    trials = @generateRecalls(@formStimuli.DELAYED_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateDelayedRecallTrials(trials)
