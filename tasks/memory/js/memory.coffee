@@ -481,7 +481,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
+    $(".nextButton").one("tap", =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
@@ -492,7 +492,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
+    $(".nextButton").one("tap", =>
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
@@ -538,7 +538,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    TabCAT.UI.wait(@TIME_BETWEEN_RECALL).then( =>
+    $(".nextButton").one("tap", =>
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else

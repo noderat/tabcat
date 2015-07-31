@@ -227,3 +227,14 @@ p {
     top: 85%;
     left: 85%;
 }
+
+.nextButton {
+    position: absolute;
+    top: 150%;
+    left: 65%;
+}
+
+.nextButton img {
+    width: 2em;
+    height: 2em;
+}
