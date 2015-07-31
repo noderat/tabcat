@@ -322,21 +322,26 @@ MemoryTask = class
     @showStartScreen()
 
   firstExampleRemember: (person, item) ->
+    $("#supplementaryInstruction").hide()
     $("#exampleImage img").attr('src', "img/" + person.IMAGE)
     $("#exampleFood").empty().html("<p>" + item + "</p>")
     $("#exampleScreen").show()
 
   exampleRemember: (person, item) ->
+    $("#supplementaryInstruction").show().html(
+      "<p>And her favorite animal is:</p>"
+    )
     $("#exampleScreen").hide()
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
     $("#screenImage img").attr('src', "img/" + person.IMAGE)
     $("#rememberOne").show().empty().html( \
-      "<p>" + item + "</p>" )
+      '<p>' + item + '</p>' )
     $("#trialScreen").show()
 
   exampleRecall: (person, recall) ->
+    $("#supplementaryInstruction").hide()
     $("#exampleScreen").hide()
     $("#rememberOne").hide()
     $("#recallBoth").hide()

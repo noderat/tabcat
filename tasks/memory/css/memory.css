@@ -238,3 +238,11 @@ p {
     width: 2em;
     height: 2em;
 }
+
+#supplementaryInstruction {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top: 3%;
+    text-align: center;
+}
