@@ -1,3 +1,15 @@
+v0.8.8, 2015-08-01 -- Added Digit Symbol, Learning, and Delay tasks
+- tasks:
+  - line-perception:
+    - updated norms
+    - fixed catch trials
+  - digit-symbol:
+    - added Digit Symbol task
+  - memory:
+    - added Learning and Delay tasks
+  - flanker:
+    - fixed data export
+
 v0.8.7, 2015-06-26 -- Added catch trials for on-task measure
 - tasks:
   - line-perception:

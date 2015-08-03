@@ -249,8 +249,8 @@ itemHandler = (patientRecord, encounter, task, item) ->
       taskFinish = task.finishedAt / TIME_CONVERTER
       
     totalTrials += 1
-    rt = item.interpretation.responseTime / TIME_CONVERTER
-    if item.interpretation.correct
+    rt = item.interpretation?.responseTime / TIME_CONVERTER
+    if item.interpretation?.correct
       total.push(rt)
       if item.state.stimuli.congruent
         congr.push(rt)

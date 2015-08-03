@@ -1,0 +1,58 @@
+{
+    "name": "memory",
+    "version": "0.8.8",
+    "description": "Memory",
+    "attachments": [
+        "css/memory.css",
+        "img/learning.png",
+        "img/delay.png",
+        "js/task.js",
+        "learning.html",
+        "delay.html",
+        "img/man-example.jpg",
+        "img/man1.jpg",
+        "img/man2.jpg",
+        "img/man3.jpg",
+        "img/man4.jpg",
+        "img/man5.jpg",
+        "img/man6.jpg",
+        "img/man7.jpg",
+        "img/man8.jpg",
+        "img/right-arrow.png",
+        "img/woman1.jpg",
+        "img/woman2.jpg",
+        "img/woman3.jpg",
+        "img/woman4.jpg",
+        "img/woman5.jpg",
+        "img/woman6.jpg",
+        "img/woman7.jpg",
+        "img/woman8.jpg",
+        "img/woman-example.jpg"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "batteries": {
+            "memory": {
+                "description": "Memory Tasks",
+                "tasks": [
+                    "learning",
+                    "delay"
+                ]
+            }
+        },
+        "tasks": {
+            "learning": {
+                "description": "Learning",
+                "icon": "img/learning.png",
+                "start": "learning.html"
+            },
+            "delay": {
+                "description": "Delay",
+                "icon": "img/delay.png",
+                "start": "delay.html"
+            }
+        }
+    }
+}

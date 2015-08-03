@@ -340,8 +340,11 @@ TabCAT.Console.populateWithScores = ($scoresDiv, scores) ->
     $score = $(SCORE_HTML)
     $score.find('.scoreHeader .description').text(
       score.description)
+    scoreValue = score.value
+    if typeof scoreValue == "number"
+      scoreValue = scoreValue.toFixed(1)
     $score.find('.scoreBody .rawScore .value').text(
-      score.value.toFixed(1))
+      scoreValue)
 
     if score.norms?
       for norm in score.norms

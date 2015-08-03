@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.8.7",
+    "version": "0.8.8",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
                     "img/favicon.ico",
@@ -23,7 +23,9 @@
                 "js/vendor/gauss/timeseries.js",
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
-                "js/vendor/underscore.js"],
+                "js/vendor/underscore.js",
+                "js/vendor/jquery.mobile.custom.js",
+                "js/vendor/jquery-ui.js"],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,

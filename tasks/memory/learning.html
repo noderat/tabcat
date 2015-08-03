@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen">
+<head>
+    <title>Memory</title>
+    <meta charset="utf-8" />
+    <!-- turn off zooming -->
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="../core/img/favicon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/memory.css">
+</head>
+<body class="fullscreen unselectable">
+    <div id="task" class="fullscreen">
+        <div id="rectangle">
+            <div id="exampleScreen" style="display:none">
+                <div id="exampleExplanation">
+                    <h1>Memory Test - Example</h1>
+                    <p>You will see pictures of people.  Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
+                    <p>For example, remember his favorite food is:</p>
+                </div>
+                <div id="exampleContainer">
+                    <div id="exampleImage"><img /></div>
+                    <div id="exampleFood">
+                    </div>
+                </div>
+            </div>
+            <div id="instructionsScreen" style="display:none">
+                <h1>Instructions</h1>
+                <div id="instructions">
+                    <p>Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
+                    <p>Are you ready?</p>
+                </div>
+            </div>
+            <div id="rememberScreen" style="display:none">
+                <p>Remember</p>
+            </div>
+            <div id="trialScreen" style="display:none">
+                <div id="supplementaryInstruction"></div>
+                <div id="screenImage"><img /></div>
+                <div id="recallArea">
+                    <div class="memoryElement" id="rememberOne"></div>
+                    <div class="memoryElement" id="recallOne">
+                        <div class="recallLabel"></div>
+                        <div class="recallItem">????</div>
+                    </div>
+                    <div class="memoryElement" id="recallBoth">
+                        <div class="recallLabel">food:</div>
+                        <div class="recallItem">????</div>
+                        <div class="recallLabel">animal:</div>
+                        <div class="recallItem">????</div>
+                        <div class="nextButton"><img src="img/right-arrow.png" /></div>
+                    </div>
+                </div>
+            </div>
+            <button id="backButton" class="progressButton">Back</button>
+            <button id="nextButton" class="progressButton">Next</button>
+            <button id="beginButton" class="progressButton">Begin</button>
+        </div>
+    </div>
+    <script src="../core/js/tabcat.js"></script>
+    <script src="js/task.js"></script>
+    <script>new LearningMemoryTask().start();</script>
+</body>
+</html>

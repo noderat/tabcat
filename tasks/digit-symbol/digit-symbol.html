@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" class="fullscreen">
+<head>
+    <title>Digit Symbol</title>
+    <meta charset="utf-8" />
+    <!-- turn off zooming -->
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="../core/img/favicon.ico"/>
+    <link rel="stylesheet" href="../core/css/tabcat.css">
+    <link rel="stylesheet" href="css/digit-symbol.css">
+</head>
+<body class="fullscreen unselectable">
+<div id="task" class="fullscreen">
+    <div id="rectangle">
+        <div id="iconBar">
+            <div class="digitSymbol" id="iconSymbol1">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">1</span></span>
+                <span class="digitSymbolBottom"><img src="img/1.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol2">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">2</span></span>
+                <span class="digitSymbolBottom"><img src="img/2.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol3">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">3</span></span>
+                <span class="digitSymbolBottom"><img src="img/3.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol4">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">4</span></span>
+                <span class="digitSymbolBottom"><img src="img/4.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol5">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">5</span></span>
+                <span class="digitSymbolBottom"><img src="img/5.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol6">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">6</span></span>
+                <span class="digitSymbolBottom"><img src="img/6.1.png" /></span>
+            </div>
+            <div class="digitSymbol" id="iconSymbol7">
+                <span class="digitSymbolTop"><span class="digitSymbolNumber">7</span></span>
+                <span class="digitSymbolBottom"><img src="img/7.1.png" /></span>
+            </div>
+        </div>
+
+        <div id="startScreen" style="display:none">
+            <div id="startScreenMessage">
+            </div>
+        </div>
+
+        <div id="currentStimuli">
+
+        </div>
+
+        <div id="symbolBar">
+            <div id="symbol1" class="symbol"><img src="img/3.1.png" /></div>
+            <div id="symbol2" class="symbol"><img src="img/7.1.png" /></div>
+            <div id="symbol3" class="symbol"><img src="img/4.1.png" /></div>
+            <div id="symbol4" class="symbol"><img src="img/1.1.png" /></div>
+            <div id="symbol5" class="symbol"><img src="img/6.1.png" /></div>
+            <div id="symbol6" class="symbol"><img src="img/5.1.png" /></div>
+            <div id="symbol7" class="symbol"><img src="img/2.1.png" /></div>
+        </div>
+
+        <button id="backButton" class="progressButton">Back</button>
+        <button id="nextButton" class="progressButton">Next</button>
+        <button id="beginButton" class="progressButton">Begin</button>
+
+        <div id="debug">
+            <div id="practiceTrialsShown"></div>
+            <div id="inPracticeMode"></div>
+            <div id="numberCorrect"></div>
+            <div id="numberIncorrect"></div>
+            <div id="totalShown"></div>
+            <div id="secondsElapsed"></div>
+        </div>
+
+    </div>
+</div>
+<script src="../core/js/tabcat.js"></script>
+<script src="js/task.js"></script>
+<script>new DigitSymbolTask().initTask();</script>
+</body>
+</html>

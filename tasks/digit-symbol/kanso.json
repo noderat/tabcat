@@ -1,0 +1,38 @@
+{
+    "name": "digit-symbol",
+    "version": "0.8.8",
+    "description": "Digit Symbol",
+    "attachments": [
+        "css/digit-symbol.css",
+        "img/icon/digit-symbol.png",
+        "js/task.js",
+        "digit-symbol.html",
+        "img/1.1.png",
+        "img/2.1.png",
+        "img/3.1.png",
+        "img/4.1.png",
+        "img/5.1.png",
+        "img/6.1.png",
+        "img/7.1.png"
+    ],
+    "dependencies": {
+        "attachments": null
+    },
+    "tabcat": {
+        "batteries": {
+            "digit-symbol": {
+                "description": "Digit Symbol",
+                    "tasks": [
+                    "digit-symbol"
+                ]
+            }
+        },
+        "tasks": {
+            "digit-symbol": {
+                "description": "Digit Symbol",
+                "icon": "img/icon/digit-symbol.png",
+                "start": "digit-symbol.html"
+            }
+        }
+    }
+}

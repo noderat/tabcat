@@ -413,7 +413,7 @@ pickComets = ->
     comet.endY = SCREEN_MAX_Y + comet.length / 2
     [comet.startTime, comet.endTime] = COMET_TIMINGS[i]
     comet.angle = (
-      -Math.atan2(comet.endX - comet.startX, comet.endY - comet.startY) /
+      -Math.atan2(comet.endX - comet.startX, comet.endY - comet.startY) / \
        Math.PI * 180 + 90)
 
     comets.push(comet)
