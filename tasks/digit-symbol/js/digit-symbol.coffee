@@ -165,6 +165,8 @@ translations =
     #to get next stimuli
     @currentTank = []
 
+    @$stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
+
   showStartScreen: ->
 
     $('#backButton').unbind().hide()
@@ -196,10 +198,8 @@ translations =
 
     @fillScreen()
 
-    stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
-
     $('#backButton').show().one('tap', =>
-      stimuliSymbol.removeClass("correct")
+      @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
 
@@ -211,17 +211,18 @@ translations =
     $currentStimuli.html EXAMPLE_STIMULI
 
     $('#nextButton').unbind().one('tap', =>
-      stimuliSymbol.effect("highlight",
+      @$stimuliSymbol.effect("highlight",
         {color: "rgba(0,255,0, 1)"}, 500)
-      stimuliSymbol.addClass("correct")
+      @$stimuliSymbol.addClass("correct")
       $('#nextButton').unbind().one('tap', =>
-        stimuliSymbol.removeClass("correct")
+        @$stimuliSymbol.removeClass("correct")
         @practiceModeMessage()
       )
     )
 
   practiceModeMessage: ->
     @blankScreen()
+    @$stimuliSymbol.removeClass("correct")
 
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
