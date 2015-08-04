@@ -450,8 +450,9 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
-    TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+    $("#nextButton").show().on('tap', =>
       $("#rememberScreen").hide()
+      $("#nextButton").hide()
       @iterateFirstExposureTrials(trials)
     )
 
@@ -459,7 +460,8 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
-    TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+    $("#nextButton").show().on('tap', =>
+      $("#nextButton").hide()
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
     )
