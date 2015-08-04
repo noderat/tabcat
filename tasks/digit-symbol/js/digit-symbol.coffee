@@ -211,8 +211,6 @@ translations =
     $currentStimuli.html EXAMPLE_STIMULI
 
     $('#nextButton').unbind().one('tap', =>
-      @$stimuliSymbol.effect("highlight",
-        {color: "rgba(0,255,0, 1)"}, 500)
       @$stimuliSymbol.addClass("correct")
       $('#nextButton').unbind().one('tap', =>
         @$stimuliSymbol.removeClass("correct")
@@ -229,6 +227,7 @@ translations =
 
     $('#backButton').show().one('tap', =>
       $('#startScreenMessage').removeClass('bigFont')
+      @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
@@ -236,6 +235,7 @@ translations =
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
+    @$stimuliSymbol.removeClass("correct")
     $('#backButton').hide()
     $('#nextButton').hide()
     $('#startScreenMessage').empty()
