@@ -165,7 +165,7 @@ translations =
     #to get next stimuli
     @currentTank = []
 
-    @$stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
+    @$stimuliSymbol = null
 
   showStartScreen: ->
 
@@ -280,6 +280,8 @@ translations =
         .attr('data-sequence', element.relativeSequence)
       $symbol.find('img').attr('src', 'img/' + \
         element.symbol.image_number + '.' + @currentFormNumber + '.png')
+
+    @$stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
 
     $task = $('#task')
     $rectangle = $('#rectangle')
