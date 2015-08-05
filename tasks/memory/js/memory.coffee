@@ -252,7 +252,7 @@ MemoryTask = class
 
   generateExposureStimuli: (exposureData) ->
     stimuli = []
-    
+
     for data in exposureData
       do ( ->
         obj =
@@ -450,20 +450,24 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
-    $("#nextButton").unbind().show().on('tap', =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
       $("#rememberScreen").hide()
       $("#nextButton").hide()
       @iterateFirstExposureTrials(trials)
+      event.stopPropagation()
+      return false
     )
 
   beginSecondExposureTrials: ->
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
-    $("#nextButton").unbind().show().on('tap', =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
       $("#nextButton").hide()
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
+      event.stopPropagation()
+      return false
     )
 
   beginFirstRecall: ->
@@ -488,11 +492,14 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one("tap", =>
+    $(".nextButton").one("tap", (event) =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
         @beginSecondExposureTrials()
+
+      event.stopPropagation()
+      return false
     )
 
   iterateSecondRecallTrials: (trials) ->
