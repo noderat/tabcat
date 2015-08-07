@@ -137,6 +137,10 @@ p {
     height: 100%;
 }
 
+.faceImage {
+    display: none;
+}
+
 #screenImage img {
     padding: 3%;
     width: auto;
