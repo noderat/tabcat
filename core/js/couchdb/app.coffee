@@ -28,6 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 patient = require('./patient')
 adhocCPTDetailReport = require('./adhoc/cpt-detail-report')
 adhocCPTSummaryReport = require('./adhoc/cpt-summary-report')
+adhocDigitSymbolReport = require('./adhoc/digit-symbol-report')
 adhocFlankerDetailReport = require('./adhoc/flanker-detail-report')
 adhocFlankerSummaryReport = require('./adhoc/flanker-summary-report')
 adhocLineTasksReport = require('./adhoc/line-tasks-report')
@@ -102,6 +103,7 @@ exports.lists =
   'adhoc-flanker-detail-report': adhocFlankerDetailReport.list
   'adhoc-flanker-summary-report': adhocFlankerSummaryReport.list
   'adhoc-line-tasks-report': adhocLineTasksReport.list
+  'adhoc-digit-symbol-report': adhocDigitSymbolReport.list
   'adhoc-set-shifting-detail-report': adhocSetShiftingDetailReport.list
   'adhoc-set-shifting-summary-report': adhocSetShiftingSummaryReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list
