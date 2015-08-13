@@ -412,7 +412,6 @@ translations =
     else
       if @currentTank.length is 0
         @lastTank = @currentTank = @generatePseudoRandomArray()
-        console.log "current tank", @currentTank
       newStimuli = @currentTank.shift()
 
     return newStimuli
@@ -502,7 +501,12 @@ translations =
     @practiceTrialsCurrentStreak < PRACTICE_TRIAL_MAX_STREAK
 
   getTranslationParagraphs: (translation) ->
-    translations = $.t(translation, {returnObjectTrees: true})
-    html = _.map(translations, (value, key) ->
+    console.log "language: ", $.i18n.lng()
+    console.log translation
+    translatedText = $.t(translation, {returnObjectTrees: true})
+    console.log translatedText
+    console.log translations
+    html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
+    console.log html
     return html
