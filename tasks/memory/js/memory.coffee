@@ -81,42 +81,65 @@ MemoryTask = class
 
     @PEOPLE = {
       MAN_EXAMPLE:
+        KEY: 'man-example'
         IMAGE: 'man-example.jpg'
       MAN_1:
+        KEY: 'man1'
         IMAGE: 'man1.jpg'
       MAN_2:
+        KEY: 'man2'
         IMAGE: 'man2.jpg'
       MAN_3:
+        KEY: 'man3'
         IMAGE: 'man3.jpg'
       MAN_4:
+        KEY: 'man4'
         IMAGE: 'man4.jpg'
       MAN_5:
+        KEY: 'man5'
         IMAGE: 'man5.jpg'
       MAN_6:
+        KEY: 'man6'
         IMAGE: 'man6.jpg'
       MAN_7:
+        KEY: 'man7'
         IMAGE: 'man7.jpg'
       MAN_8:
+        KEY: 'man8'
         IMAGE: 'man8.jpg'
       WOMAN_EXAMPLE:
+        KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
       WOMAN_1:
+        KEY: 'woman1'
         IMAGE: 'woman1.jpg'
       WOMAN_2:
+        KEY: 'woman2'
         IMAGE: 'woman2.jpg'
       WOMAN_3:
+        KEY: 'woman3'
         IMAGE: 'woman3.jpg'
       WOMAN_4:
+        KEY: 'woman4'
         IMAGE: 'woman4.jpg'
       WOMAN_5:
+        KEY: 'woman5'
         IMAGE: 'woman5.jpg'
       WOMAN_6:
+        KEY: 'woman6'
         IMAGE: 'woman6.jpg'
       WOMAN_7:
+        KEY: 'woman7'
         IMAGE: 'woman7.jpg'
       WOMAN_8:
+        KEY: 'woman8'
         IMAGE: 'woman8.jpg'
     }
+
+    @EXAMPLE_PEOPLE = [
+      @PEOPLE.WOMAN_EXAMPLE,
+      @PEOPLE.MAN_EXAMPLE
+    ]
 
     #these stay the same throughout forms
     @EXAMPLE_TRIALS = [
@@ -147,6 +170,12 @@ MemoryTask = class
     #assigning people and food/animal combinations to different forms
     @FORMS = {
       FORM_ONE:
+        PEOPLE: [
+          @PEOPLE.MAN_5,
+          @PEOPLE.MAN_6,
+          @PEOPLE.WOMAN_5,
+          @PEOPLE.WOMAN_6
+        ]
         FIRST_EXPOSURE: [{
           person: @PEOPLE.MAN_5,
           label: 'animal',
@@ -319,11 +348,22 @@ MemoryTask = class
     TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
+    $faceImageContent = $("#screenImage")
+    #generate pre-loaded images to switch out on the fly
+    #concat'ing examples for first trials to work with same html
+    for person in @FORMS[@currentForm].PEOPLE.concat(@EXAMPLE_PEOPLE)
+      do =>
+        $faceImage = $('<img />') \
+          .attr( 'src', "img/" + person.IMAGE )
+          .attr('data-person', person.KEY)
+          .addClass('faceImage')
+        $faceImageContent.append($faceImage)
     @showStartScreen()
 
   firstExampleRemember: (person, item) ->
+    $(".faceImage").hide()
     $("#supplementaryInstruction").hide()
-    $("#exampleImage img").attr('src', "img/" + person.IMAGE)
+    $("#exampleImage img").attr('src', "img/" + person.IMAGE).show()
     $("#exampleFood").empty().html("<p>" + item + "</p>")
     $("#exampleScreen").show()
 
@@ -335,10 +375,14 @@ MemoryTask = class
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE)
+    @showPerson(person)
     $("#rememberOne").show().empty().html( \
       '<p>' + item + '</p>' )
     $("#trialScreen").show()
+
+  showPerson: (person) ->
+    $(".faceImage").hide()
+    $(".faceImage[data-person='" + person.KEY + "']").show()
 
   exampleRecall: (person, recall) ->
     $("#supplementaryInstruction").hide()
@@ -349,7 +393,8 @@ MemoryTask = class
     #does nothing for now, may use to validate later
     correctAnswer = person[recall.toUpperCase()]
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE)
+    @showPerson(person)
+
     $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
     $("#trialScreen").show()
 
@@ -357,7 +402,7 @@ MemoryTask = class
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE)
+    @showPerson(person)
     $("#rememberOne").show().empty().html(
       "<p>" + item + "</p>" )
     $("#trialScreen").show()
@@ -368,7 +413,7 @@ MemoryTask = class
     $("#recallOne").hide()
     $("#recallBoth").hide()
 
-    $("#screenImage img").attr('src', "img/" + person.IMAGE)
+    @showPerson(person)
     $("#recallBoth").show()
     $("#trialScreen").show()
 
@@ -450,18 +495,24 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
-    TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
       $("#rememberScreen").hide()
+      $("#nextButton").hide()
       @iterateFirstExposureTrials(trials)
+      event.stopPropagation()
+      return false
     )
 
   beginSecondExposureTrials: ->
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
-    TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
+      $("#nextButton").hide()
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
+      event.stopPropagation()
+      return false
     )
 
   beginFirstRecall: ->
@@ -486,11 +537,14 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one("tap", =>
+    $(".nextButton").one("tap", (event) =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
         @beginSecondExposureTrials()
+
+      event.stopPropagation()
+      return false
     )
 
   iterateSecondRecallTrials: (trials) ->

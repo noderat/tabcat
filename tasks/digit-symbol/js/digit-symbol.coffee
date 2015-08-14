@@ -165,6 +165,8 @@ translations =
     #to get next stimuli
     @currentTank = []
 
+    @$stimuliSymbol = null
+
   showStartScreen: ->
 
     $('#backButton').unbind().hide()
@@ -196,10 +198,8 @@ translations =
 
     @fillScreen()
 
-    stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
-
     $('#backButton').show().one('tap', =>
-      stimuliSymbol.removeClass("correct")
+      @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
 
@@ -211,23 +211,23 @@ translations =
     $currentStimuli.html EXAMPLE_STIMULI
 
     $('#nextButton').unbind().one('tap', =>
-      stimuliSymbol.effect("highlight",
-        {color: "rgba(0,255,0, 1)"}, 500)
-      stimuliSymbol.addClass("correct")
+      @$stimuliSymbol.addClass("correct")
       $('#nextButton').unbind().one('tap', =>
-        stimuliSymbol.removeClass("correct")
+        @$stimuliSymbol.removeClass("correct")
         @practiceModeMessage()
       )
     )
 
   practiceModeMessage: ->
     @blankScreen()
+    @$stimuliSymbol.removeClass("correct")
 
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
 
     $('#backButton').show().one('tap', =>
       $('#startScreenMessage').removeClass('bigFont')
+      @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
@@ -235,6 +235,7 @@ translations =
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
+    @$stimuliSymbol.removeClass("correct")
     $('#backButton').hide()
     $('#nextButton').hide()
     $('#startScreenMessage').empty()
@@ -279,6 +280,8 @@ translations =
         .attr('data-sequence', element.relativeSequence)
       $symbol.find('img').attr('src', 'img/' + \
         element.symbol.image_number + '.' + @currentFormNumber + '.png')
+
+    @$stimuliSymbol = $(".symbol[data-sequence='" + EXAMPLE_STIMULI + "']")
 
     $task = $('#task')
     $rectangle = $('#rectangle')
@@ -409,7 +412,6 @@ translations =
     else
       if @currentTank.length is 0
         @lastTank = @currentTank = @generatePseudoRandomArray()
-        console.log "current tank", @currentTank
       newStimuli = @currentTank.shift()
 
     return newStimuli
@@ -499,7 +501,12 @@ translations =
     @practiceTrialsCurrentStreak < PRACTICE_TRIAL_MAX_STREAK
 
   getTranslationParagraphs: (translation) ->
-    translations = $.t(translation, {returnObjectTrees: true})
-    html = _.map(translations, (value, key) ->
+    console.log "language: ", $.i18n.lng()
+    console.log translation
+    translatedText = $.t(translation, {returnObjectTrees: true})
+    console.log translatedText
+    console.log translations
+    html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
+    console.log html
     return html

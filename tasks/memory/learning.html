@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <!-- turn off zooming -->
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="shortcut icon" href="../core/img/favicon.ico"/>
     <link rel="stylesheet" href="../core/css/tabcat.css">
     <link rel="stylesheet" href="css/memory.css">
@@ -19,7 +20,7 @@
                     <p>For example, remember his favorite food is:</p>
                 </div>
                 <div id="exampleContainer">
-                    <div id="exampleImage"><img /></div>
+                    <div id="exampleImage"><img class="faceImage" /></div>
                     <div id="exampleFood">
                     </div>
                 </div>
@@ -36,7 +37,9 @@
             </div>
             <div id="trialScreen" style="display:none">
                 <div id="supplementaryInstruction"></div>
-                <div id="screenImage"><img /></div>
+                <div id="screenImage">
+	                <img />
+                </div>
                 <div id="recallArea">
                     <div class="memoryElement" id="rememberOne"></div>
                     <div class="memoryElement" id="recallOne">
