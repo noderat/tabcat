@@ -183,20 +183,20 @@ button:focus {
 #backButton {
     display: none;
     position: absolute;
-    top: 85%;
+    top: 88%;
     left: 3%;
 }
 
 #nextButton {
     position: absolute;
-    top: 85%;
+    top: 88%;
     left: 85%;
 }
 
 #beginButton {
     display: none;
     position:absolute;
-    top: 85%;
+    top: 88%;
     left: 85%;
 }
 
