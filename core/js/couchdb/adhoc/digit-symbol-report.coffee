@@ -68,7 +68,7 @@ patientHandler = (patientRecord) ->
 
         send("<p>task: " + task.name + "</p>")
 
-        send("<p>state: " + toJSON(task.state) + "</p>")
+        send("<p>task: " + toJSON(task) + "</p>")
 
         for item in task.eventLog
           do -> send("<p>eventlog: " + toJSON(item) + "</p>")
@@ -82,23 +82,32 @@ patientHandler = (patientRecord) ->
           do ( ->
             from = (val - 1) * REPORTING_INTERVAL
             to = val * REPORTING_INTERVAL
-            correct = (
+            corr = (
               item.interpretation?.correct for item in task.eventLog \
                 when item.interpretation?.correct is true \
                   and from < item.state?.secondsSinceStart <= to
             )
 
-            errors = (
+            send("corr: " + toJSON(corr))
+
+            correct = correct.concat(corr.length)
+
+            err = (
               item.interpretation?.correct for item in task.eventLog \
                 when item.interpretation?.correct is false \
                   and from < item.state?.secondsSinceStart <= to
             )
+            errors = errors.concat(err.length)
 
-            send ("<p>correct: " + from + " to " + to + " seconds</p>")
-            send (toJSON(correct))
-            send ("<p>errors: " + from + " to " + to + " seconds</p>")
-            send (toJSON(errors))
+            send("err: " + toJSON(err))
           )
+
+        #send ("<p>correct: " + from + " to " + to + " seconds</p>")
+        send ("correct")
+        send (toJSON(correct))
+        #send ("<p>errors: " + from + " to " + to + " seconds</p>")
+        send("errors")
+        send (toJSON(errors))
 
         firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
         totalTime = (task.finishedAt - firstAction.now) / 1000
