@@ -493,7 +493,7 @@ translations =
       state.practiceMode = true
     else if @finishedPracticeMode is true
       secondsSinceStart = Math.abs((new Date() - @startTime) / 1000)
-      state.sencondsSinceStart = secondsSinceStart
+      state.secondsSinceStart = secondsSinceStart
 
     return state
 
