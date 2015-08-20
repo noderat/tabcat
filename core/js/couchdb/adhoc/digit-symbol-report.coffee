@@ -56,33 +56,60 @@ columns = [
 
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
-
   taskInfo = {}
   for encounter in patientRecord.encounters
     for task in encounter.tasks
       if task.finishedAt and task.eventLog?
         # only keep the first task per patient
-        if taskInfo
+        if taskInfo['digit-symbol']
+          continue
+        if task.name is not 'digit-symbol'
           continue
 
-        # this isn't an off-by one; we discard the first trial because we
-        # don't know when the patient first gets the task
-        # using ? null because _.max() handles undefined differently
-        numTrials = _.max(
-          item?.state?.trialNum ? null for item in task.eventLog)
+        send("<p>task: " + task.name + "</p>")
+
+        send("<p>state: " + toJSON(task.state) + "</p>")
+
+        for item in task.eventLog
+          do -> send("<p>eventlog: " + toJSON(item) + "</p>")
+
+        correct = []
+        errors = []
+
+        intervalRange = [1..MAX_INTERVALS]
+
+        for val in intervalRange
+          do ( ->
+            from = (val - 1) * REPORTING_INTERVAL
+            to = val * REPORTING_INTERVAL
+            correct = (
+              item.interpretation?.correct for item in task.eventLog \
+                when item.interpretation?.correct is true \
+                  and from < item.state?.secondsSinceStart <= to
+            )
+
+            errors = (
+              item.interpretation?.correct for item in task.eventLog \
+                when item.interpretation?.correct is false \
+                  and from < item.state?.secondsSinceStart <= to
+            )
+
+            send ("<p>correct: " + from + " to " + to + " seconds</p>")
+            send (toJSON(correct))
+            send ("<p>errors: " + from + " to " + to + " seconds</p>")
+            send (toJSON(errors))
+          )
 
         firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
         totalTime = (task.finishedAt - firstAction.now) / 1000
 
-        taskInfo = [
+        taskInfo['digit-symbol'] = [
           report.getVersion(task),
           report.getDate(task),
         ].concat(report.getDataQualityCols(encounter)).concat([
           totalTime,
           task.eventLog
-        ]).concat(intensitiesAtReversal).concat(
-          catchTrials
-        )
+        ])
 
   if _.isEmpty(taskInfo)
     return
@@ -99,125 +126,18 @@ patientHandler = (patientRecord) ->
   # replace undefined with null, so arrayToCsv() works
   data = (x ? null for x in data)
 
-  send(csv.arrayToCsv([data]))
+  send (toJSON(data))
+
+  #send(csv.arrayToCsv([data]))
 
 exports.list = (head, req) ->
   report.requirePatientView(req)
-  start(headers: report.csvHeaders('digit-symbol-report'))
+  #start(headers: report.csvHeaders('digit-symbol-report'))
 
-  csvHeader = ['patientCode']
+  start( headers: 'Content-type':'text/html')
 
-  send(csv.arrayToCsv([csvHeader]))
+  #csvHeader = ['patientCode', 'otherField']
 
   patient.iterate(getRow, patientHandler)
 
-## the rest of the header column name
-#HEADER_SUFFIXES = [
-#  report.VERSION_HEADER,
-#  report.DATE_HEADER,
-#].concat(report.DATA_QUALITY_HEADERS).concat([
-#  'time',
-#  'trials',
-#  'timePerTrial',
-#  'catchTrialScore'
-#])
-#
-#
-#
-## combine task prefix with header suffix
-#makeHeader = (prefix, suffix) ->
-#  prefix + suffix[..0].toUpperCase() + suffix[1..]
-#
-#
-#patientHandler = (patientRecord) ->
-#  patientCode = patientRecord.patientCode
-#
-#  taskToInfo = {}
-#  for encounter in patientRecord.encounters
-#    for task in encounter.tasks
-#      if task.finishedAt and task.eventLog? and task.name in LINE_TASKS
-#        # only keep the first task per patient
-#        if taskToInfo[task.name]
-#          continue
-#
-#        # this isn't an off-by one; we discard the first trial because we
-#        # don't know when the patient first gets the task
-#        # using ? null because _.max() handles undefined differently
-#        numTrials = _.max(
-#          item?.state?.trialNum ? null for item in task.eventLog)
-#
-#        firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
-#        totalTime = (task.finishedAt - firstAction.now) / 1000
-#
-#        # use the "interpretation" field if we have it (phasing this out)
-#        intensitiesAtReversal = task?.interpretation?.intensitiesAtReversal
-#
-#        if not intensitiesAtReversal?
-#          intensitiesAtReversal = (
-#            item.state.intensity for item in task.eventLog \
-#            when item?.interpretation?.reversal)
-#
-#        catchTrials = (
-#          item.interpretation?.correct for item in task.eventLog \
-#          when item?.state?.catchTrial is true
-#        )
-#
-#        catchTrialScore = 'N/A'
-#        if catchTrials.length > 0
-#          catchTrialScore = ((catchTrials.filter((x)-> x if x == true).length \
-#            / catchTrials.length) * 100)
-#
-#        if intensitiesAtReversal.length < MAX_REVERSALS
-#          intensitiesAtReversal = intensitiesAtReversal.concat('') for i in \
-#             [1..(MAX_REVERSALS - intensitiesAtReversal.length)]
-#
-#
-#        taskToInfo[task.name] = [
-#          report.getVersion(task),
-#          report.getDate(task),
-#        ].concat(report.getDataQualityCols(encounter)).concat([
-#          totalTime,
-#          numTrials,
-#          totalTime / numTrials,
-#          catchTrialScore
-#        ]).concat(intensitiesAtReversal).concat(
-#          catchTrials
-#        )
-#
-#  if _.isEmpty(taskToInfo)
-#    return
-#
-#  data = []
-#
-#
-#  data[0] = patientCode
-#  for taskName, i in LINE_TASKS
-#    info = taskToInfo[taskName]
-#    if info?
-#      offset = i * COLUMNS_PER_TASK + 1
-#      for value, j in info
-#        data[offset + j] = value
-#
-#  # replace undefined with null, so arrayToCsv() works
-#  data = (x ? null for x in data)
-#
-#  send(csv.arrayToCsv([data]))
-#
-#
-#taskHeader = (prefix) ->
-#  (makeHeader(prefix, suffix) for suffix in HEADER_SUFFIXES).concat(
-#    (prefix + i for i in [1..MAX_REVERSALS]))
-#
-#exports.list = (head, req) ->
-#  report.requirePatientView(req)
-#  start(headers: report.csvHeaders('digit-symbol-report'))
-#
-#  csvHeader = ['patientCode']
-#  for prefix in TASK_PREFIXES
-#    csvHeader = csvHeader.concat(
-#      taskHeader(prefix)
-#    )
-#
-#  send(csv.arrayToCsv([csvHeader]))
-#
-#  patient.iterate(getRow, patientHandler)
+  #send(csv.arrayToCsv([csvHeader]))
