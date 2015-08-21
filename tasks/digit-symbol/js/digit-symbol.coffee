@@ -181,7 +181,7 @@ translations =
 
     $('#startScreenMessage').empty().append instructions.shift()
 
-    $('#nextButton').on('tap', ( (event) =>
+    $('#nextButton').on('mousedown touchstart', ( (event) =>
 
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
@@ -198,7 +198,7 @@ translations =
 
     @fillScreen()
 
-    $('#backButton').show().one('tap', =>
+    $('#backButton').show().one('mousedown touchstart', =>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
@@ -210,9 +210,9 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#nextButton').unbind().one('tap', =>
+    $('#nextButton').unbind().one('mousedown touchstart', =>
       @$stimuliSymbol.addClass("correct")
-      $('#nextButton').unbind().one('tap', =>
+      $('#nextButton').unbind().one('mousedown touchstart', =>
         @$stimuliSymbol.removeClass("correct")
         @practiceModeMessage()
       )
@@ -225,13 +225,13 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
 
-    $('#backButton').show().one('tap', =>
+    $('#backButton').show().one('mousedown touchstart', =>
       $('#startScreenMessage').removeClass('bigFont')
       @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
-    $('#nextButton').show().one('tap', \
+    $('#nextButton').show().one('mousedown touchstart', \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
@@ -242,7 +242,7 @@ translations =
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    $('.symbol').on('tap', @handleSymbolTouch.bind(this))
+    $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -306,7 +306,7 @@ translations =
     highlightColor = "rgba(255,255,204, .5)"
 
     correct = false
-    #required handling code for 'tap'
+    #required handling code for 'mousedown touchstart'
     selectedChoice = eventTarget.data('sequence')
     if @currentStimuli == selectedChoice
       @inPracticeModePause = false
@@ -369,13 +369,13 @@ translations =
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-    $('#backButton').show().one('tap', ( (event) =>
+    $('#backButton').show().one('mousedown touchstart', ( (event) =>
       #clear practice trials streak so it doesn't think we're in real task
       @practiceTrialsCurrentStreak = 0
       @finishedPracticeMode = false
       @practiceModeMessage()
     ))
-    $('#beginButton').show().on('tap', @beginTask.bind(this))
+    $('#beginButton').show().on('mousedown touchstart', @beginTask.bind(this))
     return
 
   beginTask: ->
@@ -388,7 +388,7 @@ translations =
     @fillScreen()
     @updateCurrentStimuli()
     @startTimer()
-    $('.symbol').on 'tap', @handleSymbolTouch.bind(this)
+    $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
     return
 
   updateCurrentStimuli: ->
