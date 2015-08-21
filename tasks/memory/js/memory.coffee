@@ -434,7 +434,7 @@ MemoryTask = class
 
     @currentExampleTrial++
 
-    $("#nextButton").unbind().show().one('mousedown touchstart', =>
+    $("#nextButton").unbind().show().one('tap', =>
       @iterateExampleScreens()
     )
 
@@ -448,7 +448,7 @@ MemoryTask = class
 
     @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
 
-    $("#nextButton").unbind().one('mousedown touchstart', (event) =>
+    $("#nextButton").unbind().one('tap', (event) =>
       @currentExampleTrial++
       if @currentExampleTrial <= @EXAMPLE_TRIALS.length - 1
         @iterateExampleScreens()
@@ -458,7 +458,7 @@ MemoryTask = class
       return false
     )
 
-    $("#backButton").unbind().one('mousedown touchstart', (event) =>
+    $("#backButton").unbind().one('tap', (event) =>
       @currentExampleTrial--
       if @currentExampleTrial == 0
         @showStartScreen()
@@ -475,12 +475,12 @@ MemoryTask = class
     $("#instructionsScreen").show()
 
     $("#nextButton").unbind().hide()
-    $("#beginButton").unbind().show().one('mousedown touchstart', =>
+    $("#beginButton").unbind().show().one('tap', =>
       #start actual task
       @beginFirstExposureTrials()
     )
 
-    $("#backButton").unbind().one('mousedown touchstart', =>
+    $("#backButton").unbind().one('tap', =>
       @currentExampleTrial--
       $("#exampleScreen").show()
       $("#trialScreen").show()
@@ -495,7 +495,7 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
-    $("#nextButton").unbind().show().one('mousedown touchstart', (event) =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
       $("#rememberScreen").hide()
       $("#nextButton").hide()
       @iterateFirstExposureTrials(trials)
@@ -507,7 +507,7 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
-    $("#nextButton").unbind().show().one('mousedown touchstart', (event) =>
+    $("#nextButton").unbind().show().one('tap', (event) =>
       $("#nextButton").hide()
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
@@ -537,7 +537,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one('mousedown touchstart', (event) =>
+    $(".nextButton").one("tap", (event) =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
@@ -551,7 +551,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one('mousedown touchstart', =>
+    $(".nextButton").one("tap", =>
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
@@ -597,7 +597,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one('mousedown touchstart', =>
+    $(".nextButton").one("tap", =>
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
