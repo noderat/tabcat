@@ -26,30 +26,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 
-# empty translations block for now
-translations =
-  en:
-    translation:
-      begin_button_html:
-        'Begin'
-      next_button_html:
-        'Next'
-      start_screen_html:
-        1: 'Look at the boxes above.'
-        2: 'Each number has its own picture.'
-        3: 'Now look at the pictures below. <br>They match ' +
-           'the pictures above.'
-      start_screen_next_html:
-        1: 'Each time you see a number in the middle of the screen, ' +
-           'look to see <br> which picture matches the number above, ' +
-           'and touch that picture below.'
-      start_screen_practice:
-        1: 'Let\'s practice.'
-        2: 'Work as quickly as you can <br> without making any mistakes'
-      are_you_ready:
-        1: 'Are you ready to begin?'
-
 @DigitSymbolTask = class
+
+  TRANSLATIONS =
+    en:
+      translation:
+        begin_button_html:
+          'Begin'
+        next_button_html:
+          'Next'
+        start_screen_html:
+          1: 'Look at the boxes above.'
+          2: 'Each number has its own picture.'
+          3: 'Now look at the pictures below. <br>They match ' +
+            'the pictures above.'
+        start_screen_next_html:
+          1: 'Each time you see a number in the middle of the screen, ' +
+            'look to see <br> which picture matches the number above, ' +
+            'and touch that picture below.'
+        start_screen_practice:
+          1: 'Let\'s practice.'
+          2: 'Work as quickly as you can <br> without making any mistakes'
+        are_you_ready:
+          1: 'Are you ready to begin?'
 
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
@@ -260,7 +259,7 @@ translations =
   initTask: ->
     TabCAT.Task.start(
       i18n:
-        resStore: translations
+        resStore: TRANSLATIONS
       trackViewport: true
     )
 
@@ -502,10 +501,10 @@ translations =
 
   getTranslationParagraphs: (translation) ->
     console.log "language: ", $.i18n.lng()
-    console.log translation
+    console.log "translation:", translation
     translatedText = $.t(translation, {returnObjectTrees: true})
     console.log translatedText
-    console.log translations
+    console.log TRANSLATIONS
     html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
     console.log html
