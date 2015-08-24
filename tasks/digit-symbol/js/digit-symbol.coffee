@@ -180,7 +180,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     $('#startScreenMessage').empty().append instructions.shift()
 
-    $('#nextButton').on('mousedown touchstart', ( (event) =>
+    $('#nextButton').touchdown( ( (event) =>
 
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
@@ -197,7 +197,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @fillScreen()
 
-    $('#backButton').show().one('mousedown touchstart', =>
+    $('#backButton').show().touchdown(=>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
@@ -209,9 +209,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#nextButton').unbind().one('mousedown touchstart', =>
+    $('#nextButton').unbind().touchdown(=>
       @$stimuliSymbol.addClass("correct")
-      $('#nextButton').unbind().one('mousedown touchstart', =>
+      $('#nextButton').unbind().touchdown( =>
         @$stimuliSymbol.removeClass("correct")
         @practiceModeMessage()
       )
@@ -224,13 +224,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
 
-    $('#backButton').show().one('mousedown touchstart', =>
+    $('#backButton').show().touchdown( =>
       $('#startScreenMessage').removeClass('bigFont')
       @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
-    $('#nextButton').show().one('mousedown touchstart', \
+    $('#nextButton').show().touchdown( \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
@@ -241,7 +241,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    $('.symbol').on('mousedown touchstart', @handleSymbolTouch.bind(this))
+    $('.symbol').touchdown( @handleSymbolTouch.bind(this))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -368,13 +368,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-    $('#backButton').show().one('mousedown touchstart', ( (event) =>
+    $('#backButton').show().touchdown( ( (event) =>
       #clear practice trials streak so it doesn't think we're in real task
       @practiceTrialsCurrentStreak = 0
       @finishedPracticeMode = false
       @practiceModeMessage()
     ))
-    $('#beginButton').show().on('mousedown touchstart', @beginTask.bind(this))
+    $('#beginButton').show().touchdown( @beginTask.bind(this))
     return
 
   beginTask: ->
