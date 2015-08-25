@@ -296,9 +296,13 @@ MemoryTask = class
     return stimuli
 
   generateRecalls: (recallData) ->
-    recalls = []
+
+    recalls = new Array()
     for data in recallData
-      do -> recalls.push { action: 'recallBoth', person: data.person }
+      do ( ->
+        obj = { action: 'recallBoth', person: data.person }
+        recalls.push obj
+      )
     return recalls
 
   showNextTrial: (slide) ->
@@ -524,10 +528,10 @@ MemoryTask = class
     )
 
   iterateFirstRecallTrials: (trials) ->
+    trial = trials.shift()
+    @showNextTrial(trial)
 
-    @showNextTrial(trials.shift())
-
-    $(".nextButton").touchdown( =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
@@ -538,7 +542,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").touchdown( =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
@@ -584,7 +588,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").touchdown( =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
