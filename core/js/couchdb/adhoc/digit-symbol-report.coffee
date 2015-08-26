@@ -44,34 +44,23 @@ makeHeaders = (prefix) ->
 
 columns = [
   'subject_id',
+  'version',
   'session_date',
-  'sesion_start',
   'machine',
   'Form',
-].concat(
-  makeHeaders('corr_')
-).concat(
-  makeHeaders('errors_')
-)
+].concat(report.DATA_QUALITY_HEADERS
+).concat(makeHeaders('corr_')
+).concat(makeHeaders('errors_'))
 
 patientHandler = (patientRecord) ->
   patientCode = patientRecord.patientCode
   taskInfo = {}
   for encounter in patientRecord.encounters
     for task in encounter.tasks
-      if task.finishedAt and task.eventLog?
+      if task.finishedAt and task.eventLog? and task.name is 'digit-symbol'
         # only keep the first task per patient
         if taskInfo['digit-symbol']
           continue
-        if task.name is not 'digit-symbol'
-          continue
-
-        send("<p>task: " + task.name + "</p>")
-
-        send("<p>task: " + toJSON(task) + "</p>")
-
-        for item in task.eventLog
-          do -> send("<p>eventlog: " + toJSON(item) + "</p>")
 
         correct = []
         errors = []
@@ -88,8 +77,6 @@ patientHandler = (patientRecord) ->
                   and from < item.state?.secondsSinceStart <= to
             )
 
-            send("corr: " + toJSON(corr))
-
             correct = correct.concat(corr.length)
 
             err = (
@@ -98,55 +85,35 @@ patientHandler = (patientRecord) ->
                   and from < item.state?.secondsSinceStart <= to
             )
             errors = errors.concat(err.length)
-
-            send("err: " + toJSON(err))
           )
 
-        #send ("<p>correct: " + from + " to " + to + " seconds</p>")
-        send ("correct")
-        send (toJSON(correct))
-        #send ("<p>errors: " + from + " to " + to + " seconds</p>")
-        send("errors")
-        send (toJSON(errors))
-
         firstAction = _.find(task.eventLog, (item) -> item?.interpretation?)
-        totalTime = (task.finishedAt - firstAction.now) / 1000
+        totalTime = null
+        if (firstAction)
+          totalTime = (task.finishedAt - firstAction.now) / 1000
 
         taskInfo['digit-symbol'] = [
+          patientCode,
           report.getVersion(task),
           report.getDate(task),
-        ].concat(report.getDataQualityCols(encounter)).concat([
-          totalTime,
-          task.eventLog
-        ])
+          report.getMachine(task),
+          report.getForm(task)
+        ].concat(report.getDataQualityCols(encounter)
+        ).concat(correct).concat(errors)
 
   if _.isEmpty(taskInfo)
     return
 
-  data = []
-
-
-  data[0] = patientCode
-  if taskInfo?
-    offset = 1
-    for value, j in taskInfo
-      data[offset + j] = value
-
   # replace undefined with null, so arrayToCsv() works
+  data = taskInfo['digit-symbol']
   data = (x ? null for x in data)
 
-  send (toJSON(data))
-
-  #send(csv.arrayToCsv([data]))
+  send(csv.arrayToCsv([data]))
 
 exports.list = (head, req) ->
   report.requirePatientView(req)
-  #start(headers: report.csvHeaders('digit-symbol-report'))
+  start(headers: report.csvHeaders('digit-symbol-report'))
 
-  start( headers: 'Content-type':'text/html')
-
-  #csvHeader = ['patientCode', 'otherField']
+  send(csv.arrayToCsv([columns]))
 
   patient.iterate(getRow, patientHandler)
-
-  #send(csv.arrayToCsv([csvHeader]))

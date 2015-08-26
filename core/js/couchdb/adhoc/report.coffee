@@ -60,6 +60,13 @@ exports.getDate = (task) ->
   else
     null
 
+#null until method of persisting/extracting machine
+exports.getMachine = (task) ->
+  null
+
+#null until multiple forms are implemented for tasks
+exports.getForm = (task) ->
+  null
 
 exports.DATA_QUALITY_HEADERS = [
   'goodForResearch', 'qualityIssues', 'adminComments']
