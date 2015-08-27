@@ -1,3 +1,15 @@
+v0.8.9, 2015-08-27 -- Added Digit Symbol reporting and fix touch-related bugs
+- core:
+  - Extended jQuery to accommodate customized touch handling
+- reports:
+  - Added summary report for digit symbol
+- tasks:
+  - digit-symbol:
+    - Added enhanced touch support
+  - memory:
+    - Minor visual enhancements
+    - Added enhanced touch support
+
 v0.8.8, 2015-08-01 -- Added Digit Symbol, Learning, and Delay tasks
 - tasks:
   - line-perception:

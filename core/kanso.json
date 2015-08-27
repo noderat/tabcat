@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "0.8.8",
+    "version": "0.8.9",
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
                     "img/favicon.ico",
@@ -11,6 +11,7 @@
                 "js/couchdb/adhoc/examiner.js",
                 "js/couchdb/adhoc/flanker-detail-report.js",
                 "js/couchdb/adhoc/flanker-summary-report.js",
+                "js/couchdb/adhoc/digit-symbol-report.js",
                 "js/couchdb/adhoc/line-tasks-report.js",
                 "js/couchdb/adhoc/report.js",
                 "js/couchdb/adhoc/set-shifting-detail-report.js",
@@ -24,7 +25,6 @@
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
                 "js/vendor/underscore.js",
-                "js/vendor/jquery.mobile.custom.js",
                 "js/vendor/jquery-ui.js"],
     "load": "js/couchdb/app",
     "dependencies": {

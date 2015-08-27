@@ -102,8 +102,8 @@ button:focus {
 #symbolBar .symbol {
     position: absolute;
     display: block;
-    width: 9%;
-    height: 22%;
+    width: 10%;
+    height: 23%;
     border-radius: 100%;
     -moz-border-radius: 100%;
     -webkit-border-radius: 100%;
@@ -183,20 +183,20 @@ button:focus {
 #backButton {
     display: none;
     position: absolute;
-    top: 85%;
+    top: 88%;
     left: 3%;
 }
 
 #nextButton {
     position: absolute;
-    top: 85%;
+    top: 88%;
     left: 85%;
 }
 
 #beginButton {
     display: none;
     position:absolute;
-    top: 85%;
+    top: 88%;
     left: 85%;
 }
 

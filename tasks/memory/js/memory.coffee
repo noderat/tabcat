@@ -296,9 +296,13 @@ MemoryTask = class
     return stimuli
 
   generateRecalls: (recallData) ->
-    recalls = []
+
+    recalls = new Array()
     for data in recallData
-      do -> recalls.push { action: 'recallBoth', person: data.person }
+      do ( ->
+        obj = { action: 'recallBoth', person: data.person }
+        recalls.push obj
+      )
     return recalls
 
   showNextTrial: (slide) ->
@@ -343,7 +347,6 @@ MemoryTask = class
     $rectangle = $('#rectangle')
 
     TabCAT.UI.requireLandscapeMode($task)
-    $task.on('mousedown touchstart', ( -> ) )
 
     TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
@@ -434,7 +437,7 @@ MemoryTask = class
 
     @currentExampleTrial++
 
-    $("#nextButton").unbind().show().one('tap', =>
+    $("#nextButton").unbind().show().touchdown( =>
       @iterateExampleScreens()
     )
 
@@ -448,25 +451,20 @@ MemoryTask = class
 
     @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
 
-    $("#nextButton").unbind().one('tap', (event) =>
+    $("#nextButton").unbind().touchdown( =>
       @currentExampleTrial++
       if @currentExampleTrial <= @EXAMPLE_TRIALS.length - 1
         @iterateExampleScreens()
       else
         @showInstructionsScreen()
-      event.stopPropagation()
-      return false
     )
 
-    $("#backButton").unbind().one('tap', (event) =>
+    $("#backButton").unbind().touchdown( =>
       @currentExampleTrial--
       if @currentExampleTrial == 0
         @showStartScreen()
       else
         @iterateExampleScreens()
-
-      event.stopPropagation()
-      return false
     )
 
   showInstructionsScreen: ->
@@ -475,12 +473,12 @@ MemoryTask = class
     $("#instructionsScreen").show()
 
     $("#nextButton").unbind().hide()
-    $("#beginButton").unbind().show().one('tap', =>
+    $("#beginButton").unbind().show().touchdown( =>
       #start actual task
       @beginFirstExposureTrials()
     )
 
-    $("#backButton").unbind().one('tap', =>
+    $("#backButton").unbind().touchdown( =>
       @currentExampleTrial--
       $("#exampleScreen").show()
       $("#trialScreen").show()
@@ -495,24 +493,20 @@ MemoryTask = class
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
-    $("#nextButton").unbind().show().one('tap', (event) =>
+    $("#nextButton").unbind().show().touchdown( =>
       $("#rememberScreen").hide()
       $("#nextButton").hide()
       @iterateFirstExposureTrials(trials)
-      event.stopPropagation()
-      return false
     )
 
   beginSecondExposureTrials: ->
     @showRememberScreen()
     #generate trials for exposure
     trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
-    $("#nextButton").unbind().show().one('tap', (event) =>
+    $("#nextButton").unbind().show().touchdown( =>
       $("#nextButton").hide()
       $("#rememberScreen").hide()
       @iterateSecondExposureTrials(trials)
-      event.stopPropagation()
-      return false
     )
 
   beginFirstRecall: ->
@@ -534,24 +528,21 @@ MemoryTask = class
     )
 
   iterateFirstRecallTrials: (trials) ->
+    trial = trials.shift()
+    @showNextTrial(trial)
 
-    @showNextTrial(trials.shift())
-
-    $(".nextButton").one("tap", (event) =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
         @beginSecondExposureTrials()
-
-      event.stopPropagation()
-      return false
     )
 
   iterateSecondRecallTrials: (trials) ->
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one("tap", =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
@@ -597,7 +588,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").one("tap", =>
+    $(".nextButton").unbind().touchdown( =>
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else

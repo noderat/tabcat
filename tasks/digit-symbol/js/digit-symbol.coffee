@@ -26,30 +26,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
 
-# empty translations block for now
-translations =
-  en:
-    translation:
-      begin_button_html:
-        'Begin'
-      next_button_html:
-        'Next'
-      start_screen_html:
-        1: 'Look at the boxes above.'
-        2: 'Each number has its own picture.'
-        3: 'Now look at the pictures below. <br>They match ' +
-           'the pictures above.'
-      start_screen_next_html:
-        1: 'Each time you see a number in the middle of the screen, ' +
-           'look to see <br> which picture matches the number above, ' +
-           'and touch that picture below.'
-      start_screen_practice:
-        1: 'Let\'s practice.'
-        2: 'Work as quickly as you can <br> without making any mistakes'
-      are_you_ready:
-        1: 'Are you ready to begin?'
-
 @DigitSymbolTask = class
+
+  TRANSLATIONS =
+    en:
+      translation:
+        begin_button_html:
+          'Begin'
+        next_button_html:
+          'Next'
+        start_screen_html:
+          1: 'Look at the boxes above.'
+          2: 'Each number has its own picture.'
+          3: 'Now look at the pictures below. <br>They match ' +
+            'the pictures above.'
+        start_screen_next_html:
+          1: 'Each time you see a number in the middle of the screen, ' +
+            'look to see <br> which picture matches the number above, ' +
+            'and touch that picture below.'
+        start_screen_practice:
+          1: 'Let\'s practice.'
+          2: 'Work as quickly as you can <br> without making any mistakes'
+        are_you_ready:
+          1: 'Are you ready to begin?'
 
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
@@ -181,7 +180,7 @@ translations =
 
     $('#startScreenMessage').empty().append instructions.shift()
 
-    $('#nextButton').on('tap', ( (event) =>
+    $('#nextButton').touchdown( ( (event) =>
 
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
@@ -198,7 +197,7 @@ translations =
 
     @fillScreen()
 
-    $('#backButton').show().one('tap', =>
+    $('#backButton').show().touchdown(=>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
@@ -210,9 +209,9 @@ translations =
     $currentStimuli = $('#currentStimuli')
     $currentStimuli.html EXAMPLE_STIMULI
 
-    $('#nextButton').unbind().one('tap', =>
+    $('#nextButton').unbind().touchdown(=>
       @$stimuliSymbol.addClass("correct")
-      $('#nextButton').unbind().one('tap', =>
+      $('#nextButton').unbind().touchdown( =>
         @$stimuliSymbol.removeClass("correct")
         @practiceModeMessage()
       )
@@ -225,13 +224,13 @@ translations =
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
 
-    $('#backButton').show().one('tap', =>
+    $('#backButton').show().touchdown( =>
       $('#startScreenMessage').removeClass('bigFont')
       @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
-    $('#nextButton').show().one('tap', \
+    $('#nextButton').show().touchdown( \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
@@ -242,7 +241,7 @@ translations =
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    $('.symbol').on('tap', @handleSymbolTouch.bind(this))
+    $('.symbol').touchdown( @handleSymbolTouch.bind(this))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -260,7 +259,7 @@ translations =
   initTask: ->
     TabCAT.Task.start(
       i18n:
-        resStore: translations
+        resStore: TRANSLATIONS
       trackViewport: true
     )
 
@@ -306,7 +305,7 @@ translations =
     highlightColor = "rgba(255,255,204, .5)"
 
     correct = false
-    #required handling code for 'tap'
+    #required handling code for 'mousedown touchstart'
     selectedChoice = eventTarget.data('sequence')
     if @currentStimuli == selectedChoice
       @inPracticeModePause = false
@@ -369,13 +368,13 @@ translations =
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-    $('#backButton').show().one('tap', ( (event) =>
+    $('#backButton').show().touchdown( ( (event) =>
       #clear practice trials streak so it doesn't think we're in real task
       @practiceTrialsCurrentStreak = 0
       @finishedPracticeMode = false
       @practiceModeMessage()
     ))
-    $('#beginButton').show().on('tap', @beginTask.bind(this))
+    $('#beginButton').show().touchdown( @beginTask.bind(this))
     return
 
   beginTask: ->
@@ -388,7 +387,7 @@ translations =
     @fillScreen()
     @updateCurrentStimuli()
     @startTimer()
-    $('.symbol').on 'tap', @handleSymbolTouch.bind(this)
+    $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
     return
 
   updateCurrentStimuli: ->
@@ -493,7 +492,7 @@ translations =
       state.practiceMode = true
     else if @finishedPracticeMode is true
       secondsSinceStart = Math.abs((new Date() - @startTime) / 1000)
-      state.sencondsSinceStart = secondsSinceStart
+      state.secondsSinceStart = secondsSinceStart
 
     return state
 
@@ -502,10 +501,10 @@ translations =
 
   getTranslationParagraphs: (translation) ->
     console.log "language: ", $.i18n.lng()
-    console.log translation
+    console.log "translation:", translation
     translatedText = $.t(translation, {returnObjectTrees: true})
     console.log translatedText
-    console.log translations
+    console.log TRANSLATIONS
     html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
     console.log html
