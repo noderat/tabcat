@@ -15,13 +15,13 @@ echo "Please enter Admin user's id:"
 read ADMIN_USER
 echo "Please enter Admin user's password:"
 read -s ADMIN_PASSWORD
-curl -X PUT $ADMINS_SECTION/$ADMIN_USER -d '"'$ADMIN_PASSWORD'"'
+curl -k -X PUT $ADMINS_SECTION/$ADMIN_USER -d '"'$ADMIN_PASSWORD'"'
 
 AUTH_STRING=$ADMIN_USER:$ADMIN_PASSWORD
 
 echo "Creating tabcat user ..."
 TABCAT_PASSWORD=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/org.couchdb.user:tabcat -d '{"name":"tabcat", "password": "'$TABCAT_PASSWORD'", "type": "user", "roles": []}'
+curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/org.couchdb.user:tabcat -d '{"name":"tabcat", "password": "'$TABCAT_PASSWORD'", "type": "user", "roles": []}'
 echo $TABCAT_PASSWORD > .tabcat_password
 
 echo "Please enter database user's email address:"
@@ -30,17 +30,17 @@ read USER_EMAIL
 for db in tabcat tabcat-data
 do
     echo "Creating '$db' database with correct permissions..."
-    curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db
-    curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]},"members":{"names":["'$USER_EMAIL'"]}}'
+    curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db
+    curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]},"members":{"names":["'$USER_EMAIL'"]}}'
 done
 
 
 echo "Configuring couch_httpd_auth ..."
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/allow_persistent_cookies -d '"true"'
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/timeout -d '"3600"'
+curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/allow_persistent_cookies -d '"true"'
+curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/timeout -d '"3600"'
 
 echo "Configuring httpd ..."
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_SECTION/bind_address -d '"0.0.0.0"'
+curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_SECTION/bind_address -d '"0.0.0.0"'
 
 echo "Configuring uuids ..."
-curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $UUIDS_SECTION/algorithm -d '"random"'
+curl -k -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $UUIDS_SECTION/algorithm -d '"random"'

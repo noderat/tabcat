@@ -37,8 +37,8 @@ if [ '_design' = $(echo $URL | cut -d / -f 5) ]; then
 fi
 REV_URL=$(echo $URL | cut -d / -f 1-$LAST_FIELD)  # get parent doc's URL
 
-REV=$(curl -X HEAD $REV_URL -I -s | grep ETag | cut -d '"' -f 2)
+REV=$(curl -k -X HEAD $REV_URL -I -s | grep ETag | cut -d '"' -f 2)
 if [ -n "$REV" ]; then
     REV_QUERY="?rev=$REV"
-    curl -X DELETE "$URL$REV_QUERY" -f -ss > /dev/null
+    curl -k -X DELETE "$URL$REV_QUERY" -f -ss > /dev/null
 fi
