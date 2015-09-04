@@ -13,7 +13,7 @@
 <body class="fullscreen unselectable">
     <div id="task" class="fullscreen">
         <div id="rectangle">
-            <div id="exampleScreen" style="display:none">
+            <div id="exampleScreen" class="screen">
                 <div id="exampleExplanation">
                     <h1>Memory Test - Example</h1>
                     <p>You will see pictures of people.  Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
@@ -25,17 +25,17 @@
                     </div>
                 </div>
             </div>
-            <div id="instructionsScreen" style="display:none">
+            <div id="instructionsScreen" class="screen">
                 <h1>Instructions</h1>
                 <div id="instructions">
                     <p>Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
                     <p>Are you ready?</p>
                 </div>
             </div>
-            <div id="rememberScreen" style="display:none">
+            <div id="rememberScreen" class="screen">
                 <p>Remember</p>
             </div>
-            <div id="trialScreen" style="display:none">
+            <div id="trialScreen" class="screen">
                 <div id="supplementaryInstruction"></div>
                 <div id="screenImage">
 	                <img />
@@ -55,9 +55,26 @@
                     </div>
                 </div>
             </div>
+            <div id="scoringScreen" class="screen">
+                <div id="scoringImage">
+
+                </div>
+                <div id="choices">
+                    <div id="foodChoices">
+
+                    </div>
+                    <div id="animalChoices">
+
+                    </div>
+                </div>
+            </div>
+            <div id="scoringScreenAlternative" class="screen">
+                <div id="scoringImages"></div>
+            </div>
             <button id="backButton" class="progressButton">Back</button>
             <button id="nextButton" class="progressButton">Next</button>
             <button id="beginButton" class="progressButton">Begin</button>
+            <button id="completeButton" class="progressButton">Complete</button>
         </div>
     </div>
     <script src="../core/js/tabcat.js"></script>

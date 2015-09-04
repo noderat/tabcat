@@ -352,6 +352,7 @@ MemoryTask = class
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     $faceImageContent = $("#screenImage")
+    $scoringImageContent = $("#scoringImage")
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
     for person in @FORMS[@currentForm].PEOPLE.concat(@EXAMPLE_PEOPLE)
@@ -360,7 +361,8 @@ MemoryTask = class
           .attr( 'src', "img/" + person.IMAGE )
           .attr('data-person', person.KEY)
           .addClass('faceImage')
-        $faceImageContent.append($faceImage)
+        $faceImageContent.append($faceImage.addClass('faceImage'))
+        $scoringImageContent.append($faceImage.addClass('scoringImage'))
     @showStartScreen()
 
   firstExampleRemember: (person, item) ->
@@ -546,7 +548,7 @@ MemoryTask = class
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
-        @endTask()
+        @beginScoring()
     )
 
   iterateFirstExposureTrials: (trials) ->
@@ -568,6 +570,11 @@ MemoryTask = class
       else
         @beginSecondRecall()
     )
+
+  beginScoring: ->
+    #@endTask()
+
+
 
 #Not implementing for now, just creating the skeleton
 @DelayMemoryTask = class extends MemoryTask
@@ -592,5 +599,9 @@ MemoryTask = class
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
-        @endTask()
+        @beginScoring()
     )
+
+  beginScoring: ->
+
+    #@endTask()
