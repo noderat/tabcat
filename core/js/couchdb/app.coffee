@@ -29,6 +29,7 @@ patient = require('./patient')
 adhocCPTDetailReport = require('./adhoc/cpt-detail-report')
 adhocCPTSummaryReport = require('./adhoc/cpt-summary-report')
 adhocDigitSymbolReport = require('./adhoc/digit-symbol-report')
+adhocDigitSymbolSupplReport = require('./adhoc/digit-symbol-suppl-report')
 adhocFlankerDetailReport = require('./adhoc/flanker-detail-report')
 adhocFlankerSummaryReport = require('./adhoc/flanker-summary-report')
 adhocLineTasksReport = require('./adhoc/line-tasks-report')
@@ -104,6 +105,7 @@ exports.lists =
   'adhoc-flanker-summary-report': adhocFlankerSummaryReport.list
   'adhoc-line-tasks-report': adhocLineTasksReport.list
   'adhoc-digit-symbol-report': adhocDigitSymbolReport.list
+  'adhoc-digit-symbol-suppl-report': adhocDigitSymbolSupplReport.list
   'adhoc-set-shifting-detail-report': adhocSetShiftingDetailReport.list
   'adhoc-set-shifting-summary-report': adhocSetShiftingSummaryReport.list
   'adhoc-stargazer-report': adhocStargazerReport.list

@@ -12,6 +12,7 @@
                 "js/couchdb/adhoc/flanker-detail-report.js",
                 "js/couchdb/adhoc/flanker-summary-report.js",
                 "js/couchdb/adhoc/digit-symbol-report.js",
+                "js/couchdb/adhoc/digit-symbol-suppl-report.js",
                 "js/couchdb/adhoc/line-tasks-report.js",
                 "js/couchdb/adhoc/report.js",
                 "js/couchdb/adhoc/set-shifting-detail-report.js",
