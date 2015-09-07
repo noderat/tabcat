@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "hansode/fedora-21-server-x86_64"
+  config.vm.box = "ubuntu/trusty64"
   
   
   config.vm.provider "virtualbox" do |v|
