@@ -11,4 +11,6 @@ sudo chown -R vagrant /home/vagrant/.npm
 #do NOT install nodejs as root user
 apt-get install nodejs -y
 npm install -g npm@3.x-latest
+#installing these globally for now until they can be used with gulp
+npm install -g kanso coffee-script uglify-js coffeelint -y
 cd /vagrant && npm install
