@@ -14,5 +14,7 @@ packages
 .tabcat_password
 .idea*
 .vagrant*
+node_modules*
+npm-debug*
 couchdb.stderr
 couchdb.stdout

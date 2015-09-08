@@ -1,9 +1,16 @@
 #!/bin/bash
+sudo apt-get update -y    ##this step will add 5-10 minutes in initial provision
+sudo apt-get install curl tar vim git -y #nodejs npm couchdb kmod-VirtualBox -y
+#sudo npm install -g kanso coffee-script uglify-js coffeelint -y
 
-sudo groupadd vboxsf
-sudo usermod -aG vboxsf $(whoami)
-sudo modprobe -a vboxguest vboxsf
-#sudo yum update -y    ##this step will add 5-10 minutes in initial provision
-sudo yum install vim git nodejs npm couchdb kmod-VirtualBox -y
-sudo iptables -A  IN_public_allow -p tcp -m tcp --dport 5984 -m conntrack --ctstate NEW -j ACCEPT  ## need to find a way to make this permanent
-sudo npm install -g kanso coffee-script uglify-js coffeelint -y
+curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+sudo apt-get install couchdb -y
+sudo apt-get autoremove
+sudo chown -R couchdb /var/run/couchdb
+sudo chown -R vagrant /home/vagrant/.npm
+#do NOT install nodejs as root user
+apt-get install nodejs -y
+npm install -g npm@3.x-latest
+#installing these globally for now until they can be used with gulp
+npm install -g kanso coffee-script uglify-js coffeelint -y
+cd /vagrant && npm install
