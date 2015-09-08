@@ -431,6 +431,8 @@ MemoryTask = class
 
     @currentExampleTrial = 0
 
+    @currentScoringSheet = 0
+
   showStartScreen: ->
     $("#backButton").hide()
     @currentExampleTrial = 0
@@ -572,8 +574,48 @@ MemoryTask = class
     )
 
   beginScoring: ->
-    #@endTask()
+    @scoringSheets = @buildScoringSheetsData(@currentForm)
+    @iterateScoringSheets()
 
+  buildScoringSheetsData: (currentForm) ->
+    return [1,2,3,4]
+
+  iterateScoringSheets: ->
+    #these should already be in this state the first time
+    #but should be reset if back button was pressed from instruction screen
+    $("#completeButton").unbind().hide()
+    $("#nextButton").show()
+    $("#backButton").show()
+
+    nextScoringSheet = @scoringSheets[@currentScoringSheet]
+    console.log nextScoringSheet
+    @showNextScoringSheet(nextScoringSheet)
+
+    $("#nextButton").unbind().touchdown( =>
+      @currentScoringSheet++
+      if @currentScoringSheet <= @scoringSheets.length - 1
+        console.log "current scoring sheet:", @currentScoringSheet
+        @iterateScoringSheets()
+      else
+        console.log "setting up task close"
+        @("#completeButton").unbind().show().touchdown( =>
+          console.log "closing task"
+          @endTask()
+        )
+    )
+
+    $("#backButton").unbind().touchdown( =>
+      @currentScoringSheet--
+      if @currentScoringSheet <= 0
+        console.log "current scoring sheet is 0"
+        @currentScoringSheet = 0
+      else
+        console.log "starting over"
+        @iterateScoringSheets()
+    )
+
+  showNextScoringSheet: (nextScoringSheet) ->
+    nextScoringSheet
 
 
 #Not implementing for now, just creating the skeleton
