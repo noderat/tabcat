@@ -273,6 +273,10 @@ MemoryTask = class
     # time values in milliseconds
     @TIME_BETWEEN_STIMULI = 3000
 
+    @FADE_IN_TIME = 1000
+
+    @FADE_OUT_TIME = 1000
+
     @TIME_BETWEEN_RECALL = 10000
 
   getCurrentForm: ->
@@ -383,9 +387,13 @@ MemoryTask = class
       '<p>' + item + '</p>' )
     $("#trialScreen").show()
 
-  showPerson: (person) ->
+  showPerson: (person, fadeIn = false) ->
     $(".faceImage").hide()
-    $(".faceImage[data-person='" + person.KEY + "']").show()
+    $image = $(".faceImage[data-person='" + person.KEY + "']")
+    if fadeIn
+      $image.fadeIn(@FADE_IN_TIME)
+    else
+      $image.show()
 
   exampleRecall: (person, recall) ->
     $("#supplementaryInstruction").hide()
@@ -405,7 +413,7 @@ MemoryTask = class
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
-    @showPerson(person)
+    @showPerson(person, true)
     $("#rememberOne").show().empty().html(
       "<p>" + item + "</p>" )
     $("#trialScreen").show()
@@ -553,6 +561,8 @@ MemoryTask = class
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+    ).then( =>
       if trials.length
         @iterateFirstExposureTrials(trials)
       else
@@ -563,6 +573,8 @@ MemoryTask = class
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+    ).then( =>
       if trials.length
         @iterateSecondExposureTrials(trials)
       else

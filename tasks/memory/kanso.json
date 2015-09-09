@@ -1,6 +1,6 @@
 {
     "name": "memory",
-    "version": "0.8.9",
+    "version": "0.9.0",
     "description": "Memory",
     "attachments": [
         "css/memory.css",
