@@ -357,12 +357,16 @@ MemoryTask = class
     #concat'ing examples for first trials to work with same html
     for person in @FORMS[@currentForm].PEOPLE.concat(@EXAMPLE_PEOPLE)
       do =>
-        $faceImage = $('<img />') \
+        $faceImage = $('<img>')
           .attr( 'src', "img/" + person.IMAGE )
           .attr('data-person', person.KEY)
-          .addClass('faceImage')
-        $faceImageContent.append($faceImage.addClass('faceImage'))
-        $scoringImageContent.append($faceImage.addClass('scoringImage'))
+
+        #note: clone is needed because faceImage is DOM element
+        $scoringImage = $faceImage.clone()
+
+        $faceImage.addClass('faceImage')
+        $faceImageContent.append($faceImage)
+        $scoringImageContent.append($scoringImage)
     @showStartScreen()
 
   firstExampleRemember: (person, item) ->
