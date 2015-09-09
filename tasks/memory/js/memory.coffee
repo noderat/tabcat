@@ -414,8 +414,8 @@ MemoryTask = class
     $("#recallOne").hide()
 
     @showPerson(person, true)
-    $("#rememberOne").show().empty().html(
-      "<p>" + item + "</p>" )
+    $("#rememberOne").empty().html(
+      "<p>" + item + "</p>" ).fadeIn(@FADE_IN_TIME)
     $("#trialScreen").show()
 
   recallBoth: (person) ->
@@ -562,6 +562,7 @@ MemoryTask = class
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $("#rememberOne").fadeOut(@FADE_OUT_TIME)
     ).then( =>
       if trials.length
         @iterateFirstExposureTrials(trials)
@@ -574,6 +575,7 @@ MemoryTask = class
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $("#rememberOne").fadeOut(@FADE_OUT_TIME)
     ).then( =>
       if trials.length
         @iterateSecondExposureTrials(trials)
