@@ -120,11 +120,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         { relativeSequence: 5, symbol: SYMBOLS.MOBIUS }
         { relativeSequence: 2, symbol: SYMBOLS.INNER_CIRCLES }
       ]
+    FORM_TWO:
+      ICON_BAR: [
+        SYMBOLS.MOBIUS
+        SYMBOLS.DIAMOND
+        SYMBOLS.INNER_CIRCLES
+        SYMBOLS.MOUSTACHE
+        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.TRI_BLOCKS
+        SYMBOLS.TEARDROPS
+      ]
+      SYMBOL_BAR: [
+        { relativeSequence: 7, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
+        { relativeSequence: 5, symbol: SYMBOLS.TRI_CIRCLES }
+        { relativeSequence: 6, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 2, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 1, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
+      ]
 
   constructor: ->
     #current form - static for now, will add switch later
-    @currentForm = FORM_ORDER.FORM_ONE
-    @currentFormNumber = 1
+    @currentForm = @getCurrentForm()
+    @currentFormNumber = @getCurrentFormNumber()
 
     #current digit presented on screen
     @currentStimuli = null
@@ -165,6 +184,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @currentTank = []
 
     @$stimuliSymbol = null
+
+  getCurrentForm: ->
+    #TODO: make dynamic, probably from URL
+    return FORM_ORDER.FORM_TWO
+
+  getCurrentFormNumber: ->
+    #TODO: make dynamic, probably from URL
+    return 2
 
   showStartScreen: ->
 
