@@ -171,6 +171,7 @@ TabCAT.Task.start = _.once((options) ->
 
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()
+  form = options?.form ? 'default'
 
   # note that we started this task but didn't score it
   TabCAT.Encounter.addTaskAttempt(taskName)
@@ -193,6 +194,7 @@ TabCAT.Task.start = _.once((options) ->
       browser: TabCAT.Task.getBrowserInfo()
       clockLastStarted: TabCAT.Clock.lastStarted()
       encounterId: TabCAT.Encounter.getId()
+      form: form
       language: $.i18n.lng()
       name: taskName
       patientCode: TabCAT.Encounter.getPatientCode()

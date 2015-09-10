@@ -141,7 +141,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ]
 
   constructor: ->
-    [@currentForm, @currentFormNumber] = @getCurrentForm()
+    [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
     #current digit presented on screen
     @currentStimuli = null
@@ -189,16 +189,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #there's likely a much more efficient way to do this
     #note that forms 3 and 4 do not currently exist yet
     switch form
-      when "one" then return [FORM_ORDER.FORM_ONE, 1]
-      when "two" then return [FORM_ORDER.FORM_TWO, 2]
-      when "three" then return [FORM_ORDER.FORM_THREE, 3]
-      when "four" then return [FORM_ORDER.FORM_FOUR, 4]
+      when "one" then return [FORM_ORDER.FORM_ONE, 1, 'A']
+      when "two" then return [FORM_ORDER.FORM_TWO, 2, 'B']
+      when "three" then return [FORM_ORDER.FORM_THREE, 3, 'C']
+      when "four" then return [FORM_ORDER.FORM_FOUR, 4, 'D']
     #if no form found, just return default form
-    return [FORM_ORDER.FORM_ONE, 1]
-
-  getCurrentFormNumber: ->
-    #TODO: make dynamic, probably from URL
-    return 2
+    return [FORM_ORDER.FORM_ONE, 1, 'A']
 
   showStartScreen: ->
 
@@ -295,6 +291,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       i18n:
         resStore: TRANSLATIONS
       trackViewport: true
+      form: @currentFormLabel
     )
 
     TabCAT.UI.turnOffBounce()
