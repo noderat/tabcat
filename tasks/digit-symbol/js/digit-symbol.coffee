@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             'and touch that picture below.'
         start_screen_practice:
           1: 'Let\'s practice.'
-          2: 'Work as quickly as you can <br> without making any mistakes'
+          2: 'Work as quickly as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
 
