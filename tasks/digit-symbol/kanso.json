@@ -39,7 +39,11 @@
             "digit-symbol": {
                 "description": "Digit Symbol",
                 "icon": "img/icon/digit-symbol.png",
-                "start": "digit-symbol.html"
+                "start": "digit-symbol.html",
+                "forms": {
+                  "A": "one",
+                  "B": "two"
+                }
             }
         }
     }

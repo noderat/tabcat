@@ -540,12 +540,14 @@ div.score .scoreBody div.catchTrialScore .value {
 /*** tasks.html ***/
 
 #tasks div.task {
+    display: block;
     position: relative;
     background-color: #eeeeee;
     padding: 8px;
     margin-left: 10px;
     margin-bottom: 10px;
     width: 600px;
+    height: 72px;
     text-align: left;
     border-radius: 18px;
     color: #000000;
@@ -561,6 +563,8 @@ div.score .scoreBody div.catchTrialScore .value {
 }
 
 #tasks img.icon {
+    float: left;
+    display: inline-block;
     width: 72px;
     height: 72px;
     background-size: 72px 72px;
@@ -569,10 +573,12 @@ div.score .scoreBody div.catchTrialScore .value {
 }
 
 #tasks div.task > span.description {
-    position: absolute;
+    float: left;
+    display: inline-block;
+    position: relative;
     font-size: 32px;
-    top: 25px;
-    left: 98px;
+    top: 20px;
+    margin-left: 5px;
     vertical-align: top;
 }
 
@@ -584,6 +590,21 @@ div.score .scoreBody div.catchTrialScore .value {
     top: 64px;
     left: 99px;
     vertical-align: top;
+}
+
+#tasks div.task > span.alternateForm {
+    position: relative;
+    float: left;
+    display: inline-block;
+    margin-left: 12px;
+    border: 1px solid black;
+    font-size: 32px;
+    text-align:center;
+    vertical-align: middle;
+    width: 65px;
+    height: 65px;
+    border-radius:12px;
+    display: inline-block;
 }
 
 #tasks div.task div.scores {
