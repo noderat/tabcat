@@ -141,9 +141,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ]
 
   constructor: ->
-    #current form - static for now, will add switch later
-    @currentForm = @getCurrentForm()
-    @currentFormNumber = @getCurrentFormNumber()
+    [@currentForm, @currentFormNumber] = @getCurrentForm()
 
     #current digit presented on screen
     @currentStimuli = null
@@ -185,9 +183,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @$stimuliSymbol = null
 
+  #returns a tuple
   getCurrentForm: ->
-    #TODO: make dynamic, probably from URL
-    return FORM_ORDER.FORM_TWO
+    form = TabCAT.UI.getQueryString 'form'
+    #there's likely a much more efficient way to do this
+    #note that forms 3 and 4 do not currently exist yet
+    switch form
+      when "one" then return [FORM_ORDER.FORM_ONE, 1]
+      when "two" then return [FORM_ORDER.FORM_TWO, 2]
+      when "three" then return [FORM_ORDER.FORM_THREE, 3]
+      when "four" then return [FORM_ORDER.FORM_FOUR, 4]
+    #if no form found, just return default form
+    return [FORM_ORDER.FORM_ONE, 1]
 
   getCurrentFormNumber: ->
     #TODO: make dynamic, probably from URL
@@ -527,12 +534,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @practiceTrialsCurrentStreak < PRACTICE_TRIAL_MAX_STREAK
 
   getTranslationParagraphs: (translation) ->
-    console.log "language: ", $.i18n.lng()
-    console.log "translation:", translation
     translatedText = $.t(translation, {returnObjectTrees: true})
-    console.log translatedText
-    console.log TRANSLATIONS
     html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
-    console.log html
     return html
