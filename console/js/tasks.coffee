@@ -101,19 +101,6 @@ showTasks = ->
 
         $scoringMessage = $('<span></span>', class: 'scoringMessage')
 
-        startUrl = TabCAT.Console.getTaskStartUrl(task)
-
-        if task.forms
-          console.log task.forms
-          for form, value of task.forms
-            do ( =>
-              console.log form, value
-              $icon = $('<span></span>', class: 'alternateForm')
-              formUrl = startUrl + '?form=' + value
-              $icon.append($("<a></a>").attr("href", formUrl).text(form))
-              $taskDiv.append $icon
-            )
-
         if scores
           $scoringMessage.text('tap to show scoring')
           $taskDiv.append($scoringMessage)
@@ -142,9 +129,25 @@ showTasks = ->
 
           # add handler to launch task (separate scope for each task)
           do ->
+            startUrl = TabCAT.Console.getTaskStartUrl(task)
             if startUrl?
               # start the task
               $taskDiv.on('click', (event) -> window.location = startUrl)
+
+              if task.forms
+                for form, value of task.forms
+                  do ( =>
+                    $icon = $('<span></span>', class: 'alternateForm')
+                    formUrl = startUrl + '?form=' + value
+                    $icon.text(form)
+                    $icon.on('click', (event) ->
+                      event.preventDefault()
+                      event.stopPropagation()
+                      window.location = formUrl
+                      return false
+                    )
+                    $taskDiv.append $icon
+                  )
 
         $taskDiv.append($scoringMessage)
         $tasksDiv.append($taskDiv)
