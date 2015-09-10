@@ -131,13 +131,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         SYMBOLS.TEARDROPS
       ]
       SYMBOL_BAR: [
-        { relativeSequence: 7, symbol: SYMBOLS.TEARDROPS }
-        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
-        { relativeSequence: 5, symbol: SYMBOLS.TRI_CIRCLES }
         { relativeSequence: 6, symbol: SYMBOLS.TRI_BLOCKS }
-        { relativeSequence: 2, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 5, symbol: SYMBOLS.TRI_CIRCLES }
         { relativeSequence: 1, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 7, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 2, symbol: SYMBOLS.DIAMOND }
         { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
+        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
       ]
 
   constructor: ->
