@@ -46,12 +46,20 @@
             "learning": {
                 "description": "Learning",
                 "icon": "img/learning.png",
-                "start": "learning.html"
+                "start": "learning.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two"
+                }
             },
             "delay": {
                 "description": "Delay",
                 "icon": "img/delay.png",
-                "start": "delay.html"
+                "start": "delay.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two"
+                }
             }
         }
     }
