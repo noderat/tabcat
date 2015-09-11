@@ -547,7 +547,7 @@ div.score .scoreBody div.catchTrialScore .value {
     margin-left: 10px;
     margin-bottom: 10px;
     width: 600px;
-    height: 72px;
+    min-height: 72px;
     text-align: left;
     border-radius: 18px;
     color: #000000;
@@ -609,6 +609,7 @@ div.score .scoreBody div.catchTrialScore .value {
 
 #tasks div.task div.scores {
     position: relative;
+    clear: both;
     margin-top: 10px;
     padding-left: 92px;
     margin-bottom: -10px;
