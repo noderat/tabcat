@@ -1,9 +1,27 @@
-//Response buttons RB
-.rb-affirmative{
-  @include response-button($green);
+// Variables
+$colorBackButton: #888;
+$colorTextButton: #fff;
+$colorShadow: #444;
+$fontFamilyMain: 'Arial';
 
-  .rb-affirmative span.affirmative{
-    @include response-button-span(nav-next);
-  }
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="file"],
+button,
+a.button {
+  @include button();
 }
 
+.btn-label{
+  position:relative;
+  left:-20px;
+  //display:inline-block;
+  padding-top: 0.58rem;
+  padding-right: 0.8rem;
+  padding-bottom: 0.62rem;
+  padding-left: 0.8rem;
+  background:rgba(0,0,0,0.15);
+  border-radius:3px 0 0 3px
+}

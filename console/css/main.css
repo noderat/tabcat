@@ -1,26 +1,40 @@
-@import url(http://fonts.googleapis.com/css?family=Poiret+One);
-.rb-affirmative {
-    background: #61A255 url("../img/buttons/response-yes.png");
-    height: 91px;
-    width: 320px;
-    border-radius: 16px;
+/* Makes border-box properties */
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-.rb-affirmative:hover {
-    background: #518747;
-    transition: all 0.3s ease;
+.wrap {
+    max-width: 1120px;
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
 }
 
-.rb-affirmative:active {
-    background: #395f32;
+.wrap:after {
+    content: " ";
+    display: block;
+    clear: both;
 }
 
-/*.rb-affirmative:before {*/
-    /*content: url("../img/buttons/nav-next.png");*/
-    /*display: inline-block;*/
-    /*float: left;*/
-/*}*/
-
-.btn {
-    color: white;
+/* Tells Susy there's 12 columns in the content */
+.content {
+    width: 100%;
+    float: left;
+    margin-left: 0;
+    margin-right: 0;
 }
+
+.content {
+    /* Styles for mobile view go here */
+    /* Styles for desktop view go here */
+}
+
+@media (min-width: 700px) {
+    .content {
+        width: 66.10169%;
+        float: left;
+        margin-right: 1.69492%;
+    }
+}
+

@@ -24,6 +24,7 @@
                     "js/tabcat-console.js",
                     "js/tasks.js",
                     "login.html",
+                    "login-home.html",
                     "patient-scoring.html",
                     "return-to-examiner.html",
                     "tasks.html"],

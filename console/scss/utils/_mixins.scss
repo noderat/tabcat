@@ -1,20 +1,28 @@
 //Mixins for response buttons
-@mixin response-button($response){
-  background:$response;
-  height: $response-button-height;
-  width: $response-button-width;
-  border-radius: $response-button-border-radius;
-  &:hover{
-    background: darken($response, 8%);
-    transition: all 0.3s ease;
+@mixin button {
+  background-color: $colorBackButton;
+  background: linear-gradient(lighten($colorBackButton, 25%), $colorBackButton 50%, darken($colorBackButton, 20%));
+  box-shadow: lighten($colorBackButton, 80%) 0 1px 0 inset;
+  border: 1px solid darken($colorBackButton, 40%);
+  color: $colorTextButton;
+  text-shadow: darken($colorBackButton, 30%) 0 -1px 0;
+  font-size: 1.1em;
+  line-height: 1.2em;
+  padding: 0.6em 1.2em;
+  margin: 0.5em;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  border-radius: 0.4em;
+  color: white;
+  text-shadow: darken($colorBackButton, 60%) 0 -1px 0;
+  font-family: $fontFamilyMain;
+  display: inline-block;
+  transition: 0.5s all ease;
+  &:hover {
+    background: linear-gradient(lighten($colorBackButton, 10%), darken($colorBackButton, 15%) 50%, darken($colorBackButton, 25%));
   }
-  &:active{
-    background: darken($response,20%);
+  &:active {
+    box-shadow: $colorShadow 0 1px 2px inset;
   }
-
-}
-
-@mixin response-button-span($name){
-  $url:"../img/buttons/#{$name}.png";
-  background: url($url);
 }
