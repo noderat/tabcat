@@ -86,9 +86,13 @@ MemoryTask = class
       MAN_1:
         KEY: 'man1'
         IMAGE: 'man1.jpg'
+        FOOD: @CHOICES.FOOD.MELON
+        ANIMAL: @CHOICES.ANIMAL.RABBIT
       MAN_2:
         KEY: 'man2'
         IMAGE: 'man2.jpg'
+        FOOD: @CHOICES.FOOD.POTATO
+        ANIMAL: @CHOICES.ANIMAL.FROG
       MAN_3:
         KEY: 'man3'
         IMAGE: 'man3.jpg'
@@ -98,9 +102,13 @@ MemoryTask = class
       MAN_5:
         KEY: 'man5'
         IMAGE: 'man5.jpg'
+        FOOD: @CHOICES.ANIMAL.COCONUT
+        ANIMAL: @CHOICES.ANIMAL.TURTLE
       MAN_6:
         KEY: 'man6'
         IMAGE: 'man6.jpg'
+        FOOD: @CHOICES.FOOD.CHERRY
+        ANIMAL: @CHOICES.ANIMAL.WOLF
       MAN_7:
         KEY: 'man7'
         IMAGE: 'man7.jpg'
@@ -113,9 +121,13 @@ MemoryTask = class
       WOMAN_1:
         KEY: 'woman1'
         IMAGE: 'woman1.jpg'
+        FOOD: @CHOICES.FOOD.CARROT
+        ANIMAL: @CHOICES.ANIMAL.SHEEP
       WOMAN_2:
         KEY: 'woman2'
         IMAGE: 'woman2.jpg'
+        FOOD: @CHOICES.FOOD.GRAPES
+        ANIMAL: @CHOICES.ANIMAL.BEAR
       WOMAN_3:
         KEY: 'woman3'
         IMAGE: 'woman3.jpg'
@@ -125,9 +137,13 @@ MemoryTask = class
       WOMAN_5:
         KEY: 'woman5'
         IMAGE: 'woman5.jpg'
+        FOOD: @CHOICES.FOOD.LETTUCE
+        ANIMAL: @CHOICES.ANIMAL.SHARK
       WOMAN_6:
         KEY: 'woman6'
         IMAGE: 'woman6.jpg'
+        FOOD: @CHOICES.FOOD.PEAS
+        ANIMAL: @CHOICES.ANIMAL.COW
       WOMAN_7:
         KEY: 'woman7'
         IMAGE: 'woman7.jpg'
@@ -176,78 +192,32 @@ MemoryTask = class
           @PEOPLE.WOMAN_5,
           @PEOPLE.WOMAN_6
         ]
-        FIRST_EXPOSURE: [{
-          person: @PEOPLE.MAN_5,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.TURTLE
-        }, {
-          person: @PEOPLE.WOMAN_6,
-          label: 'food',
-          item: @CHOICES.FOOD.PEAS
-        },{
-          person: @PEOPLE.WOMAN_5,
-          label: 'food',
-          item: @CHOICES.FOOD.LETTUCE
-        }, {
-          person: @PEOPLE.MAN_6,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.WOLF
-        },{
-          person: @PEOPLE.WOMAN_5,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.SHARK
-        }, {
-          person: @PEOPLE.MAN_5,
-          label: 'food',
-          item: @CHOICES.FOOD.COCONUT
-        },{
-          person: @PEOPLE.MAN_6,
-          label: 'food',
-          item: @CHOICES.FOOD.CHERRY
-        }, {
-          person: @PEOPLE.WOMAN_6,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.COW
-        }],
+        FIRST_EXPOSURE: [
+          { person: @PEOPLE.MAN_5, item: 'animal' },
+          { person: @PEOPLE.WOMAN_6, item: 'food' },
+          { person: @PEOPLE.WOMAN_5, item: 'food' },
+          { person: @PEOPLE.MAN_6, item: 'animal' },
+          { person: @PEOPLE.WOMAN_5, item: 'animal'},
+          { person: @PEOPLE.MAN_5, item: 'food' },
+          { person: @PEOPLE.MAN_6, item: 'food' },
+          { person: @PEOPLE.WOMAN_6, item: 'animal'}
+        ],
         FIRST_RECALL: [
           { person: @PEOPLE.WOMAN_5 },
           { person: @PEOPLE.MAN_5 },
           { person: @PEOPLE.WOMAN_6 },
           { person: @PEOPLE.MAN_6 }
         ],
-        SECOND_EXPOSURE: [{
-          person: @PEOPLE.WOMAN_5,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.SHARK
-        },{
-          person: @PEOPLE.MAN_5,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.TURTLE
-        },{
-          person: @PEOPLE.WOMAN_6,
-          label: 'food',
-          item: @CHOICES.FOOD.PEAS
-        },{
-          person: @PEOPLE.MAN_6,
-          label: 'food',
-          item: @CHOICES.FOOD.CHERRY
-        },{
-          person: @PEOPLE.WOMAN_6,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.COW
-        },{
-          person: @PEOPLE.WOMAN_5,
-          label: 'food',
-          item: @CHOICES.FOOD.LETTUCE
-        }, {
-          person: @PEOPLE.MAN_6,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.WOLF
-        },{
-          person: @PEOPLE.MAN_5,
-          label: 'food',
-          item: @CHOICES.FOOD.COCONUT
-        }],
+        SECOND_EXPOSURE: [
+          { person: @PEOPLE.WOMAN_5, item: 'animal' },
+          { person: @PEOPLE.MAN_5, item: 'animal' },
+          { person: @PEOPLE.WOMAN_6, item: 'food' },
+          { person: @PEOPLE.MAN_6, item: 'food' },
+          { person: @PEOPLE.WOMAN_6, item: 'animal' },
+          { person: @PEOPLE.WOMAN_5, item: 'food'},
+          { person: @PEOPLE.MAN_6, item: 'animal'},
+          { person: @PEOPLE.MAN_5, item: 'food'}
+        ],
         SECOND_RECALL: [
           { person: @PEOPLE.MAN_6 },
           { person: @PEOPLE.MAN_5 },
@@ -267,78 +237,32 @@ MemoryTask = class
           @PEOPLE.WOMAN_1,
           @PEOPLE.WOMAN_2
         ]
-        FIRST_EXPOSURE: [{
-          person: @PEOPLE.WOMAN_1,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.SHEEP
-        }, {
-          person: @PEOPLE.WOMAN_2,
-          label: 'food',
-          item: @CHOICES.FOOD.CARROT
-        },{
-          person: @PEOPLE.MAN_2,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.FROG
-        }, {
-          person: @PEOPLE.WOMAN_1,
-          label: 'food',
-          item: @CHOICES.FOOD.GRAPES
-        },{
-          person: @PEOPLE.MAN_1,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.RABBIT
-        }, {
-          person: @PEOPLE.MAN_2,
-          label: 'food',
-          item: @CHOICES.FOOD.POTATO
-        },{
-          person: @PEOPLE.WOMAN_2,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.BEAR
-        },{
-          person: @PEOPLE.MAN_1,
-          label: 'food',
-          item: @CHOICES.FOOD.MELON
-        }],
+        FIRST_EXPOSURE: [
+          { person: @PEOPLE.WOMAN_1, item: 'animal'},
+          { person: @PEOPLE.WOMAN_2, item: 'food' },
+          { person: @PEOPLE.MAN_2, item: 'animal' },
+          { person: @PEOPLE.WOMAN_1, item: 'food'},
+          { person: @PEOPLE.MAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_2, item: 'food' },
+          { person: @PEOPLE.WOMAN_2, item: 'animal' },
+          { person: @PEOPLE.MAN_1, item: 'food' }
+        ],
         FIRST_RECALL: [
           { person: @PEOPLE.WOMAN_1 },
           { person: @PEOPLE.MAN_2 },
           { person: @PEOPLE.WOMAN_2 },
           { person: @PEOPLE.MAN_1 }
         ],
-        SECOND_EXPOSURE: [{
-          person: @PEOPLE.MAN_2,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.FROG
-        },{
-          person: @PEOPLE.WOMAN_1,
-          label: 'food',
-          item: @CHOICES.FOOD.GRAPES
-        },{
-          person: @PEOPLE.MAN_1,
-          label: 'food',
-          item: @CHOICES.FOOD.MELON
-        },{
-          person: @PEOPLE.WOMAN_2,
-          label: 'food',
-          item: @CHOICES.FOOD.CARROT
-        },{
-          person: @PEOPLE.WOMAN_1,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.SHEEP
-        },{
-          person: @PEOPLE.MAN_1,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.RABBIT
-        },{
-          person: @PEOPLE.MAN_2,
-          label: 'food',
-          item: @CHOICES.FOOD.POTATO
-        },{
-          person: @PEOPLE.WOMAN_2,
-          label: 'animal',
-          item: @CHOICES.ANIMAL.BEAR
-        }],
+        SECOND_EXPOSURE: [
+          { person: @PEOPLE.MAN_2, item: 'animal' },
+          { person: @PEOPLE.WOMAN_1, item: 'food' },
+          { person: @PEOPLE.MAN_1, item: 'food' },
+          { person: @PEOPLE.WOMAN_2, item: 'food' },
+          { person: @PEOPLE.WOMAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_2, item: 'food' },
+          { person: @PEOPLE.WOMAN_2, item: 'animal' }
+        ],
         SECOND_RECALL: [
           { person: @PEOPLE.MAN_2 },
           { person: @PEOPLE.WOMAN_1 },
@@ -360,35 +284,35 @@ MemoryTask = class
         ]
         FIRST_EXPOSURE: [{
           person: @PEOPLE.MAN_3,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.GOAT
         },{
           person: @PEOPLE.WOMAN_3,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.TOMATO
         },{
           person: @PEOPLE.MAN_4,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.WHALE
         },{
           person: @PEOPLE.WOMAN_4,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.MONKEY
         },{
           person: @PEOPLE.WOMAN_3,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.PIG
         },{
           person: @PEOPLE.WOMAN_4,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.LEMON
         },{
           person: @PEOPLE.MAN_3,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.PLUM
         },{
           person: @PEOPLE.MAN_4,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.MUSHROOM
         }],
         FIRST_RECALL: [
@@ -399,35 +323,35 @@ MemoryTask = class
         ],
         SECOND_EXPOSURE: [{
           person: @PEOPLE.MAN_4,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.WHALE
         },{
           person: @PEOPLE.WOMAN_4,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.MONKEY
         },{
           person: @PEOPLE.WOMAN_3,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.PIG
         },{
           person: @PEOPLE.MAN_4,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.MUSHROOM
         },{
           person: @PEOPLE.MAN_3,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.PLUM
         },{
           person: @PEOPLE.WOMAN_3,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.TOMATO
         },{
           person: @PEOPLE.WOMAN_4,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.LEMON
         },{
           person: @PEOPLE.MAN_3,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.GOAT
         }],
         SECOND_RECALL: [
@@ -451,35 +375,35 @@ MemoryTask = class
         ]
         FIRST_EXPOSURE: [{
           person: @PEOPLE.WOMAN_7,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.BANANA
         },{
           person: @PEOPLE.MAN_8,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.FOX
         },{
           person: @PEOPLE.WOMAN_8,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.MANGO
         },{
           person: @PEOPLE.MAN_7,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.SNAKE
         },{
           person: @PEOPLE.WOMAN_7,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.TIGER
         },{
           person: @PEOPLE.MAN_7,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.PEPPER
         },{
           person: @PEOPLE.WOMAN_8,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.MOUSE
         },{
           person: @PEOPLE.MAN_8,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.SQUASH
         }],
         FIRST_RECALL: [
@@ -490,35 +414,35 @@ MemoryTask = class
         ],
         SECOND_EXPOSURE: [{
           person: @PEOPLE.WOMAN_8,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.MOUSE
         },{
           person: @PEOPLE.MAN_7,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.SNAKE
         },{
           person: @PEOPLE.WOMAN_7,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.TIGER
         },{
           person: @PEOPLE.WOMAN_8,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.MANGO
         },{
           person: @PEOPLE.MAN_8,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.SQUASH
         },{
           person: @PEOPLE.WOMAN_7,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.BANANA
         },{
           person: @PEOPLE.MAN_8,
-          label: 'animal',
+          item: 'animal',
           item: @CHOICES.ANIMAL.FOX
         },{
           person: @PEOPLE.MAN_7,
-          label: 'food',
+          item: 'food',
           item: @CHOICES.FOOD.PEPPER
         }]
         SECOND_RECALL: [
@@ -547,8 +471,6 @@ MemoryTask = class
 
     @FADE_OUT_TIME = 1000
 
-    @TIME_BETWEEN_RECALL = 10000
-
   #returns a tuple
   getCurrentForm: ->
     form = TabCAT.UI.getQueryString 'form'
@@ -570,7 +492,6 @@ MemoryTask = class
         obj =
           action: 'rememberOne',
           person: data.person,
-          type: data.label,
           item: data.item
 
         stimuli.push obj
@@ -695,12 +616,13 @@ MemoryTask = class
     $("#trialScreen").show()
 
   rememberOne: (person, item) ->
+    stimuli = person[item.toUpperCase()]
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
     @showPerson(person, true)
     $("#rememberOne").empty().html(
-      "<p>" + item + "</p>" ).fadeIn(@FADE_IN_TIME)
+      "<p>" + stimuli + "</p>" ).fadeIn(@FADE_IN_TIME)
     $("#trialScreen").show()
 
   recallBoth: (person) ->
@@ -895,7 +817,8 @@ MemoryTask = class
         @iterateScoringSheets()
       else
         console.log "setting up task close"
-        @("#completeButton").unbind().show().touchdown( =>
+        $("#nextButton").hide()
+        $("#completeButton").unbind().show().touchdown( =>
           console.log "closing task"
           @endTask()
         )
