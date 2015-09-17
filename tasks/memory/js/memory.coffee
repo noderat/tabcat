@@ -348,8 +348,190 @@ MemoryTask = class
         DELAYED_RECALL: [
           { person: @PEOPLE.WOMAN_2 },
           { person: @PEOPLE.MAN_1 },
-          { person: @PEOPLE.WOMAN_2 },
+          { person: @PEOPLE.WOMAN_1 },
           { person: @PEOPLE.MAN_2 }
+        ]
+      FORM_THREE:
+        PEOPLE: [
+          @PEOPLE.MAN_3,
+          @PEOPLE.MAN_4,
+          @PEOPLE.WOMAN_3,
+          @PEOPLE.WOMAN_4
+        ]
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.MAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.GOAT
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.TOMATO
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WHALE
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MONKEY
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.PIG
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.LEMON
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.PLUM
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.MUSHROOM
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_3 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_4 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.MAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WHALE
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MONKEY
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.PIG
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.MUSHROOM
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.PLUM
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.TOMATO
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.LEMON
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.GOAT
+        }],
+        SECOND_RECALL: [
+          { person: @PEOPLE.MAN_3 },
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_4 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.WOMAN_4 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_3 }
+        ]
+      FORM_FOUR:
+        PEOPLE: [
+          @PEOPLE.MAN_7,
+          @PEOPLE.MAN_8,
+          @PEOPLE.WOMAN_7,
+          @PEOPLE.WOMAN_8
+        ]
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.BANANA
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FOX
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.MANGO
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SNAKE
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TIGER
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.PEPPER
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MOUSE
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.SQUASH
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_7 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.WOMAN_8 },
+          { person: @PEOPLE.MAN_7 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MOUSE
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SNAKE
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TIGER
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.MANGO
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.SQUASH
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.BANANA
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FOX
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.PEPPER
+        }]
+        SECOND_RECALL: [
+          { person: @PEOPLE.WOMAN_8 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.MAN_7 },
+          { person: @PEOPLE.WOMAN_7 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.MAN_7 },
+          { person: @PEOPLE.WOMAN_7 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.WOMAN_8 }
         ]
     }
 
