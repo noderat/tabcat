@@ -64,9 +64,10 @@ exports.getDate = (task) ->
 exports.getMachine = (task) ->
   null
 
-#null until multiple forms are implemented for tasks
 exports.getForm = (task) ->
-  null
+  if task.form?
+    return task.form
+  return null
 
 exports.DATA_QUALITY_HEADERS = [
   'goodForResearch', 'qualityIssues', 'adminComments']

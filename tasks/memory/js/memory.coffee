@@ -260,12 +260,282 @@ MemoryTask = class
           { person: @PEOPLE.MAN_6 },
           { person: @PEOPLE.WOMAN_5 }
         ]
+      FORM_TWO:
+        PEOPLE: [
+          @PEOPLE.MAN_1,
+          @PEOPLE.MAN_2,
+          @PEOPLE.WOMAN_1,
+          @PEOPLE.WOMAN_2
+        ]
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_1,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SHEEP
+        }, {
+          person: @PEOPLE.WOMAN_2,
+          label: 'food',
+          item: @CHOICES.FOOD.CARROT
+        },{
+          person: @PEOPLE.MAN_2,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FROG
+        }, {
+          person: @PEOPLE.WOMAN_1,
+          label: 'food',
+          item: @CHOICES.FOOD.GRAPES
+        },{
+          person: @PEOPLE.MAN_1,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.RABBIT
+        }, {
+          person: @PEOPLE.MAN_2,
+          label: 'food',
+          item: @CHOICES.FOOD.POTATO
+        },{
+          person: @PEOPLE.WOMAN_2,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.BEAR
+        },{
+          person: @PEOPLE.MAN_1,
+          label: 'food',
+          item: @CHOICES.FOOD.MELON
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_1 },
+          { person: @PEOPLE.MAN_2 },
+          { person: @PEOPLE.WOMAN_2 },
+          { person: @PEOPLE.MAN_1 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.MAN_2,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FROG
+        },{
+          person: @PEOPLE.WOMAN_1,
+          label: 'food',
+          item: @CHOICES.FOOD.GRAPES
+        },{
+          person: @PEOPLE.MAN_1,
+          label: 'food',
+          item: @CHOICES.FOOD.MELON
+        },{
+          person: @PEOPLE.WOMAN_2,
+          label: 'food',
+          item: @CHOICES.FOOD.CARROT
+        },{
+          person: @PEOPLE.WOMAN_1,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SHEEP
+        },{
+          person: @PEOPLE.MAN_1,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.RABBIT
+        },{
+          person: @PEOPLE.MAN_2,
+          label: 'food',
+          item: @CHOICES.FOOD.POTATO
+        },{
+          person: @PEOPLE.WOMAN_2,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.BEAR
+        }],
+        SECOND_RECALL: [
+          { person: @PEOPLE.MAN_2 },
+          { person: @PEOPLE.WOMAN_1 },
+          { person: @PEOPLE.WOMAN_2 },
+          { person: @PEOPLE.MAN_1 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.WOMAN_2 },
+          { person: @PEOPLE.MAN_1 },
+          { person: @PEOPLE.WOMAN_1 },
+          { person: @PEOPLE.MAN_2 }
+        ]
+      FORM_THREE:
+        PEOPLE: [
+          @PEOPLE.MAN_3,
+          @PEOPLE.MAN_4,
+          @PEOPLE.WOMAN_3,
+          @PEOPLE.WOMAN_4
+        ]
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.MAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.GOAT
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.TOMATO
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WHALE
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MONKEY
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.PIG
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.LEMON
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.PLUM
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.MUSHROOM
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_3 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_4 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.MAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.WHALE
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MONKEY
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.PIG
+        },{
+          person: @PEOPLE.MAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.MUSHROOM
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.PLUM
+        },{
+          person: @PEOPLE.WOMAN_3,
+          label: 'food',
+          item: @CHOICES.FOOD.TOMATO
+        },{
+          person: @PEOPLE.WOMAN_4,
+          label: 'food',
+          item: @CHOICES.FOOD.LEMON
+        },{
+          person: @PEOPLE.MAN_3,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.GOAT
+        }],
+        SECOND_RECALL: [
+          { person: @PEOPLE.MAN_3 },
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_4 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.WOMAN_4 },
+          { person: @PEOPLE.MAN_4 },
+          { person: @PEOPLE.WOMAN_3 },
+          { person: @PEOPLE.MAN_3 }
+        ]
+      FORM_FOUR:
+        PEOPLE: [
+          @PEOPLE.MAN_7,
+          @PEOPLE.MAN_8,
+          @PEOPLE.WOMAN_7,
+          @PEOPLE.WOMAN_8
+        ]
+        FIRST_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.BANANA
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FOX
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.MANGO
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SNAKE
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TIGER
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.PEPPER
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MOUSE
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.SQUASH
+        }],
+        FIRST_RECALL: [
+          { person: @PEOPLE.WOMAN_7 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.WOMAN_8 },
+          { person: @PEOPLE.MAN_7 }
+        ],
+        SECOND_EXPOSURE: [{
+          person: @PEOPLE.WOMAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.MOUSE
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.SNAKE
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.TIGER
+        },{
+          person: @PEOPLE.WOMAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.MANGO
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'food',
+          item: @CHOICES.FOOD.SQUASH
+        },{
+          person: @PEOPLE.WOMAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.BANANA
+        },{
+          person: @PEOPLE.MAN_8,
+          label: 'animal',
+          item: @CHOICES.ANIMAL.FOX
+        },{
+          person: @PEOPLE.MAN_7,
+          label: 'food',
+          item: @CHOICES.FOOD.PEPPER
+        }]
+        SECOND_RECALL: [
+          { person: @PEOPLE.WOMAN_8 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.MAN_7 },
+          { person: @PEOPLE.WOMAN_7 }
+        ],
+        DELAYED_RECALL: [
+          { person: @PEOPLE.MAN_7 },
+          { person: @PEOPLE.WOMAN_7 },
+          { person: @PEOPLE.MAN_8 },
+          { person: @PEOPLE.WOMAN_8 }
+        ]
     }
 
-    #can switch this later
-    @currentForm = @getCurrentForm()
-
-    @formStimuli = @FORMS[@currentForm]
+    [@formStimuli, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
     # main div's aspect ratio (pretend we're on an iPad)
     @ASPECT_RATIO = 4/3
@@ -273,11 +543,24 @@ MemoryTask = class
     # time values in milliseconds
     @TIME_BETWEEN_STIMULI = 3000
 
+    @FADE_IN_TIME = 1000
+
+    @FADE_OUT_TIME = 1000
+
     @TIME_BETWEEN_RECALL = 10000
 
+  #returns a tuple
   getCurrentForm: ->
-    #static for now, will have some way of determining later
-    return 'FORM_ONE'
+    form = TabCAT.UI.getQueryString 'form'
+    #there's likely a much more efficient way to do this
+    #note that forms 3 and 4 do not currently exist yet
+    switch form
+      when "one" then return [@FORMS.FORM_ONE, 1, 'A']
+      when "two" then return [@FORMS.FORM_TWO, 2, 'B']
+      when "three" then return [@FORMS.FORM_THREE, 3, 'C']
+      when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
+    #if no form found, just return default form
+    return [@FORMS.FORM_ONE, 1, 'A']
 
   generateExposureStimuli: (exposureData) ->
     stimuli = []
@@ -355,7 +638,7 @@ MemoryTask = class
     $scoringImageContent = $("#scoringImage")
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
-    for person in @FORMS[@currentForm].PEOPLE.concat(@EXAMPLE_PEOPLE)
+    for person in @formStimuli.PEOPLE.concat(@EXAMPLE_PEOPLE)
       do =>
         $faceImage = $('<img>')
           .attr( 'src', "img/" + person.IMAGE )
@@ -389,9 +672,13 @@ MemoryTask = class
       '<p>' + item + '</p>' )
     $("#trialScreen").show()
 
-  showPerson: (person) ->
+  showPerson: (person, fadeIn = false) ->
     $(".faceImage").hide()
-    $(".faceImage[data-person='" + person.KEY + "']").show()
+    $image = $(".faceImage[data-person='" + person.KEY + "']")
+    if fadeIn
+      $image.fadeIn(@FADE_IN_TIME)
+    else
+      $image.show()
 
   exampleRecall: (person, recall) ->
     $("#supplementaryInstruction").hide()
@@ -411,9 +698,9 @@ MemoryTask = class
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
-    @showPerson(person)
-    $("#rememberOne").show().empty().html(
-      "<p>" + item + "</p>" )
+    @showPerson(person, true)
+    $("#rememberOne").empty().html(
+      "<p>" + item + "</p>" ).fadeIn(@FADE_IN_TIME)
     $("#trialScreen").show()
 
   recallBoth: (person) ->
@@ -561,6 +848,9 @@ MemoryTask = class
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $("#rememberOne").fadeOut(@FADE_OUT_TIME)
+    ).then( =>
       if trials.length
         @iterateFirstExposureTrials(trials)
       else
@@ -571,6 +861,9 @@ MemoryTask = class
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
+      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $("#rememberOne").fadeOut(@FADE_OUT_TIME)
+    ).then( =>
       if trials.length
         @iterateSecondExposureTrials(trials)
       else

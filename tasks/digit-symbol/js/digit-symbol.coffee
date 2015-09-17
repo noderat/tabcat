@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             'and touch that picture below.'
         start_screen_practice:
           1: 'Let\'s practice.'
-          2: 'Work as quickly as you can <br> without making any mistakes'
+          2: 'Work as quickly as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
 
@@ -120,11 +120,66 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         { relativeSequence: 5, symbol: SYMBOLS.MOBIUS }
         { relativeSequence: 2, symbol: SYMBOLS.INNER_CIRCLES }
       ]
+    FORM_TWO:
+      ICON_BAR: [
+        SYMBOLS.MOBIUS
+        SYMBOLS.DIAMOND
+        SYMBOLS.INNER_CIRCLES
+        SYMBOLS.MOUSTACHE
+        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.TRI_BLOCKS
+        SYMBOLS.TEARDROPS
+      ]
+      SYMBOL_BAR: [
+        { relativeSequence: 6, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 5, symbol: SYMBOLS.TRI_CIRCLES }
+        { relativeSequence: 1, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 7, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 2, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
+        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
+      ]
+    FORM_THREE:
+      ICON_BAR: [
+        SYMBOLS.DIAMOND
+        SYMBOLS.TEARDROPS
+        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.MOBIUS
+        SYMBOLS.MOUSTACHE
+        SYMBOLS.INNER_CIRCLES
+        SYMBOLS.TRI_BLOCKS
+      ]
+      SYMBOL_BAR: [
+        { relativeSequence: 4, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 6, symbol: SYMBOLS.INNER_CIRCLES }
+        { relativeSequence: 5, symbol: SYMBOLS.MOUSTACHE }
+        { relativeSequence: 3, symbol: SYMBOLS.TRI_CIRCLES }
+        { relativeSequence: 7, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 2, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 1, symbol: SYMBOLS.DIAMOND }
+      ]
+    FORM_FOUR:
+      ICON_BAR: [
+        SYMBOLS.MOUSTACHE
+        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.INNER_CIRCLES
+        SYMBOLS.TRI_BLOCKS
+        SYMBOLS.DIAMOND
+        SYMBOLS.TEARDROPS
+        SYMBOLS.MOBIUS
+      ]
+      SYMBOL_BAR: [
+        { relativeSequence: 3, symbol: SYMBOLS.INNER_CIRCLES }
+        { relativeSequence: 5, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 4, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 6, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 1, symbol: SYMBOLS.MOUSTACHE }
+        { relativeSequence: 7, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 2, symbol: SYMBOLS.TRI_CIRCLES }
+      ]
 
   constructor: ->
-    #current form - static for now, will add switch later
-    @currentForm = FORM_ORDER.FORM_ONE
-    @currentFormNumber = 1
+    [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
     #current digit presented on screen
     @currentStimuli = null
@@ -165,6 +220,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @currentTank = []
 
     @$stimuliSymbol = null
+
+  #returns a tuple
+  getCurrentForm: ->
+    form = TabCAT.UI.getQueryString 'form'
+    #there's likely a much more efficient way to do this
+    #note that forms 3 and 4 do not currently exist yet
+    switch form
+      when "one" then return [FORM_ORDER.FORM_ONE, 1, 'A']
+      when "two" then return [FORM_ORDER.FORM_TWO, 2, 'B']
+      when "three" then return [FORM_ORDER.FORM_THREE, 3, 'C']
+      when "four" then return [FORM_ORDER.FORM_FOUR, 4, 'D']
+    #if no form found, just return default form
+    return [FORM_ORDER.FORM_ONE, 1, 'A']
 
   showStartScreen: ->
 
@@ -261,6 +329,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       i18n:
         resStore: TRANSLATIONS
       trackViewport: true
+      form: @currentFormLabel
     )
 
     TabCAT.UI.turnOffBounce()
@@ -500,12 +569,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @practiceTrialsCurrentStreak < PRACTICE_TRIAL_MAX_STREAK
 
   getTranslationParagraphs: (translation) ->
-    console.log "language: ", $.i18n.lng()
-    console.log "translation:", translation
     translatedText = $.t(translation, {returnObjectTrees: true})
-    console.log translatedText
-    console.log TRANSLATIONS
     html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
-    console.log html
     return html

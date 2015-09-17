@@ -1,6 +1,6 @@
 {
     "name": "memory",
-    "version": "0.8.9",
+    "version": "0.9.0",
     "description": "Memory",
     "attachments": [
         "css/memory.css",
@@ -46,12 +46,24 @@
             "learning": {
                 "description": "Learning",
                 "icon": "img/learning.png",
-                "start": "learning.html"
+                "start": "learning.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two",
+                    "C": "three",
+                    "D": "four"
+                }
             },
             "delay": {
                 "description": "Delay",
                 "icon": "img/delay.png",
-                "start": "delay.html"
+                "start": "delay.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two",
+                    "C": "three",
+                    "D": "four"
+                }
             }
         }
     }

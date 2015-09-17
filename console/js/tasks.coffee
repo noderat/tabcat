@@ -134,6 +134,21 @@ showTasks = ->
               # start the task
               $taskDiv.on('click', (event) -> window.location = startUrl)
 
+              if task.forms
+                for form, value of task.forms
+                  do ( =>
+                    $icon = $('<span></span>', class: 'alternateForm')
+                    formUrl = startUrl + '?form=' + value
+                    $icon.text(form)
+                    $icon.on('click', (event) ->
+                      event.preventDefault()
+                      event.stopPropagation()
+                      window.location = formUrl
+                      return false
+                    )
+                    $taskDiv.append $icon
+                  )
+
         $taskDiv.append($scoringMessage)
         $tasksDiv.append($taskDiv)
 

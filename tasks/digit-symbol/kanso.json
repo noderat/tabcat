@@ -1,6 +1,6 @@
 {
     "name": "digit-symbol",
-    "version": "0.8.9",
+    "version": "0.9.0",
     "description": "Digit Symbol",
     "attachments": [
         "css/digit-symbol.css",
@@ -8,12 +8,34 @@
         "js/task.js",
         "digit-symbol.html",
         "img/1.1.png",
+        "img/1.2.png",
+        "img/1.3.png",
+        "img/1.4.png",
         "img/2.1.png",
+        "img/2.2.png",
+        "img/2.3.png",
+        "img/2.4.png",
         "img/3.1.png",
+        "img/3.2.png",
+        "img/3.3.png",
+        "img/3.4.png",
         "img/4.1.png",
+        "img/4.2.png",
+        "img/4.3.png",
+        "img/4.4.png",
         "img/5.1.png",
+        "img/5.2.png",
+        "img/5.3.png",
+        "img/5.4.png",
         "img/6.1.png",
-        "img/7.1.png"
+        "img/6.2.png",
+        "img/6.3.png",
+        "img/6.4.png",
+        "img/7.1.png",
+        "img/7.2.png",
+        "img/7.3.png",
+        "img/7.4.png"
+
     ],
     "dependencies": {
         "attachments": null
@@ -31,7 +53,13 @@
             "digit-symbol": {
                 "description": "Digit Symbol",
                 "icon": "img/icon/digit-symbol.png",
-                "start": "digit-symbol.html"
+                "start": "digit-symbol.html",
+                "forms": {
+                  "A": "one",
+                  "B": "two",
+                  "C": "three",
+                  "D": "four"
+                }
             }
         }
     }
