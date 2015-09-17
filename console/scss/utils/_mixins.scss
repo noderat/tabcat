@@ -1,0 +1,20 @@
+//Mixins for response buttons
+@mixin response-button($response){
+  background:$response;
+  height: $response-button-height;
+  width: $response-button-width;
+  border-radius: $response-button-border-radius;
+  &:hover{
+    background: darken($response, 8%);
+    transition: all 0.3s ease;
+  }
+  &:active{
+    background: darken($response,20%);
+  }
+
+}
+
+@mixin response-button-span($name){
+  $url:"../img/buttons/#{$name}.png";
+  background: url($url);
+}

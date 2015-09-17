@@ -1,0 +1,26 @@
+@import url(http://fonts.googleapis.com/css?family=Poiret+One);
+.rb-affirmative {
+    background: #61A255 url("../img/buttons/response-yes.png");
+    height: 91px;
+    width: 320px;
+    border-radius: 16px;
+}
+
+.rb-affirmative:hover {
+    background: #518747;
+    transition: all 0.3s ease;
+}
+
+.rb-affirmative:active {
+    background: #395f32;
+}
+
+/*.rb-affirmative:before {*/
+    /*content: url("../img/buttons/nav-next.png");*/
+    /*display: inline-block;*/
+    /*float: left;*/
+/*}*/
+
+.btn {
+    color: white;
+}

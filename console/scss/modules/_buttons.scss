@@ -1,0 +1,9 @@
+//Response buttons RB
+.rb-affirmative{
+  @include response-button($green);
+
+  .rb-affirmative span.affirmative{
+    @include response-button-span(nav-next);
+  }
+}
+
