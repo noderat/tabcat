@@ -106,7 +106,7 @@ MemoryTask = class
       MAN_5:
         KEY: 'man5'
         IMAGE: 'man5.jpg'
-        FOOD: @CHOICES.ANIMAL.COCONUT
+        FOOD: @CHOICES.FOOD.COCONUT
         ANIMAL: @CHOICES.ANIMAL.TURTLE
       MAN_6:
         KEY: 'man6'
@@ -129,12 +129,12 @@ MemoryTask = class
       WOMAN_1:
         KEY: 'woman1'
         IMAGE: 'woman1.jpg'
-        FOOD: @CHOICES.FOOD.CARROT
+        FOOD: @CHOICES.FOOD.GRAPES
         ANIMAL: @CHOICES.ANIMAL.SHEEP
       WOMAN_2:
         KEY: 'woman2'
         IMAGE: 'woman2.jpg'
-        FOOD: @CHOICES.FOOD.GRAPES
+        FOOD: @CHOICES.FOOD.CARROT
         ANIMAL: @CHOICES.ANIMAL.BEAR
       WOMAN_3:
         KEY: 'woman3'
