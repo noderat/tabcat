@@ -4,6 +4,7 @@
     "description": "TabCAT console",
     "attachments": ["close-encounter.html",
                     "create-encounter.html",
+                    "create-encounter-test.html",
                     "css/console.css",
                     "css/main.css",
                     "enter-password.html",
