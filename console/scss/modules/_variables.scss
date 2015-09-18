@@ -59,6 +59,22 @@ $response-button-width:               620px !default;
 $response-button-height:              156px !default;
 $response-icon-width:                 156px !default;
 
+
+
+
+
+// Button Configuration
+$btn-name:  'button' !default;
+$btn-size-ratio: 1.2 !default;
+$btn-hover:  saturate 25% !default;
+$btn-border: darken   20% !default;
+$btn-background: (
+        'default': #565656,
+        'success': #468847,
+        'danger':  #b94a48,
+        'warning': #c09853,
+        'info':    #3a87ad
+) !default;
 //Fonts
 //-------------------------------------------------------
 
