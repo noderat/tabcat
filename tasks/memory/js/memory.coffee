@@ -96,9 +96,13 @@ MemoryTask = class
       MAN_3:
         KEY: 'man3'
         IMAGE: 'man3.jpg'
+        FOOD: @CHOICES.FOOD.PLUM
+        ANIMAL: @CHOICES.ANIMAL.GOAT
       MAN_4:
         KEY: 'man4'
         IMAGE: 'man4.jpg'
+        FOOD: @CHOICES.FOOD.MUSHROOM
+        ANIMAL: @CHOICES.ANIMAL.WHALE
       MAN_5:
         KEY: 'man5'
         IMAGE: 'man5.jpg'
@@ -112,9 +116,13 @@ MemoryTask = class
       MAN_7:
         KEY: 'man7'
         IMAGE: 'man7.jpg'
+        FOOD: @CHOICES.FOOD.PEPPER
+        ANIMAL: @CHOICES.ANIMAL.SNAKE
       MAN_8:
         KEY: 'man8'
         IMAGE: 'man8.jpg'
+        FOOD: @CHOICES.FOOD.SQUASH
+        ANIMAL: @CHOICES.ANIMAL.FOX
       WOMAN_EXAMPLE:
         KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
@@ -131,9 +139,13 @@ MemoryTask = class
       WOMAN_3:
         KEY: 'woman3'
         IMAGE: 'woman3.jpg'
+        FOOD: @CHOICES.FOOD.TOMATO
+        ANIMAL: @CHOICES.ANIMAL.PIG
       WOMAN_4:
         KEY: 'woman4'
         IMAGE: 'woman4.jpg'
+        FOOD: @CHOICES.FOOD.LEMON
+        ANIMAL: @CHOICES.ANIMAL.MONKEY
       WOMAN_5:
         KEY: 'woman5'
         IMAGE: 'woman5.jpg'
@@ -147,9 +159,13 @@ MemoryTask = class
       WOMAN_7:
         KEY: 'woman7'
         IMAGE: 'woman7.jpg'
+        FOOD: @CHOICES.FOOD.BANANA
+        ANIMAL: @CHOICES.ANIMAL.TIGER
       WOMAN_8:
         KEY: 'woman8'
         IMAGE: 'woman8.jpg'
+        FOOD: @CHOICES.FOOD.MANGO
+        ANIMAL: @CHOICES.ANIMAL.MOUSE
     }
 
     @EXAMPLE_PEOPLE = [
@@ -282,78 +298,32 @@ MemoryTask = class
           @PEOPLE.WOMAN_3,
           @PEOPLE.WOMAN_4
         ]
-        FIRST_EXPOSURE: [{
-          person: @PEOPLE.MAN_3,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.GOAT
-        },{
-          person: @PEOPLE.WOMAN_3,
-          item: 'food',
-          item: @CHOICES.FOOD.TOMATO
-        },{
-          person: @PEOPLE.MAN_4,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.WHALE
-        },{
-          person: @PEOPLE.WOMAN_4,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.MONKEY
-        },{
-          person: @PEOPLE.WOMAN_3,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.PIG
-        },{
-          person: @PEOPLE.WOMAN_4,
-          item: 'food',
-          item: @CHOICES.FOOD.LEMON
-        },{
-          person: @PEOPLE.MAN_3,
-          item: 'food',
-          item: @CHOICES.FOOD.PLUM
-        },{
-          person: @PEOPLE.MAN_4,
-          item: 'food',
-          item: @CHOICES.FOOD.MUSHROOM
-        }],
+        FIRST_EXPOSURE: [
+          { person: @PEOPLE.MAN_3, item: 'animal' },
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_4, item: 'animal' },
+          { person: @PEOPLE.WOMAN_4, item: 'animal' },
+          { person: @PEOPLE.WOMAN_3, item: 'animal' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_4, item: 'food'}
+        ],
         FIRST_RECALL: [
           { person: @PEOPLE.WOMAN_3 },
           { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.MAN_4 },
           { person: @PEOPLE.WOMAN_4 }
         ],
-        SECOND_EXPOSURE: [{
-          person: @PEOPLE.MAN_4,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.WHALE
-        },{
-          person: @PEOPLE.WOMAN_4,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.MONKEY
-        },{
-          person: @PEOPLE.WOMAN_3,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.PIG
-        },{
-          person: @PEOPLE.MAN_4,
-          item: 'food',
-          item: @CHOICES.FOOD.MUSHROOM
-        },{
-          person: @PEOPLE.MAN_3,
-          item: 'food',
-          item: @CHOICES.FOOD.PLUM
-        },{
-          person: @PEOPLE.WOMAN_3,
-          item: 'food',
-          item: @CHOICES.FOOD.TOMATO
-        },{
-          person: @PEOPLE.WOMAN_4,
-          item: 'food',
-          item: @CHOICES.FOOD.LEMON
-        },{
-          person: @PEOPLE.MAN_3,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.GOAT
-        }],
+        SECOND_EXPOSURE: [
+          { person: @PEOPLE.MAN_4, item: 'animal' },
+          { person: @PEOPLE.WOMAN_4, item: 'animal' },
+          { person: @PEOPLE.WOMAN_3, item: 'animal' },
+          { person: @PEOPLE.MAN_4, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'animal'}
+        ],
         SECOND_RECALL: [
           { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.WOMAN_3 },
@@ -373,78 +343,32 @@ MemoryTask = class
           @PEOPLE.WOMAN_7,
           @PEOPLE.WOMAN_8
         ]
-        FIRST_EXPOSURE: [{
-          person: @PEOPLE.WOMAN_7,
-          item: 'food',
-          item: @CHOICES.FOOD.BANANA
-        },{
-          person: @PEOPLE.MAN_8,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.FOX
-        },{
-          person: @PEOPLE.WOMAN_8,
-          item: 'food',
-          item: @CHOICES.FOOD.MANGO
-        },{
-          person: @PEOPLE.MAN_7,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.SNAKE
-        },{
-          person: @PEOPLE.WOMAN_7,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.TIGER
-        },{
-          person: @PEOPLE.MAN_7,
-          item: 'food',
-          item: @CHOICES.FOOD.PEPPER
-        },{
-          person: @PEOPLE.WOMAN_8,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.MOUSE
-        },{
-          person: @PEOPLE.MAN_8,
-          item: 'food',
-          item: @CHOICES.FOOD.SQUASH
-        }],
+        FIRST_EXPOSURE: [
+          { person: @PEOPLE.WOMAN_7, item: 'food' },
+          { person: @PEOPLE.MAN_8, item: 'animal' },
+          { person: @PEOPLE.WOMAN_8, item: 'food' },
+          { person: @PEOPLE.MAN_7, item: 'animal' },
+          { person: @PEOPLE.WOMAN_7, item: 'animal' },
+          { person: @PEOPLE.MAN_7, item: 'food' },
+          { person: @PEOPLE.WOMAN_8, item: 'animal' },
+          { person: @PEOPLE.MAN_8, item: 'food'}
+        ],
         FIRST_RECALL: [
           { person: @PEOPLE.WOMAN_7 },
           { person: @PEOPLE.MAN_8 },
           { person: @PEOPLE.WOMAN_8 },
           { person: @PEOPLE.MAN_7 }
         ],
-        SECOND_EXPOSURE: [{
-          person: @PEOPLE.WOMAN_8,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.MOUSE
-        },{
-          person: @PEOPLE.MAN_7,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.SNAKE
-        },{
-          person: @PEOPLE.WOMAN_7,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.TIGER
-        },{
-          person: @PEOPLE.WOMAN_8,
-          item: 'food',
-          item: @CHOICES.FOOD.MANGO
-        },{
-          person: @PEOPLE.MAN_8,
-          item: 'food',
-          item: @CHOICES.FOOD.SQUASH
-        },{
-          person: @PEOPLE.WOMAN_7,
-          item: 'food',
-          item: @CHOICES.FOOD.BANANA
-        },{
-          person: @PEOPLE.MAN_8,
-          item: 'animal',
-          item: @CHOICES.ANIMAL.FOX
-        },{
-          person: @PEOPLE.MAN_7,
-          item: 'food',
-          item: @CHOICES.FOOD.PEPPER
-        }]
+        SECOND_EXPOSURE: [
+          { person: @PEOPLE.WOMAN_8, item: 'animal' },
+          { person: @PEOPLE.MAN_7, item: 'animal' },
+          { person: @PEOPLE.WOMAN_7, item: 'animal' },
+          { person: @PEOPLE.WOMAN_8, item: 'food' },
+          { person: @PEOPLE.MAN_8, item: 'food' },
+          { person: @PEOPLE.WOMAN_7, item: 'food' },
+          { person: @PEOPLE.MAN_8, item: 'animal' },
+          { person: @PEOPLE.MAN_7, item: 'food'}
+        ]
         SECOND_RECALL: [
           { person: @PEOPLE.WOMAN_8 },
           { person: @PEOPLE.MAN_8 },
@@ -763,7 +687,8 @@ MemoryTask = class
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
-        @beginScoring()
+        @endTask()
+        #@beginScoring()
     )
 
   iterateFirstExposureTrials: (trials) ->
@@ -861,7 +786,8 @@ MemoryTask = class
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
-        @beginScoring()
+        @endTask()
+        #@beginScoring()
     )
 
   beginScoring: ->
