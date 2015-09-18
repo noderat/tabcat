@@ -95,7 +95,22 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       <div class="right">
         <p class="email">&nbsp;</p>
-        <button class="login" style="display:none"></span>
+        <nav>
+          <div id='burger'>
+            <div class='line'></div>
+            <div class='line'></div>
+            <div class='line'></div>
+          </div>
+        </nav>
+        <div id='menu'>
+          <ul>
+            <p>[ X ]</p>
+            <li>Item 1 ...</li>
+            <li>Item 2 ...</li>
+            <li><button class="login" style="display:none"></span></li>
+          </ul>
+        </div>
+
       </div>
       <div class="center">
         <p class="encounter"></p>
@@ -103,6 +118,13 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       """
     )
+
+    menu = document.getElementById("menu")
+    document.getElementById("burger").addEventListener "click", ->
+      menu.style.left = "0"
+
+    document.getElementsByTagName("p")[0].addEventListener "click", ->
+      menu.style.left = "256px"
 
     $statusBar.find('.version').text(TabCAT.version)
 

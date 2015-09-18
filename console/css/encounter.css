@@ -2,11 +2,11 @@ body{
     margin:0!important;
     color: white;
 }
- input{
-     height: 30px;
-     width: 200px;
-     font-size: 1.2em;
- }
+input{
+    height: 30px;
+    width: 200px;
+    font-size: 1.2em;
+}
 .wrap {
     max-width: 100%;
     margin-left: auto;
@@ -42,8 +42,8 @@ body{
 /*Backgrounds and Banners*/
 /*-----------------------*/
 .blueBackground {
-     background-color: #000824;
- }
+    background-color: #000824;
+}
 
 .banner-main {
     background: #122147;
@@ -54,21 +54,21 @@ body{
 }
 
 .banner-main img.logo{
-        width: 180px;
-        height: 180px;
-        margin-top: 10px;
-        margin-bottom: -10px;
-    }
+    width: 180px;
+    height: 180px;
+    margin-top: 10px;
+    margin-bottom: -10px;
+}
 
 .banner-main span.logo{
-        display: inline-block;
-        position: relative;
-        width: 353px;
-        height: 120px;
-        margin-top: 7px;
-        background-image: url('../img/banner.png');
-        background-size: 353px 120px;
-    }
+    display: inline-block;
+    position: relative;
+    width: 353px;
+    height: 120px;
+    margin-top: 7px;
+    background-image: url('../img/banner.png');
+    background-size: 353px 120px;
+}
 
 .banner-main #message{
     color: white;
@@ -186,161 +186,6 @@ body{
     border-radius: 9px 0 0 9px;
 }
 
-.create{
+ .create{
     width: 300px;
-}
-
-
-
-/*----------Status Bar---------*/
-/*----------------------------*/
-#statusBar {
-    text-align: center;
-    height: 50px;
-    padding: 5px;
-    min-width: 800px;
-}
-
-
-#statusBar div.left {
-    position: relative;
-    float: left;
-    width: 250px;
-    text-align: left;
-    color: #bbbbaa;
-}
-
-#statusBar.sandbox div.left {
-    color: #ffffff;
-}
-
-#statusBar span.banner {
-    display: inline-block;
-    width: 147px;
-    height: 50px;
-    background-image: url('../img/banner.png');
-    background-size: 147px 50px;
-}
-
-#statusBar.sandbox span.banner {
-    background-image: url('../img/sandbox/banner.png');
-}
-
-#statusBar span.version {
-    position: relative;
-    margin: 0;
-    top: -13px;
-    vertical-align: bottom;
-    font-size: 18px;
-}
-
-#statusBar p.offline {
-    position: absolute;
-    font-size: 10px;
-    font-style: italic;
-    top: 30px;
-    left: 54px;
-}
-
-#statusBar p.offline span.warning {
-    font-weight: bold;
-    color: #ffcc99;
-}
-
-#statusBar div.right {
-    float: right;
-    text-align: right;
-    width: 250px;
-}
-
-#statusBar div.center {
-    width: 300px;
-}
-
-#statusBar p.email {
-    font-size: 14px;
-    margin: 0px;
-}
-
-#statusBar p.encounter {
-    font-size: 18px;
-    margin: 0px;
-}
-
-#statusBar p.clock {
-    font-size: 24px;
-    margin: 0px;
-}
-
-#statusBar div.center {
-    display: inline-block;
-}
-
-#statusBar button.login {
-    height: 27px;
-    border-radius: 6px;
-    font-size: 16px;
-    margin-top: 5px;
-    border-width: 3px;
-}
-
-
-/*-----------------------------------------------*/
-body {
-    margin:0;
-    overflow:hidden;
-}
-
-nav {
-    height:4em;
-    width:100%;
-    z-index:1;
-}
-
-#burger {
-    float:right;
-    cursor:pointer;
-}
-#burger:active {
-    position:relative;
-    top:2px;
-}
-
-.line {
-    width:3em;
-    height:.5em;
-    background-color:white;
-    margin:.5em;
-    margin-right:.75em;
-}
-.line:nth-child(1) {
-    margin-top:.75em;
-}
-
-#menu {
-    float:right;
-    height:100vh;
-    width:256px;
-    background-color:#122147;
-    color:white;
-    position:relative;
-    left:256px;
-    transition:1s;
-}
-
-ul p {
-    font-weight:bold;
-    position:absolute;
-    right:1.5em;
-    top:.25em;
-    cursor:pointer;
-}
-
-ul {
-    margin:0;
-}
-
-li {
-    margin-top:4.5em;
-    list-style-type:none;
 }
