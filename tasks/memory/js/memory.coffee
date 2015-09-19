@@ -483,7 +483,7 @@ MemoryTask = class
     $scoringImageContent = $("#scoringImage")
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
-    for person in @formStimuli.PEOPLE.concat(@EXAMPLE_PEOPLE)
+    for person in @EXAMPLE_PEOPLE.concat(@formStimuli.PEOPLE)
       do =>
         $faceImage = $('<img>')
           .attr( 'src', "img/" + person.IMAGE )
@@ -687,8 +687,8 @@ MemoryTask = class
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
-        @endTask()
-        #@beginScoring()
+        #@endTask()
+        @beginScoring()
     )
 
   iterateFirstExposureTrials: (trials) ->
@@ -722,6 +722,24 @@ MemoryTask = class
     @iterateScoringSheets()
 
   buildScoringSheetsData: (currentForm) ->
+    console.log currentForm
+    #we can derive the people and the list of total food
+    #directly from each of the forms
+    people = currentForm.FIRST_RECALL
+    food = []
+    animals = []
+    for person in people
+      do ( ->
+        food.push(person.FOOD)
+        animals.push(person.ANIMAL)
+      )
+
+    food.concat(["other", "don't know"])
+    animals.concat(["other", "don't know"])
+
+    console.log people
+    console.log food
+    console.log animals
     return [1,2,3,4]
 
   iterateScoringSheets: ->
