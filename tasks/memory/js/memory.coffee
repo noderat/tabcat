@@ -383,7 +383,14 @@ MemoryTask = class
         ]
     }
 
-    [@formStimuli, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
+    [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
+
+    @scoringSheets = [
+      { first_recall: @buildScoringSheetsData(@currentForm) },
+      { second_recall: @buildScoringSheetsData(@currentForm) }
+    ]
+
+    @scores = {}
 
     # main div's aspect ratio (pretend we're on an iPad)
     @ASPECT_RATIO = 4/3
@@ -407,6 +414,31 @@ MemoryTask = class
       when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
     #if no form found, just return default form
     return [@FORMS.FORM_ONE, 1, 'A']
+
+  buildScoringSheetsData: (currentForm) ->
+    #we can derive the people and the list of total food
+    #directly from each of the forms
+    people = currentForm.FIRST_RECALL
+    food = []
+    animals = []
+    for person in people
+      do ( ->
+        food.push(person.person.FOOD)
+        animals.push(person.person.ANIMAL)
+      )
+
+    food = food.concat(["other", "don't know"])
+    animals = animals.concat(["other", "don't know"])
+
+    console.log people
+    console.log food
+    console.log animals
+    sheets =
+      people: people
+      food: food
+      animals: animals
+
+    return sheets
 
   generateExposureStimuli: (exposureData) ->
     stimuli = []
@@ -483,7 +515,7 @@ MemoryTask = class
     $scoringImageContent = $("#scoringImage")
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
-    for person in @EXAMPLE_PEOPLE.concat(@formStimuli.PEOPLE)
+    for person in @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
       do =>
         $faceImage = $('<img>')
           .attr( 'src', "img/" + person.IMAGE )
@@ -560,6 +592,11 @@ MemoryTask = class
     $("#trialScreen").show()
 
   endTask: ->
+
+    #there is currently no real event data since
+    #this is more of an examiner task
+    TabCAT.Task.logEvent(state, null, interpretation)
+
     TabCAT.Task.finish()
 
 @LearningMemoryTask = class extends MemoryTask
@@ -589,7 +626,6 @@ MemoryTask = class
     $("#beginButton").hide()
     $("#nextButton").show()
     $("#backButton").show()
-
     @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
 
     $("#nextButton").unbind().touchdown( =>
@@ -633,7 +669,7 @@ MemoryTask = class
 
     @showRememberScreen()
     #generate trials for exposure
-    trials = @generateExposureStimuli(@formStimuli.FIRST_EXPOSURE)
+    trials = @generateExposureStimuli(@currentForm.FIRST_EXPOSURE)
     $("#nextButton").unbind().show().touchdown( =>
       $("#rememberScreen").hide()
       $("#nextButton").hide()
@@ -643,7 +679,7 @@ MemoryTask = class
   beginSecondExposureTrials: ->
     @showRememberScreen()
     #generate trials for exposure
-    trials = @generateExposureStimuli(@formStimuli.SECOND_EXPOSURE)
+    trials = @generateExposureStimuli(@currentForm.SECOND_EXPOSURE)
     $("#nextButton").unbind().show().touchdown( =>
       $("#nextButton").hide()
       $("#rememberScreen").hide()
@@ -653,7 +689,7 @@ MemoryTask = class
   beginFirstRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls(@formStimuli.FIRST_RECALL)
+    trials = @generateRecalls(@currentForm.FIRST_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
@@ -662,7 +698,7 @@ MemoryTask = class
   beginSecondRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls(@formStimuli.SECOND_RECALL)
+    trials = @generateRecalls(@currentForm.SECOND_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
@@ -687,7 +723,6 @@ MemoryTask = class
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
-        #@endTask()
         @beginScoring()
     )
 
@@ -718,39 +753,21 @@ MemoryTask = class
     )
 
   beginScoring: ->
-    @scoringSheets = @buildScoringSheetsData(@currentForm)
+    $('#trialScreen').hide()
+    $('#backButton').hide()
+    $('#scoringScreen').show()
+    $('#nextButton').show()
     @iterateScoringSheets()
-
-  buildScoringSheetsData: (currentForm) ->
-    console.log currentForm
-    #we can derive the people and the list of total food
-    #directly from each of the forms
-    people = currentForm.FIRST_RECALL
-    food = []
-    animals = []
-    for person in people
-      do ( ->
-        food.push(person.FOOD)
-        animals.push(person.ANIMAL)
-      )
-
-    food.concat(["other", "don't know"])
-    animals.concat(["other", "don't know"])
-
-    console.log people
-    console.log food
-    console.log animals
-    return [1,2,3,4]
 
   iterateScoringSheets: ->
     #these should already be in this state the first time
     #but should be reset if back button was pressed from instruction screen
     $("#completeButton").unbind().hide()
     $("#nextButton").show()
-    $("#backButton").show()
 
     nextScoringSheet = @scoringSheets[@currentScoringSheet]
     console.log nextScoringSheet
+
     @showNextScoringSheet(nextScoringSheet)
 
     $("#nextButton").unbind().touchdown( =>
@@ -790,7 +807,7 @@ MemoryTask = class
     @beginDelayedRecall()
 
   beginDelayedRecall: ->
-    trials = @generateRecalls(@formStimuli.DELAYED_RECALL)
+    trials = @generateRecalls(@currentForm.DELAYED_RECALL)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateDelayedRecallTrials(trials)

@@ -210,6 +210,7 @@ p {
 }
 
 .progressButton {
+    display: none;
     border-width: 0.2em;
     border-style: solid;
     border-color: #ffffff;
@@ -221,7 +222,6 @@ p {
 }
 
 #backButton {
-    display: none;
     position: absolute;
     top: 88%;
     left: 3%;
@@ -234,7 +234,12 @@ p {
 }
 
 #beginButton {
-    display: none;
+    position:absolute;
+    top: 88%;
+    left: 85%;
+}
+
+#completeButton {
     position:absolute;
     top: 88%;
     left: 85%;
