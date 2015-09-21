@@ -141,7 +141,13 @@ p {
     height: 100%;
 }
 
-.faceImage {
+
+/* possible these two will have different properties */
+.encounterFace {
+    display: none;
+}
+
+.scoringFace {
     display: none;
 }
 

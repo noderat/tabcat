@@ -511,23 +511,46 @@ MemoryTask = class
     TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
-    $faceImageContent = $("#screenImage")
-    $scoringImageContent = $("#scoringImage")
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
-    for person in @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
-      do =>
-        $faceImage = $('<img>')
-          .attr( 'src', "img/" + person.IMAGE )
-          .attr('data-person', person.KEY)
+    encounterPeople = @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
 
-        #note: clone is needed because faceImage is DOM element
-        $scoringImage = $faceImage.clone()
+    @preloadEncounterImageData($("#screenImage"), encounterPeople)
+    @preloadScoringImageData(
+      recallOneScoringScreen: @currentForm.FIRST_RECALL
+      recallTwoScoringScreen: @currentForm.SECOND_RECALL
+    )
 
-        $faceImage.addClass('faceImage')
-        $faceImageContent.append($faceImage)
-        $scoringImageContent.append($scoringImage)
     @showStartScreen()
+
+
+  preloadEncounterImageData: (parentElement, sourcePeople) ->
+    for person in sourcePeople
+      do =>
+        $image = @buildFaceElement(person, 'encounterFace')
+        parentElement.append($image)
+
+  preloadScoringImageData: (recalls) ->
+    for containerName, recall of recalls
+      do =>
+        personContainerClasses = @getPersonContainerClasses()
+        for person in recall
+          do =>
+            $image = @buildFaceElement(person.person, 'scoringFace')
+            personContainerClass = personContainerClasses.shift()
+            $container = $("#" + containerName + " ." + personContainerClass)
+            $container.find('.scoringImage').append($image)
+
+  getPersonContainerClasses: ->
+    ['personOne', 'personTwo', 'personThree', 'personFour']
+
+  buildFaceElement: (person, className) ->
+    $image = $('<img>')
+      .attr( 'src', "img/" + person.IMAGE )
+      .attr('data-person', person.KEY)
+    if className
+      $image.addClass(className)
+    return $image
 
   firstExampleRemember: (person, item) ->
     $(".faceImage").hide()
@@ -755,7 +778,7 @@ MemoryTask = class
   beginScoring: ->
     $('#trialScreen').hide()
     $('#backButton').hide()
-    $('#scoringScreen').show()
+    $('#recallOneScoringScreen').show()
     $('#nextButton').show()
     @iterateScoringSheets()
 
