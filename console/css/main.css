@@ -25,6 +25,20 @@ body{
     clear: both;
 }
 
+.content{
+    text-align: center;
+}
+
+.icon-reorder{
+    font-weight: bolder;
+    font-size: xx-large;
+}
+
+.icon-reorder .burger{
+    font-weight: bolder;
+    font-size: xx-large;
+    padding-top: 15px;
+}
 @media (min-width: 768px) and (max-width: 1024px) {
     .content > div {
 
@@ -294,7 +308,8 @@ body {
 nav {
     height:4em;
     width:100%;
-    z-index:1;
+    z-index:-2
+
 }
 
 #burger {
@@ -323,9 +338,10 @@ nav {
     width:256px;
     background-color:#122147;
     color:white;
-    position:relative;
-    left:256px;
+    position:absolute;
+    /*left:256px;*/
     transition:1s;
+    text-align: center;
 }
 
 ul p {
@@ -334,10 +350,12 @@ ul p {
     right:1.5em;
     top:.25em;
     cursor:pointer;
+    text-align:center;
 }
 
 ul {
     margin:0;
+
 }
 
 li {

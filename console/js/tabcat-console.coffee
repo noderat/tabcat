@@ -95,16 +95,14 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       <div class="right">
         <p class="email">&nbsp;</p>
-        <nav>
+        <nav class='menu-nav'>
           <div id='burger'>
-            <div class='line'></div>
-            <div class='line'></div>
-            <div class='line'></div>
+            <p class='icon-reorder burger'></p>
           </div>
         </nav>
         <div id='menu'>
           <ul>
-            <p>[ X ]</p>
+            <p id="close"><i class="icon-reorder"></i></p>
             <li>Item 1 ...</li>
             <li>Item 2 ...</li>
             <li><button class="login" style="display:none"></span></li>
@@ -119,16 +117,41 @@ TabCAT.Console.updateStatusBar = ->
       """
     )
 
-    menu = document.getElementById("menu")
-    document.getElementById("burger").addEventListener "click", ->
-      menu.style.left = "0"
+    menu = $("#menu")
+    menu.hide()
 
-    document.getElementsByTagName("p")[0].addEventListener "click", ->
-      menu.style.left = "256px"
+    $("#burger").touchdown ->
+      menu = $("#menu")
+      menu.show()
+      menu.css.left = "256px"
+      $("#burger").css.textAlign = "left"
+      $('.menu-nav').css
+        position: 'fixed'
+
+
+
+
+
+    $("#close").touchdown ->
+      menu = $("#menu")
+      menu.css.left = "0"
+      menu.hide()
+      $('.menu-nav').css
+        position: "static"
+
+
+#    menu = document.getElementById('menu')
+#    document.getElementById('burger').addEventListener 'click', ->
+#      menu.style.left = '0'
+#
+#    document.getElementsById('menu')[0].addEventListener 'click', ->
+#      menu.style.left = '256px'
+
 
     $statusBar.find('.version').text(TabCAT.version)
 
     $statusBar.find('button.login').on('click', (event) ->
+      alert('login button clicked')
       button = $(event.target)
       if button.text() == 'Log Out'
         $emailP = $statusBar.find('p.email')
