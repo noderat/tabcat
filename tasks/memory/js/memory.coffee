@@ -385,11 +385,6 @@ MemoryTask = class
 
     [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
-    @scoringSheets = [
-      { first_recall: @buildScoringSheetsData(@currentForm) },
-      { second_recall: @buildScoringSheetsData(@currentForm) }
-    ]
-
     @scores = {}
 
     # main div's aspect ratio (pretend we're on an iPad)
@@ -430,9 +425,6 @@ MemoryTask = class
     food = food.concat(["other", "don't know"])
     animals = animals.concat(["other", "don't know"])
 
-    console.log people
-    console.log food
-    console.log animals
     sheets =
       people: people
       food: food
@@ -510,16 +502,6 @@ MemoryTask = class
 
     TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-
-    #generate pre-loaded images to switch out on the fly
-    #concat'ing examples for first trials to work with same html
-    encounterPeople = @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
-
-    @preloadEncounterImageData($("#screenImage"), encounterPeople)
-    @preloadScoringImageData(
-      recallOneScoringScreen: @currentForm.FIRST_RECALL
-      recallTwoScoringScreen: @currentForm.SECOND_RECALL
-    )
 
     @showStartScreen()
 
@@ -626,9 +608,27 @@ MemoryTask = class
   constructor: ->
     super()
 
+    @scoringSheets = [{
+      label: "Recall One"
+      data: @buildScoringSheetsData(@currentForm)
+    },{
+      label: "Recall Two"
+      data: @buildScoringSheetsData(@currentForm)
+    }]
+
     @currentExampleTrial = 0
 
     @currentScoringSheet = 0
+
+    #generate pre-loaded images to switch out on the fly
+    #concat'ing examples for first trials to work with same html
+    encounterPeople = @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
+
+    @preloadEncounterImageData($("#screenImage"), encounterPeople)
+    @preloadScoringImageData(
+      recallOneScoringScreen: @currentForm.FIRST_RECALL
+      recallTwoScoringScreen: @currentForm.SECOND_RECALL
+    )
 
   showStartScreen: ->
     $("#backButton").hide()
@@ -820,11 +820,20 @@ MemoryTask = class
   showNextScoringSheet: (nextScoringSheet) ->
     nextScoringSheet
 
-
-#Not implementing for now, just creating the skeleton
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
     super()
+
+    @scoringSheets = [{
+        label: "Delayed Recall"
+        data: @buildScoringSheetsData(@currentForm)
+    }]
+
+    #generate pre-loaded images to switch out on the fly
+    @preloadEncounterImageData($("#screenImage"), @currentForm.PEOPLE)
+    @preloadScoringImageData(
+      delayedRecallScoringScreen: @currentForm.DELAYED_RECALL
+    )
 
   showStartScreen: ->
     @beginDelayedRecall()
