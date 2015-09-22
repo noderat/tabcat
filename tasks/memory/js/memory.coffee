@@ -522,6 +522,8 @@ MemoryTask = class
             personContainerClass = personContainerClasses.shift()
             $container = $("#" + containerName + " ." + personContainerClass)
             $container.find('.scoringImage').append($image)
+            $container.find('.scoringFood').html(person.person.FOOD)
+            $container.find('.scoringAnimal').html(person.person.ANIMAL)
 
   getPersonContainerClasses: ->
     ['personOne', 'personTwo', 'personThree', 'personFour']
@@ -535,7 +537,7 @@ MemoryTask = class
     return $image
 
   firstExampleRemember: (person, item) ->
-    $(".faceImage").hide()
+    $(".encounterFace").hide()
     $("#supplementaryInstruction").hide()
     $("#exampleImage img").attr('src', "img/" + person.IMAGE).show()
     $("#exampleFood").empty().html("<p>" + item + "</p>")
@@ -555,8 +557,9 @@ MemoryTask = class
     $("#trialScreen").show()
 
   showPerson: (person, fadeIn = false) ->
-    $(".faceImage").hide()
-    $image = $(".faceImage[data-person='" + person.KEY + "']")
+    $(".encounterFace").hide()
+    $image = $(".encounterFace[data-person='" + person.KEY + "']")
+    console.log $image
     if fadeIn
       $image.fadeIn(@FADE_IN_TIME)
     else
@@ -746,14 +749,14 @@ MemoryTask = class
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
-        @beginScoring()
+        @recallOneScoringScreen()
     )
 
   iterateFirstExposureTrials: (trials) ->
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
-      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $(".encounterFace").fadeOut(@FADE_OUT_TIME)
       $("#rememberOne").fadeOut(@FADE_OUT_TIME)
     ).then( =>
       if trials.length
@@ -766,7 +769,7 @@ MemoryTask = class
     @showNextTrial(trials.shift())
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
-      $(".faceImage").fadeOut(@FADE_OUT_TIME)
+      $(".encounterFace").fadeOut(@FADE_OUT_TIME)
       $("#rememberOne").fadeOut(@FADE_OUT_TIME)
     ).then( =>
       if trials.length
@@ -775,50 +778,30 @@ MemoryTask = class
         @beginSecondRecall()
     )
 
-  beginScoring: ->
+  recallOneScoringScreen: ->
     $('#trialScreen').hide()
     $('#backButton').hide()
     $('#recallOneScoringScreen').show()
-    $('#nextButton').show()
-    @iterateScoringSheets()
-
-  iterateScoringSheets: ->
-    #these should already be in this state the first time
-    #but should be reset if back button was pressed from instruction screen
     $("#completeButton").unbind().hide()
-    $("#nextButton").show()
 
-    nextScoringSheet = @scoringSheets[@currentScoringSheet]
-    console.log nextScoringSheet
-
-    @showNextScoringSheet(nextScoringSheet)
-
-    $("#nextButton").unbind().touchdown( =>
-      @currentScoringSheet++
-      if @currentScoringSheet <= @scoringSheets.length - 1
-        console.log "current scoring sheet:", @currentScoringSheet
-        @iterateScoringSheets()
-      else
-        console.log "setting up task close"
-        $("#nextButton").hide()
-        $("#completeButton").unbind().show().touchdown( =>
-          console.log "closing task"
-          @endTask()
-        )
+    $("#nextButton").unbind().show().touchdown( =>
+      $('#recallOneScoringScreen').hide()
+      @recallTwoScoringScreen()
     )
 
-    $("#backButton").unbind().touchdown( =>
-      @currentScoringSheet--
-      if @currentScoringSheet <= 0
-        console.log "current scoring sheet is 0"
-        @currentScoringSheet = 0
-      else
-        console.log "starting over"
-        @iterateScoringSheets()
+  recallTwoScoringScreen: ->
+    $('#nextButton').hide()
+    $('#recallTwoScoringScreen').show()
+    $('#backButton').unbind().show().touchdown( =>
+      $('#recallTwoScoringScreen').hide()
+      @recallOneScoringScreen()
     )
 
-  showNextScoringSheet: (nextScoringSheet) ->
-    nextScoringSheet
+    $("#completeButton").unbind().show().touchdown( =>
+      console.log "closing task"
+      @endTask()
+    )
+
 
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
@@ -854,9 +837,9 @@ MemoryTask = class
         @iterateDelayedRecallTrials(trials)
       else
         @endTask()
-        #@beginScoring()
+        #@delayedScoringScreen()
     )
 
-  beginScoring: ->
+  delayedScoringScreen: ->
 
     #@endTask()

@@ -46,6 +46,7 @@ p {
 
 .screen {
     display: none;
+    height: 100%;
 }
 
 #exampleScreen {
@@ -141,14 +142,28 @@ p {
     height: 100%;
 }
 
-
-/* possible these two will have different properties */
 .encounterFace {
     display: none;
 }
 
 .scoringFace {
-    display: none;
+    height: 100%;
+    width: 33%;
+    float: left;
+}
+
+.scoringFood {
+    height: 100%;
+    width:33%;
+    float: left;
+    max-width: 33%;
+}
+
+.scoringAnimal {
+    height: 100%;
+    width: 33%;
+    float: left;
+    max-width: 33%;
 }
 
 #screenImage img {
@@ -163,10 +178,6 @@ p {
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
-}
-
-#scoringScreen {
-
 }
 
 #recallArea {
@@ -268,4 +279,11 @@ p {
     width: 100%;
     top: 3%;
     text-align: center;
+}
+
+.scoringRow {
+    display: inline-block;
+    margin: 1%;
+    height: 19%;
+    width:100%;
 }
