@@ -89,9 +89,10 @@ TabCAT.Console.updateStatusBar = ->
     $statusBar.html(
       """
       <div class="left">
+<!--
         <span class="banner"></span>
         <span class="version"></span>
-        <p class="offline"></p>
+        <p class="offline"></p> -->
       </div>
       <div class="right">
         <p class="email">&nbsp;</p>
@@ -103,16 +104,21 @@ TabCAT.Console.updateStatusBar = ->
         <div id='menu'>
           <ul>
             <p id="close"><i class="icon-reorder"></i></p>
-            <li class='menu-list-item'>Item 1 ...</li>
-            <li class='menu-list-item'>Item 2 ...</li>
+            <li class='menu-list-item'><a href='#'>DEVICE NAME</a></li>
+            <li class='menu-list-item'><a href='#'>SELECT A LANGUAGE</a></li>
+            <li class='menu-list-item'><a href='#'>SYNC DATA</a></li>
             <li><button class="login" style="display:none"></span></li>
           </ul>
         </div>
 
       </div>
       <div class="center">
-        <p class="encounter"></p>
-        <p class="clock"></p>
+        <span class="banner"></span>
+        <span class="version"></span>
+        <br/>
+        <br>
+        <p class="encounter message"></p>
+        <p class="clock message"></p>
       </div>
       """
     )
