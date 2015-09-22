@@ -21,8 +21,8 @@ input[type=text], textarea {
 
 input:focus {
     box-shadow: 0 0 5px rgba(81, 203, 238, 1);
-    padding: 3px 0px 3px 3px;
-    margin: 5px 1px 3px 0px;
+    /*padding: 3px 0px 3px 3px;*/
+    /*margin: 5px 1px 3px 0px;*/
     border: 2px solid rgba(81, 203, 238, 1);
 }
 
@@ -103,7 +103,7 @@ input:focus {
         background-size: 353px 120px;
     }
 
-.message{
+.instructions{
     color: #A6CFD7;
     font-size: 1.6em;
 }
@@ -250,10 +250,10 @@ input:focus {
 
 #statusBar span.banner {
     display: inline-block;
-    width: 347px;
-    height: 120px;
+    width: 325px;
+    height: 100px;
     background-image: url('../img/banner.png');
-    background-size: 347px 120px;
+    background-size: 325px 100px;
 }
 
 #statusBar.sandbox span.banner {
