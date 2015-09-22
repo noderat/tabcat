@@ -315,6 +315,8 @@ nav {
 #burger {
     float:right;
     cursor:pointer;
+    padding-top: 10px;
+    padding-right: 15px;
 }
 #burger:active {
     position:relative;
@@ -342,6 +344,8 @@ nav {
     /*left:256px;*/
     transition:1s;
     text-align: center;
+    opacity: 0.8;
+    top: 2px;
 }
 
 ul p {
@@ -351,14 +355,199 @@ ul p {
     top:.25em;
     cursor:pointer;
     text-align:center;
+    padding-right: 170px;
+
 }
 
 ul {
     margin:0;
+    padding-top: 30%;
 
 }
 
 li {
-    margin-top:4.5em;
-    list-style-type:none;
+    margin-top: 4.5em;
+    list-style-type: none;
+    text-align: left;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    width: 80%;
+}
+
+.menu-list-item{
+    border-bottom: 2px white solid;
+}
+
+
+/*** tasks.html ***/
+
+#tasks div.task {
+    display: block;
+    position: relative;
+    background-color: #eeeeee;
+    padding: 8px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    width: 600px;
+    min-height: 72px;
+    text-align: left;
+    border-radius: 18px;
+    color: #000000;
+}
+
+#tasks div.task:active {
+    background-color: #cccccc;
+}
+
+#tasks p.message {
+    min-height: 32px;
+    margin: 10px;
+}
+
+#tasks img.icon {
+    float: left;
+    display: inline-block;
+    width: 72px;
+    height: 72px;
+    background-size: 72px 72px;
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
+#tasks div.task > span.description {
+    float: left;
+    display: inline-block;
+    position: relative;
+    font-size: 32px;
+    top: 20px;
+    margin-left: 5px;
+    vertical-align: top;
+}
+
+
+#tasks div.task > span.scoringMessage {
+    position: absolute;
+    font-size: 12px;
+    font-style: italic;
+    top: 64px;
+    left: 99px;
+    vertical-align: top;
+}
+
+#tasks div.task > span.alternateForm {
+    position: relative;
+    float: left;
+    display: inline-block;
+    margin-left: 12px;
+    border: 1px solid black;
+    font-size: 36px;
+    text-align:center;
+    vertical-align: middle;
+    width: 65px;
+    height: 65px;
+    border-radius:12px;
+    display: inline-block;
+}
+
+#tasks div.task div.scores {
+    position: relative;
+    clear: both;
+    margin-top: 10px;
+    padding-left: 92px;
+    margin-bottom: -10px;
+    border-top: 1px solid #000000;
+}
+
+#tasks div.task div.scores div.score {
+    font-style: normal;
+}
+
+#tasks div.task div.scores div.score .scoreHeader {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#tasks div.task div.scores div.score .scoreBody {
+    margin: 10px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore {
+    display: inline-block;
+    clear: none;
+    vertical-align: top;
+    text-align: center;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore .description {
+    font-size: 10px;
+    margin: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.rawScore .value {
+    font-size: 60px;
+    margin: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms {
+    display: inline-block;
+    clear: none;
+    margin-left: 10px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms table {
+    border-spacing: 0px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms th {
+    font-weight: normal;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+}
+
+#tasks div.task div.scores div.score .scoreBody div.norms td {
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    padding: 2px 8px 2px 8px;
+}
+
+#tasks div.task div.scores div.score .scoreFooter {
+    margin-top: 10px;
+    font-size: 10px;
+}
+
+#tasks div.battery {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #eeeeee;
+    width: 650px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#tasks div.battery div.header {
+    font-size: 32px;
+    width: 634px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}
+
+#tasks div.battery .collapsed {
+    display: none;
+}
+
+#tasks button {
+    font-size: 24px;
+    border-radius: 10px;
+    border-width: 5px;
+}
+
+#tasks #taskList {
+    margin-top: 25px;
 }
