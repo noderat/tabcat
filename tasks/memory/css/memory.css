@@ -296,6 +296,7 @@ p {
 }
 
 .foodSelection, .animalSelection {
+    display: none;
     background: #333;
     position: absolute;
     left: 50%;

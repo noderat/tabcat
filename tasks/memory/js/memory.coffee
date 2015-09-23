@@ -546,7 +546,6 @@ MemoryTask = class
       do =>
         $li = $('<li></li>')
         if food == currentFood
-          console.log food, currentFood
           $li.addClass('currentFood')
         $li.html(food)
         $food.append($li)
@@ -561,7 +560,6 @@ MemoryTask = class
       do =>
         $li = $('<li></li>')
         if animal == currentAnimal
-          console.log animal, currentAnimal
           $li.addClass('currentAnimal')
         $li.html(animal)
         $animal.append($li)
@@ -591,7 +589,6 @@ MemoryTask = class
   showPerson: (person, fadeIn = false) ->
     $(".encounterFace").hide()
     $image = $(".encounterFace[data-person='" + person.KEY + "']")
-    console.log $image
     if fadeIn
       $image.fadeIn(@FADE_IN_TIME)
     else
@@ -630,6 +627,18 @@ MemoryTask = class
     @showPerson(person)
     $("#recallBoth").show()
     $("#trialScreen").show()
+
+  scoringTouchHandler: (event, type) ->
+    #default to animalSelection
+    className = '.foodSelection'
+    if type == 'animal' then className = '.animalSelection'
+
+    target = event.target
+    $scoringSheet = $(target).find('ul' + className)
+    $scoringSheet.fadeIn(500)
+    $scoringSheet.touchdown( =>
+      $scoringSheet.fadeOut(500)
+    )
 
   endTask: ->
 
@@ -815,6 +824,13 @@ MemoryTask = class
     $('#backButton').hide()
     $('#recallOneScoringScreen').show()
     $("#completeButton").unbind().hide()
+    $("#recallOneScoringScreen")
+      .find("span.scoringFood").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+
+    $("#recallOneScoringScreen")
+      .find("span.scoringAnimal").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
 
     $("#nextButton").unbind().show().touchdown( =>
       $('#recallOneScoringScreen').hide()
@@ -828,6 +844,14 @@ MemoryTask = class
       $('#recallTwoScoringScreen').hide()
       @recallOneScoringScreen()
     )
+
+    $("#recallTwoScoringScreen")
+      .find("span.scoringFood").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+
+    $("#recallTwoScoringScreen")
+      .find("span.scoringAnimal").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
 
     $("#completeButton").unbind().show().touchdown( =>
       console.log "closing task"
@@ -869,10 +893,24 @@ MemoryTask = class
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
-        @endTask()
-        #@delayedScoringScreen()
+        @delayedScoringScreen()
     )
 
   delayedScoringScreen: ->
+    $('#trialScreen').hide()
+    $('#backButton').hide()
+    $('#delayedRecallScoringScreen').show()
 
-    #@endTask()
+    $("#delayedRecallScoringScreen")
+      .find("span.scoringFood").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+
+    $("#delayedRecallScoringScreen")
+      .find("span.scoringAnimal").unbind()
+      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
+
+    $("#completeButton").unbind().show().touchdown( =>
+      console.log "closing task"
+      #at this point, check to ensure we've answered all questions
+      @endTask()
+    )
