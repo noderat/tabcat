@@ -90,7 +90,7 @@ showTasks = ->
           $icon = $('<img>', class: 'icon', src: 'img/check-overlay.png')
           $icon.css('background-image', "url(#{iconUrl})")
         else
-          $icon = $('<img>', class: 'icon', src: iconUrl)
+          $icon = $('<img>', class: 'test-buttons', src: iconUrl)
         $taskDiv.append($icon)
 
         $taskDescription = $('<span></span>', class: 'description')
