@@ -522,8 +522,10 @@ MemoryTask = class
             personContainerClass = personContainerClasses.shift()
             $container = $("#" + containerName + " ." + personContainerClass)
             $container.find('.scoringImage').append($image)
-            $container.find('.scoringFood').html(person.person.FOOD)
-            $container.find('.scoringAnimal').html(person.person.ANIMAL)
+            $food = @buildFoodOptions(person.person.FOOD)
+            $animal = @buildAnimalOptions(person.person.ANIMAL)
+            $container.find('.scoringFood').append($food)
+            $container.find('.scoringAnimal').append($animal)
 
   getPersonContainerClasses: ->
     ['personOne', 'personTwo', 'personThree', 'personFour']
@@ -535,6 +537,36 @@ MemoryTask = class
     if className
       $image.addClass(className)
     return $image
+
+  buildFoodOptions: (currentFood) ->
+    data = @buildScoringSheetsData(@currentForm)
+
+    $food = $('<ul></ul>').addClass('foodSelection')
+    for food in data.food
+      do =>
+        $li = $('<li></li>')
+        if food == currentFood
+          console.log food, currentFood
+          $li.addClass('currentFood')
+        $li.html(food)
+        $food.append($li)
+
+    return $food
+
+  buildAnimalOptions: (currentAnimal) ->
+    data = @buildScoringSheetsData(@currentForm)
+
+    $animal = $('<ul></ul>').addClass('animalSelection')
+    for animal in data.animals
+      do =>
+        $li = $('<li></li>')
+        if animal == currentAnimal
+          console.log animal, currentAnimal
+          $li.addClass('currentAnimal')
+        $li.html(animal)
+        $animal.append($li)
+
+    return $animal
 
   firstExampleRemember: (person, item) ->
     $(".encounterFace").hide()
@@ -799,6 +831,7 @@ MemoryTask = class
 
     $("#completeButton").unbind().show().touchdown( =>
       console.log "closing task"
+      #at this point, check to ensure we've answered all questions
       @endTask()
     )
 
