@@ -97,7 +97,7 @@ MemoryTask = class
         KEY: 'man3'
         IMAGE: 'man3.jpg'
         FOOD: @CHOICES.FOOD.PLUM
-        ANIMAL: @CHOICES.ANIMAL.GOAT
+        ANIMAL: @CHOICES.ANIMAL.PIG
       MAN_4:
         KEY: 'man4'
         IMAGE: 'man4.jpg'
@@ -116,13 +116,13 @@ MemoryTask = class
       MAN_7:
         KEY: 'man7'
         IMAGE: 'man7.jpg'
-        FOOD: @CHOICES.FOOD.PEPPER
-        ANIMAL: @CHOICES.ANIMAL.SNAKE
+        FOOD: @CHOICES.FOOD.BANANA
+        ANIMAL: @CHOICES.ANIMAL.FOX
       MAN_8:
         KEY: 'man8'
         IMAGE: 'man8.jpg'
         FOOD: @CHOICES.FOOD.SQUASH
-        ANIMAL: @CHOICES.ANIMAL.FOX
+        ANIMAL: @CHOICES.ANIMAL.SNAKE
       WOMAN_EXAMPLE:
         KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
@@ -140,7 +140,7 @@ MemoryTask = class
         KEY: 'woman3'
         IMAGE: 'woman3.jpg'
         FOOD: @CHOICES.FOOD.TOMATO
-        ANIMAL: @CHOICES.ANIMAL.PIG
+        ANIMAL: @CHOICES.ANIMAL.GOAT
       WOMAN_4:
         KEY: 'woman4'
         IMAGE: 'woman4.jpg'
@@ -159,7 +159,7 @@ MemoryTask = class
       WOMAN_7:
         KEY: 'woman7'
         IMAGE: 'woman7.jpg'
-        FOOD: @CHOICES.FOOD.BANANA
+        FOOD: @CHOICES.FOOD.PEPPER
         ANIMAL: @CHOICES.ANIMAL.TIGER
       WOMAN_8:
         KEY: 'woman8'
