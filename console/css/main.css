@@ -1,6 +1,9 @@
 body{
-    margin:0!important;
     color: white;
+    margin:0;
+    overflow:hidden;
+    width: 100%;
+    overflow-x: hidden;
 }
  input{
      height: 30px;
@@ -319,11 +322,8 @@ input:focus {
 }
 
 
+/*-----tabcat-console.coffee hamburger menu------*/
 /*-----------------------------------------------*/
-body {
-    margin:0;
-    overflow:hidden;
-}
 
 nav {
     height:4em;
@@ -361,11 +361,11 @@ nav {
     background-color:#000824;
     color:white;
     position:absolute;
-    /*left:256px;*/
     transition:1s;
     text-align: center;
-    opacity: 0.7;
+    opacity: 0.9;
     top: 2px;
+    z-index: 1;
 }
 
 ul p {
@@ -408,18 +408,17 @@ li a:-webkit-any-link {
 /*** tasks.html ***/
 
 #tasks div.task {
-    display: block;
+    display: inline-block;
     position: relative;
-    background-color: #eeeeee;
     padding: 8px;
     margin-left: 10px;
     margin-bottom: 10px;
-    width: 600px;
     min-height: 72px;
     text-align: left;
     border-radius: 18px;
-    color: #000000;
+    color: #FFF;
 }
+
 
 #tasks div.task:active {
     background-color: #cccccc;
@@ -441,18 +440,16 @@ li a:-webkit-any-link {
 }
 
 #tasks div.task > span.description {
-    float: left;
-    display: inline-block;
-    position: relative;
-    font-size: 32px;
-    top: 20px;
+    display: block;
+    position: absolute;
+    font-size: 1.2em;
     margin-left: 5px;
-    vertical-align: top;
+    white-space: normal;
+    max-width: 10ch;
 }
 
 
 #tasks div.task > span.scoringMessage {
-    position: absolute;
     font-size: 12px;
     font-style: italic;
     top: 64px;
@@ -545,20 +542,21 @@ li a:-webkit-any-link {
 }
 
 #tasks div.battery {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #eeeeee;
-    width: 650px;
+    width: 300px;
+    color: white;
     margin-left: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 75px;
+    padding-right: 50px;
+    padding-left: 50px;
     border-radius: 12px;
     text-overflow: ellipsis;
     white-space: nowrap;
+    float: left;
 }
 
 #tasks div.battery div.header {
     font-size: 32px;
-    width: 634px;
+    width: 300px;
     padding-top: 8px;
     padding-bottom: 8px;
     padding-left: 16px;
@@ -595,7 +593,7 @@ li a:-webkit-any-link {
 }
 
 .test-buttons{
-    width: 80px;
+    width: 65px;
     border-radius: 10px;
     padding: 15px;
     background-color: #383E5E;
