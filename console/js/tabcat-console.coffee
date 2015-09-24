@@ -84,6 +84,7 @@ TabCAT.Console.updateStatusBar = ->
   if TabCAT.Console.inSandbox()
     $statusBar.addClass('sandbox')
 
+  # coffeelint: disable=max_line_length
   # populate with new HTML if we didn't already
   if $statusBar.find('div.left').length is 0
     $statusBar.html(
@@ -103,14 +104,26 @@ TabCAT.Console.updateStatusBar = ->
         </nav>
         <div id='menu'>
           <ul>
-            <p id="close"><i class="icon-reorder"></i></p>
-            <li class='menu-list-item'><a href='#'>DEVICE NAME</a></li>
-            <li class='menu-list-item'><a href='#'>SELECT A LANGUAGE</a></li>
+            <p id='close'><i class='icon-reorder'></i></p>
+            <li class='menu-list-item show-dev'><a href='#'>DEVICE NAME</a></li>
+            <li class='menu-list-item device-input'>
+              <input type='text' name='device' class='device-name'>
+            </li>
+            <li class='menu-list-item show-lang'><a href='#'>SELECT A LANGUAGE</a></li>
+            <li class="menu-list-item lang">
+              <select name="language" multiple="multiple">
+                <option></option>
+                <option>English</option>
+                <option>Dutch</option>
+                <option>French</option>
+                <option>German</option>
+                <option>Japanese</option>
+              </select>
+            </li>
             <li class='menu-list-item'><a href='#'>SYNC DATA</a></li>
-            <li><button class="login" style="display:none"></span></li>
+            <li><button class='login closeEncounter'></button></span></li>
           </ul>
         </div>
-
       </div>
       <div class="center">
         <span class="banner"></span>
@@ -122,7 +135,7 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       """
     )
-
+    # coffeelint: enable=max_line_length
 
     menu = $("#menu")
     menu.hide()
@@ -141,6 +154,20 @@ TabCAT.Console.updateStatusBar = ->
       menu.hide()
       $('.menu-nav').css
         position: "static"
+
+    textInput = $(".device-name")
+    textInput.hide()
+    $('.show-dev').touchdown ->
+      textInput.toggle()
+
+    language = $(".lang")
+    language.hide()
+    $('.show-lang').touchdown ->
+      language.toggle()
+
+
+
+
 
 
     $statusBar.find('.version').text(TabCAT.version)
