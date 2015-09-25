@@ -111,7 +111,7 @@ TabCAT.Console.updateStatusBar = ->
             </li>
             <li class='menu-list-item show-lang'><a href='#'>SELECT A LANGUAGE</a></li>
             <li class="menu-list-item lang">
-              <select name="language" multiple="multiple">
+              <select name="language">
                 <option value='english' selected>English</option>
                 <option value='dutch'>Dutch</option>
                 <option value='french'>French</option>
@@ -119,16 +119,20 @@ TabCAT.Console.updateStatusBar = ->
                 <option value='japanese'>Japanese</option>
               </select>
             </li>
-            <li class='menu-list-item sync-data'><a href='#'>SYNC DATA</a></li>
-            <li class='menu-list-item set-password'>
-              <form id="setPassword" action="#" method="post">
-                <input type="email" name="email" autofocus="autofocus" placeholder="Email">
-                <input type="password" name="password" placeholder="Password">
-                <input type="password" name="password" placeholder="Confirm password">
-                <button class='save-password'>Submit</button>
-              </form>
+            <li class='menu-list-item sync'><a href='#'>SYNC DATA</a>
+              <ul class='sub-item'>
+                <li class='menu-list-item set-password'>
+                  <form id="setPassword" action="#" method="post">
+                    <input type="email" name="email" autofocus="autofocus" placeholder="Email">
+                    <input type="password" name="password" placeholder="Password">
+                    <input type="password" name="password" placeholder="Confirm password">
+                    <button class='save-password'>Submit</button>
+                  </form>
+                  <button class='sync-data'>Sync Data</button>
+                </li>
+              </ul>
             </li>
-            <li><button class='login closeEncounter'></button></li>
+            <li class='menu-list-item saveChanges'><button class='login closeEncounter'></button></li>
           </ul>
         </div>
       </div>
@@ -178,10 +182,18 @@ TabCAT.Console.updateStatusBar = ->
 
 
     #Hide SYNC DATA form by default
+    syncDiv = $('.set-password')
     syncData = $("#setPassword")
     syncData.hide()
-    $('.sync-data').touchdown ->
+    syncButton = $('.sync-data')
+    syncButton.hide()
+    $('.sync').touchdown ->
       syncData.toggle()
+      syncButton.toggle()
+      $('.sync').toggleClass 'syncopen'
+
+
+
 
 
 

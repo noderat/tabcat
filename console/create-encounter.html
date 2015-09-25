@@ -16,16 +16,12 @@
 <div class="wrap">
   <div class="content">
     <div class="banner-main">
-
       <div id="statusBar"></div>
       <div style="clear:both;"></div>
-      <p id="message" class="message"></p>
       <p class="instructions">Add new or edit exisiting protocol below.</p>
-
     </div>
     <div id="createEncounter">
       <form id="createEncounterForm" class="big" action="#" method="post">
-        <p class="message"></p>
         <p class="instructions">Enter patient code to create an encounter</p>
         <p>
           <label>Patient Code</label>
@@ -38,7 +34,7 @@
           Patient code should not be based on SSN or health insurance ID
         </p>
         <p>
-          <button type="submit" class="button button--large button--success create" disabled><span class="btn-label"><i class="icon-ok"></i> </span> Create New Encounter</button>
+          <button type="submit" class="button button--large button--success create" disabled><span class="btn-label-success"><i class="fa fa-check fa-fw"></i> </span> Create New Encounter</button>
         </p>
         <p id="error" class="error"></p>
       </form>

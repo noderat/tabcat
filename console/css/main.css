@@ -205,7 +205,7 @@ input:focus {
     left: -34px;
     padding-top: 0.55em;
     padding-right: 0.8rem;
-    padding-bottom: 0.55em;
+    padding-bottom: 0.65em;
     padding-left: 0.8rem;
     background: rgba(0, 0, 0, 0.18);
     border-radius: 9px 0 0 9px;
@@ -213,10 +213,10 @@ input:focus {
 
 .btn-label-danger {
     position: relative;
-    left: -16px;
-    padding-top: 0.85em;
+    left: -18px;
+    padding-top: 0.75em;
     padding-right: 0.8rem;
-    padding-bottom: 0.85em;
+    padding-bottom: 0.75em;
     padding-left: 0.8rem;
     background: rgba(0, 0, 0, 0.18);
     border-radius: 9px 0 0 9px;
@@ -445,8 +445,6 @@ li a:-webkit-any-link {
 
 .lang select{
     width: 170px;
-    height: 150px;
-    height: 150px;
     overflow: hidden;
 }
 
@@ -458,13 +456,35 @@ li a:-webkit-any-link {
     overflow: auto;
 }
 
-.sync-data{
+.sync{
     margin-top: -5px;
+    height: 20px;
+}
+
+.syncopen{
+    height: auto;
+}
+.sub-item{
+    display: inline;
+    padding-top: 0;
+}
+.sync-data{
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 8px;
+    width: 170px;
+    height: 40px;
+    color: white;
+    font-size: 1.2em;
+    font-family: "Roboto-Medium", sans-serif;
+    margin-top: 50px;
+    cursor: pointer;
 }
 
 .set-password{
     border-bottom: none;
     margin-top: -5px;
+    padding-bottom: 15px;
 }
 .set-password input{
     margin-bottom: 5px;
@@ -481,6 +501,17 @@ li a:-webkit-any-link {
     width: 100px;
     float: right;
     margin-top: 5px;
+    margin-right: -30px;
+}
+
+.saveChanges{
+    border-bottom: none;
+    margin-top: -5px;
+
+}
+
+.closeEncounter{
+    cursor: pointer;
 }
 
 /*** tasks.html ***/
@@ -501,8 +532,9 @@ li a:-webkit-any-link {
 }
 
 #tasks p.message {
-    min-height: 32px;
-    margin: 10px;
+    font-family: "Roboto-Regular",sans-serif;
+    font-size: 24px;
+    text-align: center;
 }
 
 #tasks img.icon {
@@ -671,4 +703,62 @@ li a:-webkit-any-link {
     border-radius: 10px;
     padding: 15px;
     background-color: #383E5E;
+}
+
+/*** administration-notes.html ***/
+
+#administrationNotesForm {
+    font-size: 24px;
+}
+
+#administrationNotesForm fieldset {
+    margin-top: 20px;
+    padding: 5px;
+    border: none;
+}
+
+#administrationNotesForm fieldset div.threeColumns {
+    column-count: 3;
+    column-width: 150px;
+    column-gap: 50px;
+    -moz-column-count: 3;
+    -moz-column-width: 150px;
+    -moz-column-gap: 50px;
+    -webkit-column-count: 3;
+    -webkit-column-width: 150px;
+    -webkit-column-gap: 50px;
+}
+
+#administrationNotesForm legend {
+    font-size: 28px;
+    font-family: "Roboto-Medium", sans-serif;
+    color: white;
+}
+
+#administrationNotesForm fieldset.required legend:after {
+    content: '*';
+}
+
+#administrationNotesForm div.threeColumns label {
+    display: block;
+}
+
+#administrationNotesForm textarea {
+    width: 750px;
+    max-width: 750px;
+    height: 150px;
+    max-height: 150px;
+    font-size: 18px;
+}
+
+#administrationNotesForm p {
+    text-align: center;
+}
+
+#administrationNotesForm button {
+    font-size: 24px;
+    height: 60px;
+    border-radius: 10px;
+    border-width: 5px;
+    margin: 0px;
 }
