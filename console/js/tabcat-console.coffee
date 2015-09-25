@@ -112,16 +112,23 @@ TabCAT.Console.updateStatusBar = ->
             <li class='menu-list-item show-lang'><a href='#'>SELECT A LANGUAGE</a></li>
             <li class="menu-list-item lang">
               <select name="language" multiple="multiple">
-                <option></option>
-                <option>English</option>
-                <option>Dutch</option>
-                <option>French</option>
-                <option>German</option>
-                <option>Japanese</option>
+                <option value='english' selected>English</option>
+                <option value='dutch'>Dutch</option>
+                <option value='french'>French</option>
+                <option value='german'>German</option>
+                <option value='japanese'>Japanese</option>
               </select>
             </li>
-            <li class='menu-list-item'><a href='#'>SYNC DATA</a></li>
-            <li><button class='login closeEncounter'></button></span></li>
+            <li class='menu-list-item sync-data'><a href='#'>SYNC DATA</a></li>
+            <li class='menu-list-item set-password'>
+              <form id="setPassword" action="#" method="post">
+                <input type="email" name="email" autofocus="autofocus" placeholder="Email">
+                <input type="password" name="password" placeholder="Password">
+                <input type="password" name="password" placeholder="Confirm password">
+                <button class='save-password'>Submit</button>
+              </form>
+            </li>
+            <li><button class='login closeEncounter'></button></li>
           </ul>
         </div>
       </div>
@@ -137,9 +144,11 @@ TabCAT.Console.updateStatusBar = ->
     )
     # coffeelint: enable=max_line_length
 
+    #Hide the hamburger menu as default
     menu = $("#menu")
     menu.hide()
 
+    #Show and Hide Menu on Touchdown
     $("#burger").touchdown ->
       menu = $("#menu")
       menu.show()
@@ -155,16 +164,24 @@ TabCAT.Console.updateStatusBar = ->
       $('.menu-nav').css
         position: "static"
 
+    #Hide device input field & Open on Touchdown
     textInput = $(".device-name")
     textInput.hide()
     $('.show-dev').touchdown ->
       textInput.toggle()
 
+    #Hide lang select field & Open on Touchdown
     language = $(".lang")
     language.hide()
     $('.show-lang').touchdown ->
       language.toggle()
 
+
+    #Hide SYNC DATA form by default
+    syncData = $("#setPassword")
+    syncData.hide()
+    $('.sync-data').touchdown ->
+      syncData.toggle()
 
 
 

@@ -322,6 +322,21 @@ input:focus {
     background-size: 100%;
 }
 
+#statusBar button.saveButton {
+    /*width: 250px;*/
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 12px;
+    margin-right: 15px;
+    width: 170px;
+    font-size: .8em;
+    font-family: "Roboto-Regular", sans-serif;
+    background: transparent;
+    background-size: 100%;
+    color: white;
+
+}
+
 
 /*-----tabcat-console.coffee hamburger menu------*/
 /*-----------------------------------------------*/
@@ -408,6 +423,10 @@ li a:-webkit-any-link {
     width: 170px;
 }
 
+.show-dev{
+    margin-bottom: 5px;
+}
+
 .device-input{
     margin-top: -15px;
     /*display: none;*/
@@ -426,11 +445,42 @@ li a:-webkit-any-link {
 
 .lang select{
     width: 170px;
-    height: 120px;
+    height: 150px;
+    height: 150px;
+    overflow: hidden;
 }
 
 .lang option{
     border-bottom: 1px solid lightgray;
+    height: 25px;
+    font-family: "Roboto-Regular", sans-serif;
+    font-size: 1.2em;
+    overflow: auto;
+}
+
+.sync-data{
+    margin-top: -5px;
+}
+
+.set-password{
+    border-bottom: none;
+    margin-top: -5px;
+}
+.set-password input{
+    margin-bottom: 5px;
+    font-family: "Roboto-Regular", sans-serif;
+}
+
+.save-password{
+    background: transparent;
+    color: white;
+    font-size: 1em;
+    font-family: "Roboto-Medium",sans-serif;
+    border: 2px solid white;
+    border-radius: 12px;
+    width: 100px;
+    float: right;
+    margin-top: 5px;
 }
 
 /*** tasks.html ***/
