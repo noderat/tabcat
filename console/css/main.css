@@ -204,7 +204,7 @@ input:focus {
     position: relative;
     left: -34px;
     padding-top: 0.55em;
-    padding-right: 0.8rem;
+    padding-right: 0.6rem;
     padding-bottom: 0.65em;
     padding-left: 0.8rem;
     background: rgba(0, 0, 0, 0.18);
@@ -386,7 +386,6 @@ nav {
 
 ul {
     margin: 0;
-    padding-top: 30%;
 }
 
 ul p {
@@ -405,7 +404,7 @@ li {
     text-align: left;
     padding-top: 15px;
     padding-bottom: 5px;
-    width: 80%;
+    width: 100%;
 }
 
 li a:-webkit-any-link {
@@ -420,7 +419,7 @@ li a:-webkit-any-link {
 }
 
 .menu-list-item input{
-    width: 170px;
+    width: 90%;
 }
 
 .show-dev{
@@ -434,6 +433,13 @@ li a:-webkit-any-link {
     margin-bottom: -15px;
 }
 
+.device-input input{
+    font-size: 1em;
+    font-family: "Roboto-Regular", sans-serif;
+    width: 95%;
+
+}
+
 .show-lang{
     margin-top: -5px;
 }
@@ -444,8 +450,9 @@ li a:-webkit-any-link {
 }
 
 .lang select{
-    width: 170px;
     overflow: hidden;
+    height: 30px;
+    width: 100%;
 }
 
 .lang option{
@@ -463,6 +470,7 @@ li a:-webkit-any-link {
 
 .syncopen{
     height: auto;
+    margin-bottom: -15px;
 }
 .sub-item{
     display: inline;
@@ -482,13 +490,13 @@ li a:-webkit-any-link {
 }
 
 .set-password{
-    border-bottom: none;
     margin-top: -5px;
     padding-bottom: 15px;
 }
 .set-password input{
     margin-bottom: 5px;
     font-family: "Roboto-Regular", sans-serif;
+    font-size: 1em;
 }
 
 .save-password{
@@ -501,7 +509,7 @@ li a:-webkit-any-link {
     width: 100px;
     float: right;
     margin-top: 5px;
-    margin-right: -30px;
+    margin-right: 5%;
 }
 
 .saveChanges{
@@ -677,10 +685,20 @@ li a:-webkit-any-link {
     /*font-size: 24px;*/
     border-radius: 10px;
     border-width: 5px;
+    margin-top: 50px;
 }
 
 #tasks #taskList {
     margin-top: 25px;
+}
+
+.task-encounter-button{
+    text-align: center;
+}
+
+.task-message{
+    margin-top: 30px;
+    text-align: center;
 }
 
 /*** enter-password.html ***/
@@ -760,5 +778,29 @@ li a:-webkit-any-link {
     height: 60px;
     border-radius: 10px;
     border-width: 5px;
-    margin: 0px;
+    margin: 0;
+}
+
+/*--Return to Examiner--*/
+/*---------------------*/
+
+.caption{
+    color: #A6CFD7;
+    font-family: "Roboto", sans-serif;
+    font-size: 5em;
+    text-align: center;
+    margin-top: 20%;
+}
+#iAmTheExaminer{
+    float: right;
+    width: 200px;
+    height: 100px;
+    background-color: transparent;
+    color: white;
+    font-size: 18px;
+    border: 2px solid white;
+    border-radius: 26px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }

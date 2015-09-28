@@ -119,7 +119,7 @@ TabCAT.Console.updateStatusBar = ->
                 <option value='japanese'>Japanese</option>
               </select>
             </li>
-            <li class='menu-list-item sync'><a href='#'>SYNC DATA</a>
+            <li class='menu-list-item sync'><a href='#'>SYNC DATA</a></li>
               <ul class='sub-item'>
                 <li class='menu-list-item set-password'>
                   <form id="setPassword" action="#" method="post">
@@ -131,7 +131,6 @@ TabCAT.Console.updateStatusBar = ->
                   <button class='sync-data'>Sync Data</button>
                 </li>
               </ul>
-            </li>
             <li class='menu-list-item saveChanges'><button class='login closeEncounter'></button></li>
           </ul>
         </div>
@@ -183,11 +182,13 @@ TabCAT.Console.updateStatusBar = ->
 
     #Hide SYNC DATA form by default
     syncDiv = $('.set-password')
+    syncDiv.hide()
     syncData = $("#setPassword")
     syncData.hide()
     syncButton = $('.sync-data')
     syncButton.hide()
     $('.sync').touchdown ->
+      syncDiv.toggle()
       syncData.toggle()
       syncButton.toggle()
       $('.sync').toggleClass 'syncopen'
