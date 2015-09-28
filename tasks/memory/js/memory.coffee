@@ -538,29 +538,29 @@ MemoryTask = class
       $image.addClass(className)
     return $image
 
-  buildFoodOptions: (currentFood) ->
+  buildFoodOptions: (correctFood) ->
     data = @buildScoringSheetsData(@currentForm)
 
     $food = $('<ul></ul>').addClass('foodSelection')
     for food in data.food
       do =>
         $li = $('<li></li>')
-        if food == currentFood
-          $li.addClass('currentFood')
+        if food == correctFood
+          $li.addClass('correctFood')
         $li.html(food)
         $food.append($li)
 
     return $food
 
-  buildAnimalOptions: (currentAnimal) ->
+  buildAnimalOptions: (correctAnimal) ->
     data = @buildScoringSheetsData(@currentForm)
 
     $animal = $('<ul></ul>').addClass('animalSelection')
     for animal in data.animals
       do =>
         $li = $('<li></li>')
-        if animal == currentAnimal
-          $li.addClass('currentAnimal')
+        if animal == correctAnimal
+          $li.addClass('correctAnimal')
         $li.html(animal)
         $animal.append($li)
 
@@ -631,10 +631,13 @@ MemoryTask = class
   scoringTouchHandler: (event, type) ->
     #default to animalSelection
     className = '.foodSelection'
-    if type == 'animal' then className = '.animalSelection'
+    parentClass = '.scoringFood'
+    if type == 'animal'
+      className = '.animalSelection'
+      parentClass = '.scoringAnimal'
 
     target = event.target
-    $scoringSheet = $(target).find('ul' + className)
+    $scoringSheet = $(target).parent('.scoringFood').find('ul' + className)
     $scoringSheet.fadeIn(500)
     $scoringSheet.touchdown( =>
       $scoringSheet.fadeOut(500)
@@ -664,6 +667,8 @@ MemoryTask = class
 
     @currentScoringSheet = 0
 
+    @state = @buildInitialState()
+
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
     encounterPeople = @EXAMPLE_PEOPLE.concat(@currentForm.PEOPLE)
@@ -673,6 +678,13 @@ MemoryTask = class
       recallOneScoringScreen: @currentForm.FIRST_RECALL
       recallTwoScoringScreen: @currentForm.SECOND_RECALL
     )
+
+  #use existing form as a template for data
+  buildInitialState: ->
+    return {
+      RECALL_ONE: @currentForm.FIRST_RECALL
+      RECALL_TWO: @currentForm.SECOND_RECALL
+    }
 
   showStartScreen: ->
     $("#backButton").hide()
@@ -825,11 +837,16 @@ MemoryTask = class
     $('#recallOneScoringScreen').show()
     $("#completeButton").unbind().hide()
     $("#recallOneScoringScreen")
-      .find("span.scoringFood").unbind()
+      .find(".scoringFood span.currentSelection").unbind()
       .touchdown( (event) => @scoringTouchHandler(event, 'food') )
 
+    $currentAnimal = $("#recallOneScoringScreen")
+      .find(".scoringAnimal span.currentSelection")
+
+    console.log $currentAnimal
+
     $("#recallOneScoringScreen")
-      .find("span.scoringAnimal").unbind()
+      .find(".scoringAnimal span.currentSelection").unbind()
       .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
 
     $("#nextButton").unbind().show().touchdown( =>
@@ -875,6 +892,13 @@ MemoryTask = class
       delayedRecallScoringScreen: @currentForm.DELAYED_RECALL
     )
 
+    @state = @buildInitialState()
+
+  buildInitialState: ->
+    return {
+      DELAYED_RECALL: @currentForm.DELAYED_RECALL
+    }
+
   showStartScreen: ->
     @beginDelayedRecall()
 
@@ -886,7 +910,6 @@ MemoryTask = class
     )
 
   iterateDelayedRecallTrials: (trials) ->
-
     @showNextTrial(trials.shift())
 
     $(".nextButton").unbind().touchdown( =>
@@ -900,6 +923,9 @@ MemoryTask = class
     $('#trialScreen').hide()
     $('#backButton').hide()
     $('#delayedRecallScoringScreen').show()
+
+    console.log ($("#delayedRecallScoringScreen")
+      .find("span.scoringFood"))
 
     $("#delayedRecallScoringScreen")
       .find("span.scoringFood").unbind()

@@ -322,6 +322,16 @@ p {
     border-top: 1px solid #777;
 }
 
-.currentFood, .currentAnimal {
+.correctFood, .correctAnimal {
     background: rgba(0, 153, 0, 0.2);
+}
+
+/*
+* TODO: center this
+*/
+.currentSelection {
+    display: block;
+    width: 50%;
+    height: 50%;
+    background-color: #0000ff;
 }
