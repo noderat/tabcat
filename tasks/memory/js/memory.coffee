@@ -548,6 +548,11 @@ MemoryTask = class
         if food == correctFood
           $li.addClass('correctFood')
         $li.html(food)
+        #$.data($li, 'food', food)#
+        #console.log $li
+        $li.data('food', food)
+        console.log $li
+        console.log $li.data('food')
         $food.append($li)
 
     return $food
@@ -562,6 +567,8 @@ MemoryTask = class
         if animal == correctAnimal
           $li.addClass('correctAnimal')
         $li.html(animal)
+        $li.data($li, 'animal', animal)
+        #console.log $li.data('animal')
         $animal.append($li)
 
     return $animal
@@ -628,7 +635,7 @@ MemoryTask = class
     $("#recallBoth").show()
     $("#trialScreen").show()
 
-  scoringTouchHandler: (event, type) ->
+  scoringTouchHandler: (event, type, scoringScreen) ->
     #default to animalSelection
     className = '.foodSelection'
     parentClass = '.scoringFood'
@@ -637,10 +644,10 @@ MemoryTask = class
       parentClass = '.scoringAnimal'
 
     target = event.target
-    $scoringSheet = $(target).parent('.scoringFood').find('ul' + className)
-    $scoringSheet.fadeIn(500)
-    $scoringSheet.touchdown( =>
-      $scoringSheet.fadeOut(500)
+    $scoringElement = $(target).parent(parentClass)
+    $scoreSheet = $scoringElement.find('ul' + className).fadeIn(500)
+    $scoreSheet.find('li').touchdown( =>
+      $scoreSheet.fadeOut(500)
     )
 
   endTask: ->
@@ -838,7 +845,9 @@ MemoryTask = class
     $("#completeButton").unbind().hide()
     $("#recallOneScoringScreen")
       .find(".scoringFood span.currentSelection").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'food', 'RECALL_ONE')
+      )
 
     $currentAnimal = $("#recallOneScoringScreen")
       .find(".scoringAnimal span.currentSelection")
@@ -847,7 +856,9 @@ MemoryTask = class
 
     $("#recallOneScoringScreen")
       .find(".scoringAnimal span.currentSelection").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'animal', 'RECALL_ONE')
+      )
 
     $("#nextButton").unbind().show().touchdown( =>
       $('#recallOneScoringScreen').hide()
@@ -864,11 +875,15 @@ MemoryTask = class
 
     $("#recallTwoScoringScreen")
       .find("span.scoringFood").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'food', 'RECALL_TWO')
+      )
 
     $("#recallTwoScoringScreen")
       .find("span.scoringAnimal").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'animal', 'RECALL_TWO')
+      )
 
     $("#completeButton").unbind().show().touchdown( =>
       console.log "closing task"
@@ -929,11 +944,15 @@ MemoryTask = class
 
     $("#delayedRecallScoringScreen")
       .find("span.scoringFood").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'food') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'food', 'DELAYED_RECALL')
+      )
 
     $("#delayedRecallScoringScreen")
       .find("span.scoringAnimal").unbind()
-      .touchdown( (event) => @scoringTouchHandler(event, 'animal') )
+      .touchdown( (event) =>
+        @scoringTouchHandler(event, 'animal', 'DELAYED_RECALL')
+      )
 
     $("#completeButton").unbind().show().touchdown( =>
       console.log "closing task"
