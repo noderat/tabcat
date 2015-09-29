@@ -521,6 +521,8 @@ MemoryTask = class
             $image = @buildFaceElement(person.person, 'scoringFace')
             personContainerClass = personContainerClasses.shift()
             $container = $("#" + containerName + " ." + personContainerClass)
+            console.log $container
+            $container.data('person', person.person.KEY)
             $container.find('.scoringImage').append($image)
             $food = @buildFoodOptions(person.person.FOOD)
             $animal = @buildAnimalOptions(person.person.ANIMAL)
@@ -548,11 +550,7 @@ MemoryTask = class
         if food == correctFood
           $li.addClass('correctFood')
         $li.html(food)
-        #$.data($li, 'food', food)#
-        #console.log $li
         $li.data('food', food)
-        #console.log $li
-        #console.log $li.data('food')
         $food.append($li)
 
     return $food
@@ -568,10 +566,8 @@ MemoryTask = class
           $li.addClass('correctAnimal')
         $li.html(animal)
         $li.data('animal', animal)
-        #console.log $li.data('animal')
         $animal.append($li)
 
-    #console.log $animal.find('li:first').data('animal')
     return $animal
 
   firstExampleRemember: (person, item) ->
@@ -608,9 +604,6 @@ MemoryTask = class
     $("#rememberOne").hide()
     $("#recallBoth").hide()
 
-    #does nothing for now, may use to validate later
-    correctAnswer = person[recall.toUpperCase()]
-
     @showPerson(person)
 
     $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
@@ -646,6 +639,9 @@ MemoryTask = class
 
     $target = $(event.target)
     $scoringElement = $target.parent('.selectionContainer').parent(parentClass)
+    $scoringRow = $scoringElement.parent('.scoringRow')
+    #previously set key on row container
+    personKey = $scoringRow.data('person')
     $scoreSheet = $scoringElement.find('ul' + className).fadeIn(500)
     $scoreSheet.find('li').touchdown( (event) =>
       $scoreSheet.fadeOut(500)
@@ -654,13 +650,16 @@ MemoryTask = class
       #set the current display to what we just touched
       $target.html(touched)
 
+      #set the state's touched answer where the scoringScreen is current
+      #and the person's key matches personKey
+      console.log @state[scoringScreen]
     )
 
   endTask: ->
 
     #there is currently no real event data since
     #this is more of an examiner task
-    TabCAT.Task.logEvent(state, null, interpretation)
+    TabCAT.Task.logEvent(@getTaskState(), null, interpretation)
 
     TabCAT.Task.finish()
 
@@ -892,6 +891,9 @@ MemoryTask = class
       @endTask()
     )
 
+  getTaskState: ->
+    console.log @scoringSheets
+    @scoringSheets
 
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
@@ -940,9 +942,6 @@ MemoryTask = class
     $('#trialScreen').hide()
     $('#backButton').hide()
     $('#delayedRecallScoringScreen').show()
-
-    console.log ($("#delayedRecallScoringScreen")
-      .find("span.scoringFood"))
 
     $("#delayedRecallScoringScreen")
       .find(".scoringFood span.currentSelection")
