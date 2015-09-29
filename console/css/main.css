@@ -5,6 +5,8 @@ body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
+    font-family: "Roboto-Regular", sans-serif;
+    font-size: 1em;
 }
 
 input {
@@ -31,7 +33,7 @@ textarea {
     -o-transition: all 0.3s ease-in-out;
     outline: none;
     padding: 3px 0px 3px 3px;
-    margin: 5px 1px 3px 0px;
+    margin: 5px 1px 3px 0;
     border: 1px solid #DDDDDD;
 }
 
@@ -132,7 +134,7 @@ input:focus {
 }
 
 .button--large {
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .button--small {
@@ -209,6 +211,22 @@ input:focus {
     padding-left: 0.8rem;
     background: rgba(0, 0, 0, 0.18);
     border-radius: 9px 0 0 9px;
+}
+
+.btn-label-save {
+    position: relative;
+    padding-top: 0.55em;
+    padding-right: 0.40rem;
+    padding-bottom: 0.65em;
+    padding-left: 1rem;
+    border-radius: 9px 0 0 9px;
+    border-right: 2px solid white;
+    margin-right: 10px;
+    font-size: 1em;
+}
+
+.btn-label-save i {
+    margin-left: -25px;
 }
 
 .btn-label-danger {
@@ -312,14 +330,22 @@ input:focus {
 }
 
 #statusBar button.login {
-    width: 250px;
     height: 50px;
     border: none;
     margin-right: 15px;
     width: 170px;
     font-size: 0;
-    background: url('../img/buttons/nav-endsession.png') no-repeat;
+    background: url("../img/buttons/nav-endsession.png") no-repeat;
     background-size: 100%;
+}
+
+#statusBar button.save {
+    width: 170px;
+    height: 40px;
+    color: white;
+    border: 2px solid white;
+    border-radius: 12px;
+    background-color: transparent;
 }
 
 #statusBar button.saveButton {
@@ -334,9 +360,7 @@ input:focus {
     background: transparent;
     background-size: 100%;
     color: white;
-
 }
-
 
 /*-----tabcat-console.coffee hamburger menu------*/
 /*-----------------------------------------------*/
@@ -418,44 +442,43 @@ li a:-webkit-any-link {
     border-bottom: 2px white solid;
 }
 
-.menu-list-item input{
+.menu-list-item input {
     width: 90%;
 }
 
-.show-dev{
+.show-dev {
     margin-bottom: 5px;
 }
 
-.device-input{
+.device-input {
     margin-top: -15px;
     /*display: none;*/
     border-bottom: none;
     margin-bottom: -15px;
 }
 
-.device-input input{
+.device-input input {
     font-size: 1em;
     font-family: "Roboto-Regular", sans-serif;
     width: 95%;
-
 }
 
-.show-lang{
+.show-lang {
     margin-top: -5px;
 }
 
-.lang{
+.lang {
     border-bottom: none;
     margin-top: -10px;
 }
 
-.lang select{
+.lang select {
     overflow: hidden;
     height: 30px;
     width: 100%;
 }
 
-.lang option{
+.lang option {
     border-bottom: 1px solid lightgray;
     height: 25px;
     font-family: "Roboto-Regular", sans-serif;
@@ -463,20 +486,22 @@ li a:-webkit-any-link {
     overflow: auto;
 }
 
-.sync{
+.sync {
     margin-top: -5px;
     height: 20px;
 }
 
-.syncopen{
+.syncopen {
     height: auto;
     margin-bottom: -15px;
 }
-.sub-item{
+
+.sub-item {
     display: inline;
     padding-top: 0;
 }
-.sync-data{
+
+.sync-data {
     background: transparent;
     border: 2px solid white;
     border-radius: 8px;
@@ -489,17 +514,18 @@ li a:-webkit-any-link {
     cursor: pointer;
 }
 
-.set-password{
+.set-password {
     margin-top: -5px;
     padding-bottom: 15px;
 }
-.set-password input{
+
+.set-password input {
     margin-bottom: 5px;
     font-family: "Roboto-Regular", sans-serif;
     font-size: 1em;
 }
 
-.save-password{
+.save-password {
     background: transparent;
     color: white;
     font-size: 1em;
@@ -512,13 +538,12 @@ li a:-webkit-any-link {
     margin-right: 5%;
 }
 
-.saveChanges{
+.saveChanges {
     border-bottom: none;
     margin-top: -5px;
-
 }
 
-.closeEncounter{
+.closeEncounter {
     cursor: pointer;
 }
 
@@ -692,11 +717,11 @@ li a:-webkit-any-link {
     margin-top: 25px;
 }
 
-.task-encounter-button{
+.task-encounter-button {
     text-align: center;
 }
 
-.task-message{
+.task-message {
     margin-top: 30px;
     text-align: center;
 }
@@ -724,7 +749,6 @@ li a:-webkit-any-link {
 }
 
 /*** administration-notes.html ***/
-
 #administrationNotesForm {
     font-size: 24px;
 }
@@ -783,15 +807,15 @@ li a:-webkit-any-link {
 
 /*--Return to Examiner--*/
 /*---------------------*/
-
-.caption{
+.caption {
     color: #A6CFD7;
     font-family: "Roboto", sans-serif;
     font-size: 5em;
     text-align: center;
     margin-top: 20%;
 }
-#iAmTheExaminer{
+
+#iAmTheExaminer {
     float: right;
     width: 200px;
     height: 100px;
@@ -806,9 +830,7 @@ li a:-webkit-any-link {
 }
 
 /*** patient-scoring.html ***/
-
 /* attempts to look similar to tasks.html */
-
 #patientScoring {
     margin-top: 25px;
 }
@@ -924,7 +946,6 @@ div.score .scoreBody div.catchTrialScore .value {
     margin: 4px;
     padding: 2px 8px 2px 8px;
 }
-
 
 #patientScoring div.task div.score .scoreBody div.norms {
     display: inline-block;

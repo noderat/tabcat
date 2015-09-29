@@ -131,6 +131,7 @@ TabCAT.Console.updateStatusBar = ->
                   <button class='sync-data'>Sync Data</button>
                 </li>
               </ul>
+            <li class='menu-list-item saveChanges'><button class='save button button--large'><span class='btn-label-save'><i class='fa fa-check fa-fw'></i></span>Save Changes</button></li>
             <li class='menu-list-item saveChanges'><button class='login closeEncounter'></button></li>
           </ul>
         </div>
@@ -192,12 +193,6 @@ TabCAT.Console.updateStatusBar = ->
       syncData.toggle()
       syncButton.toggle()
       $('.sync').toggleClass 'syncopen'
-
-
-
-
-
-
 
 
     $statusBar.find('.version').text(TabCAT.version)
