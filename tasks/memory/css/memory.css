@@ -309,6 +309,7 @@ p {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
+    z-index: 100;
 }
 .foodSelection li, .animalSelection li {
     list-style-type: none;
@@ -331,7 +332,22 @@ p {
 */
 .currentSelection {
     display: block;
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 2.5em;
+}
+
+.selectionContainer {
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
     width: 50%;
     height: 50%;
-    background-color: #0000ff;
+    background-color: #333333;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
