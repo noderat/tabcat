@@ -205,7 +205,7 @@ TabCAT.UI.logout = ->
     if not window.confirm(
       'Logging out will close the current encounter without administration' +
       ' notes. Proceed?')
-      return
+        return
 
   TabCAT.User.logout(options).always(->
     window.location = (

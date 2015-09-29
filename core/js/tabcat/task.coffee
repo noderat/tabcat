@@ -228,7 +228,7 @@ TabCAT.Task.start = _.once((options) ->
   # the task document, with some additional fields filled in
   $.when(TabCAT.Couch.getDoc(null, '.', timeout: timeout),
          TabCAT.Config.get(timeout: timeout)).then(
-    (designDoc, config) ->
+           (designDoc, config) ->
       taskDoc.version = designDoc?.kanso?.config?.version
 
       if config.limitedPHI
@@ -370,8 +370,8 @@ TabCAT.Task.finish = (options) ->
     $.when(
       TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout),
       TabCAT.Task.syncEventLog(force: true, now: now, timeout: timeout),
-      waitedForMinWait).then(
-      ->
+      waitedForMinWait)
+      .then( ->
         # protect against scoring crashing
         score = try(TabCAT.Task.score())
         TabCAT.Encounter.addTaskScoring(taskDoc.name, score)
