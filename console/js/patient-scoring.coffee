@@ -125,6 +125,14 @@ showScoring = ->
   )
 
 
+#Accordion function for patient scoring
+content = $('.taskHeader')
+content.hide()
+scores = $('.scores')
+scores.hide()
+$('.tasks').touchdown ->
+  content.toggle()
+  scores.toggle()
 
 
 # initialization
