@@ -424,7 +424,7 @@ LineLengthTask = class extends LinePerceptionTask
 
       if @shouldShowPracticeCaption() and (
         Math.abs(orientation) < @MIN_PRACTICE_MODE_ORIENTATION)
-          continue
+        continue
 
       @lastOrientation = orientation
       return orientation
