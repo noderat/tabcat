@@ -227,15 +227,15 @@ TabCAT.Task.start = _.once((options) ->
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
   $.when(TabCAT.Couch.getDoc(null, '.', timeout: timeout),
-         TabCAT.Config.get(timeout: timeout)).then(
-           (designDoc, config) ->
-      taskDoc.version = designDoc?.kanso?.config?.version
+    TabCAT.Config.get(timeout: timeout))
+  .then( (designDoc, config) ->
+    taskDoc.version = designDoc?.kanso?.config?.version
 
-      if config.limitedPHI
-        taskDoc.limitedPHI =
-          clockOffset: TabCAT.Clock.offset()
+    if config.limitedPHI
+      taskDoc.limitedPHI =
+        clockOffset: TabCAT.Clock.offset()
 
-      TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout)
+    TabCAT.DB.putDoc(DATA_DB, taskDoc, now: now, timeout: timeout)
   )
 )
 

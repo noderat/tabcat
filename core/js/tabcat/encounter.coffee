@@ -148,9 +148,8 @@ TabCAT.Encounter.create = (options) ->
   TabCAT.Clock.reset()
 
   patientDoc = TabCAT.Patient.newDoc(options?.patientCode)
-
-  $.when(TabCAT.Config.get(timeout: options?.timeout)).then(
-    (config) ->
+  $.when(TabCAT.Config.get(timeout: options?.timeout))
+  .then( (config) ->
     encounterDoc = TabCAT.Encounter.newDoc(patientDoc.patientCode, config)
 
     patientDoc.encounterIds = [encounterDoc._id]
