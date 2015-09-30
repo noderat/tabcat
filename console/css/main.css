@@ -558,6 +558,7 @@ li a:-webkit-any-link {
     text-align: left;
     border-radius: 18px;
     color: #FFF;
+    width: 30%;
 }
 
 #tasks div.task:active {
