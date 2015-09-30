@@ -882,7 +882,7 @@ li a:-webkit-any-link {
 #patientScoring div.task .taskHeader {
     color: #eeeeee;
     font-size: 24px;
-    height: 36px;
+    /*height: 36px;*/
 }
 
 #patientScoring div.task .taskHeader .description {
@@ -974,4 +974,8 @@ div.score .scoreBody div.catchTrialScore .value {
 #patientScoring div.task div.score .scoreFooter {
     margin-top: 10px;
     font-size: 10px;
+}
+
+#patientScoring div.tasks{
+    display: none;
 }

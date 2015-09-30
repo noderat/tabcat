@@ -476,3 +476,7 @@ TabCAT.Console.populateWithScores = ($scoresDiv, scores) ->
       catchTrialScore)
 
     $scoresDiv.append($score)
+
+
+
+

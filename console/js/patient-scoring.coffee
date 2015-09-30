@@ -75,12 +75,21 @@ showScoring = ->
 
         $tasks = $encounter.find('.tasks')
 
+
+        encounters = $encounter.attr('id', "encounter-#{e._id}")
+        encounters.touchdown ->
+          taskDiv = $(this).find('.tasks')
+          taskDiv.toggle()
+
+
         for t in e.tasks by -1
           if not t.name?
             continue
 
           $task = $(TASK_HTML)
           $task.attr('id', "task-#{t._id}")
+
+
 
           taskInfo = tasksByName[t.name]
 
@@ -122,17 +131,12 @@ showScoring = ->
                   $scores.text('no scoring available for this task')
           )
     )
+
+    
   )
 
 
-#Accordion function for patient scoring
-content = $('.taskHeader')
-content.hide()
-scores = $('.scores')
-scores.hide()
-$('.tasks').touchdown ->
-  content.toggle()
-  scores.toggle()
+
 
 
 # initialization
