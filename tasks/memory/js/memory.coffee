@@ -218,7 +218,7 @@ MemoryTask = class
           { person: @PEOPLE.MAN_6, item: 'food' },
           { person: @PEOPLE.WOMAN_6, item: 'animal'}
         ],
-        FIRST_RECALL: [
+        RECALL_ONE: [
           { person: @PEOPLE.WOMAN_5 },
           { person: @PEOPLE.MAN_5 },
           { person: @PEOPLE.WOMAN_6 },
@@ -234,7 +234,7 @@ MemoryTask = class
           { person: @PEOPLE.MAN_6, item: 'animal'},
           { person: @PEOPLE.MAN_5, item: 'food'}
         ],
-        SECOND_RECALL: [
+        RECALL_TWO: [
           { person: @PEOPLE.MAN_6 },
           { person: @PEOPLE.MAN_5 },
           { person: @PEOPLE.WOMAN_6 },
@@ -263,7 +263,7 @@ MemoryTask = class
           { person: @PEOPLE.WOMAN_2, item: 'animal' },
           { person: @PEOPLE.MAN_1, item: 'food' }
         ],
-        FIRST_RECALL: [
+        RECALL_ONE: [
           { person: @PEOPLE.WOMAN_1 },
           { person: @PEOPLE.MAN_2 },
           { person: @PEOPLE.WOMAN_2 },
@@ -279,7 +279,7 @@ MemoryTask = class
           { person: @PEOPLE.MAN_2, item: 'food' },
           { person: @PEOPLE.WOMAN_2, item: 'animal' }
         ],
-        SECOND_RECALL: [
+        RECALL_TWO: [
           { person: @PEOPLE.MAN_2 },
           { person: @PEOPLE.WOMAN_1 },
           { person: @PEOPLE.WOMAN_2 },
@@ -308,7 +308,7 @@ MemoryTask = class
           { person: @PEOPLE.MAN_3, item: 'food' },
           { person: @PEOPLE.MAN_4, item: 'food'}
         ],
-        FIRST_RECALL: [
+        RECALL_ONE: [
           { person: @PEOPLE.WOMAN_3 },
           { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.MAN_4 },
@@ -324,7 +324,7 @@ MemoryTask = class
           { person: @PEOPLE.WOMAN_4, item: 'food' },
           { person: @PEOPLE.MAN_3, item: 'animal'}
         ],
-        SECOND_RECALL: [
+        RECALL_TWO: [
           { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.WOMAN_3 },
           { person: @PEOPLE.MAN_4 },
@@ -353,7 +353,7 @@ MemoryTask = class
           { person: @PEOPLE.WOMAN_8, item: 'animal' },
           { person: @PEOPLE.MAN_8, item: 'food'}
         ],
-        FIRST_RECALL: [
+        RECALL_ONE: [
           { person: @PEOPLE.WOMAN_7 },
           { person: @PEOPLE.MAN_8 },
           { person: @PEOPLE.WOMAN_8 },
@@ -369,7 +369,7 @@ MemoryTask = class
           { person: @PEOPLE.MAN_8, item: 'animal' },
           { person: @PEOPLE.MAN_7, item: 'food'}
         ]
-        SECOND_RECALL: [
+        RECALL_TWO: [
           { person: @PEOPLE.WOMAN_8 },
           { person: @PEOPLE.MAN_8 },
           { person: @PEOPLE.MAN_7 },
@@ -391,11 +391,22 @@ MemoryTask = class
     @ASPECT_RATIO = 4/3
 
     # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 3000
+    @TIME_BETWEEN_STIMULI = 100
 
-    @FADE_IN_TIME = 1000
+    @FADE_IN_TIME = 100
 
-    @FADE_OUT_TIME = 1000
+    @FADE_OUT_TIME = 100
+
+  buildInitialState: (recalls) ->
+    state = {}
+    for recall in recalls
+      do =>
+        data = []
+        _.each(@currentForm[recall], (person) ->
+          data[person.person.KEY] = person
+        )
+        state[recall] = data
+    return state
 
   #returns a tuple
   getCurrentForm: ->
@@ -413,7 +424,7 @@ MemoryTask = class
   buildScoringSheetsData: (currentForm) ->
     #we can derive the people and the list of total food
     #directly from each of the forms
-    people = currentForm.FIRST_RECALL
+    people = currentForm.RECALL_ONE
     food = []
     animals = []
     for person in people
@@ -448,7 +459,6 @@ MemoryTask = class
     return stimuli
 
   generateRecalls: (recallData) ->
-
     recalls = new Array()
     for data in recallData
       do ( ->
@@ -521,7 +531,6 @@ MemoryTask = class
             $image = @buildFaceElement(person.person, 'scoringFace')
             personContainerClass = personContainerClasses.shift()
             $container = $("#" + containerName + " ." + personContainerClass)
-            console.log $container
             $container.data('person', person.person.KEY)
             $container.find('.scoringImage').append($image)
             $food = @buildFoodOptions(person.person.FOOD)
@@ -652,6 +661,7 @@ MemoryTask = class
 
       #set the state's touched answer where the scoringScreen is current
       #and the person's key matches personKey
+      @state[scoringScreen][personKey].touched = touched
       console.log @state[scoringScreen]
     )
 
@@ -659,27 +669,17 @@ MemoryTask = class
 
     #there is currently no real event data since
     #this is more of an examiner task
-    TabCAT.Task.logEvent(@getTaskState(), null, interpretation)
-
+    TabCAT.Task.logEvent(@state)
+    
     TabCAT.Task.finish()
 
 @LearningMemoryTask = class extends MemoryTask
   constructor: ->
     super()
 
-    @scoringSheets = [{
-      label: "Recall One"
-      data: @buildScoringSheetsData(@currentForm)
-    },{
-      label: "Recall Two"
-      data: @buildScoringSheetsData(@currentForm)
-    }]
-
     @currentExampleTrial = 0
 
-    @currentScoringSheet = 0
-
-    @state = @buildInitialState()
+    @state = @buildInitialState(["RECALL_ONE", "RECALL_TWO"])
 
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
@@ -687,16 +687,9 @@ MemoryTask = class
 
     @preloadEncounterImageData($("#screenImage"), encounterPeople)
     @preloadScoringImageData(
-      recallOneScoringScreen: @currentForm.FIRST_RECALL
-      recallTwoScoringScreen: @currentForm.SECOND_RECALL
+      recallOneScoringScreen: @currentForm.RECALL_ONE
+      recallTwoScoringScreen: @currentForm.RECALL_TWO
     )
-
-  #use existing form as a template for data
-  buildInitialState: ->
-    return {
-      RECALL_ONE: @currentForm.FIRST_RECALL
-      RECALL_TWO: @currentForm.SECOND_RECALL
-    }
 
   showStartScreen: ->
     $("#backButton").hide()
@@ -780,7 +773,7 @@ MemoryTask = class
   beginFirstRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls(@currentForm.FIRST_RECALL)
+    trials = @generateRecalls(@currentForm.RECALL_ONE)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
@@ -789,7 +782,7 @@ MemoryTask = class
   beginSecondRecall: ->
     @showBlankScreen()
 
-    trials = @generateRecalls(@currentForm.SECOND_RECALL)
+    trials = @generateRecalls(@currentForm.RECALL_TWO)
 
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
@@ -891,18 +884,9 @@ MemoryTask = class
       @endTask()
     )
 
-  getTaskState: ->
-    console.log @scoringSheets
-    @scoringSheets
-
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
     super()
-
-    @scoringSheets = [{
-        label: "Delayed Recall"
-        data: @buildScoringSheetsData(@currentForm)
-    }]
 
     #generate pre-loaded images to switch out on the fly
     @preloadEncounterImageData($("#screenImage"), @currentForm.PEOPLE)
@@ -910,12 +894,7 @@ MemoryTask = class
       delayedRecallScoringScreen: @currentForm.DELAYED_RECALL
     )
 
-    @state = @buildInitialState()
-
-  buildInitialState: ->
-    return {
-      DELAYED_RECALL: @currentForm.DELAYED_RECALL
-    }
+    @state = @buildInitialState(["DELAYED_RECALL"])
 
   showStartScreen: ->
     $("completeButton").hide()
@@ -923,10 +902,7 @@ MemoryTask = class
 
   beginDelayedRecall: ->
     trials = @generateRecalls(@currentForm.DELAYED_RECALL)
-
-    TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
-      @iterateDelayedRecallTrials(trials)
-    )
+    @iterateDelayedRecallTrials(trials)
 
   iterateDelayedRecallTrials: (trials) ->
     @showNextTrial(trials.shift())
