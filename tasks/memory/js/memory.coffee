@@ -391,11 +391,11 @@ MemoryTask = class
     @ASPECT_RATIO = 4/3
 
     # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 100
+    @TIME_BETWEEN_STIMULI = 3000
 
-    @FADE_IN_TIME = 100
+    @FADE_IN_TIME = 1000
 
-    @FADE_OUT_TIME = 100
+    @FADE_OUT_TIME = 1000
 
   buildInitialState: (recalls) ->
     state = {}
@@ -670,7 +670,7 @@ MemoryTask = class
     #there is currently no real event data since
     #this is more of an examiner task
     TabCAT.Task.logEvent(@state)
-    
+
     TabCAT.Task.finish()
 
 @LearningMemoryTask = class extends MemoryTask
