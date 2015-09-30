@@ -173,6 +173,11 @@ p {
     max-width: 33%;
 }
 
+.scoringTitle {
+    height: 8%;
+    text-align: center;
+}
+
 #screenImage img {
     padding: 3%;
     width: auto;
@@ -290,8 +295,8 @@ p {
 
 .scoringRow {
     display: inline-block;
-    margin: 1%;
-    height: 19%;
+    margin: .5%;
+    height: 16.5%;
     width:100%;
 }
 
