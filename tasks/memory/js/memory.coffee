@@ -30,7 +30,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 translations =
   en:
     translation:
-      '...'
+      instructions_before_face:
+        'You will need to remember people <br> and their favorite things.'
+      instructions_favorite_food:
+        'For example, remember that her favorite food is an...'
+      instructions_favorite_animal:
+        'And her favorite animal is a...'
+      instructions_recall_both:
+        food:
+          'food'
+        animal:
+          'animal'
+      instructions_remember:
+        1: 'Now you will see some more faces. ' +
+           'You will see each face twice; once with their favorite ' +
+           'food and once with their favorite animal.'
+        2: 'Remember both.'
+      instructions_ready:
+        'Are you ready to begin?'
   es:
     translation:
       '...'
@@ -126,6 +143,8 @@ MemoryTask = class
       WOMAN_EXAMPLE:
         KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
+        FOOD: @CHOICES.FOOD.APPLE
+        ANIMAL: @CHOICES.ANIMAL.DOLPHIN
       WOMAN_1:
         KEY: 'woman1'
         IMAGE: 'woman1.jpg'
@@ -169,8 +188,8 @@ MemoryTask = class
     }
 
     @EXAMPLE_PEOPLE = [
-      @PEOPLE.WOMAN_EXAMPLE,
-      @PEOPLE.MAN_EXAMPLE
+      @PEOPLE.WOMAN_EXAMPLE
+      #@PEOPLE.MAN_EXAMPLE
     ]
 
     #these stay the same throughout forms
@@ -473,6 +492,8 @@ MemoryTask = class
     # function with the same name as type, but there's some strange
     # behavior regarding scope that I don't yet understand
     switch slide.action
+      when "exampleInstructions" then \
+        @exampleInstructions slide.instructions
       when "firstExampleRemember" then \
         @firstExampleRemember slide.person, slide.item
       when "exampleRemember" then \
@@ -514,7 +535,6 @@ MemoryTask = class
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     @showStartScreen()
-
 
   preloadEncounterImageData: (parentElement, sourcePeople) ->
     for person in sourcePeople
@@ -579,12 +599,13 @@ MemoryTask = class
 
     return $animal
 
-  firstExampleRemember: (person, item) ->
-    $(".encounterFace").hide()
-    $("#supplementaryInstruction").hide()
-    $("#exampleImage img").attr('src', "img/" + person.IMAGE).show()
-    $("#exampleFood").empty().html("<p>" + item + "</p>")
-    $("#exampleScreen").show()
+  exampleInstructions: (instructions) ->
+    $("#supplementaryInstruction").show().html(
+      $.t(instructions)
+    )
+    $("#exampleScreen").hide()
+    $("#recallOne").hide()
+    $("#recallBoth").hide()
 
   exampleRemember: (person, item) ->
     $("#supplementaryInstruction").show().html(
