@@ -30,9 +30,10 @@ button:focus {
 }
 
 #iconBar {
-    margin: 2% auto;
+    padding-top: 8%;
     text-align: center;
-    height:  25%;
+    height: 25%;
+    background-color: #122147;
 }
 
 .digitSymbol {
@@ -218,7 +219,7 @@ button:focus {
     position: fixed;
     left: 0;
     right: 0;
-    top: 28%;
+    top: 42%;
 }
 
 #startScreenMessage p {

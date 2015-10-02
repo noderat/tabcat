@@ -4,6 +4,7 @@
     "description": "Digit Symbol",
     "attachments": [
         "css/digit-symbol.css",
+        "css/main.css",
         "img/icon/digit-symbol.png",
         "js/task.js",
         "digit-symbol.html",
