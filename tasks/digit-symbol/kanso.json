@@ -35,7 +35,9 @@
         "img/7.1.png",
         "img/7.2.png",
         "img/7.3.png",
-        "img/7.4.png"
+        "img/7.4.png",
+        "img/buttons/nav-next.png",
+        "img/buttons/nav-back.png"
 
     ],
     "dependencies": {

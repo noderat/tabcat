@@ -458,7 +458,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @startTimer()
     $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
     return
-
+    
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
     @allNumbers.push @currentStimuli

@@ -1104,6 +1104,7 @@ div.score .scoreBody div.catchTrialScore .value {
     font-size: 8em;
     /* border-bottom: 3px solid #3A3A3A; */
     line-height: 100%;
+    color: #A6CFD7;
     float: left;
 }
 
@@ -1118,7 +1119,26 @@ div.score .scoreBody div.catchTrialScore .value {
 }
 
 #rectangle{
+    width: 100% !important;
+    right: 0 !important;
+    left: 0 !important
+}
+
+#digitSymbolBanner{
     width: 100%;
-    right: 0;
-    left: 0;
+    padding-left: 25px;
+    padding-top: 5px;
+    background-color: #122147;
+}
+
+#digitSymbolBanner span{
+    position: fixed;
+    top: 3%;
+    font-size: 3em;
+    font-weight: 700;
+    font-family: "Roboto-Medium", sans-serif;
+    padding-left: 15px;
+}
+.digitSymbolBannerLogo{
+    width: 100px;
 }

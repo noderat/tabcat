@@ -227,16 +227,10 @@ TabCAT.Task.start = _.once((options) ->
   # fetch login information and the task's design doc (.), and create
   # the task document, with some additional fields filled in
   $.when(TabCAT.Couch.getDoc(null, '.', timeout: timeout),
-<<<<<<< HEAD
     TabCAT.Config.get(timeout: timeout))
   .then( (designDoc, config) ->
     taskDoc.version = designDoc?.kanso?.config?.version
-=======
-         TabCAT.Config.get(timeout: timeout)).then(
-           (designDoc, config) ->
-      taskDoc.version = designDoc?.kanso?.config?.version
->>>>>>> line indentation issues fixed in task.coffee, ui.coffee, dart.coffee, line-perception.coffee
-
+    
     if config.limitedPHI
       taskDoc.limitedPHI =
         clockOffset: TabCAT.Clock.offset()
