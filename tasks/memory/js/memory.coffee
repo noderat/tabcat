@@ -31,16 +31,16 @@ translations =
   en:
     translation:
       instructions_before_face:
-        'You will need to remember people <br> and their favorite things.'
+        1: 'You will need to remember people <br> and their favorite things.'
       instructions_favorite_food:
-        'For example, remember that her favorite food is an...'
+        1: 'For example, remember that her favorite food is an...'
       instructions_favorite_animal:
-        'And her favorite animal is a...'
+        1: 'And her favorite animal is a...'
       instructions_recall_both:
         food:
-          'food'
+          'foodasdf'
         animal:
-          'animal'
+          'animalasdf'
       instructions_remember:
         1: 'Now you will see some more faces. ' +
            'You will see each face twice; once with their favorite ' +
@@ -189,33 +189,6 @@ MemoryTask = class
 
     @EXAMPLE_PEOPLE = [
       @PEOPLE.WOMAN_EXAMPLE
-      #@PEOPLE.MAN_EXAMPLE
-    ]
-
-    #these stay the same throughout forms
-    @EXAMPLE_TRIALS = [
-      {
-        action: 'firstExampleRemember',
-        person: @PEOPLE.MAN_EXAMPLE,
-        remember: 'food',
-        item: @CHOICES.FOOD.APPLE
-      },
-      {
-        action: 'exampleRemember',
-        person: @PEOPLE.WOMAN_EXAMPLE ,
-        remember: 'animal',
-        item: @CHOICES.ANIMAL.DOLPHIN
-      },
-      {
-        action: 'exampleRecall',
-        person: @PEOPLE.MAN_EXAMPLE,
-        recall: 'food'
-      },
-      {
-        action: 'exampleRecall',
-        person: @PEOPLE.WOMAN_EXAMPLE,
-        recall: 'animal'
-      }
     ]
 
     #assigning people and food/animal combinations to different forms
@@ -714,59 +687,100 @@ MemoryTask = class
 
   showStartScreen: ->
     $("#backButton").hide()
-    @currentExampleTrial = 0
 
-    @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
+    $("#instructionsScreen").show()
+    html = @getTranslatedParagraphs('instructions_before_face')
 
-    @currentExampleTrial++
+    $("#instructionsScreen").html(html)
 
     $("#nextButton").unbind().show().touchdown( =>
-      @iterateExampleScreens()
+      @instructionsFavoriteFood()
     )
 
-  iterateExampleScreens: ->
+  instructionsFavoriteFood: ->
+    #$("#instructionsScreen").hide()
 
-    #these should already be in this state the first time
-    #but should be reset if back button was pressed from instruction screen
-    $("#beginButton").hide()
-    $("#nextButton").show()
-    $("#backButton").show()
-    @showNextTrial(@EXAMPLE_TRIALS[@currentExampleTrial])
+    $("#instructionsScreen").show()
+    html = @getTranslatedParagraphs('instructions_favorite_food')
 
-    $("#nextButton").unbind().touchdown( =>
-      @currentExampleTrial++
-      if @currentExampleTrial <= @EXAMPLE_TRIALS.length - 1
-        @iterateExampleScreens()
-      else
-        @showInstructionsScreen()
+    $("#instructionsScreen").html(html)
+
+    $("#backButton").unbind().show().touchdown( =>
+      @showStartScreen()
     )
 
-    $("#backButton").unbind().touchdown( =>
-      @currentExampleTrial--
-      if @currentExampleTrial == 0
-        @showStartScreen()
-      else
-        @iterateExampleScreens()
+    $("#nextButton").unbind().show().touchdown( =>
+      @instructionsFavoriteAnimal()
     )
 
-  showInstructionsScreen: ->
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
+  instructionsFavoriteAnimal: ->
+
     $("#instructionsScreen").show()
 
-    $("#nextButton").unbind().hide()
-    $("#beginButton").unbind().show().touchdown( =>
-      #start actual task
+    html = @getTranslatedParagraphs('instructions_favorite_animal')
+
+    $("#instructionsScreen").html(html)
+
+    $("#backButton").unbind().show().touchdown( =>
+      @instructionsFavoriteAnimal()
+    )
+
+    $("#nextButton").unbind().show().touchdown( =>
+      @instructionsRecallBoth()
+    )
+
+  instructionsRecallBoth: ->
+
+    $("#instructionsScreen").show()
+
+    html = @getTranslatedParagraphs('instructions_recall_both')
+
+    $("#instructionsScreen").html(html)
+
+    $("#backButton").unbind().show().touchdown( =>
+      @instructionsFavoriteAnimal()
+    )
+
+    $("#nextButton").unbind().show().touchdown( =>
+      @instructionsRemember()
+    )
+
+  instructionsRemember: ->
+
+    $("#instructionsScreen").show()
+
+    html = @getTranslatedParagraphs('instructions_remember')
+
+    $("#instructionsScreen").html(html)
+
+    $("#backButton").unbind().show().touchdown( =>
+      @instructionsFavoriteAnimal()
+    )
+
+    $("#nextButton").unbind().show().touchdown( =>
+      @instructionsReady()
+    )
+
+  instructionsReady: ->
+
+    $("#instructionsScreen").show()
+    html = @getTranslatedParagraphs('instructions_ready')
+
+    $("#instructionsScreen").html(html)
+
+    $("#backButton").unbind().show().touchdown( =>
+      @instructionsFavoriteAnimal()
+    )
+
+    $("#nextButton").unbind().show().touchdown( =>
       @beginFirstExposureTrials()
     )
 
-    $("#backButton").unbind().touchdown( =>
-      @currentExampleTrial--
-      $("#exampleScreen").show()
-      $("#trialScreen").show()
-      $("#instructionsScreen").hide()
-      @iterateExampleScreens()
-    )
+  getTranslatedParagraphs: (toTranslate) ->
+    translatedText = $.t(toTranslate, {returnObjectTrees: true})
+    html = _.map(translatedText, (value, key) ->
+      '<p>' + value + '</p>')
+    return html
 
   beginFirstExposureTrials: ->
     $("#beginButton").unbind().hide()
