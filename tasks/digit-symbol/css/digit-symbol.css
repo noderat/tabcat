@@ -205,13 +205,13 @@ button:focus {
 #nextButton {
     position: absolute;
     top: 88%;
-    left: 85%;
+    left: 94%;
 }
 
 #beginButton {
     display: none;
     position:absolute;
-    top: 88%;
+    top: 82%;
     left: 85%;
 }
 

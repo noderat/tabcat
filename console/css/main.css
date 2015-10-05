@@ -9,6 +9,102 @@ body {
     font-size: 1.2em;
 }
 
+/* no margins or padding by default */
+div {
+    margin: 0;
+    padding: 0;
+}
+
+/* fullscreen mode. set this class on html and body to simulate an app */
+.fullscreen {
+    position: absolute;
+    top: 0%;
+    height: 100%;
+    bottom: 100%;
+    left: 0%;
+    width: 100%;
+    right: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* disable elastic scrolling and zooming */
+body.fullscreen {
+    overflow: hidden;
+    -ms-touch-action: none !important;
+}
+
+/* disable text selection. usually just need to set this on body */
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* if you want to re-enable text selection */
+.selectable {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* used to show that a task is done */
+body.taskComplete p.message {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 30%;
+    width: 100%;
+    font-size: 15em;
+    text-align: center;
+    color: #eeeeee;
+}
+
+/* portrait mode selectors. use this to hide the task and show a message
+instead when the browser is in portrait mode */
+.portrait-show {
+    display: none;
+    visibility: hidden;
+}
+
+@media (orientation: portrait) {
+    .portrait-show {
+        display: block;
+        visibility: visible;
+    }
+    .portrait-hide {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+div.requireLandscapeMode div.portrait-show p {
+    font-size: 10em;
+    /* use padding rather than margin at top, or we get a black bar at the top */
+    margin-top: 0;
+    padding-top: 3em;
+    /* this is relative to its 10em size, so 30em */
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    text-align: center;
+}
+
+button {
+    color: #33334d;
+    border-color: #ffffff;
+    background-color: #ffffff;
+}
+
+button:disabled {
+    color: #9999aa;
+}
+
 input {
     height: 30px;
     font-size: 1.2em;
@@ -234,7 +330,7 @@ input:focus {
     left: -18px;
     padding-top: 0.75em;
     padding-right: 0.8rem;
-    padding-bottom: 0.75em;
+    padding-bottom: 0.85em;
     padding-left: 0.8rem;
     background: rgba(0, 0, 0, 0.18);
     border-radius: 9px 0 0 9px;
@@ -248,7 +344,6 @@ input:focus {
 /*----------------------------*/
 #statusBar {
     text-align: center;
-    /*height: 50px;*/
     padding: 5px;
     min-width: 800px;
 }
@@ -257,7 +352,6 @@ input:focus {
     position: relative;
     float: left;
     width: 250px;
-    /*text-align: left;*/
     color: #bbbbaa;
     display: none;
 }
@@ -977,6 +1071,69 @@ div.score .scoreBody div.catchTrialScore .value {
     font-size: 10px;
 }
 
-#patientScoring div.tasks{
+#patientScoring div.tasks {
     display: none;
+}
+
+/*----Digit Symbol----*/
+.digitSymbol {
+    -webkit-border-radius: 20px 20px 20px 20px;
+    -moz-border-radius: 20px 20px 20px 20px;
+    border-radius: 20px 20px 20px 20px;
+    position: relative;
+    display: inline-block;
+    border: 3px solid white;
+    width: 9%;
+    height: 90%;
+    background-color: transparent;
+    margin: 0 10px 0 10px;
+}
+
+.digitSymbol .digitSymbolTop {
+    display: block;
+    text-align: center;
+    margin: auto auto;
+    width: 100%;
+    height: 50%;
+    font-size: 8em;
+    /* border-bottom: 3px solid #3A3A3A; */
+    line-height: 100%;
+    color: #A6CFD7;
+    float: left;
+}
+
+.digitSymbol .digitSymbolBottom {
+    display: block;
+    width: 100%;
+    height: 50%;
+    clear: both;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+#rectangle {
+    width: 100% !important;
+    right: 0 !important;
+    left: 0 !important;
+}
+
+#digitSymbolBanner {
+    width: 100%;
+    padding-left: 25px;
+    padding-top: 5px;
+    background-color: #122147;
+}
+
+#digitSymbolBanner span {
+    position: fixed;
+    top: 3%;
+    font-size: 3em;
+    font-weight: 700;
+    font-family: "Roboto-Medium", sans-serif;
+    padding-left: 15px;
+}
+
+.digitSymbolBannerLogo {
+    width: 100px;
 }

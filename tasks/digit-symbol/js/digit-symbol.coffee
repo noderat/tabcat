@@ -292,6 +292,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     html = @getTranslationParagraphs 'start_screen_practice'
     $('#startScreenMessage').addClass('bigFont').html html
 
+    #Remove background color of icon bar when entering practice/test mode
+    iconBar = $('#iconBar')
+    iconBar.removeAttr('style').css('background-color' , '#122147')
+    iconBar.css('background-color', 'transparent')
+
+    #Align the digit symbol logo banner to the left on practice/test mode
+    digitSymbolBanner = $('#digitSymbolBanner')
+    digitSymbolBanner.removeAttr('style').css('padding-left' , '40%')
+    digitSymbolBanner.css('padding-left','25px')
+
     $('#backButton').show().touchdown( =>
       $('#startScreenMessage').removeClass('bigFont')
       @$stimuliSymbol.removeClass("correct")
@@ -458,6 +468,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @startTimer()
     $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
     return
+
     
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
@@ -573,3 +584,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     html = _.map(translatedText, (value, key) ->
       '<p>' + value + '</p>')
     return html
+
