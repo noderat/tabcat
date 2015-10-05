@@ -41,6 +41,9 @@ showTasks = ->
   TabCAT.Task.getTaskInfo().then((taskInfo) ->
     $('#taskList').empty()
 
+    contained = $('<div></div>', class: 'container ')
+    $('#taskList').append(contained)
+
     batteries = _.sortBy(_.pairs(taskInfo.batteries), (n, b) -> b.description)
     tasksByName = taskInfo.tasks
 
@@ -162,7 +165,7 @@ showTasks = ->
             $tasksDiv.removeClass('collapsed')
         )
 
-      $('#taskList').append($batteryDiv)
+      contained.append($batteryDiv)
   )
 
 
