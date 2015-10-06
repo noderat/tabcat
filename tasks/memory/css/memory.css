@@ -274,13 +274,13 @@ p {
     left: 79%;
 }
 
-.nextButton {
+#recallNextButton {
     position: absolute;
     top: 150%;
     left: 65%;
 }
 
-.nextButton img {
+#recallNextButton img {
     width: 2em;
     height: 2em;
 }
@@ -288,6 +288,7 @@ p {
 #supplementaryInstruction {
     display: none;
     position: absolute;
+    font-size: .85em;
     width: 100%;
     top: 3%;
     text-align: center;

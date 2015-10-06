@@ -465,14 +465,6 @@ MemoryTask = class
     # function with the same name as type, but there's some strange
     # behavior regarding scope that I don't yet understand
     switch slide.action
-      when "exampleInstructions" then \
-        @exampleInstructions slide.instructions
-      when "firstExampleRemember" then \
-        @firstExampleRemember slide.person, slide.item
-      when "exampleRemember" then \
-        @exampleRemember slide.person, slide.item
-      when "exampleRecall" then \
-        @exampleRecall slide.person, slide.recall
       when "rememberOne" then \
         @rememberOne slide.person, slide.item
       when "recallBoth" then \
@@ -572,27 +564,6 @@ MemoryTask = class
 
     return $animal
 
-  exampleInstructions: (instructions) ->
-    $("#supplementaryInstruction").show().html(
-      $.t(instructions)
-    )
-    $("#exampleScreen").hide()
-    $("#recallOne").hide()
-    $("#recallBoth").hide()
-
-  exampleRemember: (person, item) ->
-    $("#supplementaryInstruction").show().html(
-      "<p>And her favorite animal is:</p>"
-    )
-    $("#exampleScreen").hide()
-    $("#recallOne").hide()
-    $("#recallBoth").hide()
-
-    @showPerson(person)
-    $("#rememberOne").show().empty().html( \
-      '<p>' + item + '</p>' )
-    $("#trialScreen").show()
-
   showPerson: (person, fadeIn = false) ->
     $(".encounterFace").hide()
     $image = $(".encounterFace[data-person='" + person.KEY + "']")
@@ -600,17 +571,6 @@ MemoryTask = class
       $image.fadeIn(@FADE_IN_TIME)
     else
       $image.show()
-
-  exampleRecall: (person, recall) ->
-    $("#supplementaryInstruction").hide()
-    $("#exampleScreen").hide()
-    $("#rememberOne").hide()
-    $("#recallBoth").hide()
-
-    @showPerson(person)
-
-    $("#recallOne").show().find(".recallLabel").empty().html(recall + ":")
-    $("#trialScreen").show()
 
   rememberOne: (person, item) ->
     stimuli = person[item.toUpperCase()]
@@ -625,11 +585,10 @@ MemoryTask = class
   recallBoth: (person) ->
     $("#exampleScreen").hide()
     $("#rememberOne").hide()
-    $("#recallOne").hide()
-    $("#recallBoth").hide()
 
     @showPerson(person)
     $("#recallBoth").show()
+    $("#recallNextButton").show()
     $("#trialScreen").show()
 
   scoringTouchHandler: (event, type, scoringScreen) ->
@@ -687,6 +646,11 @@ MemoryTask = class
 
   showStartScreen: ->
     $("#backButton").hide()
+    $("#trialScreen").hide()
+
+    $("#rememberOne").hide()
+
+    $("#supplementaryInstruction").hide()
 
     $("#instructionsScreen").show()
     html = @getTranslatedParagraphs('instructions_before_face')
@@ -698,12 +662,19 @@ MemoryTask = class
     )
 
   instructionsFavoriteFood: ->
-    #$("#instructionsScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#recallBoth").hide()
 
-    $("#instructionsScreen").show()
     html = @getTranslatedParagraphs('instructions_favorite_food')
 
-    $("#instructionsScreen div#instructions").html(html)
+    $("#supplementaryInstruction").show().html(html)
+
+    person = @EXAMPLE_PEOPLE[0]
+
+    @showPerson(person)
+    $("#rememberOne").show().empty().html(
+      '<p>' + person.FOOD + '</p>' )
+    $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
       @showStartScreen()
@@ -715,11 +686,19 @@ MemoryTask = class
 
   instructionsFavoriteAnimal: ->
 
-    $("#instructionsScreen").show()
+    $("#instructionsScreen").hide()
+    $("#recallBoth").hide()
 
     html = @getTranslatedParagraphs('instructions_favorite_animal')
 
-    $("#instructionsScreen div#instructions").html(html)
+    $("#supplementaryInstruction").show().html(html)
+
+    person = @EXAMPLE_PEOPLE[0]
+
+    @showPerson(person)
+    $("#rememberOne").show().empty().html(
+      '<p>' + person.ANIMAL + '</p>' )
+    $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
       @instructionsFavoriteFood()
@@ -731,7 +710,14 @@ MemoryTask = class
 
   instructionsRecallBoth: ->
 
-    $("#instructionsScreen").show()
+    $("#trialScreen").show()
+    $("#instructionsScreen").hide()
+
+    $("#rememberOne").hide()
+    $("#recallBoth").show()
+    $("#recallNextButton").hide()
+
+    $("#supplementaryInstruction").hide()
 
     html = @getTranslatedParagraphs('instructions_recall_both')
 
@@ -828,7 +814,7 @@ MemoryTask = class
     trial = trials.shift()
     @showNextTrial(trial)
 
-    $(".nextButton").unbind().touchdown( =>
+    $("#recallNextButton").unbind().touchdown( =>
       if trials.length
         @iterateFirstRecallTrials(trials)
       else
@@ -839,7 +825,7 @@ MemoryTask = class
 
     @showNextTrial(trials.shift())
 
-    $(".nextButton").unbind().touchdown( =>
+    $("#recallNextButton").unbind().touchdown( =>
       if trials.length
         @iterateSecondRecallTrials(trials)
       else
@@ -943,7 +929,7 @@ MemoryTask = class
   iterateDelayedRecallTrials: (trials) ->
     @showNextTrial(trials.shift())
 
-    $(".nextButton").unbind().touchdown( =>
+    $("#recallNextButton").unbind().touchdown( =>
       if trials.length
         @iterateDelayedRecallTrials(trials)
       else
