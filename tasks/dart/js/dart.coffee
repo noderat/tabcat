@@ -153,8 +153,8 @@ initVideoScreen = _.once(->
       restartVideoAt? and video.seekable?.length and \
       video.seekable.start(0) <= restartVideoAt <= video.seekable.end(0))
 
-      video.currentTime = restartVideoAt
-      restartVideoAt = null
+        video.currentTime = restartVideoAt
+        restartVideoAt = null
 
   # log problems loading the video, but don't do anything about them
   $video.on('abort error stalled', (event) ->
