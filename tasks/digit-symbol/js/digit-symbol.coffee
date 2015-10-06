@@ -36,13 +36,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         next_button_html:
           'Next'
         start_screen_html:
-          1: 'Look at the boxes above.'
-          2: 'Each number has its own picture.'
-          3: 'Now look at the pictures below. <br>They match ' +
+          1: 'Look at the boxes above. <br>' +
+            'Highlight one of the number/picture boxes above when the ' +
+            'second instruction line appears. <br> ' +
+            'Each number has its own picture.'
+          2: 'Now look at the pictures below. <br>They match ' +
             'the pictures above.'
+          3: 'Highlight the picture below that matches the highlighted <br>' +
+            'box above when the third instruction appears.'
         start_screen_next_html:
           1: 'Each time you see a number in the middle of the screen, ' +
-            'look to see <br> which picture matches the number above, ' +
+            'look to see <br> which picture matches the number, ' +
             'and touch that picture below.'
         start_screen_practice:
           1: 'Let\'s practice.'
