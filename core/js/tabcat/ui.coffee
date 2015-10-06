@@ -208,7 +208,6 @@ TabCAT.UI.logout = ->
     if not window.confirm(
       encounterMessage
     )
-
       return
 
   TabCAT.User.logout(options).always(->
