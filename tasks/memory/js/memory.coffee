@@ -378,11 +378,11 @@ MemoryTask = class
     @ASPECT_RATIO = 4/3
 
     # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 3000
+    @TIME_BETWEEN_STIMULI = 30
 
-    @FADE_IN_TIME = 1000
+    @FADE_IN_TIME = 10
 
-    @FADE_OUT_TIME = 1000
+    @FADE_OUT_TIME = 10
 
   buildInitialState: (recalls) ->
     state = {}
@@ -945,4 +945,19 @@ MemoryTask = class
     $("#completeButton").unbind().show().touchdown( =>
       #at this point, check to ensure we've answered all questions
       @endTask()
+    )
+
+
+    ##########
+    ##
+    ## Modal for Memory Recall Page
+    ## Use HTML5 Data-Modal-Selector
+    scoringImageModal = $('.modal')
+    scoringImageModal.hide()
+    $('.scoringImage').touchdown ->
+      scoringImageModal.show()
+      return
+
+    $('.closeScoringImage').touchdown( =>
+      $('.modal').hide()
     )
