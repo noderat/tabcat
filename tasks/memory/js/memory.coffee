@@ -36,11 +36,6 @@ translations =
         1: 'For example, remember that her favorite food is an...'
       instructions_favorite_animal:
         1: 'And her favorite animal is a...'
-      instructions_recall_both:
-        food:
-          'foodasdf'
-        animal:
-          'animalasdf'
       instructions_remember:
         1: 'Now you will see some more faces. ' +
            'You will see each face twice; once with their favorite ' +
@@ -615,7 +610,6 @@ MemoryTask = class
       #set the state's touched answer where the scoringScreen is current
       #and the person's key matches personKey
       @state[scoringScreen][personKey].touched = touched
-      console.log @state[scoringScreen]
     )
 
   endTask: ->
@@ -718,10 +712,6 @@ MemoryTask = class
     $("#recallNextButton").hide()
 
     $("#supplementaryInstruction").hide()
-
-    html = @getTranslatedParagraphs('instructions_recall_both')
-
-    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
       @instructionsFavoriteAnimal()
@@ -901,7 +891,6 @@ MemoryTask = class
       )
 
     $("#completeButton").unbind().show().touchdown( =>
-      console.log "closing task"
       #at this point, check to ensure we've answered all questions
       @endTask()
     )
@@ -954,7 +943,6 @@ MemoryTask = class
       )
 
     $("#completeButton").unbind().show().touchdown( =>
-      console.log "closing task"
       #at this point, check to ensure we've answered all questions
       @endTask()
     )
