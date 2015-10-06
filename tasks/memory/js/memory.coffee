@@ -47,7 +47,7 @@ translations =
            'food and once with their favorite animal.'
         2: 'Remember both.'
       instructions_ready:
-        'Are you ready to begin?'
+        1: 'Are you ready to begin?'
   es:
     translation:
       '...'
@@ -691,7 +691,7 @@ MemoryTask = class
     $("#instructionsScreen").show()
     html = @getTranslatedParagraphs('instructions_before_face')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#nextButton").unbind().show().touchdown( =>
       @instructionsFavoriteFood()
@@ -703,7 +703,7 @@ MemoryTask = class
     $("#instructionsScreen").show()
     html = @getTranslatedParagraphs('instructions_favorite_food')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
       @showStartScreen()
@@ -719,10 +719,10 @@ MemoryTask = class
 
     html = @getTranslatedParagraphs('instructions_favorite_animal')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
-      @instructionsFavoriteAnimal()
+      @instructionsFavoriteFood()
     )
 
     $("#nextButton").unbind().show().touchdown( =>
@@ -735,7 +735,7 @@ MemoryTask = class
 
     html = @getTranslatedParagraphs('instructions_recall_both')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
       @instructionsFavoriteAnimal()
@@ -751,10 +751,10 @@ MemoryTask = class
 
     html = @getTranslatedParagraphs('instructions_remember')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
-      @instructionsFavoriteAnimal()
+      @instructionsRecallBoth()
     )
 
     $("#nextButton").unbind().show().touchdown( =>
@@ -762,17 +762,18 @@ MemoryTask = class
     )
 
   instructionsReady: ->
-
+    $("#nextButton").hide()
     $("#instructionsScreen").show()
+
     html = @getTranslatedParagraphs('instructions_ready')
 
-    $("#instructionsScreen").html(html)
+    $("#instructionsScreen div#instructions").html(html)
 
     $("#backButton").unbind().show().touchdown( =>
-      @instructionsFavoriteAnimal()
+      @instructionsRemember()
     )
 
-    $("#nextButton").unbind().show().touchdown( =>
+    $("#beginButton").unbind().show().touchdown( =>
       @beginFirstExposureTrials()
     )
 
