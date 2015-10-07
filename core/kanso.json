@@ -25,7 +25,10 @@
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
                 "js/vendor/underscore.js",
-                "js/vendor/jquery-ui.js"],
+                "js/vendor/jquery-ui.js",
+                "js/vendor/react-0.14.0.min.js",
+                "js/vendor/react-dom-0.14.0.min.js"
+    ],
     "load": "js/couchdb/app",
     "dependencies": {
         "attachments": null,
