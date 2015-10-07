@@ -132,7 +132,6 @@ showTasks = ->
             startUrl = TabCAT.Console.getTaskStartUrl(task)
             if startUrl?
               # start the task
-              $taskDiv.on('click', (event) -> window.location = startUrl)
 
               if task.forms
                 for form, value of task.forms
@@ -148,6 +147,8 @@ showTasks = ->
                     )
                     $taskDiv.append $icon
                   )
+              else
+                $taskDiv.on('click', (event) -> window.location = startUrl)
 
         $taskDiv.append($scoringMessage)
         $tasksDiv.append($taskDiv)
