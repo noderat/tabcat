@@ -45,7 +45,7 @@
         },
         "tasks": {
             "learning": {
-                "description": "Learning",
+                "description": "Favorites Learning",
                 "icon": "img/learning.png",
                 "start": "learning.html",
                 "forms": {
@@ -56,7 +56,7 @@
                 }
             },
             "delay": {
-                "description": "Delay",
+                "description": "Favorites Delay",
                 "icon": "img/delay.png",
                 "start": "delay.html",
                 "forms": {
