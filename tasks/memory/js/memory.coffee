@@ -378,11 +378,11 @@ MemoryTask = class
     @ASPECT_RATIO = 4/3
 
     # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 30
+    @TIME_BETWEEN_STIMULI = 3000
 
-    @FADE_IN_TIME = 10
+    @FADE_IN_TIME = 1000
 
-    @FADE_OUT_TIME = 10
+    @FADE_OUT_TIME = 1000
 
   buildInitialState: (recalls) ->
     state = {}
