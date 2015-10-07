@@ -948,16 +948,4 @@ MemoryTask = class
     )
 
 
-    ##########
-    ##
-    ## Modal for Memory Recall Page
-    ## Use HTML5 Data-Modal-Selector
-    scoringImageModal = $('.modal')
-    scoringImageModal.hide()
-    $('.scoringImage').touchdown ->
-      scoringImageModal.show()
-      return
-
-    $('.closeScoringImage').touchdown( =>
-      $('.modal').hide()
-    )
+    
