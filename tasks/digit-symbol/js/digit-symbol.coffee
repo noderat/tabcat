@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             'and touch that picture below.'
         start_screen_practice:
           1: 'Let\'s practice.'
-          2: 'Work as quickly as you can <br> without making any mistakes.'
+          2: 'Work as fast as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
 
@@ -251,8 +251,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#nextButton').touchdown( ( (event) =>
 
       if instructions.length
+        if instructions.length == 1
+          $('#symbol3').addClass('correct')
         $('#startScreenMessage').append instructions.shift()
-        $('#iconNumber4').setAttribute 'class','correct'
+        $('#iconSymbol4').addClass('correct')
       else
         @startScreenNext()
 
@@ -266,6 +268,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @fillScreen()
 
+    #remove previous page correct classes on icons, Form One
+    $('#symbol3').removeClass('correct')
+    $('#iconSymbol4').removeClass('correct')
+
+    
     $('#backButton').show().touchdown(=>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
