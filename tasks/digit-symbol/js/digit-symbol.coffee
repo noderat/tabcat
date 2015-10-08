@@ -251,10 +251,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#nextButton').touchdown( ( (event) =>
 
       if instructions.length
+        sequence = $('div[data-sequence="1"]')
+        iconId = $('div[id*="1"][class="digitSymbol"]')
         if instructions.length == 1
-          $('#symbol3').addClass('correct')
+          sequence.addClass('correct')
+        if instructions.length == 2
+          iconId.addClass('correct')
         $('#startScreenMessage').append instructions.shift()
-        $('#iconSymbol4').addClass('correct')
       else
         @startScreenNext()
 
@@ -269,8 +272,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @fillScreen()
 
     #remove previous page correct classes on icons, Form One
-    $('#symbol3').removeClass('correct')
-    $('#iconSymbol4').removeClass('correct')
+    sequence = $('div[data-sequence="1"]')
+    sequence.removeClass('correct')
+    $('#iconSymbol1').removeClass('correct')
 
     
     $('#backButton').show().touchdown(=>
