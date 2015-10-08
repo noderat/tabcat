@@ -252,6 +252,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       if instructions.length
         $('#startScreenMessage').append instructions.shift()
+        $('#iconNumber4').setAttribute 'class','correct'
       else
         @startScreenNext()
 
