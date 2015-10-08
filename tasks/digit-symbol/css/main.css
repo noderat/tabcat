@@ -1094,3 +1094,7 @@ li a:-webkit-any-link {
 .digitSymbolBannerLogo {
     width: 100px;
 }
+
+.instruct-highlight{
+    background-color: gray!important;
+}

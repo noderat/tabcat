@@ -254,9 +254,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         sequence = $('div[data-sequence="1"]')
         iconId = $('div[id*="1"][class="digitSymbol"]')
         if instructions.length == 1
-          sequence.addClass('correct')
+          sequence.addClass('instruct-highlight')
         if instructions.length == 2
-          iconId.addClass('correct')
+          iconId.addClass('instruct-highlight')
         $('#startScreenMessage').append instructions.shift()
       else
         @startScreenNext()
@@ -273,8 +273,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     #remove previous page correct classes on icons, Form One
     sequence = $('div[data-sequence="1"]')
-    sequence.removeClass('correct')
-    $('#iconSymbol1').removeClass('correct')
+    sequence.removeClass('instruct-highlight')
+    $('#iconSymbol1').removeClass('instruct-highlight')
 
     
     $('#backButton').show().touchdown(=>
