@@ -13,25 +13,6 @@
 <body class="fullscreen unselectable">
     <div id="task" class="fullscreen">
         <div id="rectangle">
-            <div id="exampleScreen" style="display:none">
-                <div id="exampleExplanation">
-                    <h1>Memory Test - Example</h1>
-                    <p>You will see pictures of people.  Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
-                    <p>For example, remember his favorite food is:</p>
-                </div>
-                <div id="exampleContainer">
-                    <div id="exampleImage"><img /></div>
-                    <div id="exampleFood">
-                    </div>
-                </div>
-            </div>
-            <div id="instructionsScreen" style="display:none">
-                <h1>Instructions</h1>
-                <div id="instructions">
-                    <p>Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
-                    <p>Are you ready?</p>
-                </div>
-            </div>
             <div id="rememberScreen" style="display:none">
                 <p>Remember</p>
             </div>
@@ -52,6 +33,62 @@
                     </div>
                 </div>
             </div>
+	        <div id="delayedRecallScoringScreen" class="screen">
+                <h1 class="scoringTitle">Delayed Recall</h1>
+		        <div class="personOne scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personTwo scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personThree scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personFour scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+                <button id="completeButton" class="progressButton">Complete</button>
+	        </div>
         </div>
     </div>
     <script src="../core/js/tabcat.js"></script>

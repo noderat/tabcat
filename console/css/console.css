@@ -546,7 +546,7 @@ div.score .scoreBody div.catchTrialScore .value {
     padding: 8px;
     margin-left: 10px;
     margin-bottom: 10px;
-    width: 600px;
+    width: 700px;
     min-height: 72px;
     text-align: left;
     border-radius: 18px;
@@ -592,9 +592,13 @@ div.score .scoreBody div.catchTrialScore .value {
     vertical-align: top;
 }
 
-#tasks div.task > span.alternateForm {
+#tasks div.task > span.alternateForms {
+    float: right;
+    margin-right: 12px;
+}
+
+#tasks div.task > span.alternateForms span.alternateForm {
     position: relative;
-    float: left;
     display: inline-block;
     margin-left: 12px;
     border: 1px solid black;
@@ -680,7 +684,7 @@ div.score .scoreBody div.catchTrialScore .value {
     border-style: solid;
     border-width: 1px;
     border-color: #eeeeee;
-    width: 650px;
+    width: 750px;
     margin-left: 8px;
     margin-bottom: 8px;
     border-radius: 12px;
