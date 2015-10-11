@@ -4,6 +4,7 @@
     "description": "Memory",
     "attachments": [
         "css/memory.css",
+        "css/modal.css",
         "img/learning.png",
         "img/delay.png",
         "js/task.js",
@@ -44,14 +45,26 @@
         },
         "tasks": {
             "learning": {
-                "description": "Learning",
+                "description": "Favorites Learning",
                 "icon": "img/learning.png",
-                "start": "learning.html"
+                "start": "learning.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two",
+                    "C": "three",
+                    "D": "four"
+                }
             },
             "delay": {
-                "description": "Delay",
+                "description": "Favorites Delay",
                 "icon": "img/delay.png",
-                "start": "delay.html"
+                "start": "delay.html",
+                "forms": {
+                    "A": "one",
+                    "B": "two",
+                    "C": "three",
+                    "D": "four"
+                }
             }
         }
     }

@@ -149,10 +149,8 @@ initVideoScreen = _.once(->
   # implements resume
   fixVideoCurrentTime = ->
     # seeking on the iPad is a pain; see goo.gl/vvy8oq for details
-    if (
-      restartVideoAt? and video.seekable?.length and \
-      video.seekable.start(0) <= restartVideoAt <= video.seekable.end(0))
-
+    if ( restartVideoAt? and video.seekable?.length and \
+    video.seekable.start(0) <= restartVideoAt <= video.seekable.end(0))
       video.currentTime = restartVideoAt
       restartVideoAt = null
 

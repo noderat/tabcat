@@ -42,11 +42,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             'the pictures above.'
         start_screen_next_html:
           1: 'Each time you see a number in the middle of the screen, ' +
-            'look to see <br> which picture matches the number above, ' +
+            'look to see <br> which picture matches the number, ' +
             'and touch that picture below.'
         start_screen_practice:
           1: 'Let\'s practice.'
-          2: 'Work as quickly as you can <br> without making any mistakes.'
+          2: 'Work as fast as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
 
@@ -251,6 +251,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#nextButton').touchdown( ( (event) =>
 
       if instructions.length
+        sequence = $('div[data-sequence="1"]')
+        iconId = $('div[id*="1"][class="digitSymbol"]')
+        if instructions.length == 1
+          sequence.addClass('instruct-highlight')
+        if instructions.length == 2
+          iconId.addClass('instruct-highlight')
         $('#startScreenMessage').append instructions.shift()
       else
         @startScreenNext()
@@ -265,6 +271,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     @fillScreen()
 
+    #remove previous page correct classes on icons, Form One
+    sequence = $('div[data-sequence="1"]')
+    sequence.removeClass('instruct-highlight')
+    $('#iconSymbol1').removeClass('instruct-highlight')
+
+    
     $('#backButton').show().touchdown(=>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()

@@ -149,31 +149,32 @@ TabCAT.Encounter.create = (options) ->
 
   patientDoc = TabCAT.Patient.newDoc(options?.patientCode)
 
-  $.when(TabCAT.Config.get(timeout: options?.timeout)).then(
-    (config) ->
-      encounterDoc = TabCAT.Encounter.newDoc(patientDoc.patientCode, config)
+  $.when(TabCAT.Config.get(timeout: options?.timeout))
+  .then( (config) ->
+    encounterDoc = TabCAT.Encounter.newDoc(patientDoc.patientCode, config)
 
-      patientDoc.encounterIds = [encounterDoc._id]
+    patientDoc.encounterIds = [encounterDoc._id]
 
-      # if there's already a doc for the patient, our new encounter ID will
-      # be appended to the existing patient.encounterIds
-      TabCAT.DB.putDoc(
-        DATA_DB, patientDoc,
-        expectConflict: true, now: now, timeout: options?.timeout).then(->
+    # if there's already a doc for the patient, our new encounter ID will
+    # be appended to the existing patient.encounterIds
+    TabCAT.DB.putDoc( DATA_DB, patientDoc,
+      expectConflict: true, now: now, timeout: options?.timeout)
+    .then(->
 
-        TabCAT.DB.putDoc(
-          DATA_DB, encounterDoc, now: now, timeout: options?.timeout).then(->
+      TabCAT.DB.putDoc(DATA_DB, encounterDoc,
+        now: now, timeout: options?.timeout)
+      .then(->
 
-          # update localStorage
-          localStorage.encounter = JSON.stringify(encounterDoc)
-          # only show encounter number if we're online
-          if encounterDoc._rev
-            localStorage.encounterNum = patientDoc.encounterIds.length
-          else
-            localStorage.removeItem('encounterNum')
-          return
-        )
+        # update localStorage
+        localStorage.encounter = JSON.stringify(encounterDoc)
+        # only show encounter number if we're online
+        if encounterDoc._rev
+          localStorage.encounterNum = patientDoc.encounterIds.length
+        else
+          localStorage.removeItem('encounterNum')
+        return
       )
+    )
   )
 
 
@@ -258,9 +259,10 @@ TabCAT.Encounter.getInfo = (encounterId, patientCode) ->
 
   patientCodePromise.then((patientCode) ->
 
-    TabCAT.Couch.getDoc(DATA_DB, '_design/core/_view/patient', query:
+    TabCAT.Couch.getDoc(DATA_DB, '_design/core/_view/patient', {query:
       startkey: [patientCode, encounterId]
-      endkey: [patientCode, encounterId, []]).then((results) ->
+      endkey: [patientCode, encounterId, []]})
+    .then((results) ->
 
       info = {_id: encounterId, patientCode: patientCode, tasks: []}
 

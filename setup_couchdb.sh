@@ -24,6 +24,9 @@ TABCAT_PASSWORD=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/org.couchdb.user:tabcat -d '{"name":"tabcat", "password": "'$TABCAT_PASSWORD'", "type": "user", "roles": []}'
 echo $TABCAT_PASSWORD > .tabcat_password
 
+#adding sandbox user by default
+curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $USERS_SECTION/org.couchdb.user:s@ndbox -d '{"name":"s@ndbox", "password": "s@ndbox", "type": "user", "roles": []}'
+
 echo "Please enter database user's email address:"
 read USER_EMAIL
 
@@ -31,9 +34,11 @@ for db in tabcat tabcat-data
 do
     echo "Creating '$db' database with correct permissions..."
     curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db
-    curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/$db/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]},"members":{"names":["'$USER_EMAIL'"]}}'
 done
 
+#the tabcat database needs an empty members section
+curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/tabcat/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]}}'
+curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $COUCHDB_URL/tabcat-data/_security -d '{"admins":{"names":["tabcat"],"roles":["admins"]},"members":{"names":["'$USER_EMAIL'", "s@ndbox"]}}'
 
 echo "Configuring couch_httpd_auth ..."
 curl -u $AUTH_STRING --header "Content-Type: application/json" -X PUT $HTTPD_AUTH_SECTION/allow_persistent_cookies -d '"true"'

@@ -13,4 +13,6 @@ apt-get install nodejs -y
 npm install -g npm@3.x-latest
 #installing these globally for now until they can be used with gulp
 npm install -g kanso coffee-script uglify-js coffeelint -y
-cd /vagrant && npm install
+sudo su -c "gem install sass"
+#skipping npm install for now
+#cd /vagrant && npm install

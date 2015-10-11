@@ -59,7 +59,7 @@ If you are on a UNIX system, you probably have `make` (and `curl`) already.
 
 On Mac OS X, `make` is available as part of [XCode](https://developer.apple.com/xcode/); once you have XCode installed, install Command Line Tools from the Components tab of the Downloads preferences panel.
 
-On Windows, you'll probably want to install [Cygwin](http://www.cygwin.com/).
+Due to issues with symbolic links in the build process, building on Windows is currently unsupported.
 
 Finally, if you want to get involved in developing TabCAT, we recommend installing coffeelint (`sudo npm install -g coffeelint`).
 
@@ -98,6 +98,8 @@ Set the environment variable `TABCAT_HOST` to your web server's URL, with the `t
 `export TABCAT_HOST=http://tabcat:your-password@localhost:5984`
 
 Then run `make`.
+
+If you're developing TabCAT and you get symlink issues inside the Vagrant machine, run the command `vagrant-make` in the TabCAT source folder instead to build the project from the Vagrant box's home directory.
 
 ### Configuring TabCAT
 

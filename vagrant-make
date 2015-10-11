@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rsync -r --no-links /vagrant/ ~/tabcat-dir --exclude '.git' --exclude '.idea' --exclude '.vagrant'
+cd ~/tabcat-dir
+make clean && make
+rsync -r --no-links ~/tabcat-dir/ /vagrant --exclude '.git' --exclude '.idea' --exclude 'vagrant-make' --exclude '.vagrant'
