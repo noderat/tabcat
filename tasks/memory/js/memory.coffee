@@ -286,14 +286,14 @@ MemoryTask = class
           @PEOPLE.WOMAN_4
         ]
         FIRST_EXPOSURE: [
-          { person: @PEOPLE.MAN_3, item: 'animal' },
-          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' },
           { person: @PEOPLE.MAN_4, item: 'animal' },
           { person: @PEOPLE.WOMAN_4, item: 'animal' },
-          { person: @PEOPLE.WOMAN_3, item: 'animal' },
-          { person: @PEOPLE.WOMAN_4, item: 'food' },
-          { person: @PEOPLE.MAN_3, item: 'food' },
-          { person: @PEOPLE.MAN_4, item: 'food'}
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_4, item: 'food'},
+          { person: @PEOPLE.MAN_3, item: 'animal' },
+          { person: @PEOPLE.WOMAN_3, item: 'animal' }
         ],
         RECALL_ONE: [
           { person: @PEOPLE.WOMAN_3 },
@@ -303,13 +303,13 @@ MemoryTask = class
         ],
         SECOND_EXPOSURE: [
           { person: @PEOPLE.MAN_4, item: 'animal' },
-          { person: @PEOPLE.WOMAN_4, item: 'animal' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
           { person: @PEOPLE.WOMAN_3, item: 'animal' },
           { person: @PEOPLE.MAN_4, item: 'food' },
-          { person: @PEOPLE.MAN_3, item: 'food' },
-          { person: @PEOPLE.WOMAN_3, item: 'food' },
-          { person: @PEOPLE.WOMAN_4, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' }
           { person: @PEOPLE.MAN_3, item: 'animal'}
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'animal' }
         ],
         RECALL_TWO: [
           { person: @PEOPLE.MAN_3 },
