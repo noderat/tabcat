@@ -93,14 +93,29 @@ patientHandler = (patientRecord) ->
             when item?.interpretation?.reversal)
 
         catchTrials = (
-          item.interpretation?.correct for item in task.eventLog \
+          item.interpretation.correct for item in task.eventLog \
           when item?.state?.catchTrial is true
         )
 
+        catchTrials = task.eventLog.map (item) -> 
+
+        send("<p>catch trials for patient: " + patientCode + "</p>")
+        send(toJSON(catchTrials))
+
+        catchTrialTotal = catchTrials.filter( (x) ->
+          #if x is undefined
+            #send("<p>x is undefined</p>")
+          true if x == true or x == false
+        ).length
+
+        send("<p>catch trial total: " + catchTrialTotal + "</p>")
+
         catchTrialScore = 'N/A'
-        if catchTrials.length > 0
-          catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
-            / catchTrials.length ) * 100)
+        if catchTrialTotal > 0
+          catchTrialScore = (( catchTrials.filter( (x) ->
+            x if x == true
+          ).length \
+            / catchTrialTotal ) * 100)
 
         if intensitiesAtReversal.length < MAX_REVERSALS
           intensitiesAtReversal = intensitiesAtReversal.concat('') for i in \
@@ -136,7 +151,10 @@ patientHandler = (patientRecord) ->
   # replace undefined with null, so arrayToCsv() works
   data = (x ? null for x in data)
 
-  send(csv.arrayToCsv([data]))
+  send("<p>patient raw data</p>")
+  send(toJSON(data))
+
+  #send(csv.arrayToCsv([data]))
 
 
 taskHeader = (prefix) ->
@@ -149,7 +167,8 @@ catchTrialsHeader = (prefix) ->
 
 exports.list = (head, req) ->
   report.requirePatientView(req)
-  start(headers: report.csvHeaders('line-tasks-report'))
+  #start(headers: report.csvHeaders('line-tasks-report'))
+  start(headers: {"Content-type":"text/html"})
 
   csvHeader = ['patientCode']
   for prefix in TASK_PREFIXES
@@ -159,6 +178,6 @@ exports.list = (head, req) ->
       catchTrialsHeader(prefix)
     )
 
-  send(csv.arrayToCsv([csvHeader]))
+  #send(csv.arrayToCsv([csvHeader]))
 
   patient.iterate(getRow, patientHandler)
