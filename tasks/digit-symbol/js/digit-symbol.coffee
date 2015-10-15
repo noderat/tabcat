@@ -141,22 +141,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ]
     FORM_THREE:
       ICON_BAR: [
-        SYMBOLS.DIAMOND
         SYMBOLS.TEARDROPS
-        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.TRI_BLOCKS
         SYMBOLS.MOBIUS
         SYMBOLS.MOUSTACHE
+        SYMBOLS.DIAMOND
         SYMBOLS.INNER_CIRCLES
-        SYMBOLS.TRI_BLOCKS
+        SYMBOLS.TRI_CIRCLES
       ]
       SYMBOL_BAR: [
-        { relativeSequence: 4, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 3, symbol: SYMBOLS.MOBIUS }
         { relativeSequence: 6, symbol: SYMBOLS.INNER_CIRCLES }
-        { relativeSequence: 5, symbol: SYMBOLS.MOUSTACHE }
-        { relativeSequence: 3, symbol: SYMBOLS.TRI_CIRCLES }
-        { relativeSequence: 7, symbol: SYMBOLS.TRI_BLOCKS }
-        { relativeSequence: 2, symbol: SYMBOLS.TEARDROPS }
-        { relativeSequence: 1, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
+        { relativeSequence: 7, symbol: SYMBOLS.TRI_CIRCLES }
+        { relativeSequence: 2, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 1, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 5, symbol: SYMBOLS.DIAMOND }
       ]
     FORM_FOUR:
       ICON_BAR: [
