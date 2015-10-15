@@ -143,7 +143,17 @@ showTasks = ->
                     $icon.on('click', (event) ->
                       event.preventDefault()
                       event.stopPropagation()
-                      window.location = formUrl
+
+                      #yellow highlight
+                      highlightColor = "rgba(255,255,0, 1)"
+                      eventTarget = $(event.target)
+                      $.when( eventTarget.effect(
+                        "highlight",
+                        {color: highlightColor},
+                        500
+                      )).then( ->
+                        window.location = formUrl
+                      )
                       return false
                     )
                     $forms.append $icon
