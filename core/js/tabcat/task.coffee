@@ -164,9 +164,18 @@ TabCAT.Task.start = _.once((options) ->
   now = $.now()
 
   # set up i18n
-  i18n_options = _.extend(
-    {fallbackLng: DEFAULT_FALLBACK_LNG, resStore: {}},
-    options?.i18n)
+  defaultOptions = {
+    fallbackLng: DEFAULT_FALLBACK_LNG
+  }
+  i18n_options = _.extend( defaultOptions, options?.i18n)
+
+  #merge translation keys
+  for language, translation of TabCAT.Translations.translations
+    do ->
+      i18n_options.resStore[language].translation = _.extend(
+        translation.translation,
+        i18n_options.resStore[language].translation
+      )
   $.i18n.init(i18n_options)
 
   timeout = options?.timeout ? DEFAULT_TIMEOUT
