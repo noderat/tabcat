@@ -267,3 +267,6 @@ button:focus {
 .correct {
     background-color: green !important;
 }
+.instruct-highlight{
+    background-color: green !important;
+}

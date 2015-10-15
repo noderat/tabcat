@@ -9,15 +9,15 @@
     <link rel="shortcut icon" href="../core/img/favicon.ico"/>
     <link rel="stylesheet" href="../core/css/tabcat.css">
     <link rel="stylesheet" href="css/memory.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 </head>
 <body class="fullscreen unselectable">
     <div id="task" class="fullscreen">
         <div id="rectangle">
-            <div id="exampleScreen" style="display:none">
+            <div id="exampleScreen" class="screen">
                 <div id="exampleExplanation">
                     <h1>Memory Test - Example</h1>
-                    <p>You will see pictures of people.  Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
-                    <p>For example, remember his favorite food is:</p>
                 </div>
                 <div id="exampleContainer">
                     <div id="exampleImage"><img class="faceImage" /></div>
@@ -25,39 +25,186 @@
                     </div>
                 </div>
             </div>
-            <div id="instructionsScreen" style="display:none">
-                <h1>Instructions</h1>
+            <div id="instructionsScreen" class="screen">
                 <div id="instructions">
-                    <p>Please remember each person's favorite <span class="memoryHighlight">food</span> and favorite <span class="memoryHighlight">animal</span>.</p>
-                    <p>Are you ready?</p>
                 </div>
             </div>
-            <div id="rememberScreen" style="display:none">
+            <div id="rememberScreen" class="screen">
                 <p>Remember</p>
             </div>
-            <div id="trialScreen" style="display:none">
+            <div id="trialScreen" class="screen">
                 <div id="supplementaryInstruction"></div>
                 <div id="screenImage">
-	                <img />
                 </div>
                 <div id="recallArea">
                     <div class="memoryElement" id="rememberOne"></div>
-                    <div class="memoryElement" id="recallOne">
-                        <div class="recallLabel"></div>
-                        <div class="recallItem">????</div>
-                    </div>
                     <div class="memoryElement" id="recallBoth">
                         <div class="recallLabel">food:</div>
                         <div class="recallItem">????</div>
                         <div class="recallLabel">animal:</div>
                         <div class="recallItem">????</div>
-                        <div class="nextButton"><img src="img/right-arrow.png" /></div>
+                        <div id="recallNextButton"><img src="img/right-arrow.png" /></div>
                     </div>
                 </div>
             </div>
+            <div id="recallOneScoringScreen" class="screen">
+                <h1 class="scoringTitle">Recall One</h1>
+	            <div class="personOne scoringRow">
+		            <span class="scoringImage scoringImageOne"></span>
+		            <span class="scoringFood">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+		            <span class="scoringAnimal">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+
+                    <div class="modal personOneModal">
+                        <div class="close">X</div>
+                        <span class="scoringImage"></span>
+                        <span class="scoringFood">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+		                <span class="scoringAnimal">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+                        <span class="nextModal firstModalNext">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+                    </div>
+	            </div>
+	            <div class="personTwo scoringRow">
+		            <span class="scoringImage scoringImageTwo"></span>
+		            <span class="scoringFood">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+		            <span class="scoringAnimal">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+
+                    <div class="modal personTwoModal">
+                        <div class="close">X</div>
+                        <span class="scoringImage"></span>
+                        <span class="scoringFood">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+		                <span class="scoringAnimal">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+                        <span class="nextModal secondModalNext">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+                    </div>
+	            </div>
+	            <div class="personThree scoringRow">
+		            <span class="scoringImage scoringImageThree"></span>
+		            <span class="scoringFood">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+		            <span class="scoringAnimal">
+                        <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                    </span>
+
+                    <div class="modal personThreeModal">
+                        <div class="close">X</div>
+                        <span class="scoringImage"></span>
+                        <span class="scoringFood">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+		                <span class="scoringAnimal">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+                        <span class="nextModal thirdModalNext">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+                    </div>
+	            </div>
+	            <div class="personFour scoringRow">
+		            <span class="scoringImage scoringImageFour"></span>
+		            <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		            <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+
+                    <div class="modal personFourModal">
+                        <div class="close">X</div>
+                        <span class="scoringImage"></span>
+                        <span class="scoringFood">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+		                <span class="scoringAnimal">
+                            <div class="selectionContainer"><span class="currentSelection">No Selection</span></div>
+                        </span>
+                        <span class="nextModal fourthModalNext">
+                            <i class="fa fa-arrow-circle-right"></i>
+                        </span>
+                    </div>
+	            </div>
+            </div>
+	        <div id="recallTwoScoringScreen" class="screen">
+                <h1 class="scoringTitle">Recall Two</h1>
+		        <div class="personOne scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personTwo scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personThree scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+		        <div class="personFour scoringRow">
+			        <span class="scoringImage"></span>
+			        <span class="scoringFood">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+			        <span class="scoringAnimal">
+                        <div class="selectionContainer">
+                            <span class="currentSelection">No Selection</span>
+                        </div>
+                    </span>
+		        </div>
+	        </div>
             <button id="backButton" class="progressButton">Back</button>
             <button id="nextButton" class="progressButton">Next</button>
             <button id="beginButton" class="progressButton">Begin</button>
+            <button id="completeButton" class="progressButton">Complete</button>
         </div>
     </div>
     <script src="../core/js/tabcat.js"></script>

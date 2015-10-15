@@ -44,6 +44,11 @@ p {
     color: cyan;
 }
 
+.screen {
+    display: none;
+    height: 100%;
+}
+
 #exampleScreen {
     float: left;
     clear: both;
@@ -137,8 +142,40 @@ p {
     height: 100%;
 }
 
-.faceImage {
+.encounterFace {
     display: none;
+}
+
+.scoringFace {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    width: auto;
+}
+
+.scoringImage {
+    height: 100%;
+    width: 33%;
+    float: left;
+}
+
+.scoringFood {
+    height: 100%;
+    width:33%;
+    float: left;
+    max-width: 33%;
+}
+
+.scoringAnimal {
+    height: 100%;
+    width: 33%;
+    float: left;
+    max-width: 33%;
+}
+
+.scoringTitle {
+    height: 8%;
+    text-align: center;
 }
 
 #screenImage img {
@@ -202,6 +239,7 @@ p {
 }
 
 .progressButton {
+    display: none;
     border-width: 0.2em;
     border-style: solid;
     border-color: #ffffff;
@@ -213,7 +251,6 @@ p {
 }
 
 #backButton {
-    display: none;
     position: absolute;
     top: 88%;
     left: 3%;
@@ -226,19 +263,24 @@ p {
 }
 
 #beginButton {
-    display: none;
     position:absolute;
     top: 88%;
     left: 85%;
 }
 
-.nextButton {
+#completeButton {
+    position:absolute;
+    top: 88%;
+    left: 79%;
+}
+
+#recallNextButton {
     position: absolute;
     top: 150%;
     left: 65%;
 }
 
-.nextButton img {
+#recallNextButton img {
     width: 2em;
     height: 2em;
 }
@@ -246,7 +288,72 @@ p {
 #supplementaryInstruction {
     display: none;
     position: absolute;
+    font-size: .85em;
     width: 100%;
     top: 3%;
     text-align: center;
+}
+
+.scoringRow {
+    display: inline-block;
+    margin: .5%;
+    height: 16.5%;
+    width:100%;
+}
+
+.foodSelection, .animalSelection {
+    display: none;
+    background: #333;
+    position: absolute;
+    left: 50%;
+    top: 50px;
+    bottom: 50px;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 50%;
+    padding: 50px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 100;
+}
+.foodSelection li, .animalSelection li {
+    list-style-type: none;
+    border-bottom: 1px solid #777;
+    padding: 20px;
+    font-size: 2em;
+    text-transform: capitalize;
+}
+
+.foodSelection li:first-child, .animalSelection li:first-child {
+    border-top: 1px solid #777;
+}
+
+.correctFood, .correctAnimal {
+    background: rgba(0, 153, 0, 0.2);
+}
+
+/*
+* TODO: center this
+*/
+.currentSelection {
+    display: block;
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 2.5em;
+}
+
+.selectionContainer {
+    position: relative;
+    transform: translateY(-50%);
+    top: 50%;
+    width: 50%;
+    height: 50%;
+    background-color: #333333;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }

@@ -135,22 +135,24 @@ showTasks = ->
             startUrl = TabCAT.Console.getTaskStartUrl(task)
             if startUrl?
               # start the task
-              $taskDiv.on('click', (event) -> window.location = startUrl)
-
-#              if task.forms
-#                for form, value of task.forms
-#                  do ( =>
-#                    $icon = $('<span></span>', class: 'alternateForm')
-#                    formUrl = startUrl + '?form=' + value
-#                    $icon.text(form)
-#                    $icon.on('click', (event) ->
-#                      event.preventDefault()
-#                      event.stopPropagation()
-#                      window.location = formUrl
-#                      return false
-#                    )
-#                    $taskDiv.append $icon
-#                  )
+              if task.forms
+                $forms = $('<span></span>', class: 'alternateForms')
+                for form, value of task.forms
+                  do ( =>
+                    $icon = $('<span></span>', class: 'alternateForm')
+                    formUrl = startUrl + '?form=' + value
+                    $icon.text(form)
+                    $icon.on('click', (event) ->
+                      event.preventDefault()
+                      event.stopPropagation()
+                      window.location = formUrl
+                      return false
+                    )
+                    $forms.append $icon
+                  )
+                $taskDiv.append $forms
+              else
+                $taskDiv.on('click', (event) -> window.location = startUrl)
 
         $taskDiv.append($scoringMessage)
         $tasksDiv.append($taskDiv)

@@ -202,10 +202,11 @@ TabCAT.UI.logout = ->
     options.timeout = DEFAULT_LOGOUT_TIMEOUT
 
   if TabCAT.Encounter.isOpen()
-    if not window.confirm(
-      'Logging out will close the current encounter without administration' +
-      ' notes. Proceed?')
-        return
+    encounterMessage =  'Logging out will close the current encounter' +
+      'without administration' +
+      ' notes. Proceed?'
+    if not window.confirm(encounterMessage)
+      return
 
   TabCAT.User.logout(options).always(->
     window.location = (
