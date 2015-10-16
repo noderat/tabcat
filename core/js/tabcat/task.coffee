@@ -366,7 +366,8 @@ TabCAT.Task.finish = (options) ->
   $body.hide()
   TabCAT.UI.linkEmToPercentOfHeight($body)
   $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
-  $messageP = $('<p class="message">Task complete!</p>')
+  completeMessage = $.t('task_complete')
+  $messageP = $('<p class="message">' + completeMessage + '</p>')
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 

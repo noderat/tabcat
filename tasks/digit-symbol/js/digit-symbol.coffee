@@ -49,6 +49,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           2: 'Work as fast as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
+    es:
+      translation:
+        begin_button_html:
+          'Begin(es)'
+        next_button_html:
+          'Next(es)'
+        start_screen_html:
+          1: 'Mire las figuras de arriba.'
+          2: 'Note que debajo de cada número hay una figura que le corresponde.'
+          3: 'Observe las figuras de abajo y note que son <br> las mismas ' +
+            'que las figuras de arriba.'
+        start_screen_next_html:
+          1: 'Cuando vea un número aparecer en medio de la pantalla, mire ' +
+            'arriba y <br> encuentre la figura que le corresponde y luego ' +
+            'toque esta figura abajo.'
+        start_screen_practice:
+          1: 'Vamos a practicar.'
+          2: 'Haga los siguientes ejercicios <br> lo más rápido que pueda.'
+        are_you_ready:
+          1: '¿Está listo para comenzar?'
 
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3

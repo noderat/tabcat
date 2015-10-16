@@ -37,9 +37,9 @@ else  # inside browser
 Translations.translations =
   en:
     translation:
-      someKey:
-        'here is some text in english'
+      task_complete:
+        'Task complete!'
   es:
     translation:
-      someKey:
-        'text in spansih'
+      task_complete:
+        'Task complete (spanish)!'
