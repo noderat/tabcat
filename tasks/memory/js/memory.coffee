@@ -987,42 +987,6 @@ MemoryTask = class
       @recallTwoScoringScreen()
     )
 
-    #Trigger Modal Dropdown on Open
-    #Recall Scoring One Modals
-    personOneModal = $('.personOneModal')
-    personTwoModal = $('.personTwoModal')
-    personThreeModal = $('.personThreeModal')
-    personFourModal = $('.personFourModal')
-    personTwoModal.hide()
-    personThreeModal.hide()
-    personFourModal.hide()
-    $('.close').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.firstModalNext').touchdown ->
-      personOneModal.hide()
-      personTwoModal.show()
-    $('.secondModalNext').touchdown ->
-      personTwoModal.hide()
-      personThreeModal.show()
-    $('.thirdModalNext').touchdown ->
-      personThreeModal.hide()
-      personFourModal.show()
-    $('.fourthModalNext').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.scoringImageOne').touchdown ->
-      personOneModal.show()
-    $('.scoringImageTwo').touchdown ->
-      personTwoModal.show()
-    $('.scoringImageThree').touchdown ->
-      personThreeModal.show()
-    $('.scoringImageFour').touchdown ->
-      personFourModal.show()
-
-
-
-
-
-
   recallTwoScoringScreen: ->
     $('#nextButton').hide()
     $('#recallTwoScoringScreen').show()

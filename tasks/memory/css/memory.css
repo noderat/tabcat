@@ -154,23 +154,25 @@ p {
 }
 
 .scoringImage {
-    height: 100%;
-    width: 33%;
+    height: 15%;
+    max-width: 100%;
+    text-align: center;
+    margin: auto auto;
     float: left;
 }
 
 .scoringFood {
-    height: 100%;
-    width:33%;
+    clear: both;
+    height: 75%;
+    width: 48%;
     float: left;
-    max-width: 33%;
 }
 
 .scoringAnimal {
-    height: 100%;
-    width: 33%;
+    height: 75%;
+    width: 48%;
+    border-left: 1px solid white;
     float: left;
-    max-width: 33%;
 }
 
 .scoringTitle {
@@ -294,11 +296,12 @@ p {
     text-align: center;
 }
 
-.scoringRow {
+.scoringColumn {
     display: inline-block;
-    margin: .5%;
-    height: 16.5%;
-    width:100%;
+    float: left;
+    margin: 1%;
+    height: 80%;
+    width: 23%;
 }
 
 .foodSelection, .animalSelection {

@@ -4,7 +4,6 @@
     "description": "Memory",
     "attachments": [
         "css/memory.css",
-        "css/modal.css",
         "img/learning.png",
         "img/delay.png",
         "js/task.js",
