@@ -33,7 +33,7 @@ translations =
       instructions_before_face:
         1: 'You will need to remember people <br> and their favorite things.'
       instructions_favorite_food:
-        1: 'Intente recordar la fruta y el animal favorito de cada persona.'
+        1: 'For example, remember that her favorite food is an...'
       instructions_favorite_animal:
         1: 'And her favorite animal is a...'
       instructions_remember:
