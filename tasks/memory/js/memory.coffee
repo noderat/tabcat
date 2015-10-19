@@ -33,7 +33,7 @@ translations =
       instructions_before_face:
         1: 'You will need to remember people <br> and their favorite things.'
       instructions_favorite_food:
-        1: 'For example, remember that her favorite food is an...'
+        1: 'Intente recordar la fruta y el animal favorito de cada persona.'
       instructions_favorite_animal:
         1: 'And her favorite animal is a...'
       instructions_remember:
@@ -43,51 +43,289 @@ translations =
         2: 'Remember both.'
       instructions_ready:
         1: 'Are you ready to begin?'
+      animal:
+        dolphin: 'dolphin'
+        wolf: 'wolf'
+        turtle: 'turtle'
+        shark: 'shark'
+        cow: 'cow'
+        bear: 'oso'
+        frog: 'frog'
+        sheep: 'sheep'
+        rabbit: 'conejo'
+        pig: 'pig'
+        whale: 'whale'
+        goat: 'goat'
+        monkey: 'monkey'
+        snake: 'snake'
+        fox: 'fox'
+        mouse: 'mouse'
+        tiger: 'tiger'
+      food:
+        apple: 'apple'
+        potato: 'potato'
+        grapes: 'grapes'
+        melon: 'melon'
+        coconut: 'coconut'
+        cherry: 'cherry'
+        lettuce: 'lettuce'
+        peas: 'peas'
+        carrot: 'carrot'
+        tomator: 'tomato'
+        mushroom: 'mushroom'
+        lemon: 'lemon'
+        plum: 'plum'
+        banana: 'banana'
+        mango: 'mango'
+        pepper: 'pepper'
+        squash: 'squash'
+
   es:
     translation:
-      '...'
+      instructions_before_face:
+        1: 'Le vamos a mostrar fotos de personas junto a su alimento ' +
+          'favorito y a su animal favorito.'
+      instructions_favorite_food:
+        1: 'El alimento favorito de esta mujer es:'
+      instructions_favorite_animal:
+        1: 'Y el animal favorito de esta mujer es:...'
+      instructions_remember:
+        1: 'Now you will see some more faces. ' +
+          'You will see each face twice; once with their favorite ' +
+          'food and once with their favorite animal.'
+        2: 'Remember both.'
+      instructions_ready:
+        1: '¿Está listo?'
+      animal:
+        dolphin: 'delphin'
+        wolf: 'lobo'
+        penguin: 'pinguino'
+        turtle: 'tortuga'
+        shark: 'tiburón'
+        cow: 'vaca'
+        bear: 'oso'
+        frog: 'rana'
+        toucan: 'tucán'
+        lion: 'león'
+        sheep: 'oveja'
+        rabbit: 'conejo'
+        giraffe: 'girafa'
+        pig: 'cerdo'
+        whale: 'ballena'
+        octopus: 'pulpo'
+        goat: 'cabra'
+        monkey: 'mono'
+        elephant: 'elefante'
+        chipmunk: 'ardilla'
+        camel: 'camello'
+        snake: 'serpiente'
+        fox: 'zorro'
+        mouse: 'ratón'
+        tiger: 'tigre'
+      food:
+        apple: 'manzana'
+        garlic: 'ajo'
+        celery: 'apio'
+        potato: 'patata'
+        mango: 'mango'
+        cantaloupe: 'melón'
+        eggplant: 'berenjena'
+        onion: 'cebolla'
+        pineapple: 'piña'
+        grapes: 'uvas' #not sure if singular or plural is needed
+        grape: 'uva'
+        melon: 'melón'
+        spinach: 'espinaca'
+        lettuce: 'lechuga'
+        coconut: 'coco'
+        cherry: 'cereza'
+        peas: 'chícharos'
+        pear: 'pera'
+        carrot: 'zanahoria'
+        parsley: 'perejil'
+        tomato: 'tomate'
+        mushroom: 'seta'
+        lemon: 'limón'
+        orange: 'naranja'
+        plum: 'ciruela'
+        banana: 'plátano'
+        pepper: 'pimienta'
+        squash: 'squash'
 
 MemoryTask = class
   constructor: ->
 
+    @scores = {}
+
+    # main div's aspect ratio (pretend we're on an iPad)
+    @ASPECT_RATIO = 4/3
+
+    # time values in milliseconds
+    @TIME_BETWEEN_STIMULI = 3000
+
+    @FADE_IN_TIME = 1000
+
+    @FADE_OUT_TIME = 1000
+
+  buildInitialState: (recalls) ->
+    state = {}
+    for recall in recalls
+      do =>
+        data = []
+        _.each(@currentForm[recall], (person) ->
+          data[person.person.KEY] = person
+        )
+        state[recall] = data
+    return state
+
+  #returns a tuple
+  getCurrentForm: ->
+    form = TabCAT.UI.getQueryString 'form'
+    #there's likely a much more efficient way to do this
+    #note that forms 3 and 4 do not currently exist yet
+    switch form
+      when "one" then return [@FORMS.FORM_ONE, 1, 'A']
+      when "two" then return [@FORMS.FORM_TWO, 2, 'B']
+      when "three" then return [@FORMS.FORM_THREE, 3, 'C']
+      when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
+    #if no form found, just return default form
+    return [@FORMS.FORM_ONE, 1, 'A']
+
+  buildScoringSheetsData: (currentForm) ->
+    #we can derive the people and the list of total food
+    #directly from each of the forms
+    people = currentForm.RECALL_ONE
+    food = []
+    animals = []
+    for person in people
+      do ( ->
+        food.push(person.person.FOOD)
+        animals.push(person.person.ANIMAL)
+      )
+
+    food = food.concat(["other", "DK"])
+    animals = animals.concat(["other", "DK"])
+
+    sheets =
+      people: people
+      food: food
+      animals: animals
+
+    return sheets
+
+  generateExposureStimuli: (exposureData) ->
+    stimuli = []
+
+    for data in exposureData
+      do ( ->
+        obj =
+          action: 'rememberOne',
+          person: data.person,
+          item: data.item
+
+        stimuli.push obj
+      )
+
+    return stimuli
+
+  generateRecalls: (recallData) ->
+    recalls = new Array()
+    for data in recallData
+      do ( ->
+        obj = { action: 'recallBoth', person: data.person }
+        recalls.push obj
+      )
+    return recalls
+
+  showNextTrial: (slide) ->
+    # looking to move away from switch, will refactor later.
+    # looking for something to automatically call
+    # function with the same name as type, but there's some strange
+    # behavior regarding scope that I don't yet understand
+    switch slide.action
+      when "rememberOne" then \
+        @rememberOne slide.person, slide.item
+      when "recallBoth" then \
+        @recallBoth slide.person
+
+  showRememberScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").show()
+    #resume after this
+
+  showBlankScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").hide()
+
+  start: ->
+    TabCAT.Task.start(
+      i18n:
+        resStore: translations
+      trackViewport: true
+    )
+    TabCAT.UI.turnOffBounce()
+
+    #moved here because data initialization requires i18n
+    @initializeData()
+
+    #this is the hook where task-specific setup may occur
+    @setUpTask()
+
+    console.log @CHOICES
+
+    $task = $('#task')
+    $rectangle = $('#rectangle')
+
+    TabCAT.UI.requireLandscapeMode($task)
+
+    TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
+    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
+
+    @showStartScreen()
+
+  initializeData: ->
     @CHOICES = {
       ANIMAL: {
-        DOLPHIN: 'dolphin',
-        WOLF: 'wolf',
-        TURTLE: 'turtle',
-        SHARK: 'shark',
-        COW: 'cow',
-        BEAR: 'bear',
-        FROG: 'frog',
-        SHEEP: 'sheep',
-        RABBIT: 'rabbit',
-        PIG: 'pig',
-        WHALE: 'whale',
-        GOAT: 'goat',
-        MONKEY: 'monkey',
-        SNAKE: 'snake',
-        FOX: 'fox',
-        MOUSE: 'mouse',
-        TIGER: 'tiger'
+        DOLPHIN: $.t('animal.dolphin'),
+        WOLF: $.t('animal.wolf'),
+        TURTLE: $.t('animal.turtle'),
+        SHARK: $.t('animal.shark'),
+        COW: $.t('animal.cow'),
+        BEAR: $.t('animal.bear'),
+        FROG: $.t('animal.frog'),
+        SHEEP: $.t('animal.sheep'),
+        RABBIT: $.t('animal.rabbit'),
+        PIG: $.t('animal.pig'),
+        WHALE: $.t('animal.whale'),
+        GOAT: $.t('animal.goat'),
+        MONKEY: $.t('animal.monkey'),
+        SNAKE: $.t('animal.snake'),
+        FOX: $.t('animal.fox'),
+        MOUSE: $.t('animal.mouse'),
+        TIGER: $.t('animal.tiger')
       },
       FOOD: {
-        APPLE: 'apple',
-        POTATO: 'potato',
-        GRAPES: 'grapes',
-        MELON: 'melon',
-        COCONUT: 'coconut',
-        CHERRY: 'cherry',
-        LETTUCE: 'lettuce',
-        PEAS: 'peas',
-        CARROT: 'carrot',
-        TOMATO: 'tomato',
-        MUSHROOM: 'mushroom',
-        LEMON: 'lemon',
-        PLUM: 'plum',
-        BANANA: 'banana',
-        MANGO: 'mango',
-        PEPPER: 'pepper',
-        SQUASH: 'squash'
+        APPLE: $.t('food.apple'),
+        POTATO: $.t('food.potato'),
+        GRAPES: $.t('food.grapes'),
+        MELON: $.t('food.melon'),
+        COCONUT: $.t('food.coconut'),
+        CHERRY: $.t('food.cherry'),
+        LETTUCE: $.t('food.lettuce'),
+        PEAS: $.t('food.peas'),
+        CARROT: $.t('food.carrot'),
+        TOMATO: $.t('food.tomato'),
+        MUSHROOM: $.t('food.mushroom'),
+        LEMON: $.t('food.lemon'),
+        PLUM: $.t('food.plum'),
+        BANANA: $.t('food.banana'),
+        MANGO: $.t('food.mango'),
+        PEPPER: $.t('food.pepper'),
+        SQUASH: $.t('food.squash')
       }
     }
 
@@ -372,129 +610,6 @@ MemoryTask = class
 
     [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
-    @scores = {}
-
-    # main div's aspect ratio (pretend we're on an iPad)
-    @ASPECT_RATIO = 4/3
-
-    # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 3000
-
-    @FADE_IN_TIME = 1000
-
-    @FADE_OUT_TIME = 1000
-
-  buildInitialState: (recalls) ->
-    state = {}
-    for recall in recalls
-      do =>
-        data = []
-        _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = person
-        )
-        state[recall] = data
-    return state
-
-  #returns a tuple
-  getCurrentForm: ->
-    form = TabCAT.UI.getQueryString 'form'
-    #there's likely a much more efficient way to do this
-    #note that forms 3 and 4 do not currently exist yet
-    switch form
-      when "one" then return [@FORMS.FORM_ONE, 1, 'A']
-      when "two" then return [@FORMS.FORM_TWO, 2, 'B']
-      when "three" then return [@FORMS.FORM_THREE, 3, 'C']
-      when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
-    #if no form found, just return default form
-    return [@FORMS.FORM_ONE, 1, 'A']
-
-  buildScoringSheetsData: (currentForm) ->
-    #we can derive the people and the list of total food
-    #directly from each of the forms
-    people = currentForm.RECALL_ONE
-    food = []
-    animals = []
-    for person in people
-      do ( ->
-        food.push(person.person.FOOD)
-        animals.push(person.person.ANIMAL)
-      )
-
-    food = food.concat(["other", "DK"])
-    animals = animals.concat(["other", "DK"])
-
-    sheets =
-      people: people
-      food: food
-      animals: animals
-
-    return sheets
-
-  generateExposureStimuli: (exposureData) ->
-    stimuli = []
-
-    for data in exposureData
-      do ( ->
-        obj =
-          action: 'rememberOne',
-          person: data.person,
-          item: data.item
-
-        stimuli.push obj
-      )
-
-    return stimuli
-
-  generateRecalls: (recallData) ->
-    recalls = new Array()
-    for data in recallData
-      do ( ->
-        obj = { action: 'recallBoth', person: data.person }
-        recalls.push obj
-      )
-    return recalls
-
-  showNextTrial: (slide) ->
-    # looking to move away from switch, will refactor later.
-    # looking for something to automatically call
-    # function with the same name as type, but there's some strange
-    # behavior regarding scope that I don't yet understand
-    switch slide.action
-      when "rememberOne" then \
-        @rememberOne slide.person, slide.item
-      when "recallBoth" then \
-        @recallBoth slide.person
-
-  showRememberScreen: ->
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
-    $("#instructionsScreen").hide()
-    $("#rememberScreen").show()
-    #resume after this
-
-  showBlankScreen: ->
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
-    $("#instructionsScreen").hide()
-    $("#rememberScreen").hide()
-
-  start: ->
-    TabCAT.Task.start(
-      i18n:
-        resStore: translations
-      trackViewport: true
-    )
-    TabCAT.UI.turnOffBounce()
-
-    $task = $('#task')
-    $rectangle = $('#rectangle')
-
-    TabCAT.UI.requireLandscapeMode($task)
-
-    TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
-    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-
-    @showStartScreen()
 
   preloadEncounterImageData: (parentElement, sourcePeople) ->
     for person in sourcePeople
@@ -627,6 +742,7 @@ MemoryTask = class
 
     @currentExampleTrial = 0
 
+  setUpTask: ->
     @state = @buildInitialState(["RECALL_ONE", "RECALL_TWO"])
 
     #generate pre-loaded images to switch out on the fly
@@ -937,6 +1053,7 @@ MemoryTask = class
   constructor: ->
     super()
 
+  setUpTask: ->
     #generate pre-loaded images to switch out on the fly
     @preloadEncounterImageData($("#screenImage"), @currentForm.PEOPLE)
     @preloadScoringImageData(
