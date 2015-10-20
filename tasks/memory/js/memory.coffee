@@ -275,8 +275,6 @@ MemoryTask = class
     #this is the hook where task-specific setup may occur
     @setUpTask()
 
-    console.log @CHOICES
-
     $task = $('#task')
     $rectangle = $('#rectangle')
 
@@ -647,7 +645,7 @@ MemoryTask = class
   buildFoodOptions: (correctFood) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $food = $('<ul></ul>').addClass('foodSelection')
+    $food = $('<ul></ul>').addClass('foodSelection selectionColumn')
     for food in data.food
       do =>
         $li = $('<li></li>')
@@ -662,7 +660,7 @@ MemoryTask = class
   buildAnimalOptions: (correctAnimal) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $animal = $('<ul></ul>').addClass('animalSelection')
+    $animal = $('<ul></ul>').addClass('animalSelection selectionColumn')
     for animal in data.animals
       do =>
         $li = $('<li></li>')
@@ -710,23 +708,20 @@ MemoryTask = class
       parentClass = '.scoringAnimal'
 
     $target = $(event.target)
-    $scoringElement = $target.parent('.selectionContainer').parent(parentClass)
-    console.log($scoringElement)
-    $scoringRow = $scoringElement.parent('.scoringRow')
+    $scoringElement = $target.parent('.selectionColumn').parent(parentClass)
+    $scoringColumn = $scoringElement.parent('.scoringColumn')
     #previously set key on row container
-    personKey = $scoringRow.data('person')
-    $scoreSheet = $scoringElement.find('ul' + className).fadeIn(500)
-    $scoreSheet.find('li').touchdown( (event) =>
-      $scoreSheet.fadeOut(500)
-      #get the data we set in the scoring preload
-      touched = $(event.target).data(type)
-      #set the current display to what we just touched
-      $target.html(touched)
+    personKey = $scoringColumn.data('person')
+    console.log personKey
 
-      #set the state's touched answer where the scoringScreen is current
-      #and the person's key matches personKey
-      @state[scoringScreen][personKey].touched = touched
-    )
+    touched = $(event.target).data(type)
+    console.log "touched", touched
+    #set the current display to what we just touched
+    $target.html(touched).addClass('currentSelection')
+
+    #set the state's touched answer where the scoringScreen is current
+    #and the person's key matches personKey
+    @state[scoringScreen][personKey].touched = touched
 
   endTask: ->
 
@@ -971,13 +966,13 @@ MemoryTask = class
     $('#recallOneScoringScreen').show()
     $("#completeButton").unbind().hide()
     $("#recallOneScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_ONE')
       )
 
     $("#recallOneScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_ONE')
       )
