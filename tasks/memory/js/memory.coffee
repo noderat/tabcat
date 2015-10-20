@@ -722,6 +722,7 @@ MemoryTask = class
     #set the state's touched answer where the scoringScreen is current
     #and the person's key matches personKey
     @state[scoringScreen][personKey].touched = touched
+    console.log @state
 
   endTask: ->
 
