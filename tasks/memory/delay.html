@@ -13,79 +13,43 @@
 <body class="fullscreen unselectable">
     <div id="task" class="fullscreen">
         <div id="rectangle">
-            <div id="rememberScreen" style="display:none">
+            <div id="rememberScreen" class="screen">
                 <p>Remember</p>
             </div>
-            <div id="trialScreen" style="display:none">
+            <div id="trialScreen" class="screen">
                 <div id="screenImage"><img /></div>
                 <div id="recallArea">
                     <div class="memoryElement" id="rememberOne"></div>
-                    <div class="memoryElement" id="recallOne">
-                        <div class="recallLabel"></div>
-                        <div class="recallItem">????</div>
-                    </div>
                     <div class="memoryElement" id="recallBoth">
                         <div class="recallLabel">food:</div>
                         <div class="recallItem">????</div>
                         <div class="recallLabel">animal:</div>
                         <div class="recallItem">????</div>
-                        <div class="nextButton"><img src="img/right-arrow.png" /></div>
+                        <div id="recallNextButton"><img src="img/right-arrow.png" /></div>
                     </div>
                 </div>
             </div>
 	        <div id="delayedRecallScoringScreen" class="screen">
                 <h1 class="scoringTitle">Delayed Recall</h1>
-		        <div class="personOne scoringRow">
+		        <div class="personOne scoringColumn">
 			        <span class="scoringImage"></span>
-			        <span class="scoringFood">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
-			        <span class="scoringAnimal">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
+			        <span class="scoringFood"></span>
+			        <span class="scoringAnimal"></span>
 		        </div>
-		        <div class="personTwo scoringRow">
+		        <div class="personTwo scoringColumn">
 			        <span class="scoringImage"></span>
-			        <span class="scoringFood">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
-			        <span class="scoringAnimal">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
+			        <span class="scoringFood"></span>
+			        <span class="scoringAnimal"></span>
 		        </div>
-		        <div class="personThree scoringRow">
+		        <div class="personThree scoringColumn">
 			        <span class="scoringImage"></span>
-			        <span class="scoringFood">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
-			        <span class="scoringAnimal">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
+			        <span class="scoringFood"></span>
+			        <span class="scoringAnimal"></span>
 		        </div>
-		        <div class="personFour scoringRow">
+		        <div class="personFour scoringColumn">
 			        <span class="scoringImage"></span>
-			        <span class="scoringFood">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
-			        <span class="scoringAnimal">
-                        <div class="selectionContainer">
-                            <!--<span class="currentSelection">No Selection</span>-->
-                        </div>
-                    </span>
+			        <span class="scoringFood"></span>
+			        <span class="scoringAnimal"></span>
 		        </div>
                 <button id="completeButton" class="progressButton">Complete</button>
 	        </div>

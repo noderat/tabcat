@@ -173,7 +173,11 @@ MemoryTask = class
       do =>
         data = []
         _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = person
+          data[person.person.KEY] = {
+            person: person,
+            food: null,
+            animal: null
+          }
         )
         state[recall] = data
     return state
@@ -709,20 +713,18 @@ MemoryTask = class
 
     $target = $(event.target)
     $scoringElement = $target.parent('.selectionColumn').parent(parentClass)
+    $scoringElement.find('.currentSelection').removeClass('currentSelection')
     $scoringColumn = $scoringElement.parent('.scoringColumn')
     #previously set key on row container
     personKey = $scoringColumn.data('person')
-    console.log personKey
 
     touched = $(event.target).data(type)
-    console.log "touched", touched
     #set the current display to what we just touched
     $target.html(touched).addClass('currentSelection')
 
     #set the state's touched answer where the scoringScreen is current
     #and the person's key matches personKey
-    @state[scoringScreen][personKey].touched = touched
-    console.log @state
+    @state[scoringScreen][personKey][type] = touched
 
   endTask: ->
 
@@ -992,13 +994,13 @@ MemoryTask = class
     )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_TWO')
       )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_TWO')
       )
@@ -1046,13 +1048,13 @@ MemoryTask = class
     $('#delayedRecallScoringScreen').show()
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'DELAYED_RECALL')
       )
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'DELAYED_RECALL')
       )
