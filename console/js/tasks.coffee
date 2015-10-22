@@ -145,7 +145,8 @@ showTasks = ->
                       event.preventDefault()
                       event.stopPropagation()
 
-                      window.localStorage.taskForm = $(event.target).data('taskForm')
+                      window.localStorage.taskForm =
+                        $(event.target).data('taskForm')
 
                       #yellow highlight
                       highlightColor = "rgba(255,255,0, 1)"
