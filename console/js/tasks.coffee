@@ -138,11 +138,14 @@ showTasks = ->
                 for form, value of task.forms
                   do ( =>
                     $icon = $('<span></span>', class: 'alternateForm')
-                    formUrl = startUrl + '?form=' + value
+                    #formUrl = startUrl + '?form=' + value
                     $icon.text(form)
+                    $icon.data('taskForm', value)
                     $icon.on('click', (event) ->
                       event.preventDefault()
                       event.stopPropagation()
+
+                      window.localStorage.taskForm = $(event.target).data('taskForm')
 
                       #yellow highlight
                       highlightColor = "rgba(255,255,0, 1)"
@@ -152,7 +155,7 @@ showTasks = ->
                         {color: highlightColor},
                         500
                       )).then( ->
-                        window.location = formUrl
+                        window.location = startUrl
                       )
                       return false
                     )

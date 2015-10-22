@@ -184,7 +184,11 @@ MemoryTask = class
 
   #returns a tuple
   getCurrentForm: ->
-    form = TabCAT.UI.getQueryString 'form'
+    form = window.localStorage.taskForm
+    #remove this key so other tasks are not confused
+    window.localStorage.removeItem('taskForm')
+
+    console.log "form: " + form
     #there's likely a much more efficient way to do this
     #note that forms 3 and 4 do not currently exist yet
     switch form
