@@ -328,15 +328,25 @@ p {
     left: 79%;
 }
 
-#recallNextButton {
+.recallNavigation {
+    display: none;
     position: absolute;
-    top: 150%;
-    left: 65%;
+    top: 86%;
+    width: 9%;
+    height: 9%;
 }
 
-#recallNextButton img {
-    width: 2em;
-    height: 2em;
+.recallNavigation img {
+    max-width: 100%;
+    height: auto;
+}
+
+#recallNextButton {
+    left: 85%;
+}
+
+#recallPreviousButton {
+    left: 6%;
 }
 
 #supplementaryInstruction {

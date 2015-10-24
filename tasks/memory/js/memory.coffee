@@ -167,6 +167,8 @@ MemoryTask = class
 
     @FADE_OUT_TIME = 1000
 
+    @currentRecallTrial = 0
+
   buildInitialState: (recalls) ->
     state = {}
     for recall in recalls
@@ -188,7 +190,6 @@ MemoryTask = class
     #remove this key so other tasks are not confused
     window.localStorage.removeItem('taskForm')
 
-    console.log "form: " + form
     #there's likely a much more efficient way to do this
     #note that forms 3 and 4 do not currently exist yet
     switch form
@@ -261,7 +262,6 @@ MemoryTask = class
     $("#trialScreen").hide()
     $("#instructionsScreen").hide()
     $("#rememberScreen").show()
-    #resume after this
 
   showBlankScreen: ->
     $("#exampleScreen").hide()
@@ -829,6 +829,7 @@ MemoryTask = class
     $("#rememberOne").hide()
     $("#recallBoth").show()
     $("#recallNextButton").hide()
+    $("#recallPreviousButton").hide()
 
     $("#supplementaryInstruction").hide()
 
@@ -906,6 +907,8 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_ONE)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
     )
@@ -915,29 +918,57 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_TWO)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
     )
 
   iterateFirstRecallTrials: (trials) ->
-    trial = trials.shift()
-    @showNextTrial(trial)
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateFirstRecallTrials(trials)
+        )
+
         @iterateFirstRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
         @beginSecondExposureTrials()
     )
 
   iterateSecondRecallTrials: (trials) ->
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
 
-    @showNextTrial(trials.shift())
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateSecondRecallTrials(trials)
+        )
+
         @iterateSecondRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
         @recallOneScoringScreen()
     )
 
@@ -1034,13 +1065,28 @@ MemoryTask = class
 
   beginDelayedRecall: ->
     trials = @generateRecalls(@currentForm.DELAYED_RECALL)
+    @currentRecallTrial = 0
     @iterateDelayedRecallTrials(trials)
 
   iterateDelayedRecallTrials: (trials) ->
-    @showNextTrial(trials.shift())
+
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateDelayedRecallTrials(trials)
+        )
+
         @iterateDelayedRecallTrials(trials)
       else
         @delayedScoringScreen()
