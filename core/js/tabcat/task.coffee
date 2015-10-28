@@ -166,7 +166,12 @@ TabCAT.Task.start = _.once((options) ->
   # set up i18n
   defaultOptions = {
     fallbackLng: DEFAULT_FALLBACK_LNG
+    useCookie: false
   }
+
+  if window.localStorage.currentLanguage?
+    defaultOptions.lng = window.localStorage.currentLanguage
+
   i18n_options = _.extend( defaultOptions, options?.i18n)
 
   #merge translation keys

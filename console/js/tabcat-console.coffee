@@ -95,7 +95,9 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       <div class="right">
         <p class="email">&nbsp;</p>
-        <button class="login" style="display:none"></span>
+        <button class="login" style="display:none"></button>
+        <button class="languageButton" id="englishButton">English</button>
+        <button class="languageButton" id="spanishButton">Spanish</button>
       </div>
       <div class="center">
         <p class="encounter"></p>
@@ -103,6 +105,13 @@ TabCAT.Console.updateStatusBar = ->
       </div>
       """
     )
+
+    #temporary way to switch between english and spanish
+    $('#englishButton').touchdown =>
+      window.localStorage.currentLanguage = 'en'
+
+    $('#spanishButton').touchdown =>
+      window.localStorage.currentLanguage = 'es'
 
     $statusBar.find('.version').text(TabCAT.version)
 
