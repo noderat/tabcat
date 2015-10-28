@@ -1,3 +1,26 @@
+v0.9.0, 2015-10-23 -- Alternate forms for Memory and Digit Symbol, Spanish translations
+- build system:
+  - Normalized line endings
+  - Added vagrant-make to bypass symlink issues on shared folders
+  - Began conversion from make to gulp
+  - Fixed initial permissions on CouchDB setup
+  - Added SASS support
+- core:
+  - Began style guide implementation
+  - Added more internationalization support for Spanish translation
+- console:
+  - Added support for alternate forms for tasks
+- reports:
+  - Fixed bugs in line tasks reports
+- tasks:
+  - digit-symbol:
+    - Added alternate forms
+  - memory:
+    - Added alternate forms
+    - Added scoring capture
+    - Added fade between faces
+    - Changed task instructions
+
 v0.8.9, 2015-08-27 -- Added Digit Symbol reporting and fix touch-related bugs
 - core:
   - Extended jQuery to accommodate customized touch handling

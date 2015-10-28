@@ -167,20 +167,29 @@ MemoryTask = class
 
     @FADE_OUT_TIME = 1000
 
+    @currentRecallTrial = 0
+
   buildInitialState: (recalls) ->
     state = {}
     for recall in recalls
       do =>
         data = []
         _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = person
+          data[person.person.KEY] = {
+            person: person,
+            food: null,
+            animal: null
+          }
         )
         state[recall] = data
     return state
 
   #returns a tuple
   getCurrentForm: ->
-    form = TabCAT.UI.getQueryString 'form'
+    form = window.localStorage.taskForm
+    #remove this key so other tasks are not confused
+    window.localStorage.removeItem('taskForm')
+
     #there's likely a much more efficient way to do this
     #note that forms 3 and 4 do not currently exist yet
     switch form
@@ -253,7 +262,6 @@ MemoryTask = class
     $("#trialScreen").hide()
     $("#instructionsScreen").hide()
     $("#rememberScreen").show()
-    #resume after this
 
   showBlankScreen: ->
     $("#exampleScreen").hide()
@@ -274,8 +282,6 @@ MemoryTask = class
 
     #this is the hook where task-specific setup may occur
     @setUpTask()
-
-    console.log @CHOICES
 
     $task = $('#task')
     $rectangle = $('#rectangle')
@@ -647,7 +653,7 @@ MemoryTask = class
   buildFoodOptions: (correctFood) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $food = $('<ul></ul>').addClass('foodSelection')
+    $food = $('<ul></ul>').addClass('foodSelection selectionColumn')
     for food in data.food
       do =>
         $li = $('<li></li>')
@@ -662,7 +668,7 @@ MemoryTask = class
   buildAnimalOptions: (correctAnimal) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $animal = $('<ul></ul>').addClass('animalSelection')
+    $animal = $('<ul></ul>').addClass('animalSelection selectionColumn')
     for animal in data.animals
       do =>
         $li = $('<li></li>')
@@ -710,23 +716,19 @@ MemoryTask = class
       parentClass = '.scoringAnimal'
 
     $target = $(event.target)
-    $scoringElement = $target.parent('.selectionContainer').parent(parentClass)
-    console.log($scoringElement)
-    $scoringRow = $scoringElement.parent('.scoringRow')
+    $scoringElement = $target.parent('.selectionColumn').parent(parentClass)
+    $scoringElement.find('.currentSelection').removeClass('currentSelection')
+    $scoringColumn = $scoringElement.parent('.scoringColumn')
     #previously set key on row container
-    personKey = $scoringRow.data('person')
-    $scoreSheet = $scoringElement.find('ul' + className).fadeIn(500)
-    $scoreSheet.find('li').touchdown( (event) =>
-      $scoreSheet.fadeOut(500)
-      #get the data we set in the scoring preload
-      touched = $(event.target).data(type)
-      #set the current display to what we just touched
-      $target.html(touched)
+    personKey = $scoringColumn.data('person')
 
-      #set the state's touched answer where the scoringScreen is current
-      #and the person's key matches personKey
-      @state[scoringScreen][personKey].touched = touched
-    )
+    touched = $(event.target).data(type)
+    #set the current display to what we just touched
+    $target.html(touched).addClass('currentSelection')
+
+    #set the state's touched answer where the scoringScreen is current
+    #and the person's key matches personKey
+    @state[scoringScreen][personKey][type] = touched
 
   endTask: ->
 
@@ -827,6 +829,7 @@ MemoryTask = class
     $("#rememberOne").hide()
     $("#recallBoth").show()
     $("#recallNextButton").hide()
+    $("#recallPreviousButton").hide()
 
     $("#supplementaryInstruction").hide()
 
@@ -904,6 +907,8 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_ONE)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
     )
@@ -913,29 +918,57 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_TWO)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
     )
 
   iterateFirstRecallTrials: (trials) ->
-    trial = trials.shift()
-    @showNextTrial(trial)
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateFirstRecallTrials(trials)
+        )
+
         @iterateFirstRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
         @beginSecondExposureTrials()
     )
 
   iterateSecondRecallTrials: (trials) ->
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
 
-    @showNextTrial(trials.shift())
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateSecondRecallTrials(trials)
+        )
+
         @iterateSecondRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
         @recallOneScoringScreen()
     )
 
@@ -971,13 +1004,13 @@ MemoryTask = class
     $('#recallOneScoringScreen').show()
     $("#completeButton").unbind().hide()
     $("#recallOneScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_ONE')
       )
 
     $("#recallOneScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_ONE')
       )
@@ -986,42 +1019,6 @@ MemoryTask = class
       $('#recallOneScoringScreen').hide()
       @recallTwoScoringScreen()
     )
-
-    #Trigger Modal Dropdown on Open
-    #Recall Scoring One Modals
-    personOneModal = $('.personOneModal')
-    personTwoModal = $('.personTwoModal')
-    personThreeModal = $('.personThreeModal')
-    personFourModal = $('.personFourModal')
-    personTwoModal.hide()
-    personThreeModal.hide()
-    personFourModal.hide()
-    $('.close').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.firstModalNext').touchdown ->
-      personOneModal.hide()
-      personTwoModal.show()
-    $('.secondModalNext').touchdown ->
-      personTwoModal.hide()
-      personThreeModal.show()
-    $('.thirdModalNext').touchdown ->
-      personThreeModal.hide()
-      personFourModal.show()
-    $('.fourthModalNext').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.scoringImageOne').touchdown ->
-      personOneModal.show()
-    $('.scoringImageTwo').touchdown ->
-      personTwoModal.show()
-    $('.scoringImageThree').touchdown ->
-      personThreeModal.show()
-    $('.scoringImageFour').touchdown ->
-      personFourModal.show()
-
-
-
-
-
 
   recallTwoScoringScreen: ->
     $('#nextButton').hide()
@@ -1032,13 +1029,13 @@ MemoryTask = class
     )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_TWO')
       )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_TWO')
       )
@@ -1068,13 +1065,28 @@ MemoryTask = class
 
   beginDelayedRecall: ->
     trials = @generateRecalls(@currentForm.DELAYED_RECALL)
+    @currentRecallTrial = 0
     @iterateDelayedRecallTrials(trials)
 
   iterateDelayedRecallTrials: (trials) ->
-    @showNextTrial(trials.shift())
+
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateDelayedRecallTrials(trials)
+        )
+
         @iterateDelayedRecallTrials(trials)
       else
         @delayedScoringScreen()
@@ -1086,13 +1098,13 @@ MemoryTask = class
     $('#delayedRecallScoringScreen').show()
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'DELAYED_RECALL')
       )
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'DELAYED_RECALL')
       )
