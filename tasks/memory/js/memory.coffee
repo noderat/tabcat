@@ -1091,6 +1091,8 @@ MemoryTask = class
 
         @iterateDelayedRecallTrials(trials)
       else
+        $("#recallNextButton").unbind().hide()
+        $("#recallPreviousButton").unbind().hide()
         @delayedScoringScreen()
     )
 
