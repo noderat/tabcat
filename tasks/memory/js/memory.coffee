@@ -945,6 +945,7 @@ MemoryTask = class
         @iterateFirstRecallTrials(trials)
       else
         $("#recallPreviousButton").unbind().hide()
+        $("#recallNextButton").unbind().hide()
         @beginSecondExposureTrials()
     )
 
@@ -969,6 +970,7 @@ MemoryTask = class
         @iterateSecondRecallTrials(trials)
       else
         $("#recallPreviousButton").unbind().hide()
+        $("#recallNextButton").unbind().hide()
         @recallOneScoringScreen()
     )
 
