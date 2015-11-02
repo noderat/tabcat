@@ -45,9 +45,6 @@ DEFAULT_MIN_WAIT = 1000
 # default duration of fade at end of task
 DEFAULT_FADE_DURATION = 200
 
-# default fallback language, for i18n
-DEFAULT_FALLBACK_LNG = 'en'
-
 # DB where design docs and task content is stored
 TABCAT_DB = 'tabcat'
 
@@ -163,25 +160,7 @@ TabCAT.Task.patientHasDevice = (value) ->
 TabCAT.Task.start = _.once((options) ->
   now = $.now()
 
-  # set up i18n
-  defaultOptions = {
-    fallbackLng: DEFAULT_FALLBACK_LNG
-    useCookie: false
-  }
-
-  if window.localStorage.currentLanguage?
-    defaultOptions.lng = window.localStorage.currentLanguage
-
-  i18n_options = _.extend( defaultOptions, options?.i18n)
-
-  #merge translation keys
-  for language, translation of TabCAT.Translations.translations
-    do ->
-      i18n_options.resStore[language].translation = _.extend(
-        translation.translation,
-        i18n_options.resStore[language].translation
-      )
-  $.i18n.init(i18n_options)
+  TabCAT.Translations.init(options?.i18n)
 
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()

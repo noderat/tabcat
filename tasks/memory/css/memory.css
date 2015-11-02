@@ -294,6 +294,7 @@ p {
 
 .progressButton {
     display: none;
+    white-space: nowrap;
     border-width: 0.2em;
     border-style: solid;
     border-color: #ffffff;

@@ -25,6 +25,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
 
+# default fallback language, for i18n
+DEFAULT_FALLBACK_LNG = 'en'
 
 Translations = {}
 
@@ -37,9 +39,41 @@ else  # inside browser
 Translations.translations =
   en:
     translation:
+      return_to_examiner:
+        'Please return to the examiner'
+      i_am_the_examiner:
+        'I am the examiner'
       task_complete:
         'Task complete!'
   es:
     translation:
+      return_to_examiner:
+        'Por favor devuelva la tableta al examinador'
+      i_am_the_examiner:
+        'Soy el examinador'
       task_complete:
-        'Task complete (spanish)!'
+        'Tarea terminado!'
+
+Translations.init = (options) ->
+# set up i18n
+  defaultOptions = {
+    fallbackLng: DEFAULT_FALLBACK_LNG
+    useCookie: false,
+    resStore: { translation: {}}
+  }
+
+  if window.localStorage.currentLanguage?
+    defaultOptions.lng = window.localStorage.currentLanguage
+
+  i18n_options = _.extend( defaultOptions, options)
+
+  #merge translation keys
+  for language, translation of TabCAT.Translations.translations
+    do ->
+      if not i18n_options.resStore[language]?
+        i18n_options.resStore[language] = {}
+      i18n_options.resStore[language].translation = _.extend(
+        translation.translation,
+        i18n_options.resStore[language].translation
+      )
+  $.i18n.init(i18n_options)

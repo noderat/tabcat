@@ -24,6 +24,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###
+
 clickIAmTheExaminer = (event) ->
   TabCAT.Task.patientHasDevice(false)
   window.location = TabCAT.UI.srcPath() ? 'tasks.html'
@@ -31,6 +32,10 @@ clickIAmTheExaminer = (event) ->
 TabCAT.UI.linkEmToPercentOfHeight($(document.body))
 $('#returnToExaminer').show()
 $(->
+  TabCAT.Translations.init()
+
+  #translate immediately on document load
+  $("body").i18n()
   $('#iAmTheExaminer').on('click', clickIAmTheExaminer)
   $('#iAmTheExaminer').removeAttr('disabled')
 )

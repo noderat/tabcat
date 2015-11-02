@@ -34,11 +34,11 @@ translations =
   # translations by David Marin (fluent/careful but not a native speaker)
   es:
     translation:
-      tap_the_longer_line_html: (
-        '<span class="smaller">Haga tap sobre la línea más larga<br>' +
-        'con rapidez y precisión.</span>')
+      tap_the_longer_line_html:
+        'Rápidamente toque la línea más larga.'
       which_is_parallel_html:
-        '¿Cuál es paralela a la línea <span class="blue">azul</span>?'
+        'Toque la flecha <span class="orange">naranja</span> que apunta en ' +
+        'la misma dirección que la flecha <span class="blue">azul</span>.'
   zh:
     translation:  # these are all zh-Hant
       tap_the_longer_line_html: '儘量選出最長的線。<br>越快越好。'
