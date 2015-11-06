@@ -482,9 +482,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    @startTimer()
-    $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
-    return
+
+    #begin timeer on first symbol touch, and
+    $('.symbol').touchdown =>
+      @startTimer()
+      @handleSymbolTouch.bind(this)
 
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
