@@ -112,8 +112,8 @@ TabCAT.Console.updateStatusBar = ->
             <li class='menu-list-item show-lang'><a href='#'>SELECT A LANGUAGE</a></li>
             <li class="menu-list-item lang">
               <select name="language">
-                <option value='english' selected>English</option>
-                <option value='dutch'>Dutch</option>
+                <option id="englishButton" value='english' selected>English</option>
+                <option id="spanishButton" value='spanish'>Spanish</option>
                 <option value='french'>French</option>
                 <option value='german'>German</option>
                 <option value='japanese'>Japanese</option>
@@ -194,6 +194,13 @@ TabCAT.Console.updateStatusBar = ->
       syncButton.toggle()
       $('.sync').toggleClass 'syncopen'
 
+
+    #temporary way to switch between english and spanish
+    $('#englishButton').touchdown =>
+      window.localStorage.currentLanguage = 'en'
+
+    $('#spanishButton').touchdown =>
+      window.localStorage.currentLanguage = 'es'
 
     $statusBar.find('.version').text(TabCAT.version)
 

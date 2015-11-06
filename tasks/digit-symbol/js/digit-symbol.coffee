@@ -31,10 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   TRANSLATIONS =
     en:
       translation:
-        begin_button_html:
-          'Begin'
-        next_button_html:
-          'Next'
         start_screen_html:
           1: 'Look at the boxes above.'
           2: 'Each number has its own picture.'
@@ -49,6 +45,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           2: 'Work as fast as you can <br> without making any mistakes.'
         are_you_ready:
           1: 'Are you ready to begin?'
+    es:
+      translation:
+        start_screen_html:
+          1: 'Mire las figuras de arriba.'
+          2: 'Note que debajo de cada número hay una figura que le corresponde.'
+          3: 'Observe las figuras de abajo y note que son <br> las mismas ' +
+            'que las figuras de arriba.'
+        start_screen_next_html:
+          1: 'Cuando vea un número aparecer en medio de la pantalla, mire ' +
+            'arriba y <br> encuentre la figura que le corresponde y luego ' +
+            'toque esta figura abajo.'
+        start_screen_practice:
+          1: 'Vamos a practicar.'
+          2: 'Haga los siguientes ejercicios <br> lo más rápido que pueda.'
+        are_you_ready:
+          1: '¿Está listo para comenzar?'
 
   # main div's aspect ratio (pretend we're on an iPad)
   ASPECT_RATIO = 4/3
@@ -141,22 +153,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ]
     FORM_THREE:
       ICON_BAR: [
-        SYMBOLS.DIAMOND
         SYMBOLS.TEARDROPS
-        SYMBOLS.TRI_CIRCLES
+        SYMBOLS.TRI_BLOCKS
         SYMBOLS.MOBIUS
         SYMBOLS.MOUSTACHE
+        SYMBOLS.DIAMOND
         SYMBOLS.INNER_CIRCLES
-        SYMBOLS.TRI_BLOCKS
+        SYMBOLS.TRI_CIRCLES
       ]
       SYMBOL_BAR: [
-        { relativeSequence: 4, symbol: SYMBOLS.MOBIUS }
+        { relativeSequence: 3, symbol: SYMBOLS.MOBIUS }
         { relativeSequence: 6, symbol: SYMBOLS.INNER_CIRCLES }
-        { relativeSequence: 5, symbol: SYMBOLS.MOUSTACHE }
-        { relativeSequence: 3, symbol: SYMBOLS.TRI_CIRCLES }
-        { relativeSequence: 7, symbol: SYMBOLS.TRI_BLOCKS }
-        { relativeSequence: 2, symbol: SYMBOLS.TEARDROPS }
-        { relativeSequence: 1, symbol: SYMBOLS.DIAMOND }
+        { relativeSequence: 4, symbol: SYMBOLS.MOUSTACHE }
+        { relativeSequence: 7, symbol: SYMBOLS.TRI_CIRCLES }
+        { relativeSequence: 2, symbol: SYMBOLS.TRI_BLOCKS }
+        { relativeSequence: 1, symbol: SYMBOLS.TEARDROPS }
+        { relativeSequence: 5, symbol: SYMBOLS.DIAMOND }
       ]
     FORM_FOUR:
       ICON_BAR: [
@@ -223,7 +235,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   #returns a tuple
   getCurrentForm: ->
-    form = TabCAT.UI.getQueryString 'form'
+    form = window.localStorage.taskForm
+    #remove this key so other tasks are not confused
+    window.localStorage.removeItem('taskForm')
+
     #there's likely a much more efficient way to do this
     #note that forms 3 and 4 do not currently exist yet
     switch form
@@ -477,9 +492,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    @startTimer()
-    $('.symbol').on 'mousedown touchstart', @handleSymbolTouch.bind(this)
-    return
+
+    #begin timeer on first symbol touch, and
+    $('.symbol').touchdown =>
+      @startTimer()
+      @handleSymbolTouch.bind(this)
 
     
   updateCurrentStimuli: ->

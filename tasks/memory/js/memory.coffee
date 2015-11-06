@@ -43,143 +43,523 @@ translations =
         2: 'Remember both.'
       instructions_ready:
         1: 'Are you ready to begin?'
+      static_text:
+        food: 'food'
+        animal: 'animal'
+        remember: 'Remember'
+      animal:
+        dolphin: 'dolphin'
+        wolf: 'wolf'
+        turtle: 'turtle'
+        shark: 'shark'
+        cow: 'cow'
+        bear: 'bear'
+        frog: 'frog'
+        sheep: 'sheep'
+        rabbit: 'rabbit'
+        pig: 'pig'
+        whale: 'whale'
+        goat: 'goat'
+        monkey: 'monkey'
+        snake: 'snake'
+        fox: 'fox'
+        mouse: 'mouse'
+        tiger: 'tiger'
+      food:
+        apple: 'apple'
+        potato: 'potato'
+        grapes: 'grapes'
+        melon: 'melon'
+        coconut: 'coconut'
+        cherry: 'cherry'
+        lettuce: 'lettuce'
+        peas: 'peas'
+        carrot: 'carrot'
+        tomato: 'tomato'
+        mushroom: 'mushroom'
+        lemon: 'lemon'
+        plum: 'plum'
+        banana: 'banana'
+        mango: 'mango'
+        pepper: 'pepper'
+        squash: 'squash'
+
   es:
     translation:
-      '...'
+      instructions_before_face:
+        1: 'Le vamos a mostrar fotos de personas junto a su alimento ' +
+          'favorito y a su animal favorito.'
+      instructions_favorite_food:
+        1: 'Por ejemplo, recuerde que el alimento favorito de esta mujer es:'
+      instructions_favorite_animal:
+        1: 'Y el animal favorito de esta mujer es:'
+      instructions_remember:
+        1: 'Ahora vamos a mostrarle mas personas. ' +
+          'Le vamos a mostrar a cada persona dos veces, una vez con su ' +
+          'alimento favorito y la otra con su animal favorito.'
+        2: 'Recuerde ambas.'
+      instructions_ready:
+        1: '¿Esta listo para empezar?'
+      static_text:
+        food: 'alimento'
+        animal: 'animal'
+        remember: 'Recuerde'
+      animal:
+        dolphin: 'delfín'
+        wolf: 'lobo'
+        penguin: 'pinguino'
+        turtle: 'tortuga'
+        shark: 'tiburón'
+        cow: 'vaca'
+        bear: 'oso'
+        frog: 'rana'
+        toucan: 'tucán'
+        lion: 'león'
+        sheep: 'oveja'
+        rabbit: 'conejo'
+        giraffe: 'girafa'
+        pig: 'cerdo'
+        whale: 'ballena'
+        octopus: 'pulpo'
+        goat: 'cabra'
+        monkey: 'mono'
+        elephant: 'elefante'
+        chipmunk: 'ardilla'
+        camel: 'camello'
+        snake: 'serpiente'
+        fox: 'zorro'
+        mouse: 'ratón'
+        tiger: 'tigre'
+      food:
+        apple: 'manzana'
+        garlic: 'ajo'
+        celery: 'apio'
+        potato: 'patata'
+        mango: 'mango'
+        cantaloupe: 'melón'
+        eggplant: 'berenjena'
+        onion: 'cebolla'
+        pineapple: 'piña'
+        grapes: 'uvas' #not sure if singular or plural is needed
+        grape: 'uva'
+        melon: 'melón'
+        spinach: 'espinaca'
+        lettuce: 'lechuga'
+        coconut: 'coco'
+        cherry: 'cereza'
+        peas: 'chícharos'
+        pear: 'pera'
+        carrot: 'zanahoria'
+        parsley: 'perejil'
+        tomato: 'tomate'
+        mushroom: 'seta'
+        lemon: 'limón'
+        orange: 'naranja'
+        plum: 'ciruela'
+        banana: 'plátano'
+        pepper: 'pimienta'
+        squash: 'squash'
 
 MemoryTask = class
   constructor: ->
 
+    @scores = {}
+
+    # main div's aspect ratio (pretend we're on an iPad)
+    @ASPECT_RATIO = 4/3
+
+    # time values in milliseconds
+    @TIME_BETWEEN_STIMULI = 3000
+
+    @FADE_IN_TIME = 1000
+
+    @FADE_OUT_TIME = 1000
+
+    @currentRecallTrial = 0
+
+  buildInitialState: (recalls) ->
+    state = {
+      languageVersion: @languageVersion
+    }
+    for recall in recalls
+      do =>
+        data = []
+        _.each(@currentForm[recall], (person) ->
+          data[person.person.KEY] = {
+            person: person,
+            food: null,
+            animal: null
+          }
+        )
+        state[recall] = data
+    return state
+
+  #returns a tuple
+  getCurrentForm: ->
+    form = window.localStorage.taskForm
+    #remove this key so other tasks are not confused
+    window.localStorage.removeItem('taskForm')
+
+    #there's likely a much more efficient way to do this
+    #note that forms 3 and 4 do not currently exist yet
+    switch form
+      when "one" then return [@FORMS.FORM_ONE, 1, 'A']
+      when "two" then return [@FORMS.FORM_TWO, 2, 'B']
+      when "three" then return [@FORMS.FORM_THREE, 3, 'C']
+      when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
+    #if no form found, just return default form
+    return [@FORMS.FORM_ONE, 1, 'A']
+
+  buildScoringSheetsData: (currentForm) ->
+    #we can derive the people and the list of total food
+    #directly from each of the forms
+    people = currentForm.RECALL_ONE
+    food = []
+    animals = []
+    for person in people
+      do ( =>
+        food.push person.person.FOOD[@languageVersion]
+        animals.push person.person.ANIMAL[@languageVersion]
+      )
+
+    food = food.concat(["other", "DK"])
+    animals = animals.concat(["other", "DK"])
+
+    sheets =
+      people: people
+      food: food
+      animals: animals
+
+    return sheets
+
+  generateExposureStimuli: (exposureData) ->
+    stimuli = []
+
+    for data in exposureData
+      do ( ->
+        obj =
+          action: 'rememberOne',
+          person: data.person,
+          item: data.item
+
+        stimuli.push obj
+      )
+
+    return stimuli
+
+  generateRecalls: (recallData) ->
+    recalls = new Array()
+    for data in recallData
+      do ( ->
+        obj = { action: 'recallBoth', person: data.person }
+        recalls.push obj
+      )
+    return recalls
+
+  showNextTrial: (slide) ->
+    # looking to move away from switch, will refactor later.
+    # looking for something to automatically call
+    # function with the same name as type, but there's some strange
+    # behavior regarding scope that I don't yet understand
+    switch slide.action
+      when "rememberOne" then \
+        @rememberOne slide.person, slide.item
+      when "recallBoth" then \
+        @recallBoth slide.person
+
+  showRememberScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").show()
+
+  showBlankScreen: ->
+    $("#exampleScreen").hide()
+    $("#trialScreen").hide()
+    $("#instructionsScreen").hide()
+    $("#rememberScreen").hide()
+
+  start: ->
+    TabCAT.Task.start(
+      i18n:
+        resStore: translations
+      trackViewport: true
+    )
+    TabCAT.UI.turnOffBounce()
+
+    @languageVersion = @getLanguageVersion()
+
+    #moved here because data initialization requires i18n
+    @initializeData()
+
+    #this is the hook where task-specific setup may occur
+    @setUpTask()
+
+    $task = $('#task')
+    $rectangle = $('#rectangle')
+
+    TabCAT.UI.requireLandscapeMode($task)
+
+    TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
+    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
+
+    @showStartScreen()
+
+  #will help determine which set of food/animal pairings to use
+  getLanguageVersion: ->
+    currentLanguage = $.i18n.lng()
+    #english by default
+    languageVersion = 'ENGLISH'
+    #can add more versions if needed here
+    switch currentLanguage
+      when 'en' then languageVersion = 'ENGLISH'
+      when 'es' then languageVersion = 'LATIN'
+
+    return languageVersion
+
+  initializeData: ->
     @CHOICES = {
       ANIMAL: {
-        DOLPHIN: 'dolphin',
-        WOLF: 'wolf',
-        TURTLE: 'turtle',
-        SHARK: 'shark',
-        COW: 'cow',
-        BEAR: 'bear',
-        FROG: 'frog',
-        SHEEP: 'sheep',
-        RABBIT: 'rabbit',
-        PIG: 'pig',
-        WHALE: 'whale',
-        GOAT: 'goat',
-        MONKEY: 'monkey',
-        SNAKE: 'snake',
-        FOX: 'fox',
-        MOUSE: 'mouse',
-        TIGER: 'tiger'
+        DOLPHIN: $.t('animal.dolphin'),
+        WOLF: $.t('animal.wolf'),
+        TURTLE: $.t('animal.turtle'),
+        PENGUIN: $.t('animal.penguin'),
+        SHARK: $.t('animal.shark'),
+        BEAR: $.t('animal.bear'),
+        COW: $.t('animal.cow'),
+        LION: $.t('animal.lion'),
+        GIRAFFE: $.t('animal.giraffe'),
+        FROG: $.t('animal.frog'),
+        SHEEP: $.t('animal.sheep'),
+        RABBIT: $.t('animal.rabbit'),
+        TOUCAN: $.t('animal.toucan'),
+        PIG: $.t('animal.pig'),
+        WHALE: $.t('animal.whale'),
+        GOAT: $.t('animal.goat'),
+        OCTOPUS: $.t('animal.octopus'),
+        MONKEY: $.t('animal.monkey'),
+        ELEPHANT: $.t('animal.elephant'),
+        CHIPMUNK: $.t('animal.chipmunk'),
+        CAMEL: $.t('animal.camel'),
+        SNAKE: $.t('animal.snake'),
+        FOX: $.t('animal.fox'),
+        MOUSE: $.t('animal.mouse'),
+        TIGER: $.t('animal.tiger')
       },
       FOOD: {
-        APPLE: 'apple',
-        POTATO: 'potato',
-        GRAPES: 'grapes',
-        MELON: 'melon',
-        COCONUT: 'coconut',
-        CHERRY: 'cherry',
-        LETTUCE: 'lettuce',
-        PEAS: 'peas',
-        CARROT: 'carrot',
-        TOMATO: 'tomato',
-        MUSHROOM: 'mushroom',
-        LEMON: 'lemon',
-        PLUM: 'plum',
-        BANANA: 'banana',
-        MANGO: 'mango',
-        PEPPER: 'pepper',
-        SQUASH: 'squash'
+        APPLE: $.t('food.apple'),
+        CELERY: $.t('food.celery'),
+        CANTALOUPE: $.t('food.cantaloupe'),
+        EGGPLANT: $.t('food.eggplant'),
+        POTATO: $.t('food.potato'),
+        GRAPES: $.t('food.grapes'),
+        GRAPE: $.t('food.grape'),
+        MELON: $.t('food.melon'),
+        GARLIC: $.t('food.garlic'),
+        ONION: $.t('food.onion'),
+        PINEAPPLE: $.t('food.pineapple'),
+        COCONUT: $.t('food.coconut'),
+        CHERRY: $.t('food.cherry'),
+        LETTUCE: $.t('food.lettuce'),
+        SPINACH: $.t('food.spinach'),
+        PEAR: $.t('food.pear'),
+        PEAS: $.t('food.peas'),
+        CARROT: $.t('food.carrot'),
+        TOMATO: $.t('food.tomato'),
+        MUSHROOM: $.t('food.mushroom'),
+        LEMON: $.t('food.lemon'),
+        PLUM: $.t('food.plum'),
+        BANANA: $.t('food.banana'),
+        PARSLEY: $.t('food.parsley'),
+        MANGO: $.t('food.mango'),
+        ORANGE: $.t('food.orange'),
+        PEPPER: $.t('food.pepper'),
+        SQUASH: $.t('food.squash')
       }
     }
 
     @PEOPLE = {
-      MAN_EXAMPLE:
-        KEY: 'man-example'
-        IMAGE: 'man-example.jpg'
       MAN_1:
         KEY: 'man1'
         IMAGE: 'man1.jpg'
-        FOOD: @CHOICES.FOOD.MELON
-        ANIMAL: @CHOICES.ANIMAL.RABBIT
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MELON
+          LATIN: @CHOICES.FOOD.ONION
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.RABBIT
+          LATIN: @CHOICES.ANIMAL.BEAR
       MAN_2:
         KEY: 'man2'
         IMAGE: 'man2.jpg'
-        FOOD: @CHOICES.FOOD.POTATO
-        ANIMAL: @CHOICES.ANIMAL.FROG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.POTATO
+          LATIN: @CHOICES.FOOD.PINEAPPLE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FROG
+          LATIN: @CHOICES.ANIMAL.RABBIT
       MAN_3:
         KEY: 'man3'
         IMAGE: 'man3.jpg'
-        FOOD: @CHOICES.FOOD.PLUM
-        ANIMAL: @CHOICES.ANIMAL.PIG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PLUM
+          LATIN: @CHOICES.FOOD.PEAR
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.PIG
+          LATIN: @CHOICES.ANIMAL.OCTOPUS
       MAN_4:
         KEY: 'man4'
         IMAGE: 'man4.jpg'
-        FOOD: @CHOICES.FOOD.MUSHROOM
-        ANIMAL: @CHOICES.ANIMAL.WHALE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MUSHROOM
+          LATIN: @CHOICES.FOOD.SPINACH
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.WHALE
+          LATIN: @CHOICES.ANIMAL.GIRAFFE
       MAN_5:
         KEY: 'man5'
         IMAGE: 'man5.jpg'
-        FOOD: @CHOICES.FOOD.COCONUT
-        ANIMAL: @CHOICES.ANIMAL.TURTLE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.COCONUT
+          LATIN: @CHOICES.FOOD.GARLIC
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.TURTLE
+          LATIN: @CHOICES.ANIMAL.PENGUIN
       MAN_6:
         KEY: 'man6'
         IMAGE: 'man6.jpg'
-        FOOD: @CHOICES.FOOD.CHERRY
-        ANIMAL: @CHOICES.ANIMAL.WOLF
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.CHERRY
+          LATIN: @CHOICES.FOOD.MANGO
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.WOLF
+          LATIN: @CHOICES.ANIMAL.TURTLE
       MAN_7:
         KEY: 'man7'
         IMAGE: 'man7.jpg'
-        FOOD: @CHOICES.FOOD.BANANA
-        ANIMAL: @CHOICES.ANIMAL.FOX
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.BANANA
+          LATIN: @CHOICES.FOOD.CARROT
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FOX
+          LATIN: @CHOICES.ANIMAL.DOLPHIN
       MAN_8:
         KEY: 'man8'
         IMAGE: 'man8.jpg'
-        FOOD: @CHOICES.FOOD.SQUASH
-        ANIMAL: @CHOICES.ANIMAL.SNAKE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.SQUASH
+          LATIN: @CHOICES.FOOD.LEMON
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SNAKE
+          LATIN: @CHOICES.ANIMAL.CAMEL
+      MAN_9:
+        KEY: 'man9'
+        IMAGE: 'man9.jpg'
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PLUM
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.PIG
+      MAN_10:
+        KEY: 'man10'
+        IMAGE: 'man10.jpg'
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MELON
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.RABBIT
+      MAN_11:
+        KEY: 'man11'
+        IMAGE: 'man11.jpg'
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.POTATO
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FROG
       WOMAN_EXAMPLE:
         KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
-        FOOD: @CHOICES.FOOD.APPLE
-        ANIMAL: @CHOICES.ANIMAL.DOLPHIN
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.APPLE
+          LATIN: @CHOICES.FOOD.APPLE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.DOLPHIN
+          LATIN: @CHOICES.ANIMAL.DOLPHIN
       WOMAN_1:
         KEY: 'woman1'
         IMAGE: 'woman1.jpg'
-        FOOD: @CHOICES.FOOD.GRAPES
-        ANIMAL: @CHOICES.ANIMAL.SHEEP
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.GRAPES
+          LATIN: @CHOICES.FOOD.GRAPES
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHEEP
+          LATIN: @CHOICES.ANIMAL.LION
       WOMAN_2:
         KEY: 'woman2'
         IMAGE: 'woman2.jpg'
-        FOOD: @CHOICES.FOOD.CARROT
-        ANIMAL: @CHOICES.ANIMAL.BEAR
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.CARROT
+          LATIN: @CHOICES.FOOD.EGGPLANT
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.BEAR
+          LATIN: @CHOICES.ANIMAL.TOUCAN
       WOMAN_3:
         KEY: 'woman3'
         IMAGE: 'woman3.jpg'
-        FOOD: @CHOICES.FOOD.TOMATO
-        ANIMAL: @CHOICES.ANIMAL.GOAT
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.TOMATO
+          LATIN: @CHOICES.FOOD.CHERRY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.GOAT
+          LATIN: @CHOICES.ANIMAL.WHALE
       WOMAN_4:
         KEY: 'woman4'
         IMAGE: 'woman4.jpg'
-        FOOD: @CHOICES.FOOD.LEMON
-        ANIMAL: @CHOICES.ANIMAL.MONKEY
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.LEMON
+          LATIN: @CHOICES.FOOD.LETTUCE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.MONKEY
+          LATIN: @CHOICES.ANIMAL.MONKEY
       WOMAN_5:
         KEY: 'woman5'
         IMAGE: 'woman5.jpg'
-        FOOD: @CHOICES.FOOD.LETTUCE
-        ANIMAL: @CHOICES.ANIMAL.SHARK
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.LETTUCE
+          LATIN: @CHOICES.FOOD.CANTALOUPE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHARK
+          LATIN: @CHOICES.ANIMAL.SHARK
       WOMAN_6:
         KEY: 'woman6'
         IMAGE: 'woman6.jpg'
-        FOOD: @CHOICES.FOOD.PEAS
-        ANIMAL: @CHOICES.ANIMAL.COW
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PEAS
+          LATIN: @CHOICES.FOOD.CELERY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.COW
+          LATIN: @CHOICES.ANIMAL.COW
       WOMAN_7:
         KEY: 'woman7'
         IMAGE: 'woman7.jpg'
-        FOOD: @CHOICES.FOOD.PEPPER
-        ANIMAL: @CHOICES.ANIMAL.TIGER
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PEPPER
+          LATIN: @CHOICES.FOOD.PARSLEY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.TIGER
+          LATIN: @CHOICES.ANIMAL.CHIPMUNK
       WOMAN_8:
         KEY: 'woman8'
         IMAGE: 'woman8.jpg'
-        FOOD: @CHOICES.FOOD.MANGO
-        ANIMAL: @CHOICES.ANIMAL.MOUSE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MANGO
+          LATIN: @CHOICES.FOOD.ORANGE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.MOUSE
+          LATIN: @CHOICES.ANIMAL.ELEPHANT
+      WOMAN_9:
+        KEY: 'woman9'
+        IMAGE: 'woman9.jpeg'
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.GRAPES
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHEEP
     }
 
     @EXAMPLE_PEOPLE = [
@@ -286,14 +666,14 @@ MemoryTask = class
           @PEOPLE.WOMAN_4
         ]
         FIRST_EXPOSURE: [
-          { person: @PEOPLE.MAN_3, item: 'animal' },
-          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' },
           { person: @PEOPLE.MAN_4, item: 'animal' },
           { person: @PEOPLE.WOMAN_4, item: 'animal' },
-          { person: @PEOPLE.WOMAN_3, item: 'animal' },
-          { person: @PEOPLE.WOMAN_4, item: 'food' },
-          { person: @PEOPLE.MAN_3, item: 'food' },
-          { person: @PEOPLE.MAN_4, item: 'food'}
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.MAN_4, item: 'food'},
+          { person: @PEOPLE.MAN_3, item: 'animal' },
+          { person: @PEOPLE.WOMAN_3, item: 'animal' }
         ],
         RECALL_ONE: [
           { person: @PEOPLE.WOMAN_3 },
@@ -303,13 +683,13 @@ MemoryTask = class
         ],
         SECOND_EXPOSURE: [
           { person: @PEOPLE.MAN_4, item: 'animal' },
-          { person: @PEOPLE.WOMAN_4, item: 'animal' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
           { person: @PEOPLE.WOMAN_3, item: 'animal' },
           { person: @PEOPLE.MAN_4, item: 'food' },
-          { person: @PEOPLE.MAN_3, item: 'food' },
-          { person: @PEOPLE.WOMAN_3, item: 'food' },
-          { person: @PEOPLE.WOMAN_4, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'food' }
           { person: @PEOPLE.MAN_3, item: 'animal'}
+          { person: @PEOPLE.WOMAN_3, item: 'food' },
+          { person: @PEOPLE.WOMAN_4, item: 'animal' }
         ],
         RECALL_TWO: [
           { person: @PEOPLE.MAN_3 },
@@ -372,129 +752,6 @@ MemoryTask = class
 
     [@currentForm, @currentFormNumber, @currentFormLabel] = @getCurrentForm()
 
-    @scores = {}
-
-    # main div's aspect ratio (pretend we're on an iPad)
-    @ASPECT_RATIO = 4/3
-
-    # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 3000
-
-    @FADE_IN_TIME = 1000
-
-    @FADE_OUT_TIME = 1000
-
-  buildInitialState: (recalls) ->
-    state = {}
-    for recall in recalls
-      do =>
-        data = []
-        _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = person
-        )
-        state[recall] = data
-    return state
-
-  #returns a tuple
-  getCurrentForm: ->
-    form = TabCAT.UI.getQueryString 'form'
-    #there's likely a much more efficient way to do this
-    #note that forms 3 and 4 do not currently exist yet
-    switch form
-      when "one" then return [@FORMS.FORM_ONE, 1, 'A']
-      when "two" then return [@FORMS.FORM_TWO, 2, 'B']
-      when "three" then return [@FORMS.FORM_THREE, 3, 'C']
-      when "four" then return [@FORMS.FORM_FOUR, 4, 'D']
-    #if no form found, just return default form
-    return [@FORMS.FORM_ONE, 1, 'A']
-
-  buildScoringSheetsData: (currentForm) ->
-    #we can derive the people and the list of total food
-    #directly from each of the forms
-    people = currentForm.RECALL_ONE
-    food = []
-    animals = []
-    for person in people
-      do ( ->
-        food.push(person.person.FOOD)
-        animals.push(person.person.ANIMAL)
-      )
-
-    food = food.concat(["other", "DK"])
-    animals = animals.concat(["other", "DK"])
-
-    sheets =
-      people: people
-      food: food
-      animals: animals
-
-    return sheets
-
-  generateExposureStimuli: (exposureData) ->
-    stimuli = []
-
-    for data in exposureData
-      do ( ->
-        obj =
-          action: 'rememberOne',
-          person: data.person,
-          item: data.item
-
-        stimuli.push obj
-      )
-
-    return stimuli
-
-  generateRecalls: (recallData) ->
-    recalls = new Array()
-    for data in recallData
-      do ( ->
-        obj = { action: 'recallBoth', person: data.person }
-        recalls.push obj
-      )
-    return recalls
-
-  showNextTrial: (slide) ->
-    # looking to move away from switch, will refactor later.
-    # looking for something to automatically call
-    # function with the same name as type, but there's some strange
-    # behavior regarding scope that I don't yet understand
-    switch slide.action
-      when "rememberOne" then \
-        @rememberOne slide.person, slide.item
-      when "recallBoth" then \
-        @recallBoth slide.person
-
-  showRememberScreen: ->
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
-    $("#instructionsScreen").hide()
-    $("#rememberScreen").show()
-    #resume after this
-
-  showBlankScreen: ->
-    $("#exampleScreen").hide()
-    $("#trialScreen").hide()
-    $("#instructionsScreen").hide()
-    $("#rememberScreen").hide()
-
-  start: ->
-    TabCAT.Task.start(
-      i18n:
-        resStore: translations
-      trackViewport: true
-    )
-    TabCAT.UI.turnOffBounce()
-
-    $task = $('#task')
-    $rectangle = $('#rectangle')
-
-    TabCAT.UI.requireLandscapeMode($task)
-
-    TabCAT.UI.fixAspectRatio($rectangle, @ASPECT_RATIO)
-    TabCAT.UI.linkEmToPercentOfHeight($rectangle)
-
-    @showStartScreen()
 
   preloadEncounterImageData: (parentElement, sourcePeople) ->
     for person in sourcePeople
@@ -513,8 +770,10 @@ MemoryTask = class
             $container = $("#" + containerName + " ." + personContainerClass)
             $container.data('person', person.person.KEY)
             $container.find('.scoringImage').append($image)
-            $food = @buildFoodOptions(person.person.FOOD)
-            $animal = @buildAnimalOptions(person.person.ANIMAL)
+            food = person.person.FOOD[@languageVersion]
+            $food = @buildFoodOptions food
+            animal = person.person.ANIMAL[@languageVersion]
+            $animal = @buildAnimalOptions animal
             $container.find('.scoringFood').append($food)
             $container.find('.scoringAnimal').append($animal)
 
@@ -532,7 +791,7 @@ MemoryTask = class
   buildFoodOptions: (correctFood) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $food = $('<ul></ul>').addClass('foodSelection')
+    $food = $('<ul></ul>').addClass('foodSelection selectionColumn')
     for food in data.food
       do =>
         $li = $('<li></li>')
@@ -547,7 +806,7 @@ MemoryTask = class
   buildAnimalOptions: (correctAnimal) ->
     data = @buildScoringSheetsData(@currentForm)
 
-    $animal = $('<ul></ul>').addClass('animalSelection')
+    $animal = $('<ul></ul>').addClass('animalSelection selectionColumn')
     for animal in data.animals
       do =>
         $li = $('<li></li>')
@@ -568,7 +827,8 @@ MemoryTask = class
       $image.show()
 
   rememberOne: (person, item) ->
-    stimuli = person[item.toUpperCase()]
+    #item.toUpperCase will be FOOD or ANIMAL
+    stimuli = person[item.toUpperCase()][@languageVersion]
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
@@ -595,23 +855,19 @@ MemoryTask = class
       parentClass = '.scoringAnimal'
 
     $target = $(event.target)
-    $scoringElement = $target.parent('.selectionContainer').parent(parentClass)
-    console.log($scoringElement)
-    $scoringRow = $scoringElement.parent('.scoringRow')
+    $scoringElement = $target.parent('.selectionColumn').parent(parentClass)
+    $scoringElement.find('.currentSelection').removeClass('currentSelection')
+    $scoringColumn = $scoringElement.parent('.scoringColumn')
     #previously set key on row container
-    personKey = $scoringRow.data('person')
-    $scoreSheet = $scoringElement.find('ul' + className).fadeIn(500)
-    $scoreSheet.find('li').touchdown( (event) =>
-      $scoreSheet.fadeOut(500)
-      #get the data we set in the scoring preload
-      touched = $(event.target).data(type)
-      #set the current display to what we just touched
-      $target.html(touched)
+    personKey = $scoringColumn.data('person')
 
-      #set the state's touched answer where the scoringScreen is current
-      #and the person's key matches personKey
-      @state[scoringScreen][personKey].touched = touched
-    )
+    touched = $(event.target).data(type)
+    #set the current display to what we just touched
+    $target.html(touched).addClass('currentSelection')
+
+    #set the state's touched answer where the scoringScreen is current
+    #and the person's key matches personKey
+    @state[scoringScreen][personKey][type] = touched
 
   endTask: ->
 
@@ -627,6 +883,7 @@ MemoryTask = class
 
     @currentExampleTrial = 0
 
+  setUpTask: ->
     @state = @buildInitialState(["RECALL_ONE", "RECALL_TWO"])
 
     #generate pre-loaded images to switch out on the fly
@@ -668,7 +925,7 @@ MemoryTask = class
 
     @showPerson(person)
     $("#rememberOne").show().empty().html(
-      '<p>' + person.FOOD + '</p>' )
+      '<p>' + person.FOOD[@languageVersion] + '</p>' )
     $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
@@ -692,7 +949,7 @@ MemoryTask = class
 
     @showPerson(person)
     $("#rememberOne").show().empty().html(
-      '<p>' + person.ANIMAL + '</p>' )
+      '<p>' + person.ANIMAL[@languageVersion] + '</p>' )
     $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
@@ -711,6 +968,7 @@ MemoryTask = class
     $("#rememberOne").hide()
     $("#recallBoth").show()
     $("#recallNextButton").hide()
+    $("#recallPreviousButton").hide()
 
     $("#supplementaryInstruction").hide()
 
@@ -788,6 +1046,8 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_ONE)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateFirstRecallTrials(trials)
     )
@@ -797,29 +1057,59 @@ MemoryTask = class
 
     trials = @generateRecalls(@currentForm.RECALL_TWO)
 
+    @currentRecallTrial = 0
+
     TabCAT.UI.wait(@TIME_BETWEEN_STIMULI).then( =>
       @iterateSecondRecallTrials(trials)
     )
 
   iterateFirstRecallTrials: (trials) ->
-    trial = trials.shift()
-    @showNextTrial(trial)
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateFirstRecallTrials(trials)
+        )
+
         @iterateFirstRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
+        $("#recallNextButton").unbind().hide()
         @beginSecondExposureTrials()
     )
 
   iterateSecondRecallTrials: (trials) ->
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
 
-    @showNextTrial(trials.shift())
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateSecondRecallTrials(trials)
+        )
+
         @iterateSecondRecallTrials(trials)
       else
+        $("#recallPreviousButton").unbind().hide()
+        $("#recallNextButton").unbind().hide()
         @recallOneScoringScreen()
     )
 
@@ -855,13 +1145,13 @@ MemoryTask = class
     $('#recallOneScoringScreen').show()
     $("#completeButton").unbind().hide()
     $("#recallOneScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_ONE')
       )
 
     $("#recallOneScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_ONE')
       )
@@ -870,42 +1160,6 @@ MemoryTask = class
       $('#recallOneScoringScreen').hide()
       @recallTwoScoringScreen()
     )
-
-    #Trigger Modal Dropdown on Open
-    #Recall Scoring One Modals
-    personOneModal = $('.personOneModal')
-    personTwoModal = $('.personTwoModal')
-    personThreeModal = $('.personThreeModal')
-    personFourModal = $('.personFourModal')
-    personTwoModal.hide()
-    personThreeModal.hide()
-    personFourModal.hide()
-    $('.close').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.firstModalNext').touchdown ->
-      personOneModal.hide()
-      personTwoModal.show()
-    $('.secondModalNext').touchdown ->
-      personTwoModal.hide()
-      personThreeModal.show()
-    $('.thirdModalNext').touchdown ->
-      personThreeModal.hide()
-      personFourModal.show()
-    $('.fourthModalNext').touchdown ->
-      $(this).parent().fadeOut 'slow'
-    $('.scoringImageOne').touchdown ->
-      personOneModal.show()
-    $('.scoringImageTwo').touchdown ->
-      personTwoModal.show()
-    $('.scoringImageThree').touchdown ->
-      personThreeModal.show()
-    $('.scoringImageFour').touchdown ->
-      personFourModal.show()
-
-
-
-
-
 
   recallTwoScoringScreen: ->
     $('#nextButton').hide()
@@ -916,13 +1170,13 @@ MemoryTask = class
     )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'RECALL_TWO')
       )
 
     $("#recallTwoScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'RECALL_TWO')
       )
@@ -937,6 +1191,7 @@ MemoryTask = class
   constructor: ->
     super()
 
+  setUpTask: ->
     #generate pre-loaded images to switch out on the fly
     @preloadEncounterImageData($("#screenImage"), @currentForm.PEOPLE)
     @preloadScoringImageData(
@@ -951,15 +1206,32 @@ MemoryTask = class
 
   beginDelayedRecall: ->
     trials = @generateRecalls(@currentForm.DELAYED_RECALL)
+    @currentRecallTrial = 0
     @iterateDelayedRecallTrials(trials)
 
   iterateDelayedRecallTrials: (trials) ->
-    @showNextTrial(trials.shift())
+
+    if @currentRecallTrial == 0
+      $("#recallPreviousButton").unbind().hide()
+
+    currentTrial = trials[@currentRecallTrial]
+
+    @showNextTrial(currentTrial)
 
     $("#recallNextButton").unbind().touchdown( =>
-      if trials.length
+      if trials[@currentRecallTrial + 1]
+        @currentRecallTrial++
+
+        $("#recallPreviousButton").unbind().show().touchdown( =>
+          if trials[@currentRecallTrial - 1]
+            @currentRecallTrial--
+            @iterateDelayedRecallTrials(trials)
+        )
+
         @iterateDelayedRecallTrials(trials)
       else
+        $("#recallNextButton").unbind().hide()
+        $("#recallPreviousButton").unbind().hide()
         @delayedScoringScreen()
     )
 
@@ -969,13 +1241,13 @@ MemoryTask = class
     $('#delayedRecallScoringScreen').show()
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringFood span.currentSelection")
+      .find(".scoringFood ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'food', 'DELAYED_RECALL')
       )
 
     $("#delayedRecallScoringScreen")
-      .find(".scoringAnimal span.currentSelection")
+      .find(".scoringAnimal ul")
       .unbind().touchdown( (event) =>
         @scoringTouchHandler(event, 'animal', 'DELAYED_RECALL')
       )

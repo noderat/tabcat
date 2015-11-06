@@ -4,7 +4,6 @@
     "description": "Memory",
     "attachments": [
         "css/memory.css",
-        "css/modal.css",
         "img/learning.png",
         "img/delay.png",
         "js/task.js",
@@ -19,7 +18,11 @@
         "img/man6.jpg",
         "img/man7.jpg",
         "img/man8.jpg",
+        "img/man9.jpg",
+        "img/man10.jpg",
+        "img/man11.jpg",
         "img/right-arrow.png",
+        "img/left-arrow.png",
         "img/woman1.jpg",
         "img/woman2.jpg",
         "img/woman3.jpg",
@@ -28,6 +31,7 @@
         "img/woman6.jpg",
         "img/woman7.jpg",
         "img/woman8.jpg",
+        "img/woman9.jpeg",
         "img/woman-example.jpg"
     ],
     "dependencies": {
