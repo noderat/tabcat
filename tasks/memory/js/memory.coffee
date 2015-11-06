@@ -47,11 +47,6 @@ translations =
         food: 'food'
         animal: 'animal'
         remember: 'Remember'
-      button:
-        back: 'Back'
-        next: 'Next'
-        begin: 'Begin'
-        complete: 'Complete'
       animal:
         dolphin: 'dolphin'
         wolf: 'wolf'
@@ -99,7 +94,7 @@ translations =
       instructions_favorite_animal:
         1: 'Y el animal favorito de esta mujer es:'
       instructions_remember:
-        1: 'Ahora vamos s a mostrarle mas personas. ' +
+        1: 'Ahora vamos a mostrarle mas personas. ' +
           'Le vamos a mostrar a cada persona dos veces, una vez con su ' +
           'alimento favorito y la otra con su animal favorito.'
         2: 'Recuerde ambas.'
@@ -109,11 +104,6 @@ translations =
         food: 'alimento'
         animal: 'animal'
         remember: 'Recuerde'
-      button:
-        back: 'Retroceder'
-        next: 'Siguiente'
-        begin: 'Empiezar'
-        complete: 'Ha finalizado'
       animal:
         dolphin: 'delfín'
         wolf: 'lobo'
@@ -304,8 +294,6 @@ MemoryTask = class
 
     #this is the hook where task-specific setup may occur
     @setUpTask()
-
-    $("body").i18n()
 
     $task = $('#task')
     $rectangle = $('#rectangle')

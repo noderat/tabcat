@@ -45,6 +45,11 @@ Translations.translations =
         'I am the examiner'
       task_complete:
         'Task complete!'
+      button:
+        back: 'Back'
+        next: 'Next'
+        begin: 'Begin'
+        complete: 'Complete'
   es:
     translation:
       return_to_examiner:
@@ -53,6 +58,11 @@ Translations.translations =
         'Soy el examinador'
       task_complete:
         'Tarea terminado!'
+      button:
+        back: 'Retroceder'
+        next: 'Siguiente'
+        begin: 'Empiezar'
+        complete: 'Ha finalizado'
 
 Translations.init = (options) ->
 # set up i18n
@@ -77,3 +87,5 @@ Translations.init = (options) ->
         i18n_options.resStore[language].translation
       )
   $.i18n.init(i18n_options)
+  #apply the translations to all of the data-i18n tags on the page
+  $("body").i18n()

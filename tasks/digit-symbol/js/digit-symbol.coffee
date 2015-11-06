@@ -31,10 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   TRANSLATIONS =
     en:
       translation:
-        begin_button_html:
-          'Begin'
-        next_button_html:
-          'Next'
         start_screen_html:
           1: 'Look at the boxes above.'
           2: 'Each number has its own picture.'
@@ -51,10 +47,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           1: 'Are you ready to begin?'
     es:
       translation:
-        begin_button_html:
-          'Begin(es)'
-        next_button_html:
-          'Next(es)'
         start_screen_html:
           1: 'Mire las figuras de arriba.'
           2: 'Note que debajo de cada número hay una figura que le corresponde.'
