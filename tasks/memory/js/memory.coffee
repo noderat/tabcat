@@ -188,7 +188,9 @@ MemoryTask = class
     @currentRecallTrial = 0
 
   buildInitialState: (recalls) ->
-    state = {}
+    state = {
+      languageVersion: @languageVersion
+    }
     for recall in recalls
       do =>
         data = []
@@ -225,9 +227,9 @@ MemoryTask = class
     food = []
     animals = []
     for person in people
-      do ( ->
-        food.push(person.person.FOOD)
-        animals.push(person.person.ANIMAL)
+      do ( =>
+        food.push person.person.FOOD[@languageVersion]
+        animals.push person.person.ANIMAL[@languageVersion]
       )
 
     food = food.concat(["other", "DK"])
@@ -295,6 +297,8 @@ MemoryTask = class
     )
     TabCAT.UI.turnOffBounce()
 
+    @languageVersion = @getLanguageVersion()
+
     #moved here because data initialization requires i18n
     @initializeData()
 
@@ -312,6 +316,18 @@ MemoryTask = class
     TabCAT.UI.linkEmToPercentOfHeight($rectangle)
 
     @showStartScreen()
+
+  #will help determine which set of food/animal pairings to use
+  getLanguageVersion: ->
+    currentLanguage = $.i18n.lng()
+    #english by default
+    languageVersion = 'ENGLISH'
+    #can add more versions if needed here
+    switch currentLanguage
+      when 'en' then languageVersion = 'ENGLISH'
+      when 'es' then languageVersion = 'LATIN'
+
+    return languageVersion
 
   initializeData: ->
     @CHOICES = {
@@ -336,6 +352,7 @@ MemoryTask = class
         MONKEY: $.t('animal.monkey'),
         ELEPHANT: $.t('animal.elephant'),
         CHIPMUNK: $.t('animal.chipmunk'),
+        CAMEL: $.t('animal.camel'),
         SNAKE: $.t('animal.snake'),
         FOX: $.t('animal.fox'),
         MOUSE: $.t('animal.mouse'),
@@ -365,7 +382,7 @@ MemoryTask = class
         LEMON: $.t('food.lemon'),
         PLUM: $.t('food.plum'),
         BANANA: $.t('food.banana'),
-        PARSLEY: $.t('food.parsely'),
+        PARSLEY: $.t('food.parsley'),
         MANGO: $.t('food.mango'),
         ORANGE: $.t('food.orange'),
         PEPPER: $.t('food.pepper'),
@@ -374,119 +391,187 @@ MemoryTask = class
     }
 
     @PEOPLE = {
-      MAN_EXAMPLE:
-        KEY: 'man-example'
-        IMAGE: 'man-example.jpg'
       MAN_1:
         KEY: 'man1'
         IMAGE: 'man1.jpg'
-        ITEMS:
-          ENGLISH:
-            FOOD: @CHOICES.FOOD.MELON
-            ANIMAL: @CHOICES.ANIMAL.RABBIT
-          LATIN:
-            FOOD: @CHOICES.FOOD.ONION
-            ANIMAL: @CHOICES.ANIMAL.RABBIT
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MELON
+          LATIN: @CHOICES.FOOD.ONION
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.RABBIT
+          LATIN: @CHOICES.ANIMAL.BEAR
       MAN_2:
         KEY: 'man2'
         IMAGE: 'man2.jpg'
-        FOOD: @CHOICES.FOOD.POTATO
-        ANIMAL: @CHOICES.ANIMAL.FROG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.POTATO
+          LATIN: @CHOICES.FOOD.PINEAPPLE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FROG
+          LATIN: @CHOICES.ANIMAL.RABBIT
       MAN_3:
         KEY: 'man3'
         IMAGE: 'man3.jpg'
-        FOOD: @CHOICES.FOOD.PLUM
-        ANIMAL: @CHOICES.ANIMAL.PIG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PLUM
+          LATIN: @CHOICES.FOOD.PEAR
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.PIG
+          LATIN: @CHOICES.ANIMAL.OCTOPUS
       MAN_4:
         KEY: 'man4'
         IMAGE: 'man4.jpg'
-        FOOD: @CHOICES.FOOD.MUSHROOM
-        ANIMAL: @CHOICES.ANIMAL.WHALE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MUSHROOM
+          LATIN: @CHOICES.FOOD.SPINACH
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.WHALE
+          LATIN: @CHOICES.ANIMAL.GIRAFFE
       MAN_5:
         KEY: 'man5'
         IMAGE: 'man5.jpg'
-        FOOD: @CHOICES.FOOD.COCONUT
-        ANIMAL: @CHOICES.ANIMAL.TURTLE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.COCONUT
+          LATIN: @CHOICES.FOOD.GARLIC
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.TURTLE
+          LATIN: @CHOICES.ANIMAL.PENGUIN
       MAN_6:
         KEY: 'man6'
         IMAGE: 'man6.jpg'
-        FOOD: @CHOICES.FOOD.CHERRY
-        ANIMAL: @CHOICES.ANIMAL.WOLF
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.CHERRY
+          LATIN: @CHOICES.FOOD.MANGO
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.WOLF
+          LATIN: @CHOICES.ANIMAL.TURTLE
       MAN_7:
         KEY: 'man7'
         IMAGE: 'man7.jpg'
-        FOOD: @CHOICES.FOOD.BANANA
-        ANIMAL: @CHOICES.ANIMAL.FOX
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.BANANA
+          LATIN: @CHOICES.FOOD.CARROT
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FOX
+          LATIN: @CHOICES.ANIMAL.DOLPHIN
       MAN_8:
         KEY: 'man8'
         IMAGE: 'man8.jpg'
-        FOOD: @CHOICES.FOOD.SQUASH
-        ANIMAL: @CHOICES.ANIMAL.SNAKE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.SQUASH
+          LATIN: @CHOICES.FOOD.LEMON
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SNAKE
+          LATIN: @CHOICES.ANIMAL.CAMEL
       MAN_9:
         KEY: 'man9'
         IMAGE: 'man9.jpg'
-        FOOD: @CHOICES.FOOD.PLUM
-        ANIMAL: @CHOICES.ANIMAL.PIG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PLUM
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.PIG
       MAN_10:
         KEY: 'man10'
         IMAGE: 'man10.jpg'
-        FOOD: @CHOICES.FOOD.MELON
-        ANIMAL: @CHOICES.ANIMAL.RABBIT
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MELON
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.RABBIT
       MAN_11:
         KEY: 'man11'
         IMAGE: 'man11.jpg'
-        FOOD: @CHOICES.FOOD.POTATO
-        ANIMAL: @CHOICES.ANIMAL.FROG
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.POTATO
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.FROG
       WOMAN_EXAMPLE:
         KEY: 'woman-example'
         IMAGE: 'woman-example.jpg'
-        FOOD: @CHOICES.FOOD.APPLE
-        ANIMAL: @CHOICES.ANIMAL.DOLPHIN
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.APPLE
+          LATIN: @CHOICES.FOOD.APPLE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.DOLPHIN
+          LATIN: @CHOICES.ANIMAL.DOLPHIN
       WOMAN_1:
         KEY: 'woman1'
         IMAGE: 'woman1.jpg'
-        FOOD: @CHOICES.FOOD.GRAPES
-        ANIMAL: @CHOICES.ANIMAL.SHEEP
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.GRAPES
+          LATIN: @CHOICES.FOOD.GRAPES
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHEEP
+          LATIN: @CHOICES.ANIMAL.LION
       WOMAN_2:
         KEY: 'woman2'
         IMAGE: 'woman2.jpg'
-        FOOD: @CHOICES.FOOD.CARROT
-        ANIMAL: @CHOICES.ANIMAL.BEAR
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.CARROT
+          LATIN: @CHOICES.FOOD.EGGPLANT
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.BEAR
+          LATIN: @CHOICES.ANIMAL.TOUCAN
       WOMAN_3:
         KEY: 'woman3'
         IMAGE: 'woman3.jpg'
-        FOOD: @CHOICES.FOOD.TOMATO
-        ANIMAL: @CHOICES.ANIMAL.GOAT
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.TOMATO
+          LATIN: @CHOICES.FOOD.CHERRY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.GOAT
+          LATIN: @CHOICES.ANIMAL.WHALE
       WOMAN_4:
         KEY: 'woman4'
         IMAGE: 'woman4.jpg'
-        FOOD: @CHOICES.FOOD.LEMON
-        ANIMAL: @CHOICES.ANIMAL.MONKEY
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.LEMON
+          LATIN: @CHOICES.FOOD.LETTUCE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.MONKEY
+          LATIN: @CHOICES.ANIMAL.MONKEY
       WOMAN_5:
         KEY: 'woman5'
         IMAGE: 'woman5.jpg'
-        FOOD: @CHOICES.FOOD.LETTUCE
-        ANIMAL: @CHOICES.ANIMAL.SHARK
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.LETTUCE
+          LATIN: @CHOICES.FOOD.CANTALOUPE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHARK
+          LATIN: @CHOICES.ANIMAL.SHARK
       WOMAN_6:
         KEY: 'woman6'
         IMAGE: 'woman6.jpg'
-        FOOD: @CHOICES.FOOD.PEAS
-        ANIMAL: @CHOICES.ANIMAL.COW
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PEAS
+          LATIN: @CHOICES.FOOD.CELERY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.COW
+          LATIN: @CHOICES.ANIMAL.COW
       WOMAN_7:
         KEY: 'woman7'
         IMAGE: 'woman7.jpg'
-        FOOD: @CHOICES.FOOD.PEPPER
-        ANIMAL: @CHOICES.ANIMAL.TIGER
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.PEPPER
+          LATIN: @CHOICES.FOOD.PARSLEY
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.TIGER
+          LATIN: @CHOICES.ANIMAL.CHIPMUNK
       WOMAN_8:
         KEY: 'woman8'
         IMAGE: 'woman8.jpg'
-        FOOD: @CHOICES.FOOD.MANGO
-        ANIMAL: @CHOICES.ANIMAL.MOUSE
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.MANGO
+          LATIN: @CHOICES.FOOD.ORANGE
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.MOUSE
+          LATIN: @CHOICES.ANIMAL.ELEPHANT
       WOMAN_9:
         KEY: 'woman9'
         IMAGE: 'woman9.jpeg'
-        FOOD: @CHOICES.FOOD.GRAPES
-        ANIMAL: @CHOICES.ANIMAL.SHEEP
+        FOOD:
+          ENGLISH: @CHOICES.FOOD.GRAPES
+        ANIMAL:
+          ENGLISH: @CHOICES.ANIMAL.SHEEP
     }
 
     @EXAMPLE_PEOPLE = [
@@ -542,84 +627,84 @@ MemoryTask = class
         ]
       FORM_TWO:
         PEOPLE: [
-          @PEOPLE.MAN_10,
-          @PEOPLE.MAN_11,
-          @PEOPLE.WOMAN_9,
+          @PEOPLE.MAN_1,
+          @PEOPLE.MAN_2,
+          @PEOPLE.WOMAN_1,
           @PEOPLE.WOMAN_2
         ]
         FIRST_EXPOSURE: [
-          { person: @PEOPLE.WOMAN_9, item: 'animal'},
+          { person: @PEOPLE.WOMAN_1, item: 'animal'},
           { person: @PEOPLE.WOMAN_2, item: 'food' },
-          { person: @PEOPLE.MAN_11, item: 'animal' },
-          { person: @PEOPLE.WOMAN_9, item: 'food'},
-          { person: @PEOPLE.MAN_10, item: 'animal' },
-          { person: @PEOPLE.MAN_11, item: 'food' },
+          { person: @PEOPLE.MAN_2, item: 'animal' },
+          { person: @PEOPLE.WOMAN_1, item: 'food'},
+          { person: @PEOPLE.MAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_2, item: 'food' },
           { person: @PEOPLE.WOMAN_2, item: 'animal' },
-          { person: @PEOPLE.MAN_10, item: 'food' }
+          { person: @PEOPLE.MAN_1, item: 'food' }
         ],
         RECALL_ONE: [
-          { person: @PEOPLE.WOMAN_9 },
-          { person: @PEOPLE.MAN_11 },
+          { person: @PEOPLE.WOMAN_1 },
+          { person: @PEOPLE.MAN_2 },
           { person: @PEOPLE.WOMAN_2 },
-          { person: @PEOPLE.MAN_10 }
+          { person: @PEOPLE.MAN_1 }
         ],
         SECOND_EXPOSURE: [
-          { person: @PEOPLE.MAN_11, item: 'animal' },
-          { person: @PEOPLE.WOMAN_9, item: 'food' },
-          { person: @PEOPLE.MAN_10, item: 'food' },
+          { person: @PEOPLE.MAN_2, item: 'animal' },
+          { person: @PEOPLE.WOMAN_1, item: 'food' },
+          { person: @PEOPLE.MAN_1, item: 'food' },
           { person: @PEOPLE.WOMAN_2, item: 'food' },
-          { person: @PEOPLE.WOMAN_9, item: 'animal' },
-          { person: @PEOPLE.MAN_10, item: 'animal' },
-          { person: @PEOPLE.MAN_11, item: 'food' },
+          { person: @PEOPLE.WOMAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_1, item: 'animal' },
+          { person: @PEOPLE.MAN_2, item: 'food' },
           { person: @PEOPLE.WOMAN_2, item: 'animal' }
         ],
         RECALL_TWO: [
-          { person: @PEOPLE.MAN_11 },
-          { person: @PEOPLE.WOMAN_9 },
+          { person: @PEOPLE.MAN_2 },
+          { person: @PEOPLE.WOMAN_1 },
           { person: @PEOPLE.WOMAN_2 },
-          { person: @PEOPLE.MAN_10 }
+          { person: @PEOPLE.MAN_1 }
         ],
         DELAYED_RECALL: [
           { person: @PEOPLE.WOMAN_2 },
-          { person: @PEOPLE.MAN_10 },
-          { person: @PEOPLE.WOMAN_9 },
-          { person: @PEOPLE.MAN_11 }
+          { person: @PEOPLE.MAN_1 },
+          { person: @PEOPLE.WOMAN_1 },
+          { person: @PEOPLE.MAN_2 }
         ]
       FORM_THREE:
         PEOPLE: [
-          @PEOPLE.MAN_9,
+          @PEOPLE.MAN_3,
           @PEOPLE.MAN_4,
           @PEOPLE.WOMAN_3,
           @PEOPLE.WOMAN_4
         ]
         FIRST_EXPOSURE: [
-          { person: @PEOPLE.MAN_9, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
           { person: @PEOPLE.WOMAN_4, item: 'food' },
           { person: @PEOPLE.MAN_4, item: 'animal' },
           { person: @PEOPLE.WOMAN_4, item: 'animal' },
           { person: @PEOPLE.WOMAN_3, item: 'food' },
           { person: @PEOPLE.MAN_4, item: 'food'},
-          { person: @PEOPLE.MAN_9, item: 'animal' },
+          { person: @PEOPLE.MAN_3, item: 'animal' },
           { person: @PEOPLE.WOMAN_3, item: 'animal' }
         ],
         RECALL_ONE: [
           { person: @PEOPLE.WOMAN_3 },
-          { person: @PEOPLE.MAN_9 },
+          { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.MAN_4 },
           { person: @PEOPLE.WOMAN_4 }
         ],
         SECOND_EXPOSURE: [
           { person: @PEOPLE.MAN_4, item: 'animal' },
-          { person: @PEOPLE.MAN_9, item: 'food' },
+          { person: @PEOPLE.MAN_3, item: 'food' },
           { person: @PEOPLE.WOMAN_3, item: 'animal' },
           { person: @PEOPLE.MAN_4, item: 'food' },
           { person: @PEOPLE.WOMAN_4, item: 'food' }
-          { person: @PEOPLE.MAN_9, item: 'animal'}
+          { person: @PEOPLE.MAN_3, item: 'animal'}
           { person: @PEOPLE.WOMAN_3, item: 'food' },
           { person: @PEOPLE.WOMAN_4, item: 'animal' }
         ],
         RECALL_TWO: [
-          { person: @PEOPLE.MAN_9 },
+          { person: @PEOPLE.MAN_3 },
           { person: @PEOPLE.WOMAN_3 },
           { person: @PEOPLE.MAN_4 },
           { person: @PEOPLE.WOMAN_4 }
@@ -628,7 +713,7 @@ MemoryTask = class
           { person: @PEOPLE.WOMAN_4 },
           { person: @PEOPLE.MAN_4 },
           { person: @PEOPLE.WOMAN_3 },
-          { person: @PEOPLE.MAN_9 }
+          { person: @PEOPLE.MAN_3 }
         ]
       FORM_FOUR:
         PEOPLE: [
@@ -697,8 +782,10 @@ MemoryTask = class
             $container = $("#" + containerName + " ." + personContainerClass)
             $container.data('person', person.person.KEY)
             $container.find('.scoringImage').append($image)
-            $food = @buildFoodOptions(person.person.FOOD)
-            $animal = @buildAnimalOptions(person.person.ANIMAL)
+            food = person.person.FOOD[@languageVersion]
+            $food = @buildFoodOptions food
+            animal = person.person.ANIMAL[@languageVersion]
+            $animal = @buildAnimalOptions animal
             $container.find('.scoringFood').append($food)
             $container.find('.scoringAnimal').append($animal)
 
@@ -752,7 +839,8 @@ MemoryTask = class
       $image.show()
 
   rememberOne: (person, item) ->
-    stimuli = person[item.toUpperCase()]
+    #item.toUpperCase will be FOOD or ANIMAL
+    stimuli = person[item.toUpperCase()][@languageVersion]
     $("#recallBoth").hide()
     $("#recallOne").hide()
 
@@ -849,7 +937,7 @@ MemoryTask = class
 
     @showPerson(person)
     $("#rememberOne").show().empty().html(
-      '<p>' + person.FOOD + '</p>' )
+      '<p>' + person.FOOD[@languageVersion] + '</p>' )
     $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
@@ -873,7 +961,7 @@ MemoryTask = class
 
     @showPerson(person)
     $("#rememberOne").show().empty().html(
-      '<p>' + person.ANIMAL + '</p>' )
+      '<p>' + person.ANIMAL[@languageVersion] + '</p>' )
     $("#trialScreen").show()
 
     $("#backButton").unbind().show().touchdown( =>
