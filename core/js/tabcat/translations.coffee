@@ -57,7 +57,7 @@ Translations.translations =
       i_am_the_examiner:
         'Soy el examinador'
       task_complete:
-        'Tarea terminado!'
+        'Tarea terminada!'
       button:
         back: 'Retroceder'
         next: 'Siguiente'
