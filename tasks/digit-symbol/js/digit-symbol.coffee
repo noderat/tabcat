@@ -483,10 +483,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @fillScreen()
     @updateCurrentStimuli()
 
-    #begin timeer on first symbol touch, and
-    $('.symbol').touchdown =>
+    #begin timeer on first symbol touch
+    #this feels icky, but i can't think of a better way at the moment
+    $('.symbol').touchdown (event) =>
       @startTimer()
-      @handleSymbolTouch.bind(this)
+      console.log "timer started"
+      @handleSymbolTouch(event)
+      $('.symbol').unbind().touchdown @handleSymbolTouch.bind(this)
+    return
 
   updateCurrentStimuli: ->
     @currentStimuli = @getNewStimuli()
