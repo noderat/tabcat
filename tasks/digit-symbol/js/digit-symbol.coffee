@@ -263,7 +263,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     $('#startScreenMessage').empty().append instructions.shift()
 
-    $('#nextButton').touchdown( ( (event) =>
+    $('#nextButton').unbind().touchdown( ( (event) =>
 
       if instructions.length
         sequence = $('div[data-sequence="1"]')
@@ -292,7 +292,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#iconSymbol1').removeClass('instruct-highlight')
 
     
-    $('#backButton').show().touchdown(=>
+    $('#backButton').show().unbind().touchdown(=>
       @$stimuliSymbol.removeClass("correct")
       @showStartScreen()
     )
@@ -329,13 +329,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     digitSymbolBanner.removeAttr('style').css('padding-left' , '40%')
     digitSymbolBanner.css('padding-left','25px')
 
-    $('#backButton').show().touchdown( =>
+    $('#backButton').show().unbind().touchdown( =>
       $('#startScreenMessage').removeClass('bigFont')
       @$stimuliSymbol.removeClass("correct")
       @startScreenNext()
     )
 
-    $('#nextButton').show().touchdown( \
+    $('#nextButton').show().unbind().touchdown( \
       @practiceModeMessageBodyHandler.bind(this))
 
   practiceModeMessageBodyHandler: ->
@@ -346,7 +346,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     $('#currentStimuli').empty()
     @fillScreen()
     @updateCurrentStimuli()
-    $('.symbol').touchdown( @handleSymbolTouch.bind(this))
+    $('.symbol').unbind().touchdown( @handleSymbolTouch.bind(this))
 
   #called between start screen and practice trials
   blankScreen: ->
@@ -474,13 +474,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     html = @getTranslationParagraphs 'are_you_ready'
     $('#startScreenMessage').html html
-    $('#backButton').show().touchdown( ( (event) =>
+    $('#backButton').show().unbind().touchdown( ( (event) =>
       #clear practice trials streak so it doesn't think we're in real task
       @practiceTrialsCurrentStreak = 0
       @finishedPracticeMode = false
       @practiceModeMessage()
     ))
-    $('#beginButton').show().touchdown( @beginTask.bind(this))
+    $('#beginButton').show().unbind().touchdown( @beginTask.bind(this))
     return
 
   beginTask: ->
@@ -493,10 +493,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     @fillScreen()
     @updateCurrentStimuli()
 
-    #begin timeer on first symbol touch, and
-    $('.symbol').touchdown =>
+    #begin timeer on first symbol touch
+    #this feels icky, but i can't think of a better way at the moment
+    $('.symbol').touchdown (event) =>
       @startTimer()
-      @handleSymbolTouch.bind(this)
+      console.log "timer started"
+      @handleSymbolTouch(event)
+      $('.symbol').unbind().touchdown @handleSymbolTouch.bind(this)
+    return
 
     
   updateCurrentStimuli: ->

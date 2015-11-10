@@ -47,6 +47,11 @@ translations =
         food: 'food'
         animal: 'animal'
         remember: 'Remember'
+        recall_one: 'Recall One'
+        recall_two: 'Recall Two'
+        delayed_recall: 'Delayed Recall'
+        other: 'other'
+        dont_know: 'DK'
       animal:
         dolphin: 'dolphin'
         wolf: 'wolf'
@@ -104,6 +109,11 @@ translations =
         food: 'alimento'
         animal: 'animal'
         remember: 'Recuerde'
+        recall_one: 'Memoria Immediata Uno'
+        recall_two: 'Memoria Immediata Dos'
+        delayed_recall: 'Memoria a Largo Plazo'
+        other: 'otro'
+        dont_know: 'no sé'
       animal:
         dolphin: 'delfín'
         wolf: 'lobo'
@@ -169,11 +179,11 @@ MemoryTask = class
     @ASPECT_RATIO = 4/3
 
     # time values in milliseconds
-    @TIME_BETWEEN_STIMULI = 3000
+    @TIME_BETWEEN_STIMULI = 50
 
-    @FADE_IN_TIME = 1000
+    @FADE_IN_TIME = 50
 
-    @FADE_OUT_TIME = 1000
+    @FADE_OUT_TIME = 50
 
     @currentRecallTrial = 0
 
@@ -222,9 +232,14 @@ MemoryTask = class
         animals.push person.person.ANIMAL[@languageVersion]
       )
 
-    food = food.concat(["other", "DK"])
-    animals = animals.concat(["other", "DK"])
-
+    food = food.concat([
+      $.t('static_text.other'),
+      $.t('static_text.dont_know')
+    ])
+    animals = animals.concat([
+      $.t('static_text.other'),
+      $.t('static_text.dont_know')
+    ])
     sheets =
       people: people
       food: food
