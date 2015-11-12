@@ -1,3 +1,13 @@
+v0.9.1, 2015-11-12 -- Remaining Spanish Translations
+- core:
+  - Added more Spanish translations
+- tasks:
+  - digit-symbol:
+    - Added Spanish instructions and navigation
+  - memory:
+    - Added back button to recall screens
+    - Added in Latin version of pairings
+
 v0.9.0, 2015-10-23 -- Alternate forms for Memory and Digit Symbol, Spanish translations
 - build system:
   - Normalized line endings
