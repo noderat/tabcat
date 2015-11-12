@@ -205,7 +205,7 @@ button:focus {
 #nextButton {
     position: absolute;
     top: 88%;
-    left: 94%;
+    left: 88%;
 }
 
 #beginButton {
@@ -233,7 +233,7 @@ button:focus {
     position: fixed;
     left: 0;
     right: 0;
-    top: 42%;
+    top: 33%;
 }
 
 #startScreenMessage p {
@@ -246,7 +246,7 @@ button:focus {
     font-size: 18em;
     text-align: center;
     margin: auto auto;
-    top: 53%;
+    top: 42%;
     right: 0;
     left: 0;
     color: white;
