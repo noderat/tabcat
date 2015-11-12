@@ -57,13 +57,14 @@ clean:
 	find . -name '*~' -delete
 
 # $(KANSO_DEPS) should include js/tabcat.js
-design.json: packages kanso.json $(KANSO_DEPS) $(MANIFEST)
+design.json: kanso.json $(KANSO_DEPS) $(MANIFEST)
 	kanso install
 	kanso show > $@
 
-packages:
-	mkdir -p ../kanso-packages
-	ln -sfn ../kanso-packages $@
+#kanso install will auto-fetch these dependencies
+#packages:
+#	mkdir -p ../kanso-packages
+#	ln -sfn ../kanso-packages $@
 
 $(PUSHED_DBS): %: design.json
 	../scripts/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/core

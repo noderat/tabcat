@@ -64,20 +64,21 @@ $(PUSHED)_tabcat: design.json
 	$(SCRIPTS)/force-put $< $(TABCAT_HOST)/tabcat/_design/$(DDOC_NAME)
 	touch $@
 
-design.json: packages kanso.json $(KANSO_DEPS)
+design.json: kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso show > $@
 
-packages:
-	mkdir -p ../../kanso-packages
-	ln -sfn ../../kanso-packages $@
+#kanso install will auto-fetch these dependencies
+#packages:
+#	mkdir -p ../../kanso-packages
+#	ln -sfn ../../kanso-packages $@
 
 # scoring code, for "tabcat-data*" DBs
 $(PUSHED_DATA_DBS): %: scoring/design.json
 	$(SCRIPTS)/force-put $< $(patsubst $(PUSHED)_%,$(TABCAT_HOST)/%, $@)/_design/$(DDOC_NAME)
 	touch $@
 
-scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js ../../core/js/tabcat/scoring.js scoring/packages
+scoring/design.json: scoring/kanso.json scoring/app.js scoring/scoring.js scoring/js ../../core/js/tabcat/scoring.js
 	mkdir -p $(@D)
 	cd $(@D); kanso install
 	cd $(@D); kanso show > $(@F)
@@ -95,9 +96,10 @@ scoring/js:
 	mkdir -p $(@D)
 	ln -sfn ../../../core/js $@
 
-scoring/packages:
-	mkdir -p $(@D)
-	ln -sfn ../packages $@
+#kanso install will auto-fetch these dependencies
+#scoring/packages:
+#	mkdir -p $(@D)
+#	ln -sfn ../packages $@
 
 # optionally, pack all the JS code into a single file, js/task.js.
 # (include js/task.js in kanso.json to activate this)

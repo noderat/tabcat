@@ -45,16 +45,19 @@ clean:
 	rm -rf packages
 	find . -name '*~' -delete
 
-design.json: packages kanso.json $(KANSO_DEPS)
+design.json: kanso.json $(KANSO_DEPS)
 	kanso install
 	kanso show > $@
 
-packages:
-	mkdir -p ../kanso-packages
-	ln -sfn ../kanso-packages $@
+#kanso install will auto-fetch these dependencies
+#packages:
+#	mkdir -p ../kanso-packages
+#	ln -sfn ../kanso-packages $@
 
 $(PUSHED): design.json
 	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/console
+	echo $<
+	echo "asdfasdf"
 	touch $@
 
 $(COFFEE_JS): %.js: %.coffee
