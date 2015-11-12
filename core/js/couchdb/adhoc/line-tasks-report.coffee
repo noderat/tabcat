@@ -95,12 +95,16 @@ patientHandler = (patientRecord) ->
         catchTrials = (
           item.interpretation?.correct for item in task.eventLog \
           when item?.state?.catchTrial is true
-        )
+        ).filter( (x) -> true if x == true or x == false )
+
+        catchTrialTotal = catchTrials.length
 
         catchTrialScore = 'N/A'
-        if catchTrials.length > 0
-          catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
-            / catchTrials.length ) * 100)
+        if catchTrialTotal > 0
+          catchTrialScore = (( catchTrials.filter( (x) ->
+            x if x == true
+          ).length \
+            / catchTrialTotal ) * 100)
 
         if intensitiesAtReversal.length < MAX_REVERSALS
           intensitiesAtReversal = intensitiesAtReversal.concat('') for i in \
@@ -150,7 +154,6 @@ catchTrialsHeader = (prefix) ->
 exports.list = (head, req) ->
   report.requirePatientView(req)
   start(headers: report.csvHeaders('line-tasks-report'))
-
   csvHeader = ['patientCode']
   for prefix in TASK_PREFIXES
     csvHeader = csvHeader.concat(

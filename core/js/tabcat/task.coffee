@@ -45,9 +45,6 @@ DEFAULT_MIN_WAIT = 1000
 # default duration of fade at end of task
 DEFAULT_FADE_DURATION = 200
 
-# default fallback language, for i18n
-DEFAULT_FALLBACK_LNG = 'en'
-
 # DB where design docs and task content is stored
 TABCAT_DB = 'tabcat'
 
@@ -163,11 +160,7 @@ TabCAT.Task.patientHasDevice = (value) ->
 TabCAT.Task.start = _.once((options) ->
   now = $.now()
 
-  # set up i18n
-  i18n_options = _.extend(
-    {fallbackLng: DEFAULT_FALLBACK_LNG, resStore: {}},
-    options?.i18n)
-  $.i18n.init(i18n_options)
+  TabCAT.Translations.init(options?.i18n)
 
   timeout = options?.timeout ? DEFAULT_TIMEOUT
   taskName = options?.name ? inferTaskName()
@@ -357,7 +350,8 @@ TabCAT.Task.finish = (options) ->
   $body.hide()
   TabCAT.UI.linkEmToPercentOfHeight($body)
   $body.attr('class', 'fullscreen unselectable blueBackground taskComplete')
-  $messageP = $('<p class="message">Task complete!</p>')
+  completeMessage = $.t('task_complete')
+  $messageP = $('<p class="message">' + completeMessage + '</p>')
   $body.append($messageP)
   $body.fadeIn(duration: fadeDuration)
 
