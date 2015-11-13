@@ -15,7 +15,8 @@ nvm use stable
 nvm alias default node
 
 #installing these globally for now until they can be used with gulp
-npm install -g gulp kanso coffee-script uglify-js coffeelint -y
+#also install 4.0 version of gulp for filewatcher updates
+npm install -g gulpjs/gulp-cli#4.0 gulpjs/gulp.git#4.0 kanso coffee-script uglify-js coffeelint -y
 
 #required for sass compilation
 sudo su -c "gem install sass"
