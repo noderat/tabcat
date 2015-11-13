@@ -1,6 +1,6 @@
 #!/bin/bash
 sudo apt-get update -y    ##this step will add 5-10 minutes in initial provision
-sudo apt-get install curl tar vim git couchdb -y
+sudo apt-get install curl tar vim git couchdb g++ -y
 #sudo apt-get install couchdb -y
 sudo apt-get autoremove
 sudo chown -R couchdb /var/run/couchdb
