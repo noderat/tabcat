@@ -188,20 +188,30 @@ MemoryTask = class
     @currentRecallTrial = 0
 
   buildInitialState: (recalls) ->
-    state = {
+    state =
       languageVersion: @languageVersion
-    }
+      recalls: []
+      form: @currentFormLabel
+
     for recall in recalls
       do =>
-        data = []
+        data = {}
+        data.people = {}
         _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = {
-            person: person,
-            food: null,
-            animal: null
-          }
+          data.people[person.person.KEY] =
+            person: person.person
+            selection:
+              food:
+                value: null
+                correct: false
+                sourceMemoryError: null
+              animal:
+                value: null
+                correct: false
+                sourceMemoryError: null
         )
-        state[recall] = data
+        state.recalls[recall] = data
+    console.log state
     return state
 
   #returns a tuple
@@ -882,24 +892,54 @@ MemoryTask = class
 
     #set the state's touched answer where the scoringScreen is current
     #and the person's key matches personKey
-    @state[scoringScreen][personKey][type] = touched
+    #i realize this is making a lot of assumptions about the data structure
+    @state.recalls[scoringScreen].people[personKey].selection[type].value = touched
 
   endTask: ->
 
+    console.log @state
+
+    for recall in @recalls
+      do (recall) =>
+        for key, stimuli of @state.recalls[recall].people
+          do =>
+            if not (stimuli.selection.food.value and stimuli.selection.animal.value)
+              #TODO: throw validation error here
+              console.log 'throw an error, we need a response'
+
+            #update the selection, source memory error, evaluate correctness
+            @state.recalls[recall].people[key].selection = @interpretSelection(stimuli.selection, stimuli.person)
+
+    console.log @state
     #there is currently no real event data since
     #this is more of an examiner task
-    TabCAT.Task.logEvent(@state)
+    #TabCAT.Task.logEvent(@state)
 
-    TabCAT.Task.finish()
+    #TabCAT.Task.finish()
+
+  interpretSelection: (selection, person) ->
+    for type in ['food','animal']
+      do (type) =>
+        #TODO: correct this algorithm
+        #i.e. person.FOOD.ENGLISH
+        if selection[type].value == person[type.toUpperCase()][@languageVersion]
+          selection[type].correct = true
+        else
+          selection[type].correct = false
+          #determine if selection is SME here
+
+    #send back the transformed selection
+    return selection
 
 @LearningMemoryTask = class extends MemoryTask
   constructor: ->
     super()
 
     @currentExampleTrial = 0
+    @recalls = ["RECALL_ONE", "RECALL_TWO"]
 
   setUpTask: ->
-    @state = @buildInitialState(["RECALL_ONE", "RECALL_TWO"])
+    @state = @buildInitialState(@recalls)
 
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
@@ -1205,6 +1245,7 @@ MemoryTask = class
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
     super()
+    @recalls = ["DELAYED_RECALL"]
 
   setUpTask: ->
     #generate pre-loaded images to switch out on the fly
@@ -1213,7 +1254,7 @@ MemoryTask = class
       delayedRecallScoringScreen: @currentForm.DELAYED_RECALL
     )
 
-    @state = @buildInitialState(["DELAYED_RECALL"])
+    @state = @buildInitialState(@recalls)
 
   showStartScreen: ->
     $("completeButton").hide()
