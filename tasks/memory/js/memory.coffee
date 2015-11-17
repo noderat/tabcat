@@ -211,7 +211,6 @@ MemoryTask = class
                 sourceMemoryError: null
         )
         state.recalls[recall] = data
-    console.log state
     return state
 
   #returns a tuple
@@ -897,39 +896,52 @@ MemoryTask = class
 
   endTask: ->
 
-    console.log @state
+    try
+      for recall in @recalls
+        do (recall) =>
+          for key, stimuli of @state.recalls[recall].people
+            do =>
+              if not (stimuli.selection.food.value and stimuli.selection.animal.value)
+                #TODO: throw exception
+                console.log "The memory input form is not filled out.  Finish the form and re-submit."
+              #update the selection, source memory error, evaluate correctness
+              @state.recalls[recall].people[key].selection = @interpretSelection(stimuli.selection, stimuli.person)
+      #there is currently no real "event" data since
+      #this is more of an examiner task
+      TabCAT.Task.logEvent(@state)
 
-    for recall in @recalls
-      do (recall) =>
-        for key, stimuli of @state.recalls[recall].people
-          do =>
-            if not (stimuli.selection.food.value and stimuli.selection.animal.value)
-              #TODO: throw validation error here
-              console.log 'throw an error, we need a response'
+      TabCAT.Task.finish()
+    catch error
+      console.log error.message
 
-            #update the selection, source memory error, evaluate correctness
-            @state.recalls[recall].people[key].selection = @interpretSelection(stimuli.selection, stimuli.person)
-
-    console.log @state
-    #there is currently no real event data since
-    #this is more of an examiner task
-    #TabCAT.Task.logEvent(@state)
-
-    #TabCAT.Task.finish()
-
+  #returns an object that we store in the state after
+  #performing correctness evaluations
   interpretSelection: (selection, person) ->
     for type in ['food','animal']
       do (type) =>
-        #TODO: correct this algorithm
+        selection[type].sourceMemoryError = true
         #i.e. person.FOOD.ENGLISH
         if selection[type].value == person[type.toUpperCase()][@languageVersion]
           selection[type].correct = true
         else
           selection[type].correct = false
-          #determine if selection is SME here
+          if @containedInFormChoices(selection[type].value)
+            selection[type].sourceMemoryError = true
 
     #send back the transformed selection
     return selection
+
+  #gets the list of food and animal choices so we can evaluate
+  #if someone gets a wrong choice, it's still in the list of potential
+  #choices for this particular form (sourceMemoryError)
+  containedInFormChoices: (selection) ->
+    possibleChoices = _.pluck(@currentForm.PEOPLE, 'FOOD')
+    possibleChoices = possibleChoices.concat _.pluck(@currentForm.PEOPLE, 'ANIMAL')
+
+    possibleChoices = _.map possibleChoices, (choice) =>
+      return choice[@languageVersion]
+
+    return _.contains(possibleChoices, selection)
 
 @LearningMemoryTask = class extends MemoryTask
   constructor: ->

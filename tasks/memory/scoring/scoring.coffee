@@ -69,5 +69,5 @@ makeScorer = (taskName) ->
 
     return {scores: [score]}
 
-Scoring.addTaskScorer('digit-symbol',
-  makeScorer('digit-symbol'))
+Scoring.addTaskScorer('learning',
+  makeScorer('learning'))
