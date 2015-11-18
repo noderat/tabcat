@@ -51,23 +51,20 @@ TASK_TO_NORMS =
   ]
 
 makeScorer = (taskName) ->
+  console.log "Inside makescorer"
   (eventLog) ->
 
-    trials = (item.interpretation?.correct for item in eventLog \
-    when not item?.state?.practiceMode )
-
-    totalCorrect = trials.filter((x)-> x if x == true).length
-    totalIncorrect = trials.length - totalCorrect
+    console.log eventLog
 
     score =
       description: 'Correct / Incorrect'
-      lessIsMore: false
-      value: totalCorrect + " / " + totalIncorrect
-
-    if TASK_TO_NORMS[taskName]?
-      score.norms = TASK_TO_NORMS[taskName]
+      #value: totalCorrect + " / " + totalIncorrect
+      value: "3 / 5"
 
     return {scores: [score]}
 
-Scoring.addTaskScorer('learning',
-  makeScorer('learning'))
+console.log "adding favorites-learning and delay"
+Scoring.addTaskScorer('favorites-learning',
+  makeScorer('favorites-learning'))
+Scoring.addTaskScorer('favorites-delay',
+  makeScorer('favorites-delay'))
