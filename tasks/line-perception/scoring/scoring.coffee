@@ -89,11 +89,22 @@ makeScorer = (taskName) ->
 
     catchTrials = (
       item.interpretation?.correct for item in eventLog \
-        when item?.state?.catchTrial is true
-    )
+      when item?.state?.catchTrial is true
+      #oddly enough, sometimes catch trials data get recorded
+      #that has a value of null instead of truthy for an unknown reason, so
+      #this filter ensures we only examine data where correct is
+      #explicitly true or false
+    ).filter( (x) -> true if x == true or x == false )
 
-    catchTrialScore = (( catchTrials.filter((x)-> x if x == true).length \
-      / catchTrials.length ) * 100)
+
+    catchTrialTotal = catchTrials.length
+
+    catchTrialScore = 'N/A'
+    if catchTrialTotal > 0
+      catchTrialScore = (( catchTrials.filter( (x) ->
+        x if x == true
+      ).length \
+        / catchTrialTotal ) * 100)
 
     score =
       description: 'Spatial Perception'
