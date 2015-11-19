@@ -188,20 +188,29 @@ MemoryTask = class
     @currentRecallTrial = 0
 
   buildInitialState: (recalls) ->
-    state = {
+    state =
       languageVersion: @languageVersion
-    }
+      recalls: []
+      form: @currentFormLabel
+
     for recall in recalls
       do =>
-        data = []
+        data = {}
+        data.people = {}
         _.each(@currentForm[recall], (person) ->
-          data[person.person.KEY] = {
-            person: person,
-            food: null,
-            animal: null
-          }
+          data.people[person.person.KEY] =
+            person: person.person
+            selection:
+              food:
+                value: null
+                correct: false
+                sourceMemoryError: null
+              animal:
+                value: null
+                correct: false
+                sourceMemoryError: null
         )
-        state[recall] = data
+        state.recalls[recall] = data
     return state
 
   #returns a tuple
@@ -882,24 +891,67 @@ MemoryTask = class
 
     #set the state's touched answer where the scoringScreen is current
     #and the person's key matches personKey
-    @state[scoringScreen][personKey][type] = touched
+    #i realize this is making a lot of assumptions about the data structure
+    @state.recalls[scoringScreen].people[personKey].selection[type].value = touched
 
   endTask: ->
 
-    #there is currently no real event data since
-    #this is more of an examiner task
-    TabCAT.Task.logEvent(@state)
+    try
+      for recall in @recalls
+        do (recall) =>
+          for key, stimuli of @state.recalls[recall].people
+            do =>
+              if not (stimuli.selection.food.value and stimuli.selection.animal.value)
+                #TODO: throw exception
+                console.log "The memory input form is not filled out.  Finish the form and re-submit."
+              #update the selection, source memory error, evaluate correctness
+              @state.recalls[recall].people[key].selection = @interpretSelection(stimuli.selection, stimuli.person)
+      #there is currently no real "event" data since
+      #this is more of an examiner task
+      TabCAT.Task.logEvent(@state)
 
-    TabCAT.Task.finish()
+      TabCAT.Task.finish()
+    catch error
+      console.log error.message
+
+  #returns an object that we store in the state after
+  #performing correctness evaluations
+  interpretSelection: (selection, person) ->
+    for type in ['food','animal']
+      do (type) =>
+        selection[type].sourceMemoryError = true
+        #i.e. person.FOOD.ENGLISH
+        if selection[type].value == person[type.toUpperCase()][@languageVersion]
+          selection[type].correct = true
+        else
+          selection[type].correct = false
+          if @containedInFormChoices(selection[type].value)
+            selection[type].sourceMemoryError = true
+
+    #send back the transformed selection
+    return selection
+
+  #gets the list of food and animal choices so we can evaluate
+  #if someone gets a wrong choice, it's still in the list of potential
+  #choices for this particular form (sourceMemoryError)
+  containedInFormChoices: (selection) ->
+    possibleChoices = _.pluck(@currentForm.PEOPLE, 'FOOD')
+    possibleChoices = possibleChoices.concat _.pluck(@currentForm.PEOPLE, 'ANIMAL')
+
+    possibleChoices = _.map possibleChoices, (choice) =>
+      return choice[@languageVersion]
+
+    return _.contains(possibleChoices, selection)
 
 @LearningMemoryTask = class extends MemoryTask
   constructor: ->
     super()
 
     @currentExampleTrial = 0
+    @recalls = ["RECALL_ONE", "RECALL_TWO"]
 
   setUpTask: ->
-    @state = @buildInitialState(["RECALL_ONE", "RECALL_TWO"])
+    @state = @buildInitialState(@recalls)
 
     #generate pre-loaded images to switch out on the fly
     #concat'ing examples for first trials to work with same html
@@ -1205,6 +1257,7 @@ MemoryTask = class
 @DelayMemoryTask = class extends MemoryTask
   constructor: ->
     super()
+    @recalls = ["DELAYED_RECALL"]
 
   setUpTask: ->
     #generate pre-loaded images to switch out on the fly
@@ -1213,7 +1266,7 @@ MemoryTask = class
       delayedRecallScoringScreen: @currentForm.DELAYED_RECALL
     )
 
-    @state = @buildInitialState(["DELAYED_RECALL"])
+    @state = @buildInitialState(@recalls)
 
   showStartScreen: ->
     $("completeButton").hide()

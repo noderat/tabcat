@@ -42,13 +42,13 @@
             "memory": {
                 "description": "Memory Tasks",
                 "tasks": [
-                    "learning",
-                    "delay"
+                    "favorites-learning",
+                    "favorites-delay"
                 ]
             }
         },
         "tasks": {
-            "learning": {
+            "favorites-learning": {
                 "description": "Favorites Learning",
                 "icon": "img/learning.png",
                 "start": "learning.html",
@@ -59,7 +59,7 @@
                     "D": "four"
                 }
             },
-            "delay": {
+            "favorites-delay": {
                 "description": "Favorites Delay",
                 "icon": "img/delay.png",
                 "start": "delay.html",

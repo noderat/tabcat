@@ -101,6 +101,12 @@ Then run `make`.
 
 If you're developing TabCAT and you get symlink issues inside the Vagrant machine, run the command `vagrant-make` in the TabCAT source folder instead to build the project from the Vagrant box's home directory.
 
+Additionally, if you're developing TabCAT, you may want to disable minification/uglification of assets by running the following command before `make`:
+
+`export TABCAT_DEBUG=1`
+
+This will allow you to see the uncompressed versions of css and javascript in the web browser.
+
 ### Configuring TabCAT
 
 By default, TabCAT will not store any PHI at all, including dates
