@@ -1,0 +1,878 @@
+@import 'colors';
+@import 'fonts';
+// @import 'buttons';  -- Further down...
+
+//urls
+$url_0: url(../img/banner.png);
+$url_1: url(../img/sandbox/banner.png);
+$url_2: url(../img/buttons/nav-endsession.png);
+
+body {
+  color: $white;
+  margin: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: $font_0, $font_1;
+  font-size: 1.2em;
+  &.fullscreen {
+    overflow: hidden;
+  }
+  &.taskComplete p.message {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 30%;
+    width: 100%;
+    font-size: 15em;
+    text-align: center;
+    color: $light-grey;
+  }
+}
+div {
+  margin: 0;
+  padding: 0;
+  &.requireLandscapeMode div.portrait-show p {
+    font-size: 10em;
+    margin-top: 0;
+    padding-top: 3em;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    text-align: center;
+  }
+  &.score .scoreBody div.catchTrialScore {
+    display: inline-block;
+    clear: none;
+    vertical-align: top;
+    text-align: center;
+    .description {
+      font-size: 10px;
+      margin: 4px;
+    }
+    .value {
+      font-weight: normal;
+      font-size: 15px;
+      margin: 4px;
+      padding: 2px 8px;
+    }
+  }
+}
+.fullscreen {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  right: 100%;
+  margin: 0;
+  padding: 0;
+}
+.unselectable {
+  //Instead of the line below you could use @include user-select($select)
+  user-select: none;
+}
+.selectable {
+  //Instead of the line below you could use @include user-select($select)
+  user-select: text;
+}
+.portrait-show {
+  display: none;
+  visibility: hidden;
+}
+@media(orientation: portrait) {
+  .portrait-show {
+    display: block;
+    visibility: visible;
+  }
+  .portrait-hide {
+    display: none;
+    visibility: hidden;
+  }
+}
+button {
+  color: $indigo-medium;
+  border-color: $white;
+  background-color: $white;
+  &:disabled {
+    color: $indigo-lighter;
+  }
+}
+input {
+  height: 30px;
+  font-size: 1.2em;
+  background-color: $white;
+  &:focus {
+    //Instead of the line below you could use @include box-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 5px #51cbee;
+    border: 2px solid #51cbee;
+  }
+}
+input[type=text] {
+  outline: none;
+  padding: 3px 0 3px 3px;
+  margin: 5px 1px 3px 0;
+  border: 1px solid $light-grey;
+}
+textarea {
+  outline: none;
+  padding: 3px 0 3px 3px;
+  margin: 5px 1px 3px 0;
+  border: 1px solid $light-grey;
+}
+.wrap {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-size: 8.33333%;
+  //Instead of the line below you could use @include background-origin($origin)
+  background-origin: content-box;
+  //Instead of the line below you could use @include background-clip($clip)
+  background-clip: content-box;
+  background-position: left top;
+  width: 100%;
+  &:after {
+    content: " ";
+    display: block;
+    clear: both;
+  }
+}
+.content {
+  text-align: center;
+}
+.fa-bars {
+  font-weight: bolder;
+  font-size: xx-large;
+  .burger {
+    font-weight: bolder;
+    font-size: xx-large;
+    padding-top: 15px;
+  }
+}
+.blueBackground {
+  background-color: $indigo-dark;
+}
+.banner-main {
+  background: $indigo;
+  text-align: center;
+  padding-top: 1em;
+  padding-bottom: 2em;
+  font-family: $font_0, $font_1;
+  img.logo {
+    width: 180px;
+    height: 180px;
+    margin-top: 10px;
+    margin-bottom: -10px;
+  }
+  span.logo {
+    display: inline-block;
+    position: relative;
+    width: 353px;
+    height: 120px;
+    margin-top: 7px;
+    background-image: $url_0;
+    background-size: 353px 120px;
+    p.version {
+      position: absolute;
+      top: 89px;
+      left: 205px;
+      font-size: 24px;
+      margin: 0;
+      color: #bbbbaa;
+    }
+  }
+}
+.instructions {
+  color: $light-blue;
+  font-size: 1.6em;
+}
+#loginMain {
+  text-align: center;
+}
+
+@import 'buttons';
+
+.create {
+  width: 300px;
+}
+#statusBar {
+  text-align: center;
+  padding: 5px;
+  min-width: 800px;
+  div {
+    &.left {
+      position: relative;
+      float: left;
+      width: 250px;
+      color: #bbbbaa;
+      display: none;
+    }
+    &.right {
+      float: right;
+      text-align: right;
+      width: 250px;
+    }
+    &.center {
+      width: 300px;
+      padding-left: 150px;
+      display: inline-block;
+    }
+  }
+  &.sandbox {
+    div.left {
+      color: $white;
+    }
+    span.banner {
+      background-image: $url_1;
+    }
+  }
+  span {
+    &.banner {
+      display: inline-block;
+      width: 325px;
+      height: 100px;
+      background-image: $url_0;
+      background-size: 325px 100px;
+    }
+    &.version {
+      position: relative;
+      margin: 0;
+      top: -13px;
+      vertical-align: bottom;
+      font-size: 18px;
+    }
+  }
+  p {
+    &.offline {
+      position: absolute;
+      font-size: 10px;
+      font-style: italic;
+      top: 30px;
+      left: 54px;
+      span.warning {
+        font-weight: bold;
+        color: #ffcc99;
+      }
+    }
+    &.email {
+      font-size: 14px;
+      margin: 0;
+    }
+    &.encounter {
+      font-size: 18px;
+      margin: 0;
+    }
+    &.clock {
+      font-size: 24px;
+      margin: 0;
+    }
+  }
+  button {
+    &.login {
+      height: 50px;
+      border: none;
+      margin-right: 15px;
+      width: 170px;
+      font-size: 0;
+      background: $url_2 no-repeat;
+      background-size: 100%;
+    }
+    &.save {
+      width: 170px;
+      height: 40px;
+      color: $white;
+      border: 2px solid $white;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 12px;
+      background-color: transparent;
+    }
+    &.saveButton {
+      height: 40px;
+      border: 2px solid $white;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 12px;
+      margin-right: 15px;
+      width: 170px;
+      font-size: .8em;
+      font-family: $font_0, $font_1;
+      background: transparent;
+      background-size: 100%;
+      color: $white;
+    }
+  }
+}
+nav {
+  height: 4em;
+  width: 100%;
+  z-index: -2;
+}
+#burger {
+  float: right;
+  cursor: pointer;
+  padding-top: 10px;
+  padding-right: 15px;
+  &:active {
+    position: relative;
+    top: 2px;
+  }
+}
+.line {
+  width: 3em;
+  height: .5em;
+  background-color: $white;
+  margin: .5em;
+  margin-right: .75em;
+  &:nth-child(1) {
+    margin-top: .75em;
+  }
+}
+#menu {
+  float: right;
+  height: 100vh;
+  width: 256px;
+  background-color: $indigo-dark;
+  color: $white;
+  position: absolute;
+  //Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+  transition: 1s;
+  text-align: center;
+  opacity: 0.9;
+  top: 2px;
+  z-index: 1;
+}
+ul {
+  margin: 0;
+  p {
+    font-weight: bold;
+    position: absolute;
+    right: 1.5em;
+    top: .25em;
+    cursor: pointer;
+    text-align: center;
+    padding-right: 170px;
+  }
+}
+li {
+  margin-top: 4.5em;
+  list-style-type: none;
+  text-align: left;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  width: 100%;
+  a:-webkit-any-link {
+    color: $white;
+    text-decoration: none;
+    cursor: auto;
+  }
+}
+.menu-list-item {
+  border-bottom: 2px $white solid;
+  input {
+    width: 90%;
+  }
+}
+.show-dev {
+  margin-bottom: 5px;
+}
+.device-input {
+  margin-top: -15px;
+  border-bottom: none;
+  margin-bottom: -15px;
+  input {
+    font-size: 1em;
+    font-family: $font_0, $font_1;
+    width: 95%;
+  }
+}
+.show-lang {
+  margin-top: -5px;
+}
+.lang {
+  border-bottom: none;
+  margin-top: -10px;
+  select {
+    overflow: hidden;
+    height: 30px;
+    width: 100%;
+  }
+  option {
+    border-bottom: 1px solid $light-grey;
+    height: 25px;
+    font-family: $font_0, $font_1;
+    font-size: 1.2em;
+    overflow: auto;
+  }
+}
+.sync {
+  margin-top: -5px;
+  height: 20px;
+}
+.syncopen {
+  height: auto;
+  margin-bottom: -15px;
+}
+.sub-item {
+  display: inline;
+  padding-top: 0;
+}
+.sync-data {
+  background: transparent;
+  border: 2px solid $white;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 8px;
+  width: 170px;
+  height: 40px;
+  color: $white;
+  font-size: 1.2em;
+  font-family: $font_2, $font_1;
+  margin-top: 50px;
+  cursor: pointer;
+}
+.set-password {
+  margin-top: -5px;
+  padding-bottom: 15px;
+  input {
+    margin-bottom: 5px;
+    font-family: $font_0, $font_1;
+    font-size: 1em;
+  }
+}
+.save-password {
+  background: transparent;
+  color: $white;
+  font-size: 1em;
+  font-family: $font_2, $font_1;
+  border: 2px solid $white;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 12px;
+  width: 100px;
+  float: right;
+  margin-top: 5px;
+  margin-right: 5%;
+}
+.saveChanges {
+  border-bottom: none;
+  margin-top: -5px;
+}
+.closeEncounter {
+  cursor: pointer;
+}
+#tasks {
+  div {
+    &.task {
+      display: inline-block;
+      position: relative;
+      padding: 8px;
+      margin-left: 10px;
+      margin-bottom: 10px;
+      min-height: 72px;
+      text-align: left;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 18px;
+      color: $white;
+      width: 30%;
+      &:active {
+        background-color: $grey;
+      }
+      > span {
+        &.description {
+          display: block;
+          position: absolute;
+          font-size: 1em;
+          margin-left: 5px;
+          white-space: normal;
+          max-width: 11ch;
+        }
+        &.scoringMessage {
+          font-size: 12px;
+          font-style: italic;
+          white-space: pre-wrap;
+          float: left;
+          padding-top: 25px;
+          margin-top: 25px;
+        }
+        &.alternateForm {
+          position: relative;
+          float: left;
+          margin-left: 12px;
+          border: 1px solid $black;
+          font-size: 36px;
+          text-align: center;
+          vertical-align: middle;
+          width: 65px;
+          height: 65px;
+          //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+          border-radius: 12px;
+          display: inline-block;
+        }
+      }
+      div.scores {
+        position: relative;
+        clear: both;
+        margin-top: 10px;
+        padding-left: 92px;
+        margin-bottom: -10px;
+        border-top: 1px solid $black;
+        div.score {
+          font-style: normal;
+          .scoreHeader {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .scoreBody {
+            margin: 10px;
+            div {
+              &.rawScore {
+                display: inline-block;
+                clear: none;
+                vertical-align: top;
+                text-align: center;
+                .description {
+                  font-size: 10px;
+                  margin: 4px;
+                }
+                .value {
+                  font-size: 60px;
+                  margin: 4px;
+                }
+              }
+              &.norms {
+                display: inline-block;
+                clear: none;
+                margin-left: 10px;
+                table {
+                  border-spacing: 0;
+                }
+                th {
+                  font-weight: normal;
+                  font-size: 10px;
+                  text-align: center;
+                  padding: 4px;
+                }
+                td {
+                  font-weight: normal;
+                  font-size: 15px;
+                  text-align: center;
+                  padding: 2px 8px;
+                }
+              }
+            }
+          }
+          .scoreFooter {
+            margin-top: 10px;
+            font-size: 10px;
+          }
+        }
+      }
+    }
+    &.battery {
+      width: 350px;
+      color: $white;
+      margin-left: 8px;
+      margin-bottom: 35px;
+      padding-right: 50px;
+      padding-left: 50px;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      float: left;
+      .collapsed {
+        display: none;
+      }
+      div.header {
+        font-size: 1.2em;
+        width: 200px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-left: 16px;
+      }
+    }
+  }
+  button {
+    //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+    border-radius: 10px;
+    border-width: 5px;
+    margin-top: 50px;
+  }
+  #taskList {
+    margin-top: 25px;
+  }
+  p.message {
+    font-family: $font_0, $font_1;
+    font-size: 24px;
+    text-align: center;
+  }
+  img.icon {
+    float: left;
+    display: inline-block;
+    width: 72px;
+    height: 72px;
+    background-size: 72px 72px;
+    //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+    border-radius: 12px;
+    vertical-align: middle;
+  }
+}
+.task-encounter-button {
+  text-align: center;
+}
+.task-message {
+  margin-top: 30px;
+  text-align: center;
+}
+#enterPassword {
+  text-align: center;
+  padding-top: 3%;
+}
+.continue {
+  width: 185px;
+}
+#howToLogout {
+  color: $light-blue;
+  font-size: 1.6em;
+}
+.test-buttons {
+  width: 65px;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 10px;
+  padding: 15px;
+  background-color: $indigo-medium;
+}
+#administrationNotesForm {
+  font-size: 24px;
+  fieldset {
+    margin-top: 20px;
+    padding: 5px;
+    border: none;
+    div.threeColumns {
+      //Instead of the line below you could use @include column-count($count)
+      column-count: 3;
+      //Instead of the line below you could use @include column-width($width)
+      column-width: 150px;
+      //Instead of the line below you could use @include column-gap($width)
+      column-gap: 50px;
+    }
+    &.required legend:after {
+      content: '*';
+    }
+  }
+  legend {
+    font-size: 28px;
+    font-family: $font_2, $font_1;
+    color: $white;
+  }
+  textarea {
+    width: 750px;
+    max-width: 750px;
+    height: 150px;
+    max-height: 150px;
+    font-size: 18px;
+  }
+  p {
+    text-align: center;
+  }
+  button {
+    font-size: 24px;
+    height: 60px;
+    //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+    border-radius: 10px;
+    border-width: 5px;
+    margin: 0;
+  }
+  div.threeColumns label {
+    display: block;
+  }
+}
+.caption {
+  color: $light-blue;
+  font-family: $font_3, $font_1;
+  font-size: 5em;
+  text-align: center;
+  margin-top: 20%;
+}
+#iAmTheExaminer {
+  float: right;
+  width: 200px;
+  height: 100px;
+  background-color: transparent;
+  color: $white;
+  font-size: 18px;
+  border: 2px solid $white;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 26px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+#patientScoring {
+  margin-top: 25px;
+  div {
+    &.encounter {
+      background-color: $light-grey;
+      margin-left: 15px;
+      margin-bottom: 15px;
+      padding: 15px;
+      width: 670px;
+      text-align: left;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 18px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      .encounterHeader {
+        color: $black;
+        font-size: 24px;
+        margin: 0;
+        .encounterNum {
+          font-size: 36px;
+        }
+        .date {
+          font-size: 18px;
+          float: right;
+        }
+      }
+    }
+    &.task {
+      background-color: $black;
+      padding: 15px;
+      margin-top: 10px;
+      margin-right: 0;
+      width: 640px;
+      text-align: left;
+      //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+      border-radius: 14px;
+      .taskHeader {
+        color: $light-grey;
+        font-size: 24px;
+        .description {
+          vertical-align: middle;
+        }
+      }
+      div {
+        &.scores {
+          margin-top: 15px;
+          font-size: 12px;
+          font-style: italic;
+        }
+        &.score {
+          border-top: 1px solid $light-grey;
+          padding: 5px;
+          font-style: normal;
+          .scoreHeader {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .scoreBody {
+            margin: 10px;
+            div {
+              &.rawScore {
+                display: inline-block;
+                clear: none;
+                vertical-align: top;
+                text-align: center;
+                .description {
+                  font-size: 10px;
+                  margin: 4px;
+                }
+                .value {
+                  font-size: 60px;
+                  margin: 4px;
+                }
+              }
+              &.norms {
+                display: inline-block;
+                clear: none;
+                margin-left: 10px;
+                table {
+                  border-spacing: 0;
+                }
+                th {
+                  font-weight: normal;
+                  font-size: 10px;
+                  text-align: center;
+                  padding: 4px;
+                }
+                td {
+                  font-weight: normal;
+                  font-size: 15px;
+                  text-align: center;
+                  padding: 2px 8px;
+                }
+              }
+            }
+          }
+          .scoreFooter {
+            margin-top: 10px;
+            font-size: 10px;
+          }
+        }
+      }
+      img.icon {
+        width: 65px;
+        //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+        border-radius: 10px;
+        padding: 15px;
+        background-color: $indigo-medium;
+      }
+    }
+    &.tasks {
+      display: none;
+    }
+  }
+}
+.digitSymbol {
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 20px 20px 20px 20px;
+  position: relative;
+  display: inline-block;
+  border: 3px solid $white;
+  width: 9%;
+  height: 90%;
+  background-color: transparent;
+  margin: 0 10px;
+  .digitSymbolTop {
+    display: block;
+    text-align: center;
+    margin: auto auto;
+    width: 100%;
+    height: 50%;
+    font-size: 8em;
+    line-height: 100%;
+    color: $light-blue;
+    float: left;
+  }
+  .digitSymbolBottom {
+    display: block;
+    width: 100%;
+    height: 50%;
+    clear: both;
+    //Instead of the line below you could use @include transform-style($style)
+    transform-style: preserve-3d;
+  }
+}
+#rectangle {
+  width: 100% !important;
+  right: 0 !important;
+  left: 0 !important;
+  top: 2.5% !important;
+}
+#digitSymbolBanner {
+  /*width: 100%;*/
+  padding-left: 40%;
+  padding-top: 5px;
+  background-color: $indigo;
+  span {
+    position: fixed;
+    top: 5%;
+    font-size: 3em;
+    font-weight: 700;
+    font-family: $font_2, $font_1;
+    padding-left: 15px;
+  }
+}
+.digitSymbolBannerLogo {
+  width: 100px;
+}

@@ -19,3 +19,6 @@ npm-debug*
 couchdb.stderr
 couchdb.stdout
 /.project
+task-defaults/scoring/app.js
+console/css
+task-defaults/scoring/app.js

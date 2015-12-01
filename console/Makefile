@@ -56,10 +56,7 @@ design.json: kanso.json $(KANSO_DEPS)
 
 $(PUSHED): design.json
 	../scripts/force-put $< $(TABCAT_HOST)/tabcat/_design/console
-	echo $<
-	echo "asdfasdf"
 	touch $@
 
 $(COFFEE_JS): %.js: %.coffee
 	coffee -c $<
-	if which coffeelint; then coffeelint -q $<; fi

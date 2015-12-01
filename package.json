@@ -1,35 +1,36 @@
 {
-  "name": "TabCAT",
-  "version": "0.9.1",
+  "name": "tabcat",
+  "version": "1.0.0",
   "description": "Tablet-based Cognitive Assessment Tool",
-  "author": "Nathan Norton <nate@pixelandline.com>",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/UCSFMemoryAndAging/tabcat.git"
+    "url": "git+https://github.com/noderat/tabcat.git"
   },
+  "author": "",
   "license": "BSD-2-Clause",
-  "dependencies": {
-    "coffee-script": "^1.9.3",
-    "coffeelint": "^1.11.1",
+  "bugs": {
+    "url": "https://github.com/noderat/tabcat/issues"
+  },
+  "homepage": "https://github.com/noderat/tabcat#readme",
+  "devDependencies": {
+    "del": "^2.1.0",
     "gulp": "^3.9.0",
     "gulp-coffee": "^2.3.1",
-    "gulp-coffeelint": "^0.5.0",
-    "gulp-sass": "^2.0.4",
-    "gulp-util": "^3.0.6",
-    "kanso": "^0.5.0",
-    "react": "^0.14.2",
-    "react-dom": "^0.14.0"
-  },
-  "devDependencies": {
-    "browser-sync": "^2.10.0",
-    "connect-livereload": "^0.5.3",
-    "convert-source-map": "^1.1.2",
-    "express": "^4.13.3",
-    "gulp": "github:gulpjs/gulp#4.0",
-    "gulp-batch": "^1.0.5",
     "gulp-plumber": "^1.0.1",
-    "gulp-watch": "^4.3.5",
-    "tiny-lr": "^0.2.1",
-    "vinyl": "^1.1.0"
+    "gulp-sass": "^2.1.0",
+    "gulp-size": "^2.0.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7"
+  },
+  "dependencies": {
+    "fastclick": "^1.0.6",
+    "gaussian": "^1.0.0",
+    "i18next-client": "^1.11.1",
+    "jquery": "^2.1.4",
+    "underscore": "^1.8.3"
   }
 }

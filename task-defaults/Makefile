@@ -57,7 +57,6 @@ clean:
 # compiling COFFEE_JS
 $(COFFEE_JS): %.js: %.coffee
 	coffee -c $<
-	if which coffeelint; then coffeelint -q $<; fi
 
 # task, for "tabcat" DB
 $(PUSHED)_tabcat: design.json

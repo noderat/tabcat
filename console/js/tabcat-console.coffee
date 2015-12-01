@@ -99,12 +99,12 @@ TabCAT.Console.updateStatusBar = ->
         <p class="email">&nbsp;</p>
         <nav class='menu-nav'>
           <div id='burger'>
-            <p class='icon-reorder burger'></p>
+            <p class='fa fa-bars burger'></p>
           </div>
         </nav>
         <div id='menu'>
           <ul>
-            <p id='close'><i class='icon-reorder'></i></p>
+            <p id='close'><i class='fa fa-bars'></i></p>
             <li class='menu-list-item show-dev'><a href='#'>DEVICE NAME</a></li>
             <li class='menu-list-item device-input'>
               <input type='text' name='device' class='device-name'>
@@ -131,7 +131,7 @@ TabCAT.Console.updateStatusBar = ->
                   <button class='sync-data'>Sync Data</button>
                 </li>
               </ul>
-            <li class='menu-list-item saveChanges'><button class='save button'><span class='btn-label-save'><i class='fa fa-check fa-fw'></i></span>Save Changes</button></li>
+            <li class='menu-list-item saveChanges'><button class='save button'><span class='btn-label-save'><i class='fa fa-check'></i></span>Save Changes</button></li>
             <li class='menu-list-item saveChanges'><button class='login closeEncounter'></button></li>
           </ul>
         </div>
@@ -483,7 +483,3 @@ TabCAT.Console.populateWithScores = ($scoresDiv, scores) ->
       catchTrialScore)
 
     $scoresDiv.append($score)
-
-
-
-

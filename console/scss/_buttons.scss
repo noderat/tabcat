@@ -1,0 +1,114 @@
+.button {
+  padding: .5em;
+  color: $white;
+  //Instead of the line below you could use @include transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+  transition: background 0.15s;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 8px;
+  border: 1px solid;
+}
+.button--large {
+  font-size: 1em;
+}
+.button--small {
+  font-size: 0.83333em;
+}
+.button--bold {
+  font-weight: bold;
+}
+.button--block {
+  display: block;
+  width: 100%;
+}
+.button--upper {
+  text-transform: uppercase;
+}
+.button--default {
+  background-color: $indigo;
+  border-color: $indigo-medium;
+  &:hover {
+    background: $indigo-light;
+  }
+  &:active {
+    background: $indigo-light;
+  }
+}
+.button--success {
+  background-color: $green;
+  border-color: $green;
+  width: 170px;
+  &:hover {
+    background: $green-dark;
+  }
+  &:active {
+    background: $green-dark;
+  }
+}
+.button--danger {
+  background-color: $red;
+  border-color: $red;
+  width: auto;
+  font-size: 1em;
+  &:hover {
+    background: $red-dark;
+  }
+  &:active {
+    background: $red-dark;
+  }
+}
+.button--warning {
+  background-color: #f1c40f;
+  border-color: #c29d0b;
+  &:hover {
+    background: #f4d03f;
+  }
+  &:active {
+    background: #f4d03f;
+  }
+}
+.button--info {
+  background-color: #2980b9;
+  &:hover {
+    background: #409ad5;
+  }
+  &:active {
+    background: #409ad5;
+  }
+}
+.btn-label-success {
+  position: relative;
+  left: -34px;
+  padding-top: 0.55em;
+  padding-right: 0.6rem;
+  padding-bottom: 0.65em;
+  padding-left: 0.8rem;
+  background: rgba(0, 0, 0, 0.18);;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 9px 0 0 9px;
+}
+.btn-label-save {
+  position: relative;
+  padding-top: 0.75em;
+  padding-right: 0.40rem;
+  padding-bottom: 0.75em;
+  padding-left: 1rem;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 9px 0 0 9px;
+  border-right: 2px solid $white;
+  margin-right: 10px;
+  font-size: 1em;
+  i {
+    margin-left: -25px;
+  }
+}
+.btn-label-danger {
+  position: relative;
+  left: -18px;
+  padding-top: 0.75em;
+  padding-right: 0.8rem;
+  padding-bottom: 0.85em;
+  padding-left: 0.8rem;
+  background: rgba(0, 0, 0, 0.18);;
+  //Instead of the line below you could use @include border-radius($radius, $vertical-radius)
+  border-radius: 9px 0 0 9px;
+}

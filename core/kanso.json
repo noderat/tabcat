@@ -4,8 +4,7 @@
     "description": "TabCAT core libraries",
     "attachments": ["css/tabcat.css",
                     "img/favicon.ico",
-                    "js/tabcat.js",
-                    "login.html"],
+                    "js/tabcat.js"],
     "modules": ["js/couchdb/adhoc/cpt-detail-report.js",
                 "js/couchdb/adhoc/cpt-summary-report.js",
                 "js/couchdb/adhoc/examiner.js",
@@ -25,9 +24,7 @@
                 "js/vendor/gauss/vector.js",
                 "js/vendor/ucsv.js",
                 "js/vendor/underscore.js",
-                "js/vendor/jquery-ui.js",
-                "js/vendor/react-0.14.0.min.js",
-                "js/vendor/react-dom-0.14.0.min.js"
+                "js/vendor/jquery-ui.js"
     ],
     "load": "js/couchdb/app",
     "dependencies": {

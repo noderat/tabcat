@@ -149,12 +149,12 @@ textarea {
     text-align: center;
 }
 
-.icon-reorder {
+.fa-bars {
     font-weight: bolder;
     font-size: xx-large;
 }
 
-.icon-reorder .burger {
+.fa-bars .burger {
     font-weight: bolder;
     font-size: xx-large;
     padding-top: 15px;
